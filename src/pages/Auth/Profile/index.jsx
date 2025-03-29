@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../context/AuthLocket";
 import LoadingRing from "../../../components/UI/Loading/ring";
+import HoldButton from "../../../components/UI/Button";
 
 export default function Profile() {
   const { user, setUser } = useContext(AuthContext);

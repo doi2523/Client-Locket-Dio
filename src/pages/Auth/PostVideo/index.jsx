@@ -72,7 +72,7 @@ const PostVideo = () => {
             onClick={handleTriggerUploadFile}
           >
             <FolderOpen size={20} />
-            <p>Click để chọn video</p>
+            <p>Click để chọn video .mp4 nhỏ hơn 5mb</p>
             <input
               type="file"
               ref={fileRef}
@@ -86,7 +86,7 @@ const PostVideo = () => {
         {/* Xem trước video */}
         <div className="text-center mb-6">
           <h2 className="text-3xl font-semibold mb-4">Video Preview</h2>
-          <div className="relative w-[400px] h-[400px] border border-base-content rounded-lg overflow-hidden flex items-center justify-center">
+          <div className="relative w-full max-w-[400px] rounded-[40px] aspect-square border border-base-content overflow-hidden flex items-center justify-center">
             {previewUrl ? (
               <video
                 src={previewUrl}

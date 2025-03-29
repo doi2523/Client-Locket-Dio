@@ -22,11 +22,11 @@ const DefaultLayout = ({ children }) => {
 
   useEffect(() => {
     // Thêm hoặc xóa class khóa cuộn khi đường dẫn thay đổi
-    if (isLocketPage) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
+    // if (isLocketPage) {
+    //   document.body.classList.add("overflow-hidden");
+    // } else {
+    //   document.body.classList.remove("overflow-hidden");
+    // }
 
     // Dọn dẹp khi component unmount
     return () => document.body.classList.remove("overflow-hidden");
