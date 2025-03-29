@@ -382,7 +382,7 @@ const CameraCapture = ({ onCapture }) => {
               onMouseUp={handlePressEnd}
               onTouchStart={handlePressStart}
               onTouchEnd={handlePressEnd}
-              // onTouchMove={handleTouchMove}
+              onTouchMove={handlePressStart}
               // onTouchCancel={handleTouchCancel}
               className={`rounded-full w-18 h-18 mx-4 outline-5 outline-offset-3 outline-accent ${
                 isRecording ? "bg-red-500 animate-pulseBeat" : "bg-base-300"
