@@ -8,7 +8,7 @@ const CameraCapture = ({ onCapture }) => {
   const [capturedMedia, setCapturedMedia] = useState(null);
     const [hasPermission, setHasPermission] = useState(null);
     const [isRecording, setIsRecording] = useState(false);
-  const [cameraMode, setCameraMode] = useState("front");
+  const [cameraMode, setCameraMode] = useState("user");
   const [selectedFile, setSelectedFile] = useState(null);
   const [caption, setCaption] = useState("");
   const [cameraActive, setCameraActive] = useState(true);
@@ -30,18 +30,6 @@ const CameraCapture = ({ onCapture }) => {
           streamRef.current = stream;
           videoRef.current.srcObject = stream;
           setHasPermission(true);
-                  // Lấy danh sách camera
-        navigator.mediaDevices.enumerateDevices().then((devices) => {
-          const frontCamera = devices.find(
-            (device) => device.kind === "videoinput" && device.label.toLowerCase().includes("front")
-          );
-
-          if (frontCamera) {
-            alert(`Camera trước: ${frontCamera.label} - ID: ${frontCamera.deviceId}`);
-          } else {
-            alert("Không tìm thấy camera trước!");
-          }
-        });
         })
         .catch(() => setHasPermission(false))
         .finally(() => setPermissionChecked(true));
@@ -112,7 +100,7 @@ const CameraCapture = ({ onCapture }) => {
           const blob = new Blob(chunks, { type: "video/mp4" });
           // const videoUrl = URL.createObjectURL(blob);
           const videoUrl =
-          cameraMode === "front"
+          cameraMode === "user"
             ? URL.createObjectURL(await correctFrontCameraVideo(blob))
             : URL.createObjectURL(blob);
 
@@ -151,7 +139,7 @@ const CameraCapture = ({ onCapture }) => {
         const xOffset = (video.videoWidth - size) / 2;
         const yOffset = (video.videoHeight - size) / 2;
   
-        if (cameraMode === "front") {
+        if (cameraMode === "user") {
           ctx.translate(size / 2, 0); // Dịch chuyển đúng tâm
           ctx.scale(-1, 1); // Lật ảnh
           ctx.drawImage(video, xOffset, yOffset, size, size, -size / 2, 0, size, size);
@@ -255,22 +243,18 @@ const CameraCapture = ({ onCapture }) => {
   
   const handleRotateCamera = async () => {
     setRotation((prev) => prev + 180);
-    setCameraMode((prev) => (prev === "front" ? "back" : "front"));
-  
+    const newMode = cameraMode === "user" ? "environment" : "user";
+    setCameraMode(newMode);
+
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
     }
-  
+
     try {
-      const constraints = {
-        video: {
-          facingMode: cameraMode === "front" ? "environment" : "user",
-        },
-      };
-  
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: newMode },
+      });
       streamRef.current = stream;
-  
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
@@ -331,7 +315,7 @@ const CameraCapture = ({ onCapture }) => {
             playsInline
             muted
             className={`w-full h-full object-cover ${
-              cameraMode === "front" ? "scale-x-[-1]" : ""
+              cameraMode === "user" ? "scale-x-[-1]" : ""
             }`}
           />
         )}
