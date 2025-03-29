@@ -189,11 +189,10 @@ const PostVideo = () => {
         <div className="flex justify-center mt-6">
           <button
             onClick={handleUploadFile}
-            className="flex items-center gap-2 btn btn-primary px-4 py-2 rounded-md shadow-md disabled:bg-gray-400"
+            className="btn btn-primary rounded-xl disabled:bg-gray-400"
             disabled={isUploading}
           >
-            {isUploading ? "Đang tải lên..." : "Gửi bài"}
-            <Send size={20} />
+            {isUploading ? <><LoadingRing size={20} stroke={3} speed={2} color="white" /><span>Đang tải lên...</span></> : <><span>Đăng bài viết</span><Send size={20} /></>}
           </button>
         </div>
       </div>
