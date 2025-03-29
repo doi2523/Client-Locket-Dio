@@ -8,7 +8,7 @@ const CameraCapture = ({ onCapture }) => {
   const [capturedMedia, setCapturedMedia] = useState(null);
     const [hasPermission, setHasPermission] = useState(null);
     const [isRecording, setIsRecording] = useState(false);
-  const [cameraMode, setCameraMode] = useState("back");
+  const [cameraMode, setCameraMode] = useState("front");
   const [selectedFile, setSelectedFile] = useState(null);
   const [caption, setCaption] = useState("");
   const [cameraActive, setCameraActive] = useState(true);
@@ -319,7 +319,7 @@ const CameraCapture = ({ onCapture }) => {
             playsInline
             muted
             className={`w-full h-full object-cover ${
-              cameraMode === "back" ? "scale-x-[-1]" : ""
+              cameraMode === "front" ? "scale-x-[-1]" : ""
             }`}
           />
         )}
