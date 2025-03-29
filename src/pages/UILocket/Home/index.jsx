@@ -18,6 +18,8 @@ const CameraCapture = ({ onCapture }) => {
   const recordedChunksRef = useRef([]);
   const pressTimer = useRef(null);
   const pressStartTime = useRef(null);
+  const pressTimeoutRef = useRef(null);
+const recordingStartedRef = useRef(false); // Để kiểm soát trạng thái bắt đầu quay
 
   const textareaRef = useRef(null);
 
@@ -99,11 +101,6 @@ const CameraCapture = ({ onCapture }) => {
     }
   };
 
-  const handleSwitchCamera = () => {
-    setCameraMode(cameraMode === "front" ? "back" : "front");
-    setRotation(rotation - 360);
-  };
-
   const handleCapturePhoto = () => {
     if (!videoRef.current || !canvasRef.current || isRecording) return;
     const context = canvasRef.current.getContext("2d");
@@ -165,6 +162,43 @@ const CameraCapture = ({ onCapture }) => {
       mediaRecorderRef.current.stop();
     }
   };
+  const handlePressStart = () => {
+    if (!videoRef.current || isRecording) return;
+  
+    pressTimeoutRef.current = setTimeout(() => {
+      recordingStartedRef.current = true;
+      startRecording(); // Bắt đầu quay video sau 500ms
+    }, 500);
+  };
+  
+
+  const handlePressEnd = () => {
+    if (pressTimeoutRef.current) {
+      clearTimeout(pressTimeoutRef.current);
+    }
+  
+    if (recordingStartedRef.current) {
+      stopRecording(); // Nếu đang quay thì dừng quay
+      recordingStartedRef.current = false;
+    } else {
+      handleCapturePhoto(); // Nếu chưa quay thì chụp ảnh
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    e.preventDefault(); // Ngăn chặn hành vi mặc định khi di chuyển ngón tay
+  };
+
+  const handleTouchCancel = (e) => {
+    e.preventDefault();
+    clearTimeout(pressTimer.current);
+    if (isRecording) stopRecording();
+  };
+
+  const handleSwitchCamera = () => {
+    setCameraMode(cameraMode === "front" ? "back" : "front");
+    setRotation(rotation - 360);
+  };
 
   const correctFrontCameraVideo = (blob) => {
     return new Promise((resolve) => {
@@ -207,36 +241,6 @@ const CameraCapture = ({ onCapture }) => {
         video.play();
       };
     });
-  };
-
-  const handlePressStart = (e) => {
-    e.preventDefault();
-    pressStartTime.current = Date.now();
-    pressTimer.current = setTimeout(() => {
-      startRecording();
-    }, 200);
-  };
-
-  const handlePressEnd = (e) => {
-    e.preventDefault();
-    const pressDuration = Date.now() - pressStartTime.current;
-    clearTimeout(pressTimer.current);
-
-    if (pressDuration < 200 && !isRecording) {
-      handleCapturePhoto();
-    } else if (isRecording) {
-      stopRecording();
-    }
-  };
-
-  const handleTouchMove = (e) => {
-    e.preventDefault(); // Ngăn chặn hành vi mặc định khi di chuyển ngón tay
-  };
-
-  const handleTouchCancel = (e) => {
-    e.preventDefault();
-    clearTimeout(pressTimer.current);
-    if (isRecording) stopRecording();
   };
 
   const handleFileChange = (event) => {
@@ -378,16 +382,15 @@ const CameraCapture = ({ onCapture }) => {
               <ImageUp size={35} />
             </label>
             <button
-              onMouseDown={handlePressStart}
-              onMouseUp={handlePressEnd}
-              onTouchStart={handlePressStart}
-              onTouchEnd={handlePressEnd}
-              onTouchMove={handlePressStart}
-              // onTouchCancel={handleTouchCancel}
-              className={`rounded-full w-18 h-18 mx-4 outline-5 outline-offset-3 outline-accent ${
-                isRecording ? "bg-red-500 animate-pulseBeat" : "bg-base-300"
-              }`}
-            ></button>
+  onMouseDown={handlePressStart}
+  onMouseUp={handlePressEnd}
+  onTouchStart={handlePressStart}
+  onTouchEnd={handlePressEnd}
+  className={`rounded-full w-18 h-18 mx-4 outline-5 outline-offset-3 outline-accent ${
+    isRecording ? "bg-red-500 animate-pulseBeat" : "bg-base-300"
+  }`}
+></button>
+
             <button className="cursor-pointer" onClick={handleSwitchCamera}>
               <RefreshCcw
                 size={35}
