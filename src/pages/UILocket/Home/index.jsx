@@ -1,6 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
 import { RefreshCcw, Send, Sparkles, ImageUp, X } from "lucide-react";
 import AutoResizeTextarea from "./AutoResizeTextarea";
+import { showToast } from "../../../components/Toast";
+import LoadingRing from "../../../components/UI/Loading/ring";
+import Hourglass from "../../../components/UI/Loading/hourglass";
 
 const CameraCapture = ({ onCapture }) => {
   const videoRef = useRef(null);
@@ -21,6 +24,8 @@ const CameraCapture = ({ onCapture }) => {
   const mediaRecorderRef = useRef(null);
   const streamRef = useRef(null);
   const MAX_RECORD_TIME = 10;
+  const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(null);
 
   useEffect(() => {
     if (!permissionChecked) {
@@ -178,23 +183,36 @@ const CameraCapture = ({ onCapture }) => {
   const cropVideoToSquare = (blob) => {
     return new Promise((resolve) => {
       const video = document.createElement("video");
-      video.crossOrigin = "anonymous";
       video.src = URL.createObjectURL(blob);
+      video.muted = true; // Giúp video tự động phát trên một số trình duyệt
+      video.playsInline = true; // Giúp tránh mở full màn hình trên di động
+
       video.onloadedmetadata = () => {
+        const estimatedTime = Math.ceil(video.duration); // Lấy thời lượng video
+        setCountdown(estimatedTime); // Bắt đầu đếm ngược
+
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         const size = Math.min(video.videoWidth, video.videoHeight);
         canvas.width = size;
         canvas.height = size;
 
-        video.onplay = () => {
+        const countdownInterval = setInterval(() => {
+          setCountdown((prev) => (prev > 0 ? prev - 1 : null));
+        }, 1000);
+
+        video.play().then(() => {
           const stream = canvas.captureStream();
           const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
           const chunks = [];
 
           recorder.ondataavailable = (e) => chunks.push(e.data);
-          recorder.onstop = () =>
+          recorder.onstop = () => {
+            clearInterval(countdownInterval); // Dừng đếm ngược
+            setCountdown(null);
+            setLoading(false); // Ẩn loading
             resolve(new Blob(chunks, { type: "video/mp4" }));
+          };
 
           recorder.start();
 
@@ -203,6 +221,7 @@ const CameraCapture = ({ onCapture }) => {
               recorder.stop();
               return;
             }
+
             const xOffset = (video.videoWidth - size) / 2;
             const yOffset = (video.videoHeight - size) / 2;
             ctx.drawImage(
@@ -216,20 +235,22 @@ const CameraCapture = ({ onCapture }) => {
               size,
               size
             );
+
             requestAnimationFrame(drawFrame);
           };
 
           requestAnimationFrame(drawFrame);
-        };
-        video.play();
+        });
       };
     });
   };
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
     if (file.type.startsWith("image/")) {
+      setLoading(true); // Bắt đầu loading khi xử lý ảnh
       const reader = new FileReader();
       reader.onloadend = () => {
         const img = new Image();
@@ -240,24 +261,27 @@ const CameraCapture = ({ onCapture }) => {
           const size = Math.min(img.width, img.height);
           canvas.width = size;
           canvas.height = size;
-          const xOffset = (img.width - size) / 2;
-          const yOffset = (img.height - size) / 2;
-          ctx.drawImage(img, xOffset, yOffset, size, size, 0, 0, size, size);
+          ctx.drawImage(img, 0, 0, size, size);
           setSelectedFile({
             type: "image",
             data: canvas.toDataURL("image/png"),
           });
           setCameraActive(false);
+          setLoading(false); // Dừng loading khi xử lý xong
         };
       };
       reader.readAsDataURL(file);
     } else if (file.type.startsWith("video/")) {
+      setLoading(true); // Bắt đầu loading khi xử lý video
+      showToast("info", "Đang tải video...");
       const videoBlob = new Blob([file], { type: file.type });
 
       cropVideoToSquare(videoBlob).then((croppedBlob) => {
         const videoUrl = URL.createObjectURL(croppedBlob);
         setSelectedFile({ type: "video", data: videoUrl });
         setCameraActive(false);
+        setLoading(false); // Dừng loading sau khi xử lý xong
+        showToast("success", "Tải video thành công!");
       });
     }
   };
@@ -339,44 +363,58 @@ const CameraCapture = ({ onCapture }) => {
   return (
     <div className="flex select-none flex-col items-center justify-center h-screen min-h-screen bg-locket -z-50">
       <h1 className="text-3xl mb-6 font-semibold">Locket Upload</h1>
-      <div className="relative w-full max-w-md aspect-square bg-gray-800 rounded-[60px] overflow-hidden">
-        {!selectedFile && cameraActive && (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className={`w-full h-full object-cover ${
-              cameraMode === "user" ? "scale-x-[-1]" : ""
-            }`}
-          />
-        )}
-        {selectedFile && selectedFile.type === "video" && (
-          <video
-            src={selectedFile.data}
-            autoPlay
-            loop
-            playsInline
-            muted
-            className="w-full h-full object-cover"
-          />
-        )}
-        {selectedFile && selectedFile.type === "image" && (
-          <img
-            src={selectedFile.data}
-            alt="Selected File"
-            className="w-full h-full object-cover select-none"
-          />
-        )}
+      <div className={`relative w-full max-w-md aspect-square bg-gray-800 rounded-[60px] overflow-hidden ${loading ? "border border-red-500" : ""}`}>
+  {/* Viền động chạy vòng tròn */}
+  <div className="absolute inset-0 rounded-[60px]"
+  ></div>
 
-        {(capturedMedia || selectedFile) && (
-          <AutoResizeTextarea
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-            placeholder="Nhập tin nhắn..."
-          />
-        )}
+  {loading && (
+    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50 gap-3 text-white text-lg font-medium">
+      <Hourglass size={50} stroke={2} bgOpacity={0.1} speed={1.5} color="white" />
+      <div>Đang xử lý video...</div>
+      <div className="flex items-center gap-2 text-2xl font-bold">
+        <p> {countdown}s⏳</p>
       </div>
+    </div>
+  )}
+
+  {!selectedFile && cameraActive && (
+    <video
+      ref={videoRef}
+      autoPlay
+      playsInline
+      muted
+      className={`w-full h-full object-cover ${cameraMode === "user" ? "scale-x-[-1]" : ""}`}
+    />
+  )}
+  {selectedFile && selectedFile.type === "video" && (
+    <video
+      src={selectedFile.data}
+      autoPlay
+      loop
+      playsInline
+      muted
+      className="w-full h-full object-cover"
+      onClick={(e) => e.preventDefault()}
+    />
+  )}
+  {selectedFile && selectedFile.type === "image" && (
+    <img
+      src={selectedFile.data}
+      alt="Selected File"
+      className="w-full h-full object-cover select-none"
+    />
+  )}
+
+  {(capturedMedia || selectedFile) && (
+    <AutoResizeTextarea
+      value={caption}
+      onChange={(e) => setCaption(e.target.value)}
+      placeholder="Nhập tin nhắn..."
+    />
+  )}
+</div>
+
 
       <div className="flex gap-4 w-full h-40 max-w-md justify-evenly items-center">
         {capturedMedia || selectedFile ? (
