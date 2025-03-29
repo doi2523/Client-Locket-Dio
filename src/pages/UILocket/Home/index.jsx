@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
 import { RefreshCcw, Send, Sparkles, ImageUp, X } from "lucide-react";
-import HoldButton from "../../../components/UI/Button";
 import AutoResizeTextarea from "./AutoResizeTextarea";
 
 const CameraCapture = ({ onCapture }) => {
@@ -9,7 +8,6 @@ const CameraCapture = ({ onCapture }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [capturedMedia, setCapturedMedia] = useState(null);
   const [cameraMode, setCameraMode] = useState("front");
-  const [permissionDenied, setPermissionDenied] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [caption, setCaption] = useState("");
   const [cameraActive, setCameraActive] = useState(true);
@@ -17,8 +15,133 @@ const CameraCapture = ({ onCapture }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isHolding, setIsHolding] = useState(false);
   const [holdTime, setHoldTime] = useState(0);
+  const [recordedChunks, setRecordedChunks] = useState([]);
+  const [countdown, setCountdown] = useState(0);
+  const [permissionChecked, setPermissionChecked] = useState(false);
   const holdTimeout = useRef(null);
   const intervalRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const streamRef = useRef(null);
+  const MAX_RECORD_TIME = 10;
+
+  useEffect(() => {
+    if (!permissionChecked) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          streamRef.current = stream;
+          videoRef.current.srcObject = stream;
+          setHasPermission(true);
+        })
+        .catch(() => setHasPermission(false))
+        .finally(() => setPermissionChecked(true));
+    }
+  }, [permissionChecked]);
+
+  useEffect(() => {
+    return () => {
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+    };
+  }, []);
+
+  const handleDelete = () => {
+    setCapturedMedia(null);
+    setSelectedFile(null);
+    setCaption("");
+    setCameraActive(true);
+  
+    if (!streamRef.current) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          streamRef.current = stream;
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+          setHasPermission(true);
+        })
+        .catch(() => setHasPermission(false));
+    } else {
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = streamRef.current;
+        }
+      }, 100);
+    }
+  };
+  
+  
+
+  const handleSubmit = () => {
+    console.log("File: ", selectedFile || capturedMedia);
+    console.log("Caption: ", caption);
+  };
+
+  const startHold = () => {
+    setIsHolding(true);
+    setHoldTime(0);
+
+    intervalRef.current = setInterval(() => {
+      setHoldTime((prev) => prev + 0.1);
+    }, 100);
+
+    holdTimeout.current = setTimeout(() => {
+      if (videoRef.current?.srcObject) {
+        const stream = videoRef.current.srcObject;
+        const recorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = recorder;
+        const chunks = [];
+
+        recorder.ondataavailable = (e) => {
+          if (e.data.size > 0) {
+            chunks.push(e.data);
+          }
+        };
+
+        recorder.onstop = () => {
+          const blob = new Blob(chunks, { type: "video/webm" });
+          const videoUrl = URL.createObjectURL(blob);
+          setSelectedFile({ type: "video", data: videoUrl });
+          setCameraActive(false);
+        };
+
+        recorder.start();
+        setIsRecording(true);
+
+        setTimeout(() => {
+          if (mediaRecorderRef.current?.state === "recording") {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+          }
+        }, MAX_RECORD_TIME * 1000);
+      }
+    }, 1000);
+  };
+
+  const endHold = () => {
+    setIsHolding(false);
+    clearTimeout(holdTimeout.current);
+    clearInterval(intervalRef.current);
+
+    if (holdTime < 1) {
+      if (videoRef.current) {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        const size = Math.min(video.videoWidth, video.videoHeight);
+        canvas.width = size;
+        canvas.height = size;
+        ctx.drawImage(video, 0, 0, size, size);
+        setSelectedFile({ type: "image", data: canvas.toDataURL("image/png") });
+        setCameraActive(false);
+      }
+    } else {
+      if (mediaRecorderRef.current?.state === "recording") {
+        mediaRecorderRef.current.stop();
+        setIsRecording(false);
+      }
+    }
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -50,111 +173,6 @@ const CameraCapture = ({ onCapture }) => {
       const videoUrl = URL.createObjectURL(file);
       setSelectedFile({ type: "video", data: videoUrl });
       setCameraActive(false);
-    }
-  };
-
-  const handleDelete = () => {
-    setCapturedMedia(null);
-    setSelectedFile(null);
-    setCaption("");
-    setCameraActive(true);
-  };
-
-  const handleSubmit = () => {
-    console.log("File: ", selectedFile || capturedMedia);
-    console.log("Caption: ", caption);
-  };
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [recordedChunks, setRecordedChunks] = useState([]);
-  const mediaRecorderRef = useRef(null);
-  const chunksRef = useRef([]);
-  const [countdown, setCountdown] = useState(0);
-  const streamRef = useRef(null);
-  const MAX_RECORD_TIME = 10; // Giới hạn quay 10s
-  
-  useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then((stream) => {
-        streamRef.current = stream;
-        videoRef.current.srcObject = stream;
-        setHasPermission(true);
-      })
-      .catch(() => setHasPermission(false));
-    return () => {
-      streamRef.current?.getTracks().forEach((track) => track.stop());
-    };
-  }, []);
-
-  // ---- Quay video khi giữ nút ----
-  const startHold = async () => {
-    setIsHolding(true);
-    setHoldTime(0);
-  
-    intervalRef.current = setInterval(() => {
-      setHoldTime((prev) => prev + 0.1);
-    }, 100);
-  
-    holdTimeout.current = setTimeout(() => {
-      // Khi giữ > 1s thì quay video
-      if (videoRef.current?.srcObject) {
-        const stream = videoRef.current.srcObject;
-        const recorder = new MediaRecorder(stream);
-        setMediaRecorder(recorder);
-        setRecordedChunks([]);
-  
-        recorder.ondataavailable = (e) => {
-          if (e.data.size > 0) {
-            setRecordedChunks((prev) => [...prev, e.data]);
-          }
-        };
-  
-        recorder.onstop = () => {
-          const blob = new Blob(recordedChunks, { type: "video/webm" });
-          const videoUrl = URL.createObjectURL(blob);
-          setSelectedFile({ type: "video", data: videoUrl });
-          setCameraActive(false);
-        };
-  
-        recorder.start();
-        setIsRecording(true);
-        console.log("Recording started");
-      }
-    }, 1000); // sau 1s mới quay video
-  };
-  
-  // ---- Kết thúc giữ nút ----
-  const endHold = () => {
-    setIsHolding(false);
-    clearTimeout(holdTimeout.current);
-    clearInterval(intervalRef.current);
-  
-    if (holdTime < 1) {
-      // Chụp ảnh nếu giữ < 1s
-      if (videoRef.current) {
-        const video = videoRef.current;
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext("2d");
-        const size = Math.min(video.videoWidth, video.videoHeight);
-        canvas.width = size;
-        canvas.height = size;
-        const xOffset = (video.videoWidth - size) / 2;
-        const yOffset = (video.videoHeight - size) / 2;
-        ctx.drawImage(video, xOffset, yOffset, size, size, 0, 0, size, size);
-        setSelectedFile({
-          type: "image",
-          data: canvas.toDataURL("image/png"),
-        });
-        setCameraActive(false);
-        console.log("Captured Image");
-      }
-    } else {
-      // Nếu đang quay video, thì dừng và lưu
-      if (mediaRecorder) {
-        mediaRecorder.stop();
-        setIsRecording(false);
-        console.log("Recording stopped");
-      }
     }
   };
   
