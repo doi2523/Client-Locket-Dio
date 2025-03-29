@@ -49,7 +49,7 @@ export default function HoldButton() {
         Nhấn giữ
       </button>
       {isHolding && (
-        <p className="text-gray-700 font-medium">
+        <p className="text-gray-700 font-medium absolute select-none">
           Đã giữ: {holdTime.toFixed(1)} giây
         </p>
       )}

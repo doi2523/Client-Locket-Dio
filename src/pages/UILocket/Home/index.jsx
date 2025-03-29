@@ -44,7 +44,7 @@ const CameraCapture = ({ onCapture }) => {
   const startCamera = async () => {
     if (permissionDenied || hasPermission === false || !cameraActive) return;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const stream = await navigator.mediaDevices.getUser({
         video: {
           facingMode: cameraMode === "front" ? "user" : "environment",
         },
@@ -173,36 +173,6 @@ const CameraCapture = ({ onCapture }) => {
     });
   };
 
-  const handlePressStart = (e) => {
-    e.preventDefault();
-    pressStartTime.current = Date.now();
-    pressTimer.current = setTimeout(() => {
-      startRecording();
-    }, 200);
-  };
-
-  const handlePressEnd = (e) => {
-    e.preventDefault();
-    const pressDuration = Date.now() - pressStartTime.current;
-    clearTimeout(pressTimer.current);
-
-    if (pressDuration < 200 && !isRecording) {
-      handleCapturePhoto();
-    } else if (isRecording) {
-      stopRecording();
-    }
-  };
-
-  const handleTouchMove = (e) => {
-    e.preventDefault(); // Ngăn chặn hành vi mặc định khi di chuyển ngón tay
-  };
-
-  const handleTouchCancel = (e) => {
-    e.preventDefault();
-    clearTimeout(pressTimer.current);
-    if (isRecording) stopRecording();
-  };
-
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -248,8 +218,20 @@ const CameraCapture = ({ onCapture }) => {
     console.log("Caption: ", caption);
   };
 
+  const handleHoldStart = () => {
+    startRecording();
+  };
+
+  const handleHoldEnd = () => {
+    stopRecording();
+  };
+
+  const handleClick = () => {
+    handleCapturePhoto();
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen min-h-screen bg-locket -z-50">
+    <div className="flex select-none flex-col items-center justify-center h-screen min-h-screen bg-locket -z-50">
       <h1 className="text-3xl mb-6 font-semibold">Locket Upload</h1>
       <div className="relative w-full max-w-md aspect-square bg-gray-800 rounded-[60px] overflow-hidden">
         {!selectedFile && cameraActive && (
@@ -337,17 +319,18 @@ const CameraCapture = ({ onCapture }) => {
             <label htmlFor="file-upload" className="cursor-pointer">
               <ImageUp size={35} />
             </label>
-            <label
-              onMouseDown={handlePressStart}
-              onMouseUp={handlePressEnd}
-              onTouchStart={handlePressStart}
-              onTouchEnd={handlePressEnd}
-              onTouchMove={handleTouchMove}
-              onTouchCancel={handleTouchCancel}
+            <button
+              onMouseDown={handleHoldStart}
+              onMouseUp={handleHoldEnd}
+              onTouchStart={handleHoldStart}
+              onTouchEnd={handleHoldEnd}
               className={`rounded-full w-18 h-18 mx-4 outline-5 outline-offset-3 outline-accent ${
                 isRecording ? "bg-red-500" : "bg-base-300"
               }`}
-            ></label>
+              onClick={handleClick}
+            >
+              {isRecording ? "Recording..." : "Hold to Record"}
+            </button>
             <button className="cursor-pointer" onClick={handleSwitchCamera}>
               <RefreshCcw
                 size={35}
