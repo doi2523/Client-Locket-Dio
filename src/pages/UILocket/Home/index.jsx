@@ -47,7 +47,10 @@ const CameraCapture = ({ onCapture }) => {
     setSelectedFile(null);
     setCaption("");
     setCameraActive(true);
-  
+    setIsHolding(false);
+    clearTimeout(holdTimeout.current);
+    clearInterval(intervalRef.current);
+
     if (!streamRef.current) {
       navigator.mediaDevices
         .getUserMedia({ video: true })
@@ -316,7 +319,7 @@ const CameraCapture = ({ onCapture }) => {
             playsInline
             muted
             className={`w-full h-full object-cover ${
-              cameraMode === "front" ? "scale-x-[-1]" : ""
+              cameraMode === "back" ? "scale-x-[-1]" : ""
             }`}
           />
         )}
