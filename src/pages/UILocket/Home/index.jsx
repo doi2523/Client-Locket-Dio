@@ -6,8 +6,8 @@ const CameraCapture = ({ onCapture }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [capturedMedia, setCapturedMedia] = useState(null);
-    const [hasPermission, setHasPermission] = useState(null);
-    const [isRecording, setIsRecording] = useState(false);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
   const [cameraMode, setCameraMode] = useState("user");
   const [selectedFile, setSelectedFile] = useState(null);
   const [caption, setCaption] = useState("");
@@ -15,7 +15,7 @@ const CameraCapture = ({ onCapture }) => {
   const [rotation, setRotation] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
   const [holdTime, setHoldTime] = useState(0);
-  const [permissionChecked, setPermissionChecked] = useState(false);
+  const [permissionChecked, setPermissionChecked] = useState(true); //Đổi false để hỏi xin camera
   const holdTimeout = useRef(null);
   const intervalRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -25,7 +25,7 @@ const CameraCapture = ({ onCapture }) => {
   useEffect(() => {
     if (!permissionChecked) {
       navigator.mediaDevices
-        .getUserMedia({ video: true })
+        .getUserMedia({ video: true, muted: true })
         .then((stream) => {
           streamRef.current = stream;
           videoRef.current.srcObject = stream;
@@ -100,9 +100,9 @@ const CameraCapture = ({ onCapture }) => {
           const blob = new Blob(chunks, { type: "video/mp4" });
           // const videoUrl = URL.createObjectURL(blob);
           const videoUrl =
-          cameraMode === "user"
-            ? URL.createObjectURL(await correctFrontCameraVideo(blob))
-            : URL.createObjectURL(blob);
+            cameraMode === "user"
+              ? URL.createObjectURL(await correctFrontCameraVideo(blob))
+              : URL.createObjectURL(blob);
 
           setSelectedFile({ type: "video", data: videoUrl });
           setCameraActive(false);
@@ -125,28 +125,38 @@ const CameraCapture = ({ onCapture }) => {
     setIsHolding(false);
     clearTimeout(holdTimeout.current);
     clearInterval(intervalRef.current);
-  
+
     if (holdTime < 1) {
       if (videoRef.current) {
         const video = videoRef.current;
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
         const size = Math.min(video.videoWidth, video.videoHeight);
-        
+
         canvas.width = size;
         canvas.height = size;
-  
+
         const xOffset = (video.videoWidth - size) / 2;
         const yOffset = (video.videoHeight - size) / 2;
-  
+
         if (cameraMode === "user") {
           ctx.translate(size / 2, 0); // Dịch chuyển đúng tâm
           ctx.scale(-1, 1); // Lật ảnh
-          ctx.drawImage(video, xOffset, yOffset, size, size, -size / 2, 0, size, size);
+          ctx.drawImage(
+            video,
+            xOffset,
+            yOffset,
+            size,
+            size,
+            -size / 2,
+            0,
+            size,
+            size
+          );
         } else {
           ctx.drawImage(video, xOffset, yOffset, size, size, 0, 0, size, size);
         }
-  
+
         setSelectedFile({ type: "image", data: canvas.toDataURL("image/png") });
         setCameraActive(false);
       }
@@ -164,11 +174,11 @@ const CameraCapture = ({ onCapture }) => {
       }
     }, 100);
   };
-  
+
   const cropVideoToSquare = (blob) => {
     return new Promise((resolve) => {
       const video = document.createElement("video");
-      video.crossOrigin = "anonymous"; 
+      video.crossOrigin = "anonymous";
       video.src = URL.createObjectURL(blob);
       video.onloadedmetadata = () => {
         const canvas = document.createElement("canvas");
@@ -176,17 +186,18 @@ const CameraCapture = ({ onCapture }) => {
         const size = Math.min(video.videoWidth, video.videoHeight);
         canvas.width = size;
         canvas.height = size;
-  
+
         video.onplay = () => {
           const stream = canvas.captureStream();
           const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
           const chunks = [];
-  
+
           recorder.ondataavailable = (e) => chunks.push(e.data);
-          recorder.onstop = () => resolve(new Blob(chunks, { type: "video/mp4" }));
-  
+          recorder.onstop = () =>
+            resolve(new Blob(chunks, { type: "video/mp4" }));
+
           recorder.start();
-  
+
           const drawFrame = () => {
             if (video.ended) {
               recorder.stop();
@@ -194,10 +205,20 @@ const CameraCapture = ({ onCapture }) => {
             }
             const xOffset = (video.videoWidth - size) / 2;
             const yOffset = (video.videoHeight - size) / 2;
-            ctx.drawImage(video, xOffset, yOffset, size, size, 0, 0, size, size);
+            ctx.drawImage(
+              video,
+              xOffset,
+              yOffset,
+              size,
+              size,
+              0,
+              0,
+              size,
+              size
+            );
             requestAnimationFrame(drawFrame);
           };
-  
+
           requestAnimationFrame(drawFrame);
         };
         video.play();
@@ -207,7 +228,7 @@ const CameraCapture = ({ onCapture }) => {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-  
+
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -232,7 +253,7 @@ const CameraCapture = ({ onCapture }) => {
       reader.readAsDataURL(file);
     } else if (file.type.startsWith("video/")) {
       const videoBlob = new Blob([file], { type: file.type });
-  
+
       cropVideoToSquare(videoBlob).then((croppedBlob) => {
         const videoUrl = URL.createObjectURL(croppedBlob);
         setSelectedFile({ type: "video", data: videoUrl });
@@ -240,7 +261,7 @@ const CameraCapture = ({ onCapture }) => {
       });
     }
   };
-  
+
   const handleRotateCamera = async () => {
     setRotation((prev) => prev + 180);
     const newMode = cameraMode === "user" ? "environment" : "user";
@@ -262,7 +283,7 @@ const CameraCapture = ({ onCapture }) => {
       console.error("Lỗi khi đổi camera:", error);
     }
   };
-    const correctFrontCameraVideo = (blob) => {
+  const correctFrontCameraVideo = (blob) => {
     return new Promise((resolve) => {
       const video = document.createElement("video");
       video.src = URL.createObjectURL(blob);
@@ -279,7 +300,8 @@ const CameraCapture = ({ onCapture }) => {
           const chunks = [];
 
           recorder.ondataavailable = (e) => chunks.push(e.data);
-          recorder.onstop = () => resolve(new Blob(chunks, { type: "video/mp4" }));
+          recorder.onstop = () =>
+            resolve(new Blob(chunks, { type: "video/mp4" }));
 
           recorder.start();
 
@@ -293,7 +315,17 @@ const CameraCapture = ({ onCapture }) => {
             ctx.scale(-1, 1);
             const xOffset = (video.videoWidth - size) / 2;
             const yOffset = (video.videoHeight - size) / 2;
-            ctx.drawImage(video, xOffset, yOffset, size, size, 0, 0, size, size);
+            ctx.drawImage(
+              video,
+              xOffset,
+              yOffset,
+              size,
+              size,
+              0,
+              0,
+              size,
+              size
+            );
             ctx.restore();
             requestAnimationFrame(drawFrame);
           };
@@ -380,13 +412,26 @@ const CameraCapture = ({ onCapture }) => {
               onMouseLeave={endHold}
               onTouchStart={startHold}
               onTouchEnd={endHold}
-              className={`rounded-full w-18 h-18 mx-4 outline-5 outline-offset-3 outline-accent ${
-                isHolding ? "bg-white animate-pulseBeat" : "bg-white"
-              }`}
-            ></button>
+              className="relative flex items-center justify-center w-22 h-22"
+            >
+              {/* Vòng viền bên trên */}
+              <div
+                className={`absolute w-22 h-22 border-5 border-blue-600 rounded-full z-10 ${
+                  isHolding ? "animate-lightPulse" : ""
+                }`}
+              ></div>
+
+              {/* Nút bên dưới */}
+              <div
+                className={`absolute rounded-full btn w-18 h-18 outline-accent bg-white z-0 ${
+                  isHolding ? "animate-pulseBeat" : ""
+                }`}
+              ></div>
+            </button>
+
             <button className="cursor-pointer">
               <RefreshCcw
-              onClick={handleRotateCamera}
+                onClick={handleRotateCamera}
                 size={35}
                 className="transition-transform duration-500"
                 style={{ transform: `rotate(${rotation}deg)` }}
