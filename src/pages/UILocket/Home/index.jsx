@@ -5,18 +5,16 @@ import AutoResizeTextarea from "./AutoResizeTextarea";
 const CameraCapture = ({ onCapture }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const [hasPermission, setHasPermission] = useState(null);
   const [capturedMedia, setCapturedMedia] = useState(null);
+    const [hasPermission, setHasPermission] = useState(null);
+    const [isRecording, setIsRecording] = useState(false);
   const [cameraMode, setCameraMode] = useState("front");
   const [selectedFile, setSelectedFile] = useState(null);
   const [caption, setCaption] = useState("");
   const [cameraActive, setCameraActive] = useState(true);
   const [rotation, setRotation] = useState(0);
-  const [isRecording, setIsRecording] = useState(false);
   const [isHolding, setIsHolding] = useState(false);
   const [holdTime, setHoldTime] = useState(0);
-  const [recordedChunks, setRecordedChunks] = useState([]);
-  const [countdown, setCountdown] = useState(0);
   const [permissionChecked, setPermissionChecked] = useState(false);
   const holdTimeout = useRef(null);
   const intervalRef = useRef(null);
@@ -69,9 +67,6 @@ const CameraCapture = ({ onCapture }) => {
       }, 100);
     }
   };
-  
-  
-
   const handleSubmit = () => {
     console.log("File: ", selectedFile || capturedMedia);
     console.log("Caption: ", caption);
@@ -98,9 +93,14 @@ const CameraCapture = ({ onCapture }) => {
           }
         };
 
-        recorder.onstop = () => {
+        recorder.onstop = async () => {
           const blob = new Blob(chunks, { type: "video/mp4" });
-          const videoUrl = URL.createObjectURL(blob);
+          // const videoUrl = URL.createObjectURL(blob);
+          const videoUrl =
+          cameraMode === "front"
+            ? URL.createObjectURL(await correctFrontCameraVideo(blob))
+            : URL.createObjectURL(blob);
+
           setSelectedFile({ type: "video", data: videoUrl });
           setCameraActive(false);
         };
@@ -122,16 +122,28 @@ const CameraCapture = ({ onCapture }) => {
     setIsHolding(false);
     clearTimeout(holdTimeout.current);
     clearInterval(intervalRef.current);
-
+  
     if (holdTime < 1) {
       if (videoRef.current) {
         const video = videoRef.current;
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
         const size = Math.min(video.videoWidth, video.videoHeight);
+        
         canvas.width = size;
         canvas.height = size;
-        ctx.drawImage(video, 0, 0, size, size);
+  
+        const xOffset = (video.videoWidth - size) / 2;
+        const yOffset = (video.videoHeight - size) / 2;
+  
+        if (cameraMode === "front") {
+          ctx.translate(size / 2, 0); // Dịch chuyển đúng tâm
+          ctx.scale(-1, 1); // Lật ảnh
+          ctx.drawImage(video, xOffset, yOffset, size, size, -size / 2, 0, size, size);
+        } else {
+          ctx.drawImage(video, xOffset, yOffset, size, size, 0, 0, size, size);
+        }
+  
         setSelectedFile({ type: "image", data: canvas.toDataURL("image/png") });
         setCameraActive(false);
       }
@@ -142,11 +154,50 @@ const CameraCapture = ({ onCapture }) => {
       }
     }
   };
-
+  
+  const cropVideoToSquare = (blob) => {
+    return new Promise((resolve) => {
+      const video = document.createElement("video");
+      video.crossOrigin = "anonymous"; 
+      video.src = URL.createObjectURL(blob);
+      video.onloadedmetadata = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const size = Math.min(video.videoWidth, video.videoHeight);
+        canvas.width = size;
+        canvas.height = size;
+  
+        video.onplay = () => {
+          const stream = canvas.captureStream();
+          const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
+          const chunks = [];
+  
+          recorder.ondataavailable = (e) => chunks.push(e.data);
+          recorder.onstop = () => resolve(new Blob(chunks, { type: "video/mp4" }));
+  
+          recorder.start();
+  
+          const drawFrame = () => {
+            if (video.ended) {
+              recorder.stop();
+              return;
+            }
+            const xOffset = (video.videoWidth - size) / 2;
+            const yOffset = (video.videoHeight - size) / 2;
+            ctx.drawImage(video, xOffset, yOffset, size, size, 0, 0, size, size);
+            requestAnimationFrame(drawFrame);
+          };
+  
+          requestAnimationFrame(drawFrame);
+        };
+        video.play();
+      };
+    });
+  };
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
+  
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -170,12 +221,83 @@ const CameraCapture = ({ onCapture }) => {
       };
       reader.readAsDataURL(file);
     } else if (file.type.startsWith("video/")) {
-      const videoUrl = URL.createObjectURL(file);
-      setSelectedFile({ type: "video", data: videoUrl });
-      setCameraActive(false);
+      const videoBlob = new Blob([file], { type: file.type });
+  
+      cropVideoToSquare(videoBlob).then((croppedBlob) => {
+        const videoUrl = URL.createObjectURL(croppedBlob);
+        setSelectedFile({ type: "video", data: videoUrl });
+        setCameraActive(false);
+      });
     }
   };
   
+  const handleRotateCamera = async () => {
+    setRotation((prev) => prev + 180);
+    setCameraMode((prev) => (prev === "front" ? "back" : "front"));
+  
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+    }
+  
+    try {
+      const constraints = {
+        video: {
+          facingMode: cameraMode === "front" ? "environment" : "user",
+        },
+      };
+  
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      streamRef.current = stream;
+  
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (error) {
+      console.error("Lỗi khi đổi camera:", error);
+    }
+  };
+    const correctFrontCameraVideo = (blob) => {
+    return new Promise((resolve) => {
+      const video = document.createElement("video");
+      video.src = URL.createObjectURL(blob);
+      video.onloadedmetadata = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const size = Math.min(video.videoWidth, video.videoHeight);
+        canvas.width = size;
+        canvas.height = size;
+
+        video.onplay = () => {
+          const stream = canvas.captureStream();
+          const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
+          const chunks = [];
+
+          recorder.ondataavailable = (e) => chunks.push(e.data);
+          recorder.onstop = () => resolve(new Blob(chunks, { type: "video/mp4" }));
+
+          recorder.start();
+
+          const drawFrame = () => {
+            if (video.ended) {
+              recorder.stop();
+              return;
+            }
+            ctx.save();
+            ctx.translate(size, 0);
+            ctx.scale(-1, 1);
+            const xOffset = (video.videoWidth - size) / 2;
+            const yOffset = (video.videoHeight - size) / 2;
+            ctx.drawImage(video, xOffset, yOffset, size, size, 0, 0, size, size);
+            ctx.restore();
+            requestAnimationFrame(drawFrame);
+          };
+
+          requestAnimationFrame(drawFrame);
+        };
+        video.play();
+      };
+    });
+  };
   return (
     <div className="flex select-none flex-col items-center justify-center h-screen min-h-screen bg-locket -z-50">
       <h1 className="text-3xl mb-6 font-semibold">Locket Upload</h1>
@@ -257,6 +379,7 @@ const CameraCapture = ({ onCapture }) => {
             ></button>
             <button className="cursor-pointer">
               <RefreshCcw
+              onClick={handleRotateCamera}
                 size={35}
                 className="transition-transform duration-500"
                 style={{ transform: `rotate(${rotation}deg)` }}
