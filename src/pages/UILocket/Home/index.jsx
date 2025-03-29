@@ -99,7 +99,7 @@ const CameraCapture = ({ onCapture }) => {
         };
 
         recorder.onstop = () => {
-          const blob = new Blob(chunks, { type: "video/webm" });
+          const blob = new Blob(chunks, { type: "video/mp4" });
           const videoUrl = URL.createObjectURL(blob);
           setSelectedFile({ type: "video", data: videoUrl });
           setCameraActive(false);
