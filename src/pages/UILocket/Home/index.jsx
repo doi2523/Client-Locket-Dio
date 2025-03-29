@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { RefreshCcw, Send, Sparkles, ImageUp, X } from "lucide-react";
+import HoldButton from "../../../components/UI/Button";
 
 const CameraCapture = ({ onCapture }) => {
   const videoRef = useRef(null);
@@ -44,7 +45,7 @@ const CameraCapture = ({ onCapture }) => {
   const startCamera = async () => {
     if (permissionDenied || hasPermission === false || !cameraActive) return;
     try {
-      const stream = await navigator.mediaDevices.getUser({
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: cameraMode === "front" ? "user" : "environment",
         },
@@ -173,6 +174,36 @@ const CameraCapture = ({ onCapture }) => {
     });
   };
 
+  const handlePressStart = (e) => {
+    e.preventDefault();
+    pressStartTime.current = Date.now();
+    pressTimer.current = setTimeout(() => {
+      startRecording();
+    }, 200);
+  };
+
+  const handlePressEnd = (e) => {
+    e.preventDefault();
+    const pressDuration = Date.now() - pressStartTime.current;
+    clearTimeout(pressTimer.current);
+
+    if (pressDuration < 200 && !isRecording) {
+      handleCapturePhoto();
+    } else if (isRecording) {
+      stopRecording();
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    e.preventDefault(); // Ngăn chặn hành vi mặc định khi di chuyển ngón tay
+  };
+
+  const handleTouchCancel = (e) => {
+    e.preventDefault();
+    clearTimeout(pressTimer.current);
+    if (isRecording) stopRecording();
+  };
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -216,18 +247,6 @@ const CameraCapture = ({ onCapture }) => {
   const handleSubmit = () => {
     console.log("File: ", selectedFile || capturedMedia);
     console.log("Caption: ", caption);
-  };
-
-  const handleHoldStart = () => {
-    startRecording();
-  };
-
-  const handleHoldEnd = () => {
-    stopRecording();
-  };
-
-  const handleClick = () => {
-    handleCapturePhoto();
   };
 
   return (
@@ -283,7 +302,7 @@ const CameraCapture = ({ onCapture }) => {
           <textarea
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
-            placeholder="Nhập tin nhắn bạn..."
+            placeholder="Nhập tin nhắn..."
             rows="1"
             className="absolute text-white font-semibold bottom-4 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl p-2 text-md outline-none max-w-[90%] w-auto resize-none overflow-hidden transition-all"
             style={{ width: `${Math.max(100, caption.length * 10)}px` }}
@@ -319,18 +338,17 @@ const CameraCapture = ({ onCapture }) => {
             <label htmlFor="file-upload" className="cursor-pointer">
               <ImageUp size={35} />
             </label>
-            <button
-              onMouseDown={handleHoldStart}
-              onMouseUp={handleHoldEnd}
-              onTouchStart={handleHoldStart}
-              onTouchEnd={handleHoldEnd}
+            <label
+              onMouseDown={handlePressStart}
+              onMouseUp={handlePressEnd}
+              onTouchStart={handlePressStart}
+              onTouchEnd={handlePressEnd}
+              onTouchMove={handleTouchMove}
+              onTouchCancel={handleTouchCancel}
               className={`rounded-full w-18 h-18 mx-4 outline-5 outline-offset-3 outline-accent ${
                 isRecording ? "bg-red-500" : "bg-base-300"
               }`}
-              onClick={handleClick}
-            >
-              {isRecording ? "Recording..." : "Hold to Record"}
-            </button>
+            ></label>
             <button className="cursor-pointer" onClick={handleSwitchCamera}>
               <RefreshCcw
                 size={35}
@@ -341,6 +359,7 @@ const CameraCapture = ({ onCapture }) => {
           </>
         )}
       </div>
+      <HoldButton/>
       <canvas ref={canvasRef} className="hidden" />
     </div>
   );

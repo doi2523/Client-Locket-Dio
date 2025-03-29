@@ -90,8 +90,11 @@ const PostVideo = () => {
             {previewUrl ? (
               <video
                 src={previewUrl}
-                controls
-                className="w-full h-full object-cover"
+                autoPlay
+                loop
+                playsInline
+                muted
+                className="w-full h-full object-cover "
               />
             ) : (
               <div className="flex flex-col items-center">
@@ -99,6 +102,12 @@ const PostVideo = () => {
                 <p className="mt-2 text-sm">Chưa có video</p>
               </div>
             )}
+            <div className="absolute z-10 bottom-4">
+            <div                           style={{
+                      background: `linear-gradient(to bottom, ${colorTop}, ${colorBottom})`,
+                      color: colorText,
+                    }}  className="text-white font-semibold border-none backdrop-blur-3xl px-2 py-1 rounded-4xl" type="text" name="" id="" placeholder="Nhập tin nhắn...">{caption}</div>
+          </div>
           </div>
         </div>
 
