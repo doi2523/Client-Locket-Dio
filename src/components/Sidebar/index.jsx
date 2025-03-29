@@ -8,6 +8,7 @@ import {
   LogOut,
   LogIn,
   LucideTimer,
+  Smartphone,
 } from "lucide-react";
 import { showToast } from "../Toast";
 import * as locketService from "../../services/locketService";
@@ -114,6 +115,15 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                     onClick={() => setIsOpen(false)}
                   >
                     <Upload size={22} /> Post Video
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/locket"
+                    className={`flex items-center px-3 py-3 rounded-lg transition ${location.pathname === "/locket" ? "bg-base-300" : "hover:bg-base-200"}`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Smartphone size={22} /> Locket UI
                   </Link>
                 </li>
                 <li>
