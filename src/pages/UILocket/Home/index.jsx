@@ -211,7 +211,7 @@ const recordingStartedRef = useRef(false); // Để kiểm soát trạng thái b
     holdTimeout.current = setTimeout(() => {
       console.log("Button held down!");
     }, 1000); // 1s giữ
-    handlePressStart();
+    startRecording();
   };
 
   const endHold = () => {
