@@ -55,10 +55,6 @@ const CameraCapture = ({ onCapture }) => {
   }, [caption]);
 
   useEffect(() => {
-    adjustHeight(); // Gọi hàm điều chỉnh khi nội dung thay đổi
-  }, [caption]);
-
-  useEffect(() => {
     if (cameraActive) checkCameraPermission();
     return () => {
       stopCamera();
@@ -386,10 +382,10 @@ const CameraCapture = ({ onCapture }) => {
               onMouseUp={handlePressEnd}
               onTouchStart={handlePressStart}
               onTouchEnd={handlePressEnd}
-              onTouchMove={handleTouchMove}
-              onTouchCancel={handleTouchCancel}
+              // onTouchMove={handleTouchMove}
+              // onTouchCancel={handleTouchCancel}
               className={`rounded-full w-18 h-18 mx-4 outline-5 outline-offset-3 outline-accent ${
-                isRecording ? "bg-red-500" : "bg-base-300"
+                isRecording ? "bg-red-500 animate-pulseBeat" : "bg-base-300"
               }`}
             ></label>
             <button className="cursor-pointer" onClick={handleSwitchCamera}>
