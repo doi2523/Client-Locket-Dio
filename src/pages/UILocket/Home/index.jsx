@@ -283,7 +283,7 @@ const CameraCapture = ({ onCapture }) => {
           <textarea
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
-            placeholder="Nhập tin nhắn..."
+            placeholder="Nhập tin nhắn bạn..."
             rows="1"
             className="absolute text-white font-semibold bottom-4 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl p-2 text-md outline-none max-w-[90%] w-auto resize-none overflow-hidden transition-all"
             style={{ width: `${Math.max(100, caption.length * 10)}px` }}
