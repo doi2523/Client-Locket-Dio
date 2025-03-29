@@ -100,16 +100,16 @@ export default function Profile() {
           />
           </div>
         </div>
-        <div className="flex flex-col pl-5 text-center items-start">
+        <div className="flex flex-col pl-5 text-center items-start space-y-1">
           <h2 className="text-2xl font-semibold">
             {user?.firstName} {user?.lastName}
           </h2>
-          <p className="text-lg">{user?.email || "Không có email"}</p>
+          <p className="font-semibold">{user?.email || "Không có email"}</p>
           <a
             href={`https://locket.cam/${user?.username}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="link-primary underline font-semibold text-lg"
+            className="link underline font-semibold"
           >
             https://locket.cam/{user?.username}
           </a>

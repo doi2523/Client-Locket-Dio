@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { RefreshCcw, Send, Sparkles, ImageUp, X } from "lucide-react";
+import HoldButton from "../../../components/UI/Button";
 
 const CameraCapture = ({ onCapture }) => {
   const videoRef = useRef(null);
@@ -17,6 +18,45 @@ const CameraCapture = ({ onCapture }) => {
   const recordedChunksRef = useRef([]);
   const pressTimer = useRef(null);
   const pressStartTime = useRef(null);
+
+  const textareaRef = useRef(null);
+
+  // Hàm để điều chỉnh chiều cao của textarea tự động
+  const adjustHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'; // Đặt lại chiều cao về auto để tính toán lại
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Đặt chiều cao dựa trên chiều cao cuộn
+    }
+  };
+
+  // Tính toán chiều rộng ban đầu cho textarea, đủ để chứa placeholder "Nhập tin nhắn..."
+  const getInitialWidth = () => {
+    const placeholder = "Nhập tin nhắn..."; // Văn bản placeholder
+    const width = placeholder.length * 10; // Mỗi ký tự có chiều rộng khoảng 10px (có thể điều chỉnh nếu cần)
+    return Math.max(width, 100); // Đảm bảo chiều rộng tối thiểu là 100px
+  };
+
+  // Hàm để tính toán chiều rộng của textarea dựa trên độ dài của văn bản nhập vào
+  const getTextWidth = (text) => {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    context.font = "16px sans-serif"; // Font giống với font của textarea
+    return context.measureText(text).width; // Đo chiều rộng của văn bản
+  };
+
+  // Tính toán chiều rộng dựa trên nội dung nhập vào
+  const getWidth = () => {
+    // Nếu có văn bản, tính chiều rộng dựa trên độ dài của văn bản nhập vào
+    return Math.max(getInitialWidth(), getTextWidth(caption) + 20); // +20 để thêm một chút không gian cho padding
+  };
+
+  useEffect(() => {
+    adjustHeight(); // Gọi hàm điều chỉnh khi nội dung thay đổi
+  }, [caption]);
+
+  useEffect(() => {
+    adjustHeight(); // Gọi hàm điều chỉnh khi nội dung thay đổi
+  }, [caption]);
 
   useEffect(() => {
     if (cameraActive) checkCameraPermission();
@@ -44,7 +84,7 @@ const CameraCapture = ({ onCapture }) => {
   const startCamera = async () => {
     if (permissionDenied || hasPermission === false || !cameraActive) return;
     try {
-      const stream = await navigator.mediaDevices.getUser({
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: cameraMode === "front" ? "user" : "environment",
         },
@@ -173,6 +213,36 @@ const CameraCapture = ({ onCapture }) => {
     });
   };
 
+  const handlePressStart = (e) => {
+    e.preventDefault();
+    pressStartTime.current = Date.now();
+    pressTimer.current = setTimeout(() => {
+      startRecording();
+    }, 200);
+  };
+
+  const handlePressEnd = (e) => {
+    e.preventDefault();
+    const pressDuration = Date.now() - pressStartTime.current;
+    clearTimeout(pressTimer.current);
+
+    if (pressDuration < 200 && !isRecording) {
+      handleCapturePhoto();
+    } else if (isRecording) {
+      stopRecording();
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    e.preventDefault(); // Ngăn chặn hành vi mặc định khi di chuyển ngón tay
+  };
+
+  const handleTouchCancel = (e) => {
+    e.preventDefault();
+    clearTimeout(pressTimer.current);
+    if (isRecording) stopRecording();
+  };
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -218,18 +288,6 @@ const CameraCapture = ({ onCapture }) => {
     console.log("Caption: ", caption);
   };
 
-  const handleHoldStart = () => {
-    startRecording();
-  };
-
-  const handleHoldEnd = () => {
-    stopRecording();
-  };
-
-  const handleClick = () => {
-    handleCapturePhoto();
-  };
-
   return (
     <div className="flex select-none flex-col items-center justify-center h-screen min-h-screen bg-locket -z-50">
       <h1 className="text-3xl mb-6 font-semibold">Locket Upload</h1>
@@ -248,7 +306,6 @@ const CameraCapture = ({ onCapture }) => {
             autoPlay
             loop
             playsInline
-            controls
             muted
             className="w-full h-full object-cover"
           />
@@ -273,21 +330,26 @@ const CameraCapture = ({ onCapture }) => {
             autoPlay
             loop
             playsInline
-            controls
             muted
             className="w-full h-full object-cover"
           />
         )}
 
         {(capturedMedia || selectedFile) && (
-          <textarea
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-            placeholder="Nhập tin nhắn bạn..."
-            rows="1"
-            className="absolute text-white font-semibold bottom-4 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl p-2 text-md outline-none max-w-[90%] w-auto resize-none overflow-hidden transition-all"
-            style={{ width: `${Math.max(100, caption.length * 10)}px` }}
-          />
+    <textarea
+    ref={textareaRef}
+    value={caption}
+    onChange={(e) => setCaption(e.target.value)}
+    placeholder="Nhập tin nhắn..."
+    rows="1"
+    className="absolute text-white px-4 font-semibold bottom-4 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl py-2 text-md outline-none max-w-[90%] w-auto resize-none overflow-hidden transition-all"
+    style={{
+      width: `${getWidth()}px`, // Chiều rộng thay đổi tùy theo độ dài văn bản
+      overflow: 'hidden', // Ẩn thanh cuộn
+      minHeight: '40px', // Chiều cao tối thiểu
+      whiteSpace: 'pre-wrap', // Đảm bảo văn bản xuống dòng khi hết chiều rộng
+    }}
+  />
         )}
       </div>
 
@@ -319,18 +381,17 @@ const CameraCapture = ({ onCapture }) => {
             <label htmlFor="file-upload" className="cursor-pointer">
               <ImageUp size={35} />
             </label>
-            <button
-              onMouseDown={handleHoldStart}
-              onMouseUp={handleHoldEnd}
-              onTouchStart={handleHoldStart}
-              onTouchEnd={handleHoldEnd}
+            <label
+              onMouseDown={handlePressStart}
+              onMouseUp={handlePressEnd}
+              onTouchStart={handlePressStart}
+              onTouchEnd={handlePressEnd}
+              onTouchMove={handleTouchMove}
+              onTouchCancel={handleTouchCancel}
               className={`rounded-full w-18 h-18 mx-4 outline-5 outline-offset-3 outline-accent ${
                 isRecording ? "bg-red-500" : "bg-base-300"
               }`}
-              onClick={handleClick}
-            >
-              {isRecording ? "Recording..." : "Hold to Record"}
-            </button>
+            ></label>
             <button className="cursor-pointer" onClick={handleSwitchCamera}>
               <RefreshCcw
                 size={35}
@@ -341,6 +402,7 @@ const CameraCapture = ({ onCapture }) => {
           </>
         )}
       </div>
+      <HoldButton/>
       <canvas ref={canvasRef} className="hidden" />
     </div>
   );

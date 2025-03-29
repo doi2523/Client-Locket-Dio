@@ -6,7 +6,7 @@ export default function HoldButton() {
   const holdTimeout = useRef(null);
   const intervalRef = useRef(null);
 
-  const handleTouchStart = () => {
+  const handleMouseDown = () => {
     setIsHolding(true);
     setHoldTime(0);
 
@@ -19,18 +19,10 @@ export default function HoldButton() {
     }, 1000); // 1s giữ
   };
 
-  const handleTouchEnd = () => {
+  const handleMouseUp = () => {
     setIsHolding(false);
     clearTimeout(holdTimeout.current);
     clearInterval(intervalRef.current);
-  };
-
-  const handleMouseDown = () => {
-    handleTouchStart();
-  };
-
-  const handleMouseUp = () => {
-    handleTouchEnd();
   };
 
   return (
@@ -42,17 +34,14 @@ export default function HoldButton() {
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchEnd}
       >
         Nhấn giữ
       </button>
-      {isHolding && (
-        <p className="text-gray-700 font-medium absolute select-none">
+      {/* {isHolding && (
+        <p className="text-gray-700 font-medium">
           Đã giữ: {holdTime.toFixed(1)} giây
         </p>
-      )}
+      )} */}
     </div>
   );
 }

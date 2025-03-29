@@ -15,6 +15,7 @@ import {
 import { showToast } from "../../../components/Toast/index.jsx";
 import * as lockerService from "../../../services/locketService.js";
 import * as utils from "../../../utils";
+import LoadingRing from "../../../components/UI/Loading/ring.jsx";
 
 const Post = () => {
   const [caption, setCaption] = useState("");
@@ -25,8 +26,8 @@ const Post = () => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const fileRef = useRef(null);
-  const [colorTop, setColorTop] = useState("#000000"); // Mặc định là đen
-  const [colorBottom, setColorBottom] = useState("#000000");
+  const [colorTop, setColorTop] = useState(null); // Mặc định là đen
+  const [colorBottom, setColorBottom] = useState(null);
   const [colorText, setColorText] = useState("#FFFFFF");
 
   const handleColorChange = (setter, value, otherColor, setOtherColor) => {
@@ -96,6 +97,7 @@ const Post = () => {
 
       setPreviewUrl("");
       setCaption("");
+      setCroppedImage("");
       setIsUploading(false);
 
       showToast("success", "Đăng bài viết thành công!");
@@ -175,18 +177,18 @@ const Post = () => {
                   alt="Cropped"
                   className="w-full h-full object-cover rounded-[40px]"
                 />
-                {caption.trim() && (
-                  <div
-                    className="absolute font-semibold bottom-4 left-1/2 transform -translate-x-1/2 text-center px-3 py-1.5 rounded-[30px]"
-                    style={{
-                      background: `linear-gradient(to bottom, ${colorTop}, ${colorBottom})`,
-                      color: colorText,
-                      whiteSpace: "pre-wrap",
-                      wordWrap: "break-word",
-                      padding: "8px 12px",
-                    }}
-                  >
-                    {caption}
+                {/* Only show the caption if it's not empty */}
+                {caption && (
+                  <div className="absolute bottom-4 w-auto px-3">
+                    <div
+                      style={{
+                        background: colorTop && colorBottom ? `linear-gradient(to bottom, ${colorTop}, ${colorBottom})` : 'none',
+                        color: colorText || '#FFFFFF',
+                      }}
+                      className="text-white font-semibold backdrop-blur-3xl py-1 rounded-4xl text-left px-4"
+                    >
+                      {caption}
+                    </div>
                   </div>
                 )}
               </>
@@ -213,7 +215,7 @@ const Post = () => {
               type="text"
               className="w-full text-gray-500 dark:text-gray-400 p-2 border border-base-content shadow-md rounded-md mb-4"
               placeholder="Thêm một tin nhắn"
-              value={caption}
+              value={caption || ""}
               onChange={(e) => setCaption(e.target.value)}
             />
             <h3 className="text-lg font-semibold mb-3 text-left flex flex-row items-center">
@@ -224,7 +226,7 @@ const Post = () => {
                 <label className="mb-1">Màu trên</label>
                 <input
                   type="color"
-                  value={colorTop}
+                  value={colorTop || ""}
                   onChange={(e) =>
                     handleColorChange(
                       setColorTop,
@@ -240,7 +242,7 @@ const Post = () => {
                 <label className="mb-1">Màu dưới</label>
                 <input
                   type="color"
-                  value={colorBottom}
+                  value={colorBottom || ""}
                   onChange={(e) =>
                     handleColorChange(
                       setColorBottom,
@@ -256,7 +258,7 @@ const Post = () => {
                 <label className="mb-1">Màu chữ</label>
                 <input
                   type="color"
-                  value={colorText}
+                  value={colorText || ""}
                   onChange={(e) => setColorText(e.target.value)}
                   className="w-10 h-10 rounded-md border border-base-content p-1"
                 />
@@ -266,8 +268,8 @@ const Post = () => {
             <div className="flex justify-center mt-4">
               <button
                 onClick={() => {
-                  setColorTop("#000000");
-                  setColorBottom("#000000");
+                  setColorTop("");
+                  setColorBottom("");
                   setColorText("#FFFFFF");
                 }}
                 className="flex items-center gap-2 px-4 py-2 rounded-md shadow-md btn"
@@ -282,11 +284,10 @@ const Post = () => {
         <div className="flex justify-center mt-6">
           <button
             onClick={handleUploadFile}
-            className="flex items-center gap-2 btn btn-primary px-4 py-2 rounded-md shadow-md disabled:bg-gray-400"
+            className="btn btn-primary rounded-xl disabled:bg-gray-400"
             disabled={isUploading}
           >
-            {isUploading ? "Đang tải lên..." : "Gửi bài"}
-            <Send size={20} />
+            {isUploading ? <><LoadingRing size={20} stroke={3} speed={2} color="white" /><span>Đang tải lên...</span></> : <><span>Đăng bài viết</span><Send size={20} /></>}
           </button>
         </div>
       </div>
