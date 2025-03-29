@@ -195,6 +195,33 @@ const recordingStartedRef = useRef(false); // Để kiểm soát trạng thái b
     if (isRecording) stopRecording();
   };
 
+  const [isHolding, setIsHolding] = useState(false);
+  const [holdTime, setHoldTime] = useState(0);
+  const holdTimeout = useRef(null);
+  const intervalRef = useRef(null);
+
+  const startHold = () => {
+    setIsHolding(true);
+    setHoldTime(0);
+
+    intervalRef.current = setInterval(() => {
+      setHoldTime((prev) => prev + 0.1);
+    }, 100);
+
+    holdTimeout.current = setTimeout(() => {
+      console.log("Button held down!");
+    }, 1000); // 1s giữ
+    handlePressStart();
+  };
+
+  const endHold = () => {
+    setIsHolding(false);
+    clearTimeout(holdTimeout.current);
+    clearInterval(intervalRef.current);
+    handlePressEnd();
+  };
+
+
   const handleSwitchCamera = () => {
     setCameraMode(cameraMode === "front" ? "back" : "front");
     setRotation(rotation - 360);
@@ -382,10 +409,11 @@ const recordingStartedRef = useRef(false); // Để kiểm soát trạng thái b
               <ImageUp size={35} />
             </label>
             <button
-  onMouseDown={handlePressStart}
-  onMouseUp={handlePressEnd}
-  onTouchStart={handlePressStart}
-  onTouchEnd={handlePressEnd}
+        onMouseDown={startHold}
+        onMouseUp={endHold}
+        onMouseLeave={endHold}
+        onTouchStart={startHold}
+        onTouchEnd={endHold}
   className={`rounded-full w-18 h-18 mx-4 outline-5 outline-offset-3 outline-accent ${
     isRecording ? "bg-red-500 animate-pulseBeat" : "bg-base-300"
   }`}
