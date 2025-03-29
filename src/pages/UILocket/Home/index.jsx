@@ -306,7 +306,6 @@ const CameraCapture = ({ onCapture }) => {
             autoPlay
             loop
             playsInline
-            controls
             muted
             className="w-full h-full object-cover"
           />
@@ -331,7 +330,6 @@ const CameraCapture = ({ onCapture }) => {
             autoPlay
             loop
             playsInline
-            controls
             muted
             className="w-full h-full object-cover"
           />
