@@ -153,6 +153,13 @@ const CameraCapture = ({ onCapture }) => {
         setIsRecording(false);
       }
     }
+    // Chắc chắn video không mở toàn màn hình trên iOS
+    setTimeout(() => {
+      const videoEl = document.querySelector("video");
+      if (videoEl) {
+        videoEl.setAttribute("playsinline", "true");
+      }
+    }, 100);
   };
   
   const cropVideoToSquare = (blob) => {
