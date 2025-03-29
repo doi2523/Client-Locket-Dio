@@ -267,6 +267,7 @@ const CameraCapture = ({ onCapture }) => {
     return new Promise((resolve) => {
       const video = document.createElement("video");
       video.src = URL.createObjectURL(blob);
+      video.style.display = "none";
       video.onloadedmetadata = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
@@ -314,6 +315,7 @@ const CameraCapture = ({ onCapture }) => {
             ref={videoRef}
             autoPlay
             playsInline
+            muted
             className={`w-full h-full object-cover ${
               cameraMode === "front" ? "scale-x-[-1]" : ""
             }`}
