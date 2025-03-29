@@ -89,9 +89,9 @@ export const getInfo = async (idToken, localId) => {
   }
 };
 //Get Momemnt
-export const getLatestMoment = async () => {
+export const getLatestMoment = async (idToken) => {
   try {    
-    const res = await axios.post(utils.API_URL.GET_LASTEST_URL,{}, { withCredentials: true });
+    const res = await axios.post(utils.API_URL.GET_LASTEST_URL,{idToken}, { withCredentials: true });
 
     console.log("Moment mới nhất:", res.data);
     return res.data;
