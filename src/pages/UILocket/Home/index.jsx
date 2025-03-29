@@ -8,7 +8,7 @@ const CameraCapture = ({ onCapture }) => {
   const [capturedMedia, setCapturedMedia] = useState(null);
     const [hasPermission, setHasPermission] = useState(null);
     const [isRecording, setIsRecording] = useState(false);
-  const [cameraMode, setCameraMode] = useState("front");
+  const [cameraMode, setCameraMode] = useState("back");
   const [selectedFile, setSelectedFile] = useState(null);
   const [caption, setCaption] = useState("");
   const [cameraActive, setCameraActive] = useState(true);
@@ -267,7 +267,6 @@ const CameraCapture = ({ onCapture }) => {
     return new Promise((resolve) => {
       const video = document.createElement("video");
       video.src = URL.createObjectURL(blob);
-      video.style.display = "none";
       video.onloadedmetadata = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
