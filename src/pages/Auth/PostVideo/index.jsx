@@ -17,8 +17,8 @@ const PostVideo = () => {
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef(null);
-  const [colorTop, setColorTop] = useState("#000000");
-  const [colorBottom, setColorBottom] = useState("#000000");
+  const [colorTop, setColorTop] = useState(null);
+  const [colorBottom, setColorBottom] = useState(null);
   const [colorText, setColorText] = useState("#FFFFFF");
 
   const handleTriggerUploadFile = () => fileRef.current?.click();
@@ -88,6 +88,7 @@ const PostVideo = () => {
           <h2 className="text-3xl font-semibold mb-4">Video Preview</h2>
           <div className="relative w-full max-w-[400px] rounded-[40px] aspect-square border border-base-content overflow-hidden flex items-center justify-center">
             {previewUrl ? (
+              <>
               <video
                 src={previewUrl}
                 autoPlay
@@ -96,18 +97,27 @@ const PostVideo = () => {
                 muted
                 className="w-full h-full object-cover "
               />
+            {/* Only show the caption if it's not empty */}
+            {caption && (
+              <div className="absolute bottom-4 w-auto px-3">
+                <div
+                  style={{
+                    background: colorTop && colorBottom ? `linear-gradient(to bottom, ${colorTop}, ${colorBottom})` : 'none',
+                    color: colorText || '#FFFFFF',
+                  }}
+                  className="text-white font-semibold backdrop-blur-3xl py-1 rounded-4xl px-4 text-left"
+                >
+                  {caption}
+                </div>
+              </div>
+            )}
+            </>
             ) : (
               <div className="flex flex-col items-center">
                 <Video size={80} />
                 <p className="mt-2 text-sm">Chưa có video</p>
               </div>
             )}
-            <div className="absolute z-10 bottom-4">
-            <div                           style={{
-                      background: `linear-gradient(to bottom, ${colorTop}, ${colorBottom})`,
-                      color: colorText,
-                    }}  className="text-white font-semibold border-none backdrop-blur-3xl px-2 py-1 rounded-4xl" type="text" name="" id="" placeholder="Nhập tin nhắn...">{caption}</div>
-          </div>
           </div>
         </div>
 
@@ -120,7 +130,7 @@ const PostVideo = () => {
             </h3>
             <input
               type="text"
-              className="w-full text-gray-500 dark:text-gray-400 p-2 border border-base-content shadow-md rounded-md mb-4"
+              className="w-full text-gray-500 dark:text-gray-400 p-2 border border-base-content shadow-md rounded-xl mb-4"
               placeholder="Thêm một tin nhắn"
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
@@ -134,7 +144,7 @@ const PostVideo = () => {
                 <label className="mb-1">Màu trên</label>
                 <input
                   type="color"
-                  value={colorTop}
+                  value={colorTop || ""}
                   onChange={(e) => setColorTop(e.target.value)}
                   className="w-10 h-10 rounded-md border border-base-content p-1"
                 />
@@ -143,7 +153,7 @@ const PostVideo = () => {
                 <label className="mb-1">Màu dưới</label>
                 <input
                   type="color"
-                  value={colorBottom}
+                  value={colorBottom || ""}
                   onChange={(e) => setColorBottom(e.target.value)}
                   className="w-10 h-10 rounded-md border border-base-content p-1"
                 />
@@ -152,7 +162,7 @@ const PostVideo = () => {
                 <label className="mb-1">Màu chữ</label>
                 <input
                   type="color"
-                  value={colorText}
+                  value={colorText || ""}
                   onChange={(e) => setColorText(e.target.value)}
                   className="w-10 h-10 rounded-md border border-base-content p-1"
                 />
@@ -163,8 +173,8 @@ const PostVideo = () => {
             <div className="flex justify-center mt-4">
               <button
                 onClick={() => {
-                  setColorTop("#000000");
-                  setColorBottom("#000000");
+                  setColorTop(""); // Reset to default color for top
+                  setColorBottom(""); // Reset to default color for bottom
                   setColorText("#FFFFFF");
                 }}
                 className="flex items-center gap-2 px-4 py-2 rounded-md shadow-md btn"
