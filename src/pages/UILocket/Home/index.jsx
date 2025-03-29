@@ -30,6 +30,18 @@ const CameraCapture = ({ onCapture }) => {
           streamRef.current = stream;
           videoRef.current.srcObject = stream;
           setHasPermission(true);
+                  // Lấy danh sách camera
+        navigator.mediaDevices.enumerateDevices().then((devices) => {
+          const frontCamera = devices.find(
+            (device) => device.kind === "videoinput" && device.label.toLowerCase().includes("front")
+          );
+
+          if (frontCamera) {
+            alert(`Camera trước: ${frontCamera.label} - ID: ${frontCamera.deviceId}`);
+          } else {
+            alert("Không tìm thấy camera trước!");
+          }
+        });
         })
         .catch(() => setHasPermission(false))
         .finally(() => setPermissionChecked(true));
