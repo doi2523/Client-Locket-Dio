@@ -86,11 +86,11 @@ const CameraCapture = ({ onCapture }) => {
     setIsHolding(true);
     setHoldTime(0);
     setCountdown(null);
-
+  
     intervalRef.current = setInterval(() => {
       setHoldTime((prev) => prev + 0.1);
     }, 100);
-
+  
     holdTimeout.current = setTimeout(() => {
       if (videoRef.current?.srcObject) {
         const stream = videoRef.current.srcObject;
@@ -98,47 +98,50 @@ const CameraCapture = ({ onCapture }) => {
         mediaRecorderRef.current = recorder;
         const chunks = [];
         const startTime = Date.now(); // Lưu thời điểm bắt đầu quay
-
+  
         recorder.ondataavailable = (e) => {
           if (e.data.size > 0) {
             chunks.push(e.data);
           }
         };
-
+  
         recorder.onstop = async () => {
           setCameraActive(false);
-          //Thêm Loading
           setLoading(true);
+  
           // Tính độ dài video
-          const duration = (Date.now() - startTime) / 1000;
+          let duration = (Date.now() - startTime) / 1000;
+          if (cameraMode === "user") {
+            duration *= 2; // Tăng gấp đôi thời gian đếm ngược nếu là camera trước
+          }
           setCountdown(duration); // Bắt đầu đếm ngược
-          //Tắt camera sau khi ghi video
-
+  
+          // Tạo bộ đếm ngược
           const countdownRecordvideo = setInterval(() => {
             setCountdown((prev) => {
-              const newValue = (parseFloat(prev) - 0.1).toFixed(1); // Giảm 0.1 mỗi lần
+              const newValue = (parseFloat(prev) - 0.1).toFixed(1);
               return newValue > 0 ? newValue : null;
             });
-          }, 100); // Cập nhật mỗi 100ms
-
+          }, 100);
+  
           showToast("info", "Đang xử lý video...");
           const blob = new Blob(chunks, { type: "video/mp4" });
-          // const videoUrl = URL.createObjectURL(blob);
+  
           const videoUrl =
             cameraMode === "user"
               ? URL.createObjectURL(await correctFrontCameraVideo(blob))
               : URL.createObjectURL(await cropVideoToSquareV2(blob));
-
+  
           setSelectedFile({ type: "video", data: videoUrl });
-
+  
           setLoading(false);
           clearInterval(countdownRecordvideo); // Dừng đếm ngược
           showToast("success", "Xử lý video thành công!");
         };
-
+  
         recorder.start();
         setIsRecording(true);
-
+  
         setTimeout(() => {
           if (mediaRecorderRef.current?.state === "recording") {
             mediaRecorderRef.current.stop();
@@ -148,6 +151,7 @@ const CameraCapture = ({ onCapture }) => {
       }
     }, 1000);
   };
+  
 
   const endHold = () => {
     setIsHolding(false);
