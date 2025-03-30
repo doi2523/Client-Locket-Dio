@@ -30,7 +30,9 @@ const authRoutes = [
   { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Trang Chủ` },
 ];
 
-// 📌 Các route dành cho admin (nếu có)
-const adminRoutes = [];
+// 📌 Các route dành cho locket
+const locketRoutes = [
+  { path: "/test", component: CameraCapture, title: `${APP_NAME} | Trang chủ` },
+];
 
-export { publicRoutes, authRoutes, adminRoutes };
+export { publicRoutes, authRoutes, locketRoutes };

@@ -6,6 +6,7 @@ import LoadingRing from "../../../components/UI/Loading/ring";
 import Hourglass from "../../../components/UI/Loading/hourglass";
 import { cropVideoToSquare, cropVideoToSquareV2 } from "../../../helpers/Media/cropMedia";
 import { correctFrontCameraVideo } from "../../../helpers/Media/flipVideoHorizontal";
+import ThemeSelector from "../../../components/Theme/ThemeSelector";
 
 const CameraCapture = ({ onCapture }) => {
   const videoRef = useRef(null);
@@ -20,7 +21,7 @@ const CameraCapture = ({ onCapture }) => {
   const [rotation, setRotation] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
   const [holdTime, setHoldTime] = useState(0);
-  const [permissionChecked, setPermissionChecked] = useState(false); //Đổi false để hỏi xin camera
+  const [permissionChecked, setPermissionChecked] = useState(true); //Đổi false để hỏi xin camera
   const holdTimeout = useRef(null);
   const intervalRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -278,10 +279,11 @@ const CameraCapture = ({ onCapture }) => {
     }
   };
   return (
-    <div className="flex select-none flex-col items-center justify-center h-screen min-h-screen bg-locket -z-50">
-      <h1 className="text-3xl mb-6 font-semibold">Locket Upload</h1>
+    <div className="flex select-none flex-col items-center justify-start h-full min-h-screen -z-50">
+      <div className="h-16"></div>
+      <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">Locket Camera</h1>
       <div
-        className={`relative w-full max-w-md aspect-square transform bg-gray-800 rounded-[60px] overflow-hidden ${
+        className={`relative w-full max-w-md aspect-square transform bg-gray-800 rounded-[65px] overflow-hidden ${
           loading ? "border border-red-500" : ""
         }`}
       >
@@ -388,7 +390,7 @@ const CameraCapture = ({ onCapture }) => {
 
               {/* Nút bên dưới */}
               <div
-                className={`absolute rounded-full btn w-18 h-18 outline-accent bg-white z-0 ${
+                className={`absolute rounded-full btn w-18 h-18 outline-accent bg-blue-300 z-0 ${
                   isHolding ? "animate-pulseBeat" : ""
                 }`}
               ></div>
@@ -406,6 +408,7 @@ const CameraCapture = ({ onCapture }) => {
         )}
       </div>
       <canvas ref={canvasRef} className="hidden" />
+      <ThemeSelector/>
     </div>
   );
 };

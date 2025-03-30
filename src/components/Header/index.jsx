@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import "./header.css";
 import { Menu } from "lucide-react";
 import { AuthContext } from "../../context/AuthLocket";
-import ThemeDropdown from "../ThemDropdown";
+import ThemeDropdown from "../Theme";
 import Sidebar from "../Sidebar";
 import { Link } from "react-router-dom";
 
