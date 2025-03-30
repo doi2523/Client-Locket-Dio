@@ -1,12 +1,23 @@
 import React, { useRef, useState, useEffect } from "react";
-import { RefreshCcw, Send, Sparkles, ImageUp, X } from "lucide-react";
+import {
+  RefreshCcw,
+  Send,
+  Sparkles,
+  ImageUp,
+  X,
+  Menu,
+  MenuIcon,
+} from "lucide-react";
 import AutoResizeTextarea from "./AutoResizeTextarea";
 import { showToast } from "../../../components/Toast";
-import LoadingRing from "../../../components/UI/Loading/ring";
 import Hourglass from "../../../components/UI/Loading/hourglass";
-import { cropVideoToSquare, cropVideoToSquareV2 } from "../../../helpers/Media/cropMedia";
+import {
+  cropVideoToSquare,
+  cropVideoToSquareV2,
+} from "../../../helpers/Media/cropMedia";
 import { correctFrontCameraVideo } from "../../../helpers/Media/flipVideoHorizontal";
 import ThemeSelector from "../../../components/Theme/ThemeSelector";
+import Sidebar from "../../../components/Sidebar";
 
 const CameraCapture = ({ onCapture }) => {
   const videoRef = useRef(null);
@@ -21,7 +32,7 @@ const CameraCapture = ({ onCapture }) => {
   const [rotation, setRotation] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
   const [holdTime, setHoldTime] = useState(0);
-  const [permissionChecked, setPermissionChecked] = useState(false); //Đổi false để hỏi xin camera
+  const [permissionChecked, setPermissionChecked] = useState(true); //Đổi false để hỏi xin camera
   const holdTimeout = useRef(null);
   const intervalRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -29,6 +40,7 @@ const CameraCapture = ({ onCapture }) => {
   const MAX_RECORD_TIME = 10;
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(null);
+    const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (!permissionChecked) {
@@ -87,11 +99,11 @@ const CameraCapture = ({ onCapture }) => {
     setIsHolding(true);
     setHoldTime(0);
     setCountdown(null);
-  
+
     intervalRef.current = setInterval(() => {
       setHoldTime((prev) => prev + 0.1);
     }, 100);
-  
+
     holdTimeout.current = setTimeout(() => {
       if (videoRef.current?.srcObject) {
         const stream = videoRef.current.srcObject;
@@ -99,24 +111,24 @@ const CameraCapture = ({ onCapture }) => {
         mediaRecorderRef.current = recorder;
         const chunks = [];
         const startTime = Date.now(); // Lưu thời điểm bắt đầu quay
-  
+
         recorder.ondataavailable = (e) => {
           if (e.data.size > 0) {
             chunks.push(e.data);
           }
         };
-  
+
         recorder.onstop = async () => {
           setCameraActive(false);
           setLoading(true);
-  
+
           // Tính độ dài video
           let duration = (Date.now() - startTime) / 1000;
           if (cameraMode === "user") {
             duration *= 2; // Tăng gấp đôi thời gian đếm ngược nếu là camera trước
           }
           setCountdown(duration); // Bắt đầu đếm ngược
-  
+
           // Tạo bộ đếm ngược
           const countdownRecordvideo = setInterval(() => {
             setCountdown((prev) => {
@@ -124,25 +136,25 @@ const CameraCapture = ({ onCapture }) => {
               return newValue > 0 ? newValue : null;
             });
           }, 100);
-  
+
           showToast("info", "Đang xử lý video...");
           const blob = new Blob(chunks, { type: "video/mp4" });
-  
+
           const videoUrl =
             cameraMode === "user"
               ? URL.createObjectURL(await correctFrontCameraVideo(blob))
               : URL.createObjectURL(await cropVideoToSquareV2(blob));
-  
+
           setSelectedFile({ type: "video", data: videoUrl });
-  
+
           setLoading(false);
           clearInterval(countdownRecordvideo); // Dừng đếm ngược
           showToast("success", "Xử lý video thành công!");
         };
-  
+
         recorder.start();
         setIsRecording(true);
-  
+
         setTimeout(() => {
           if (mediaRecorderRef.current?.state === "recording") {
             mediaRecorderRef.current.stop();
@@ -152,7 +164,6 @@ const CameraCapture = ({ onCapture }) => {
       }
     }, 1000);
   };
-  
 
   const endHold = () => {
     setIsHolding(false);
@@ -280,8 +291,31 @@ const CameraCapture = ({ onCapture }) => {
   };
   return (
     <div className="flex select-none flex-col items-center justify-start h-full min-h-screen -z-50">
-      <div className="h-16"></div>
-      <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">Locket Camera</h1>
+      <div className="navbar top-0 left-0 flex items-center justify-between px-6">
+        <div className="relative flex items-center justify-center w-12 h-12">
+          {/* Vòng tròn nền */}
+          <div className="bg-blue-300/40 w-12 h-12 rounded-full absolute"></div>
+
+          {/* Ảnh nằm trên và căn giữa */}
+          <img
+            src="/prvlocket.png"
+            alt=""
+            className="rounded-full h-10 w-10 relative"
+          />
+        </div>
+        <div className="flex items-center">
+          {/* <ThemeDropdown /> */}
+          <button
+            onClick={() => setIsOpen(true)}
+            className="flex items-center justify-center p-2 transition cursor-pointer rounded-full bg-base-200 w-12 h-12"
+          >
+            <Menu size={30} strokeWidth={2} />
+          </button>
+        </div>
+      </div>
+      <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">
+        Locket Camera
+      </h1>
       <div
         className={`relative w-full max-w-md aspect-square transform bg-gray-800 rounded-[65px] overflow-hidden ${
           loading ? "border border-red-500" : ""
@@ -408,7 +442,8 @@ const CameraCapture = ({ onCapture }) => {
         )}
       </div>
       <canvas ref={canvasRef} className="hidden" />
-      <ThemeSelector/>
+      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen}/>
+      <ThemeSelector />
     </div>
   );
 };
