@@ -1,5 +1,3 @@
-import React, { useRef, useState, useEffect } from "react";
-
 export const cropVideoToSquareV2 = (blob) => {
   return new Promise((resolve) => {
     const video = document.createElement("video");
