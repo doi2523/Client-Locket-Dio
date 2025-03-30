@@ -321,9 +321,9 @@ const CameraCapture = ({ onCapture }) => {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
+    setCameraActive(false);
+  
     if (file.type.startsWith("image/")) {
-      setLoading(true); // Bắt đầu loading khi xử lý ảnh
       const reader = new FileReader();
       reader.onloadend = () => {
         const img = new Image();
@@ -331,34 +331,40 @@ const CameraCapture = ({ onCapture }) => {
         img.onload = () => {
           const canvas = canvasRef.current;
           const ctx = canvas.getContext("2d");
+  
+          // Lấy kích thước nhỏ nhất giữa width và height để tạo hình vuông
           const size = Math.min(img.width, img.height);
+          const offsetX = (img.width - size) / 2; // Cắt từ giữa ảnh
+          const offsetY = (img.height - size) / 2;
+  
           canvas.width = size;
           canvas.height = size;
-          ctx.drawImage(img, 0, 0, size, size);
+  
+          // Cắt và vẽ hình vuông đúng tỷ lệ
+          ctx.drawImage(img, offsetX, offsetY, size, size, 0, 0, size, size);
+  
           setSelectedFile({
             type: "image",
             data: canvas.toDataURL("image/png"),
           });
-          setCameraActive(false);
-          setLoading(false); // Dừng loading khi xử lý xong
         };
       };
       reader.readAsDataURL(file);
     } else if (file.type.startsWith("video/")) {
-      setCameraActive(false);
-      setLoading(true); // Bắt đầu loading khi xử lý video
+      setLoading(true);
       showToast("info", "Đang tải video...");
       const videoBlob = new Blob([file], { type: file.type });
-
+  
       cropVideoToSquare(videoBlob).then((croppedBlob) => {
         const videoUrl = URL.createObjectURL(croppedBlob);
         setSelectedFile({ type: "video", data: videoUrl });
         setCameraActive(false);
-        setLoading(false); // Dừng loading sau khi xử lý xong
+        setLoading(false);
         showToast("success", "Tải video thành công!");
       });
     }
   };
+  
 
   const handleRotateCamera = async () => {
     setRotation((prev) => prev + 180);
