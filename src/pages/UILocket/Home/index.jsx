@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useContext } from "react";
 import {
   RefreshCcw,
   Send,
@@ -18,8 +18,13 @@ import {
 import { correctFrontCameraVideo } from "../../../helpers/Media/flipVideoHorizontal";
 import ThemeSelector from "../../../components/Theme/ThemeSelector";
 import Sidebar from "../../../components/Sidebar";
+import * as utils from "../../../utils";
+import * as lockerService from "../../../services/locketService.js";
+import LeftHomeScreen from "./leftHomeScreen";
+import { AuthContext } from "../../../context/AuthLocket";
 
 const CameraCapture = ({ onCapture }) => {
+    const { user, setUser } = useContext(AuthContext);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [capturedMedia, setCapturedMedia] = useState(null);
@@ -32,7 +37,7 @@ const CameraCapture = ({ onCapture }) => {
   const [rotation, setRotation] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
   const [holdTime, setHoldTime] = useState(0);
-  const [permissionChecked, setPermissionChecked] = useState(false); //Đổi false để hỏi xin camera
+  const [permissionChecked, setPermissionChecked] = useState(true); //Đổi false để hỏi xin camera
   const holdTimeout = useRef(null);
   const intervalRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -40,7 +45,10 @@ const CameraCapture = ({ onCapture }) => {
   const MAX_RECORD_TIME = 10;
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(null);
-    const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [isProfileReady, setIsProfileReady] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
     if (!permissionChecked) {
@@ -90,10 +98,49 @@ const CameraCapture = ({ onCapture }) => {
       }, 100);
     }
   };
-  const handleSubmit = () => {
-    console.log("File: ", selectedFile || capturedMedia);
-    console.log("Caption: ", caption);
+  const handleSubmit = async () => {
+    if (!selectedFile) {
+      console.error("Không có dữ liệu để tải lên.");
+      return;
+    }
+  
+    try {
+      // Tải nội dung Blob từ URL
+      const response = await fetch(selectedFile.data);
+      const blob = await response.blob();
+      
+      // Chuyển Blob thành File
+      const file = new File([blob], blob.type.includes("video") ? "captured_video.mp4" : "captured_image.jpg", { type: blob.type });
+      
+      // Tạo FormData để gửi lên server
+      const formData = new FormData();
+      formData.append("caption", caption);
+      formData.append("idToken", utils.getAuthCookies().idToken);
+      formData.append("localId", utils.getAuthCookies().localId);
+      
+      // Xác định loại file và append đúng key
+      if (file.type.includes("image")) {
+        formData.append("images", file); // key phải đúng với backend
+      } else if (file.type.includes("video")) {
+        formData.append("videos", file); // key phải đúng với backend
+      } else {
+        showToast("warning", "File không hợp lệ!");
+        return;
+      }
+      
+      try {
+        await lockerService.uploadMedia(formData);
+        showToast("success", `${file.type.includes("video") ? "Video" : "Hình ảnh"} đã được tải lên!`);
+      } catch (error) {
+        showToast("error", "Lỗi khi tải lên!");
+        console.error(error);
+      }
+    } catch (error) {
+      console.error("Lỗi khi tải lên:", error);
+    }
   };
+  
+  
 
   const startHold = () => {
     setIsHolding(true);
@@ -290,161 +337,180 @@ const CameraCapture = ({ onCapture }) => {
     }
   };
   return (
-    <div className="flex select-none flex-col items-center justify-start h-full min-h-screen -z-50">
-      <div className="navbar top-0 left-0 flex items-center justify-between px-6">
-        <div className="relative flex items-center justify-center w-12 h-12">
-          {/* Vòng tròn nền */}
-          <div className="bg-blue-300/40 w-12 h-12 rounded-full absolute"></div>
-
-          {/* Ảnh nằm trên và căn giữa */}
-          <img
-            src="/prvlocket.png"
-            alt=""
-            className="rounded-full h-10 w-10 relative"
-          />
-        </div>
-        <div className="flex items-center">
-          {/* <ThemeDropdown /> */}
-          <button
-            onClick={() => setIsOpen(true)}
-            className="flex items-center justify-center p-2 transition cursor-pointer rounded-full bg-base-200 w-12 h-12"
-          >
-            <Menu size={30} strokeWidth={2} />
-          </button>
-        </div>
-      </div>
-      <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">
-        Locket Camera
-      </h1>
+    <>
       <div
-        className={`relative w-full max-w-md aspect-square transform bg-gray-800 rounded-[65px] overflow-hidden ${
-          loading ? "border border-red-500" : ""
+        className={`transition-transform duration-500 ${
+          isProfileOpen ? "translate-x-full" : "translate-x-0"
         }`}
+        onTransitionEnd={() => setIsProfileReady(isProfileOpen)}
       >
-        {/* Viền động chạy vòng tròn */}
-        <div className="absolute inset-0 rounded-[60px]"></div>
-
-        {loading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50 gap-3 text-white text-lg font-medium">
-            <Hourglass
-              size={50}
-              stroke={2}
-              bgOpacity={0.1}
-              speed={1.5}
-              color="white"
-            />
-            <div>Đang xử lý video...</div>
-            <div className="flex items-center gap-2 text-2xl font-bold">
-              <p> {countdown}s⏳</p>
-            </div>
-          </div>
-        )}
-
-        {!selectedFile && cameraActive && (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className={`w-full h-full object-cover ${
-              cameraMode === "user" ? "scale-x-[-1]" : ""
-            }`}
-          />
-        )}
-        {selectedFile && selectedFile.type === "video" && (
-          <video
-            src={selectedFile.data}
-            autoPlay
-            loop
-            playsInline
-            muted
-            className="w-full h-full object-cover"
-            onClick={(e) => e.preventDefault()}
-          />
-        )}
-        {selectedFile && selectedFile.type === "image" && (
-          <img
-            src={selectedFile.data}
-            alt="Selected File"
-            className="w-full h-full object-cover select-none"
-          />
-        )}
-
-        {(capturedMedia || selectedFile) && (
-          <AutoResizeTextarea
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-            placeholder="Nhập tin nhắn..."
-          />
-        )}
-      </div>
-
-      <div className="flex gap-4 w-full h-40 max-w-md justify-evenly items-center">
-        {capturedMedia || selectedFile ? (
-          <>
-            <button className="cursor-pointer" onClick={handleDelete}>
-              <X size={35} />
-            </button>
+        <div className="flex select-none flex-col items-center justify-start h-full min-h-screen -z-50">
+          <div className="navbar top-0 left-0 flex items-center justify-between px-6">
             <button
-              onClick={handleSubmit}
-              className="rounded-full w-22 h-22 duration-300 outline-base-300 bg-white/10 backdrop-blur-4xl mx-4 text-center flex items-center justify-center"
+              onClick={() => setIsProfileOpen(true)}
+              className="relative flex items-center justify-center w-12 h-12"
             >
-              <Send size={40} className="mr-1 mt-1" />
-            </button>
-            <button>
-              <Sparkles size={35} />
-            </button>
-          </>
-        ) : (
-          <>
-            <input
-              type="file"
-              accept="image/*,video/*"
-              onChange={handleFileChange}
-              className="hidden"
-              id="file-upload"
-            />
-            <label htmlFor="file-upload" className="cursor-pointer">
-              <ImageUp size={35} />
-            </label>
-            <button
-              onMouseDown={startHold}
-              onMouseUp={endHold}
-              onMouseLeave={endHold}
-              onTouchStart={startHold}
-              onTouchEnd={endHold}
-              className="relative flex items-center justify-center w-22 h-22"
-            >
-              {/* Vòng viền bên trên */}
-              <div
-                className={`absolute w-22 h-22 border-5 border-blue-600 rounded-full z-10 ${
-                  isHolding ? "animate-lightPulse" : ""
-                }`}
-              ></div>
+              {/* Vòng tròn nền */}
+              <div className="bg-blue-300/40 w-12 h-12 rounded-full absolute"></div>
 
-              {/* Nút bên dưới */}
-              <div
-                className={`absolute rounded-full btn w-18 h-18 outline-accent bg-blue-300 z-0 ${
-                  isHolding ? "animate-pulseBeat" : ""
-                }`}
-              ></div>
-            </button>
-
-            <button className="cursor-pointer">
-              <RefreshCcw
-                onClick={handleRotateCamera}
-                size={35}
-                className="transition-transform duration-500"
-                style={{ transform: `rotate(${rotation}deg)` }}
+              {/* Ảnh nằm trên và căn giữa */}
+              <img
+                src="/prvlocket.png"
+                alt=""
+                className="rounded-full h-10 w-10 relative"
               />
             </button>
-          </>
-        )}
+            <div className="flex items-center">
+              {/* <ThemeDropdown /> */}
+              <button
+                onClick={() => setIsOpen(true)}
+                className="flex items-center justify-center p-2 transition cursor-pointer rounded-full bg-base-200 w-12 h-12"
+              >
+                <Menu size={30} strokeWidth={2} />
+              </button>
+            </div>
+          </div>
+          <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">
+            Locket Camera
+          </h1>
+          <div
+            className={`relative w-full max-w-md aspect-square transform bg-gray-800 rounded-[65px] overflow-hidden ${
+              loading ? "border border-red-500" : ""
+            }`}
+          >
+            {/* Viền động chạy vòng tròn */}
+            <div className="absolute inset-0 rounded-[60px]"></div>
+
+            {loading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50 gap-3 text-white text-lg font-medium">
+                <Hourglass
+                  size={50}
+                  stroke={2}
+                  bgOpacity={0.1}
+                  speed={1.5}
+                  color="white"
+                />
+                <div>Đang xử lý video...</div>
+                <div className="flex items-center gap-2 text-2xl font-bold">
+                  <p> {countdown}s⏳</p>
+                </div>
+              </div>
+            )}
+
+            {!selectedFile && cameraActive && (
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className={`w-full h-full object-cover ${
+                  cameraMode === "user" ? "scale-x-[-1]" : ""
+                }`}
+              />
+            )}
+            {selectedFile && selectedFile.type === "video" && (
+              <video
+                src={selectedFile.data}
+                autoPlay
+                loop
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+                onClick={(e) => e.preventDefault()}
+              />
+            )}
+            {selectedFile && selectedFile.type === "image" && (
+              <img
+                src={selectedFile.data}
+                alt="Selected File"
+                className="w-full h-full object-cover select-none"
+              />
+            )}
+
+            {(capturedMedia || selectedFile) && (
+              <AutoResizeTextarea
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                placeholder="Nhập tin nhắn..."
+              />
+            )}
+          </div>
+
+          <div className="flex gap-4 w-full h-40 max-w-md justify-evenly items-center">
+            {capturedMedia || selectedFile ? (
+              <>
+                <button className="cursor-pointer" onClick={handleDelete}>
+                  <X size={35} />
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  className="rounded-full w-22 h-22 duration-300 outline-base-300 bg-white/10 backdrop-blur-4xl mx-4 text-center flex items-center justify-center"
+                >
+                  <Send size={40} className="mr-1 mt-1" />
+                </button>
+                <button>
+                  <Sparkles size={35} />
+                </button>
+              </>
+            ) : (
+              <>
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="file-upload"
+                />
+                <label htmlFor="file-upload" className="cursor-pointer">
+                  <ImageUp size={35} />
+                </label>
+                <button
+                  onMouseDown={startHold}
+                  onMouseUp={endHold}
+                  onMouseLeave={endHold}
+                  onTouchStart={startHold}
+                  onTouchEnd={endHold}
+                  className="relative flex items-center justify-center w-22 h-22"
+                >
+                  {/* Vòng viền bên trên */}
+                  <div
+                    className={`absolute w-22 h-22 border-5 border-blue-600 rounded-full z-10 ${
+                      isHolding ? "animate-lightPulse" : ""
+                    }`}
+                  ></div>
+
+                  {/* Nút bên dưới */}
+                  <div
+                    className={`absolute rounded-full btn w-18 h-18 outline-accent bg-blue-300 z-0 ${
+                      isHolding ? "animate-pulseBeat" : ""
+                    }`}
+                  ></div>
+                </button>
+
+                <button className="cursor-pointer">
+                  <RefreshCcw
+                    onClick={handleRotateCamera}
+                    size={35}
+                    className="transition-transform duration-500"
+                    style={{ transform: `rotate(${rotation}deg)` }}
+                  />
+                </button>
+              </>
+            )}
+          </div>
+          <canvas ref={canvasRef} className="hidden" />
+          <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} user={user} setUser={setUser} />
+          <ThemeSelector />
+        </div>
       </div>
-      <canvas ref={canvasRef} className="hidden" />
-      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen}/>
-      <ThemeSelector />
-    </div>
+
+      {/* left */}
+      <LeftHomeScreen
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+      />
+      {/* right */}
+    </>
   );
 };
 

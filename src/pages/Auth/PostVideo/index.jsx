@@ -10,6 +10,9 @@ import {
 import { showToast } from "../../../components/Toast/index.jsx";
 import * as lockerService from "../../../services/locketService.js";
 import * as utils from "../../../utils";
+import LoadingRing from "../../../components/UI/Loading/ring.jsx";
+import { cropVideoToSquare } from "../../../helpers/Media/cropMedia.js";
+import Hourglass from "../../../components/UI/Loading/hourglass.jsx";
 
 const PostVideo = () => {
   const [caption, setCaption] = useState("");
@@ -17,24 +20,45 @@ const PostVideo = () => {
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+
   const [colorTop, setColorTop] = useState(null);
   const [colorBottom, setColorBottom] = useState(null);
   const [colorText, setColorText] = useState("#FFFFFF");
 
   const handleTriggerUploadFile = () => fileRef.current?.click();
 
-  const handleSelectFile = (event) => {
+  const handleSelectFile = async (event) => {
     const selectedFile = event.target.files[0];
     if (!selectedFile) return;
 
-    // Kiểm tra nếu là video
     if (!selectedFile.type.startsWith("video/")) {
       showToast("error", "Vui lòng chọn một tệp video!");
       return;
     }
 
-    setFile(selectedFile);
-    setPreviewUrl(URL.createObjectURL(selectedFile));
+    try {
+      setLoading(true);
+      const videoBlob = new Blob([selectedFile], { type: selectedFile.type });
+
+      // Cắt video thành hình vuông
+      const croppedBlob = await cropVideoToSquare(videoBlob, setCountdown);
+      const videoUrl = URL.createObjectURL(croppedBlob);
+
+      // Cập nhật state
+      setSelectedFile({ type: "video", data: videoUrl });
+      setPreviewUrl(videoUrl);
+      setFile(croppedBlob); // ✅ Cập nhật file để upload
+
+      setLoading(false);
+      showToast("success", "Tải video thành công!");
+    } catch (error) {
+      console.error("Lỗi khi xử lý video:", error);
+      showToast("error", "Không thể xử lý video!");
+      setLoading(false);
+    }
   };
 
   const handleUploadFile = async () => {
@@ -45,14 +69,15 @@ const PostVideo = () => {
 
     setIsUploading(true);
     const formData = new FormData();
-    formData.append("videos", file);
+    formData.append("videos", file); // ✅ Sử dụng video đã xử lý
+    console.log(file)
     formData.append("caption", caption);
     formData.append("idToken", utils.getAuthCookies().idToken);
     formData.append("localId", utils.getAuthCookies().localId);
 
     try {
-      const response = await lockerService.uploadMedia(formData);
-        showToast("success", "Video đã được tải lên!");
+      await lockerService.uploadMedia(formData);
+      showToast("success", "Video đã được tải lên!");
     } catch (error) {
       showToast("error", "Lỗi khi tải video lên!");
       console.error(error);
@@ -87,31 +112,48 @@ const PostVideo = () => {
         <div className="text-center mb-6">
           <h2 className="text-3xl font-semibold mb-4">Video Preview</h2>
           <div className="relative w-full max-w-[400px] rounded-[40px] aspect-square border border-base-content overflow-hidden flex items-center justify-center">
-            {previewUrl ? (
-              <>
-              <video
-                src={previewUrl}
-                autoPlay
-                loop
-                playsInline
-                muted
-                className="w-full h-full object-cover "
-              />
-            {/* Only show the caption if it's not empty */}
-            {caption && (
-              <div className="absolute bottom-4 w-auto px-3">
-                <div
-                  style={{
-                    background: colorTop && colorBottom ? `linear-gradient(to bottom, ${colorTop}, ${colorBottom})` : 'none',
-                    color: colorText || '#FFFFFF',
-                  }}
-                  className="text-white font-semibold backdrop-blur-3xl py-1 rounded-4xl px-4 text-left"
-                >
-                  {caption}
+            {loading ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50 gap-3 text-white text-lg font-medium">
+                <Hourglass
+                  size={50}
+                  stroke={2}
+                  bgOpacity={0.1}
+                  speed={1.5}
+                  color="white"
+                />
+                <div>Đang xử lý video...</div>
+                <div className="flex items-center gap-2 text-2xl font-bold">
+                  <p>{countdown}s⏳</p>
                 </div>
               </div>
-            )}
-            </>
+            ) : selectedFile && selectedFile.type === "video" ? (
+              <>
+                <video
+                  src={selectedFile.data}
+                  autoPlay
+                  loop
+                  playsInline
+                  muted
+                  className="w-full h-full object-cover"
+                  onClick={(e) => e.preventDefault()}
+                />
+                {caption && (
+                  <div className="absolute bottom-4 w-auto px-3">
+                    <div
+                      style={{
+                        background:
+                          colorTop && colorBottom
+                            ? `linear-gradient(to bottom, ${colorTop}, ${colorBottom})`
+                            : "none",
+                        color: colorText || "#FFFFFF",
+                      }}
+                      className="text-white font-semibold backdrop-blur-3xl py-1 rounded-4xl px-4 text-left"
+                    >
+                      {caption}
+                    </div>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="flex flex-col items-center">
                 <Video size={80} />
@@ -192,7 +234,17 @@ const PostVideo = () => {
             className="btn btn-primary rounded-xl disabled:bg-gray-400"
             disabled={isUploading}
           >
-            {isUploading ? <><LoadingRing size={20} stroke={3} speed={2} color="white" /><span>Đang tải lên...</span></> : <><span>Đăng bài viết</span><Send size={20} /></>}
+            {isUploading ? (
+              <>
+                <LoadingRing size={20} stroke={3} speed={2} color="white" />
+                <span>Đang tải lên...</span>
+              </>
+            ) : (
+              <>
+                <span>Đăng bài viết</span>
+                <Send size={20} />
+              </>
+            )}
           </button>
         </div>
       </div>
