@@ -83,6 +83,7 @@ const CameraCapture = ({ onCapture }) => {
   const startHold = () => {
     setIsHolding(true);
     setHoldTime(0);
+    setCountdown(null);
 
     intervalRef.current = setInterval(() => {
       setHoldTime((prev) => prev + 0.1);
@@ -94,6 +95,7 @@ const CameraCapture = ({ onCapture }) => {
         const recorder = new MediaRecorder(stream);
         mediaRecorderRef.current = recorder;
         const chunks = [];
+        const startTime = Date.now(); // Lưu thời điểm bắt đầu quay
 
         recorder.ondataavailable = (e) => {
           if (e.data.size > 0) {
@@ -102,15 +104,35 @@ const CameraCapture = ({ onCapture }) => {
         };
 
         recorder.onstop = async () => {
+          // Tính độ dài video
+          const duration = (Date.now() - startTime) / 1000;
+          setCountdown(duration); // Bắt đầu đếm ngược
+          //Tắt camera sau khi ghi video
+          setCameraActive(false);
+
+          const countdownRecordvideo = setInterval(() => {
+            setCountdown((prev) => {
+              const newValue = (parseFloat(prev) - 0.1).toFixed(1); // Giảm 0.1 mỗi lần
+              return newValue > 0 ? newValue : null;
+            });
+          }, 100); // Cập nhật mỗi 100ms
+
+          showToast("info", "Đang xử lý video...");
+          //Thêm Loading
+          setLoading(true);
           const blob = new Blob(chunks, { type: "video/mp4" });
           // const videoUrl = URL.createObjectURL(blob);
           const videoUrl =
             cameraMode === "user"
               ? URL.createObjectURL(await correctFrontCameraVideo(blob))
-              : URL.createObjectURL(blob);
+              : URL.createObjectURL(await cropVideoToSquareV2(blob));
 
           setSelectedFile({ type: "video", data: videoUrl });
-          setCameraActive(false);
+
+          setLoading(false);
+          clearInterval(countdownRecordvideo); // Dừng đếm ngược
+          setCountdown(null);
+          showToast("success", "Xử lý video thành công!");
         };
 
         recorder.start();
@@ -179,7 +201,59 @@ const CameraCapture = ({ onCapture }) => {
       }
     }, 100);
   };
+  const cropVideoToSquareV2 = (blob) => {
+    return new Promise((resolve) => {
+      const video = document.createElement("video");
+      video.src = URL.createObjectURL(blob);
 
+      video.onloadedmetadata = () => {
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const size = Math.min(video.videoWidth, video.videoHeight);
+        canvas.width = size;
+        canvas.height = size;
+
+        video.play().then(() => {
+          const stream = canvas.captureStream();
+          const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
+          const chunks = [];
+
+          recorder.ondataavailable = (e) => chunks.push(e.data);
+          recorder.onstop = () => {
+            resolve(new Blob(chunks, { type: "video/mp4" }));
+          };
+
+          recorder.start();
+
+          const drawFrame = () => {
+            if (video.ended) {
+              recorder.stop();
+              return;
+            }
+
+            const xOffset = (video.videoWidth - size) / 2;
+            const yOffset = (video.videoHeight - size) / 2;
+            ctx.drawImage(
+              video,
+              xOffset,
+              yOffset,
+              size,
+              size,
+              0,
+              0,
+              size,
+              size
+            );
+
+            requestAnimationFrame(drawFrame);
+          };
+
+          requestAnimationFrame(drawFrame);
+        });
+      };
+    });
+  };
   const cropVideoToSquare = (blob) => {
     return new Promise((resolve) => {
       const video = document.createElement("video");
@@ -311,6 +385,7 @@ const CameraCapture = ({ onCapture }) => {
     return new Promise((resolve) => {
       const video = document.createElement("video");
       video.src = URL.createObjectURL(blob);
+
       video.onloadedmetadata = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
@@ -363,58 +438,68 @@ const CameraCapture = ({ onCapture }) => {
   return (
     <div className="flex select-none flex-col items-center justify-center h-screen min-h-screen bg-locket -z-50">
       <h1 className="text-3xl mb-6 font-semibold">Locket Upload</h1>
-      <div className={`relative w-full max-w-md aspect-square bg-gray-800 rounded-[60px] overflow-hidden ${loading ? "border border-red-500" : ""}`}>
-  {/* Viền động chạy vòng tròn */}
-  <div className="absolute inset-0 rounded-[60px]"
-  ></div>
+      <div
+        className={`relative w-full max-w-md aspect-square transform bg-gray-800 rounded-[60px] overflow-hidden ${
+          loading ? "border border-red-500" : ""
+        }`}
+      >
+        {/* Viền động chạy vòng tròn */}
+        <div className="absolute inset-0 rounded-[60px]"></div>
 
-  {loading && (
-    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50 gap-3 text-white text-lg font-medium">
-      <Hourglass size={50} stroke={2} bgOpacity={0.1} speed={1.5} color="white" />
-      <div>Đang xử lý video...</div>
-      <div className="flex items-center gap-2 text-2xl font-bold">
-        <p> {countdown}s⏳</p>
+        {loading && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50 gap-3 text-white text-lg font-medium">
+            <Hourglass
+              size={50}
+              stroke={2}
+              bgOpacity={0.1}
+              speed={1.5}
+              color="white"
+            />
+            <div>Đang xử lý video...</div>
+            <div className="flex items-center gap-2 text-2xl font-bold">
+              <p> {countdown}s⏳</p>
+            </div>
+          </div>
+        )}
+
+        {!selectedFile && cameraActive && (
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className={`w-full h-full object-cover ${
+              cameraMode === "user" ? "scale-x-[-1]" : ""
+            }`}
+          />
+        )}
+        {selectedFile && selectedFile.type === "video" && (
+          <video
+            src={selectedFile.data}
+            autoPlay
+            loop
+            playsInline
+            muted
+            className="w-full h-full object-cover"
+            onClick={(e) => e.preventDefault()}
+          />
+        )}
+        {selectedFile && selectedFile.type === "image" && (
+          <img
+            src={selectedFile.data}
+            alt="Selected File"
+            className="w-full h-full object-cover select-none"
+          />
+        )}
+
+        {(capturedMedia || selectedFile) && (
+          <AutoResizeTextarea
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
+            placeholder="Nhập tin nhắn..."
+          />
+        )}
       </div>
-    </div>
-  )}
-
-  {!selectedFile && cameraActive && (
-    <video
-      ref={videoRef}
-      autoPlay
-      playsInline
-      muted
-      className={`w-full h-full object-cover ${cameraMode === "user" ? "scale-x-[-1]" : ""}`}
-    />
-  )}
-  {selectedFile && selectedFile.type === "video" && (
-    <video
-      src={selectedFile.data}
-      autoPlay
-      loop
-      playsInline
-      muted
-      className="w-full h-full object-cover"
-      onClick={(e) => e.preventDefault()}
-    />
-  )}
-  {selectedFile && selectedFile.type === "image" && (
-    <img
-      src={selectedFile.data}
-      alt="Selected File"
-      className="w-full h-full object-cover select-none"
-    />
-  )}
-
-  {(capturedMedia || selectedFile) && (
-    <AutoResizeTextarea
-      value={caption}
-      onChange={(e) => setCaption(e.target.value)}
-      placeholder="Nhập tin nhắn..."
-    />
-  )}
-</div>
-
 
       <div className="flex gap-4 w-full h-40 max-w-md justify-evenly items-center">
         {capturedMedia || selectedFile ? (
