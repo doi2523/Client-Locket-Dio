@@ -18,7 +18,7 @@ const CameraCapture = ({ onCapture }) => {
   const [rotation, setRotation] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
   const [holdTime, setHoldTime] = useState(0);
-  const [permissionChecked, setPermissionChecked] = useState(false); //Đổi false để hỏi xin camera
+  const [permissionChecked, setPermissionChecked] = useState(true); //Đổi false để hỏi xin camera
   const holdTimeout = useRef(null);
   const intervalRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -345,6 +345,7 @@ const CameraCapture = ({ onCapture }) => {
       };
       reader.readAsDataURL(file);
     } else if (file.type.startsWith("video/")) {
+      setCameraActive(false);
       setLoading(true); // Bắt đầu loading khi xử lý video
       showToast("info", "Đang tải video...");
       const videoBlob = new Blob([file], { type: file.type });
@@ -398,9 +399,10 @@ const CameraCapture = ({ onCapture }) => {
           const chunks = [];
 
           recorder.ondataavailable = (e) => chunks.push(e.data);
-          recorder.onstop = () =>
+          recorder.onstop = () => {
+            setLoading(false);
             resolve(new Blob(chunks, { type: "video/mp4" }));
-
+}
           recorder.start();
 
           const drawFrame = () => {
