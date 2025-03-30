@@ -104,11 +104,13 @@ const CameraCapture = ({ onCapture }) => {
         };
 
         recorder.onstop = async () => {
+          setCameraActive(false);
+          //Thêm Loading
+          setLoading(true);
           // Tính độ dài video
           const duration = (Date.now() - startTime) / 1000;
           setCountdown(duration); // Bắt đầu đếm ngược
           //Tắt camera sau khi ghi video
-          setCameraActive(false);
 
           const countdownRecordvideo = setInterval(() => {
             setCountdown((prev) => {
@@ -118,8 +120,6 @@ const CameraCapture = ({ onCapture }) => {
           }, 100); // Cập nhật mỗi 100ms
 
           showToast("info", "Đang xử lý video...");
-          //Thêm Loading
-          setLoading(true);
           const blob = new Blob(chunks, { type: "video/mp4" });
           // const videoUrl = URL.createObjectURL(blob);
           const videoUrl =
@@ -206,7 +206,6 @@ const CameraCapture = ({ onCapture }) => {
       video.src = URL.createObjectURL(blob);
 
       video.onloadedmetadata = () => {
-
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         const size = Math.min(video.videoWidth, video.videoHeight);
@@ -322,7 +321,7 @@ const CameraCapture = ({ onCapture }) => {
     const file = event.target.files[0];
     if (!file) return;
     setCameraActive(false);
-  
+
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -331,18 +330,18 @@ const CameraCapture = ({ onCapture }) => {
         img.onload = () => {
           const canvas = canvasRef.current;
           const ctx = canvas.getContext("2d");
-  
+
           // Lấy kích thước nhỏ nhất giữa width và height để tạo hình vuông
           const size = Math.min(img.width, img.height);
           const offsetX = (img.width - size) / 2; // Cắt từ giữa ảnh
           const offsetY = (img.height - size) / 2;
-  
+
           canvas.width = size;
           canvas.height = size;
-  
+
           // Cắt và vẽ hình vuông đúng tỷ lệ
           ctx.drawImage(img, offsetX, offsetY, size, size, 0, 0, size, size);
-  
+
           setSelectedFile({
             type: "image",
             data: canvas.toDataURL("image/png"),
@@ -354,7 +353,7 @@ const CameraCapture = ({ onCapture }) => {
       setLoading(true);
       showToast("info", "Đang tải video...");
       const videoBlob = new Blob([file], { type: file.type });
-  
+
       cropVideoToSquare(videoBlob).then((croppedBlob) => {
         const videoUrl = URL.createObjectURL(croppedBlob);
         setSelectedFile({ type: "video", data: videoUrl });
@@ -364,7 +363,6 @@ const CameraCapture = ({ onCapture }) => {
       });
     }
   };
-  
 
   const handleRotateCamera = async () => {
     setRotation((prev) => prev + 180);
@@ -406,9 +404,8 @@ const CameraCapture = ({ onCapture }) => {
 
           recorder.ondataavailable = (e) => chunks.push(e.data);
           recorder.onstop = () => {
-            setLoading(false);
             resolve(new Blob(chunks, { type: "video/mp4" }));
-}
+          };
           recorder.start();
 
           const drawFrame = () => {
