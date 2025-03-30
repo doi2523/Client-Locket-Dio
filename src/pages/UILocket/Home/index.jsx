@@ -4,6 +4,8 @@ import AutoResizeTextarea from "./AutoResizeTextarea";
 import { showToast } from "../../../components/Toast";
 import LoadingRing from "../../../components/UI/Loading/ring";
 import Hourglass from "../../../components/UI/Loading/hourglass";
+import { cropVideoToSquare, cropVideoToSquareV2 } from "../../../helpers/Media/cropMedia";
+import { correctFrontCameraVideo } from "../../../helpers/Media/flipVideoHorizontal";
 
 const CameraCapture = ({ onCapture }) => {
   const videoRef = useRef(null);
@@ -200,127 +202,12 @@ const CameraCapture = ({ onCapture }) => {
       }
     }, 100);
   };
-  const cropVideoToSquareV2 = (blob) => {
-    return new Promise((resolve) => {
-      const video = document.createElement("video");
-      video.src = URL.createObjectURL(blob);
-
-      video.onloadedmetadata = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        const size = Math.min(video.videoWidth, video.videoHeight);
-        canvas.width = size;
-        canvas.height = size;
-
-        video.play().then(() => {
-          const stream = canvas.captureStream();
-          const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
-          const chunks = [];
-
-          recorder.ondataavailable = (e) => chunks.push(e.data);
-          recorder.onstop = () => {
-            resolve(new Blob(chunks, { type: "video/mp4" }));
-          };
-
-          recorder.start();
-
-          const drawFrame = () => {
-            if (video.ended) {
-              recorder.stop();
-              return;
-            }
-
-            const xOffset = (video.videoWidth - size) / 2;
-            const yOffset = (video.videoHeight - size) / 2;
-            ctx.drawImage(
-              video,
-              xOffset,
-              yOffset,
-              size,
-              size,
-              0,
-              0,
-              size,
-              size
-            );
-
-            requestAnimationFrame(drawFrame);
-          };
-
-          requestAnimationFrame(drawFrame);
-        });
-      };
-    });
-  };
-  const cropVideoToSquare = (blob) => {
-    return new Promise((resolve) => {
-      const video = document.createElement("video");
-      video.src = URL.createObjectURL(blob);
-      video.muted = true; // Giúp video tự động phát trên một số trình duyệt
-      video.playsInline = true; // Giúp tránh mở full màn hình trên di động
-
-      video.onloadedmetadata = () => {
-        const estimatedTime = Math.ceil(video.duration); // Lấy thời lượng video
-        setCountdown(estimatedTime); // Bắt đầu đếm ngược
-
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        const size = Math.min(video.videoWidth, video.videoHeight);
-        canvas.width = size;
-        canvas.height = size;
-
-        const countdownInterval = setInterval(() => {
-          setCountdown((prev) => (prev > 0 ? prev - 1 : null));
-        }, 1000);
-
-        video.play().then(() => {
-          const stream = canvas.captureStream();
-          const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
-          const chunks = [];
-
-          recorder.ondataavailable = (e) => chunks.push(e.data);
-          recorder.onstop = () => {
-            clearInterval(countdownInterval); // Dừng đếm ngược
-            setCountdown(null);
-            setLoading(false); // Ẩn loading
-            resolve(new Blob(chunks, { type: "video/mp4" }));
-          };
-
-          recorder.start();
-
-          const drawFrame = () => {
-            if (video.ended) {
-              recorder.stop();
-              return;
-            }
-
-            const xOffset = (video.videoWidth - size) / 2;
-            const yOffset = (video.videoHeight - size) / 2;
-            ctx.drawImage(
-              video,
-              xOffset,
-              yOffset,
-              size,
-              size,
-              0,
-              0,
-              size,
-              size
-            );
-
-            requestAnimationFrame(drawFrame);
-          };
-
-          requestAnimationFrame(drawFrame);
-        });
-      };
-    });
-  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
     setCameraActive(false);
+    setLoading(true);
 
     if (file.type.startsWith("image/")) {
       const reader = new FileReader();
@@ -346,6 +233,7 @@ const CameraCapture = ({ onCapture }) => {
             type: "image",
             data: canvas.toDataURL("image/png"),
           });
+          setLoading(false);
         };
       };
       reader.readAsDataURL(file);
@@ -354,7 +242,7 @@ const CameraCapture = ({ onCapture }) => {
       showToast("info", "Đang tải video...");
       const videoBlob = new Blob([file], { type: file.type });
 
-      cropVideoToSquare(videoBlob).then((croppedBlob) => {
+      cropVideoToSquare(videoBlob, setCountdown).then((croppedBlob) => {
         const videoUrl = URL.createObjectURL(croppedBlob);
         setSelectedFile({ type: "video", data: videoUrl });
         setCameraActive(false);
@@ -384,60 +272,6 @@ const CameraCapture = ({ onCapture }) => {
     } catch (error) {
       console.error("Lỗi khi đổi camera:", error);
     }
-  };
-  const correctFrontCameraVideo = (blob) => {
-    return new Promise((resolve) => {
-      const video = document.createElement("video");
-      video.src = URL.createObjectURL(blob);
-
-      video.onloadedmetadata = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        const size = Math.min(video.videoWidth, video.videoHeight);
-        canvas.width = size;
-        canvas.height = size;
-
-        video.onplay = () => {
-          const stream = canvas.captureStream();
-          const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
-          const chunks = [];
-
-          recorder.ondataavailable = (e) => chunks.push(e.data);
-          recorder.onstop = () => {
-            resolve(new Blob(chunks, { type: "video/mp4" }));
-          };
-          recorder.start();
-
-          const drawFrame = () => {
-            if (video.ended) {
-              recorder.stop();
-              return;
-            }
-            ctx.save();
-            ctx.translate(size, 0);
-            ctx.scale(-1, 1);
-            const xOffset = (video.videoWidth - size) / 2;
-            const yOffset = (video.videoHeight - size) / 2;
-            ctx.drawImage(
-              video,
-              xOffset,
-              yOffset,
-              size,
-              size,
-              0,
-              0,
-              size,
-              size
-            );
-            ctx.restore();
-            requestAnimationFrame(drawFrame);
-          };
-
-          requestAnimationFrame(drawFrame);
-        };
-        video.play();
-      };
-    });
   };
   return (
     <div className="flex select-none flex-col items-center justify-center h-screen min-h-screen bg-locket -z-50">
