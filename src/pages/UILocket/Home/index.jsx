@@ -20,7 +20,7 @@ const CameraCapture = ({ onCapture }) => {
   const [rotation, setRotation] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
   const [holdTime, setHoldTime] = useState(0);
-  const [permissionChecked, setPermissionChecked] = useState(true); //Đổi false để hỏi xin camera
+  const [permissionChecked, setPermissionChecked] = useState(false); //Đổi false để hỏi xin camera
   const holdTimeout = useRef(null);
   const intervalRef = useRef(null);
   const mediaRecorderRef = useRef(null);
