@@ -131,7 +131,6 @@ const CameraCapture = ({ onCapture }) => {
 
           setLoading(false);
           clearInterval(countdownRecordvideo); // Dừng đếm ngược
-          setCountdown(null);
           showToast("success", "Xử lý video thành công!");
         };
 
