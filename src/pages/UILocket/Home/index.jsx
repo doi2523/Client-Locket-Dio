@@ -22,6 +22,7 @@ import * as utils from "../../../utils";
 import * as lockerService from "../../../services/locketService.js";
 import LeftHomeScreen from "./leftHomeScreen";
 import { AuthContext } from "../../../context/AuthLocket";
+import RightHomeScreen from "./rightHomeScreen.jsx";
 
 const CameraCapture = ({ onCapture }) => {
     const { user, setUser } = useContext(AuthContext);
@@ -47,7 +48,7 @@ const CameraCapture = ({ onCapture }) => {
   const [countdown, setCountdown] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [isProfileReady, setIsProfileReady] = useState(false);
+  const [isHomeOpen, setIsHomeOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
@@ -339,10 +340,9 @@ const CameraCapture = ({ onCapture }) => {
   return (
     <>
       <div
-        className={`transition-transform duration-500 ${
-          isProfileOpen ? "translate-x-full" : "translate-x-0"
-        }`}
-        onTransitionEnd={() => setIsProfileReady(isProfileOpen)}
+  className={`transition-transform duration-500 ${
+    isProfileOpen ? "translate-x-full" : isHomeOpen ? "-translate-x-full" : "translate-x-0"
+  }`}
       >
         <div className="flex select-none flex-col items-center justify-start h-full min-h-screen -z-50">
           <div className="navbar top-0 left-0 flex items-center justify-between px-6">
@@ -363,7 +363,7 @@ const CameraCapture = ({ onCapture }) => {
             <div className="flex items-center">
               {/* <ThemeDropdown /> */}
               <button
-                onClick={() => setIsOpen(true)}
+                onClick={() => setIsHomeOpen(true)}
                 className="flex items-center justify-center p-2 transition cursor-pointer rounded-full bg-base-200 w-12 h-12"
               >
                 <Menu size={30} strokeWidth={2} />
@@ -499,7 +499,6 @@ const CameraCapture = ({ onCapture }) => {
             )}
           </div>
           <canvas ref={canvasRef} className="hidden" />
-          <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} user={user} setUser={setUser} />
           <ThemeSelector />
         </div>
       </div>
@@ -510,6 +509,10 @@ const CameraCapture = ({ onCapture }) => {
         onClose={() => setIsProfileOpen(false)}
       />
       {/* right */}
+      <RightHomeScreen
+        isOpen={isHomeOpen}
+        onClose={() => setIsHomeOpen(false)}
+      />
     </>
   );
 };
