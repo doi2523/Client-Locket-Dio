@@ -38,7 +38,7 @@ const CameraCapture = ({ onCapture }) => {
   const [rotation, setRotation] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
   const [holdTime, setHoldTime] = useState(0);
-  const [permissionChecked, setPermissionChecked] = useState(true); //Đổi false để hỏi xin camera
+  const [permissionChecked, setPermissionChecked] = useState(false); //Đổi false để hỏi xin camera
   const holdTimeout = useRef(null);
   const intervalRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -351,7 +351,7 @@ const CameraCapture = ({ onCapture }) => {
               className="relative flex items-center justify-center w-12 h-12"
             >
               {/* Vòng tròn nền */}
-              <div className="bg-blue-300/40 w-12 h-12 rounded-full absolute"></div>
+              <div className="bg-base-content/20 w-12 h-12 rounded-full absolute"></div>
 
               {/* Ảnh nằm trên và căn giữa */}
               <img
@@ -444,7 +444,7 @@ const CameraCapture = ({ onCapture }) => {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="rounded-full w-22 h-22 duration-300 outline-base-300 bg-white/10 backdrop-blur-4xl mx-4 text-center flex items-center justify-center"
+                  className="rounded-full w-22 h-22 duration-300 outline-base-300 bg-base-300/50 backdrop-blur-4xl mx-4 text-center flex items-center justify-center"
                 >
                   <Send size={40} className="mr-1 mt-1" />
                 </button>
@@ -474,14 +474,14 @@ const CameraCapture = ({ onCapture }) => {
                 >
                   {/* Vòng viền bên trên */}
                   <div
-                    className={`absolute w-22 h-22 border-5 border-blue-600 rounded-full z-10 ${
+                    className={`absolute w-22 h-22 border-5 border-base-content/50 rounded-full z-10 ${
                       isHolding ? "animate-lightPulse" : ""
                     }`}
                   ></div>
 
                   {/* Nút bên dưới */}
                   <div
-                    className={`absolute rounded-full btn w-18 h-18 outline-accent bg-blue-300 z-0 ${
+                    className={`absolute rounded-full btn w-18 h-18 outline-accent bg-base-content z-0 ${
                       isHolding ? "animate-pulseBeat" : ""
                     }`}
                   ></div>
