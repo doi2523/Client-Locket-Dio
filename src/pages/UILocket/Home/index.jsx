@@ -22,6 +22,7 @@ import * as utils from "../../../utils";
 import * as lockerService from "../../../services/locketService.js";
 import LeftHomeScreen from "./leftHomeScreen";
 import { AuthContext } from "../../../context/AuthLocket";
+import RightHomeScreen from "./rightHomeScreen.jsx";
 
 const CameraCapture = ({ onCapture }) => {
     const { user, setUser } = useContext(AuthContext);
@@ -47,7 +48,7 @@ const CameraCapture = ({ onCapture }) => {
   const [countdown, setCountdown] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [isProfileReady, setIsProfileReady] = useState(false);
+  const [isHomeOpen, setIsHomeOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
@@ -339,10 +340,9 @@ const CameraCapture = ({ onCapture }) => {
   return (
     <>
       <div
-        className={`transition-transform duration-500 ${
-          isProfileOpen ? "translate-x-full" : "translate-x-0"
-        }`}
-        onTransitionEnd={() => setIsProfileReady(isProfileOpen)}
+  className={`transition-transform duration-500 ${
+    isProfileOpen ? "translate-x-full" : isHomeOpen ? "-translate-x-full" : "translate-x-0"
+  }`}
       >
         <div className="flex select-none flex-col items-center justify-start h-full min-h-screen -z-50">
           <div className="navbar top-0 left-0 flex items-center justify-between px-6">
@@ -351,7 +351,7 @@ const CameraCapture = ({ onCapture }) => {
               className="relative flex items-center justify-center w-12 h-12"
             >
               {/* Vòng tròn nền */}
-              <div className="bg-blue-300/40 w-12 h-12 rounded-full absolute"></div>
+              <div className="bg-base-content/20 w-12 h-12 rounded-full absolute"></div>
 
               {/* Ảnh nằm trên và căn giữa */}
               <img
@@ -363,7 +363,7 @@ const CameraCapture = ({ onCapture }) => {
             <div className="flex items-center">
               {/* <ThemeDropdown /> */}
               <button
-                onClick={() => setIsOpen(true)}
+                onClick={() => setIsHomeOpen(true)}
                 className="flex items-center justify-center p-2 transition cursor-pointer rounded-full bg-base-200 w-12 h-12"
               >
                 <Menu size={30} strokeWidth={2} />
@@ -444,7 +444,7 @@ const CameraCapture = ({ onCapture }) => {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="rounded-full w-22 h-22 duration-300 outline-base-300 bg-white/10 backdrop-blur-4xl mx-4 text-center flex items-center justify-center"
+                  className="rounded-full w-22 h-22 duration-300 outline-base-300 bg-base-300/50 backdrop-blur-4xl mx-4 text-center flex items-center justify-center"
                 >
                   <Send size={40} className="mr-1 mt-1" />
                 </button>
@@ -474,14 +474,14 @@ const CameraCapture = ({ onCapture }) => {
                 >
                   {/* Vòng viền bên trên */}
                   <div
-                    className={`absolute w-22 h-22 border-5 border-blue-600 rounded-full z-10 ${
+                    className={`absolute w-22 h-22 border-5 border-base-content/50 rounded-full z-10 ${
                       isHolding ? "animate-lightPulse" : ""
                     }`}
                   ></div>
 
                   {/* Nút bên dưới */}
                   <div
-                    className={`absolute rounded-full btn w-18 h-18 outline-accent bg-blue-300 z-0 ${
+                    className={`absolute rounded-full btn w-18 h-18 outline-accent bg-base-content z-0 ${
                       isHolding ? "animate-pulseBeat" : ""
                     }`}
                   ></div>
@@ -499,8 +499,6 @@ const CameraCapture = ({ onCapture }) => {
             )}
           </div>
           <canvas ref={canvasRef} className="hidden" />
-          <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} user={user} setUser={setUser} />
-          <ThemeSelector />
         </div>
       </div>
 
@@ -510,6 +508,10 @@ const CameraCapture = ({ onCapture }) => {
         onClose={() => setIsProfileOpen(false)}
       />
       {/* right */}
+      <RightHomeScreen
+        isOpen={isHomeOpen}
+        onClose={() => setIsHomeOpen(false)}
+      />
     </>
   );
 };
