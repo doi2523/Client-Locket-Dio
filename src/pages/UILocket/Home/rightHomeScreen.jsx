@@ -3,6 +3,7 @@ import { AuthContext } from "../../../context/AuthLocket";
 import { ChevronLeft, Settings } from "lucide-react";
 import React from "react";
 import LoadingRing from "../../../components/UI/Loading/ring";
+import ThemeSelector from "../../../components/Theme/ThemeSelector";
 
 const RightHomeScreen = ({ isOpen, onClose }) => {
   const { user, setUser } = useContext(AuthContext);
@@ -39,7 +40,7 @@ const RightHomeScreen = ({ isOpen, onClose }) => {
       </div>
 
       {/* Nội dung */}
-      <div className="flex flex-col items-center justify-start flex-1 px-4 overflow-y-scroll py-6 space-y-6">
+      <div className="flex flex-col items-center justify-start flex-1 px-4 overflow-y-scroll py-6">
         {/* Thông tin cơ bản */}
         <div className="flex flex-row items-center bg-base-200/50 border-base-300 text-base-content p-6 rounded-lg shadow-lg w-full max-w-2xl">
           <div className="avatar relative w-24 h-24 disable-select">
@@ -74,17 +75,7 @@ const RightHomeScreen = ({ isOpen, onClose }) => {
             </a>
           </div>
         </div>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
+        <ThemeSelector />
       </div>
     </div>
   );
