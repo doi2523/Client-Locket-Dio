@@ -7,6 +7,7 @@ import Profile from "../pages/Auth/Profile";
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
 import Timeline from "../pages/Public/Timeline";
+import UploadForm from "../pages/Test";
 import CameraCapture from "../pages/UILocket/Home";
 
 const APP_NAME = "💛Locket Pro - Đăng ảnh & Video lên Locket";
@@ -16,6 +17,7 @@ const publicRoutes = [
   { path: "/", component: Home, title: `${APP_NAME} | Trang Chủ` },
   { path: "/test", component: CameraCapture, title: `${APP_NAME} | Test` },
   { path: "/login", component: Login, title: `${APP_NAME} | Đăng Nhập` },
+  { path: "/testv1", component: UploadForm, title: `${APP_NAME} | Test` },
 ];
 
 // 📌 Các route yêu cầu đăng nhập
