@@ -28,10 +28,15 @@ export const login = async (email, password) => {
 //Logout
 export const logout = async () => {
   try {
-    const response = await axios.get(utils.API_URL.LOGOUT_URL, { withCredentials: true });
+    const response = await axios.get(utils.API_URL.LOGOUT_URL, {
+      withCredentials: true,
+    });
     return response.data; // ✅ Trả về dữ liệu từ API (ví dụ: { message: "Đã đăng xuất!" })
   } catch (error) {
-    console.error("❌ Lỗi khi đăng xuất:", error.response?.data || error.message);
+    console.error(
+      "❌ Lỗi khi đăng xuất:",
+      error.response?.data || error.message
+    );
     throw error.response?.data || error.message; // ✅ Trả về lỗi nếu có
   }
 };
@@ -41,7 +46,10 @@ export const getInfocheckAuth = async (idToken, localId) => {
       throw new Error("Thiếu idToken! Vui lòng đăng nhập lại.");
     }
 
-    const res = await axios.post(utils.API_URL.CHECK_AUTH_URL, { idToken, localId });
+    const res = await axios.post(utils.API_URL.CHECK_AUTH_URL, {
+      idToken,
+      localId,
+    });
 
     return res.status; // Chỉ trả về status
   } catch (error) {
@@ -63,7 +71,10 @@ export const getInfo = async (idToken, localId) => {
       throw new Error("Thiếu idToken! Vui lòng đăng nhập lại.");
     }
 
-    const res = await axios.post(utils.API_URL.GET_INFO_URL, { idToken, localId });
+    const res = await axios.post(utils.API_URL.GET_INFO_URL, {
+      idToken,
+      localId,
+    });
 
     if (!res.data || !res.data.user) {
       throw new Error("Dữ liệu trả về không hợp lệ!");
@@ -72,7 +83,7 @@ export const getInfo = async (idToken, localId) => {
     return res.data.user;
   } catch (error) {
     let errorMessage = "Lỗi không xác định!";
-    
+
     if (error.response) {
       // Lỗi từ server
       errorMessage = error.response.data?.message || "Lỗi từ server!";
@@ -90,8 +101,12 @@ export const getInfo = async (idToken, localId) => {
 };
 //Get Momemnt
 export const getLatestMoment = async (idToken) => {
-  try {    
-    const res = await axios.post(utils.API_URL.GET_LASTEST_URL,{idToken}, { withCredentials: true });
+  try {
+    const res = await axios.post(
+      utils.API_URL.GET_LASTEST_URL,
+      { idToken },
+      { withCredentials: true }
+    );
 
     console.log("Moment mới nhất:", res.data);
     return res.data;
@@ -104,32 +119,50 @@ export const uploadMedia = async (formData, setUploadProgress) => {
   let timeOutId;
 
   try {
-      const fileType = formData.get("images") ? "image" : "video"; 
+    const fileType = formData.get("images") ? "image" : "video";
 
-      // Thời gian chờ tùy vào loại file
-      timeOutId = setTimeout(() => {
-          console.log("⏳ Uploading is taking longer than expected...");
-      }, fileType === "image" ? 5000 : 10000);
+    // Thời gian chờ tùy vào loại file
+    timeOutId = setTimeout(
+      () => {
+        console.log("⏳ Uploading is taking longer than expected...");
+      },
+      fileType === "image" ? 5000 : 15000
+    );
 
-      const response = await axios.post(utils.API_URL.UPLOAD_MEDIA_URL, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-          onUploadProgress: (progressEvent) => {
-              const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-              console.log(`📤 Uploading: ${percent}%`);
-              setUploadProgress(percent); // Cập nhật tiến trình tải lên
-          },
-      });
+    const response = await axios.post(
+      utils.API_URL.UPLOAD_MEDIA_URL,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (progressEvent) => {
+          if (setUploadProgress && typeof setUploadProgress === "function") {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
 
-      clearTimeout(timeOutId);
-      
-      console.log("✅ Upload thành công:", response.data);
-      return response.data;
+            // Giảm tốc độ cập nhật progress
+            if (percent > currentProgress) {
+              const updateProgress = (target) => {
+                if (currentProgress < target) {
+                  currentProgress += 1;
+                  setUploadProgress(currentProgress);
+                  setTimeout(() => updateProgress(target), 50); // Điều chỉnh tốc độ
+                }
+              };
+              updateProgress(percent);
+            }
+          }
+        },
+      }
+    );
+
+    clearTimeout(timeOutId);
+
+    console.log("✅ Upload thành công:", response.data);
+    return response.data;
   } catch (error) {
-      clearTimeout(timeOutId);
-      console.error("❌ Lỗi khi upload:", error.response?.data || error.message);
-      throw error;
+    clearTimeout(timeOutId);
+    console.error("❌ Lỗi khi upload:", error.response?.data || error.message);
+    throw error;
   }
 };
-
-  
