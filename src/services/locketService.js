@@ -117,17 +117,13 @@ export const getLatestMoment = async (idToken) => {
 };
 export const uploadMedia = async (formData, setUploadProgress) => {
   let timeOutId;
-
   try {
     const fileType = formData.get("images") ? "image" : "video";
-
+    
     // Thời gian chờ tùy vào loại file
-    timeOutId = setTimeout(
-      () => {
-        console.log("⏳ Uploading is taking longer than expected...");
-      },
-      fileType === "image" ? 5000 : 15000
-    );
+    timeOutId = setTimeout(() => {
+      console.log("⏳ Uploading is taking longer than expected...");
+    }, fileType === "image" ? 5000 : 10000);
 
     const response = await axios.post(
       utils.API_URL.UPLOAD_MEDIA_URL,
@@ -139,14 +135,13 @@ export const uploadMedia = async (formData, setUploadProgress) => {
             const percent = Math.round(
               (progressEvent.loaded * 100) / progressEvent.total
             );
-
-            // Giảm tốc độ cập nhật progress
+            let currentProgress = 0;
             if (percent > currentProgress) {
               const updateProgress = (target) => {
                 if (currentProgress < target) {
                   currentProgress += 1;
                   setUploadProgress(currentProgress);
-                  setTimeout(() => updateProgress(target), 50); // Điều chỉnh tốc độ
+                  setTimeout(() => updateProgress(target), 50);
                 }
               };
               updateProgress(percent);
@@ -157,12 +152,22 @@ export const uploadMedia = async (formData, setUploadProgress) => {
     );
 
     clearTimeout(timeOutId);
-
     console.log("✅ Upload thành công:", response.data);
     return response.data;
   } catch (error) {
     clearTimeout(timeOutId);
+    
+    // Log lỗi chi tiết hơn
     console.error("❌ Lỗi khi upload:", error.response?.data || error.message);
+    
+    if (error.response) {
+      // Xử lý lỗi từ server
+      console.error("Server Error:", error.response);
+    } else {
+      // Xử lý lỗi kết nối hoặc khác
+      console.error("Network Error:", error.message);
+    }
+    
     throw error;
   }
 };

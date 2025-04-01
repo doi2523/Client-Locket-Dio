@@ -54,10 +54,10 @@ const PostVideo = () => {
       showToast("error", "Vui lòng chọn video!");
       return;
     }
-
+  
     setIsUploading(true);
     setUploadProgress(0); // Reset progress khi bắt đầu
-
+  
     const formData = new FormData();
     formData.append("videos", file);
     formData.append("caption", caption);
@@ -66,17 +66,30 @@ const PostVideo = () => {
     formData.append("colorBottom", colorBottom || "#1E90FF");
     formData.append("idToken", utils.getAuthCookies().idToken);
     formData.append("localId", utils.getAuthCookies().localId);
-
+  
     try {
       await lockerService.uploadMedia(formData, setUploadProgress);
       showToast("success", "Video đã được tải lên!");
     } catch (error) {
-      showToast("error", "Lỗi khi tải video lên!");
-      console.error(error);
+      if (error.response) {
+        const status = error.response.status;
+        const statusText = error.response.statusText || "Unknown Error";
+  
+        if (status === 413) {
+          showToast("error", `Lỗi ${status}: Dung lượng file quá lớn!`);
+        } else {
+          showToast("error", `Lỗi ${status}: ${statusText}`);
+        }
+      } else {
+        showToast("error", `Lỗi không xác định: ${error.message}`);
+      }
+  
+      console.error("❌ Upload Error:", error);
     } finally {
       setIsUploading(false);
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center flex-col min-h-screen p-6 bg-base-200">
