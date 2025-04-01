@@ -95,9 +95,9 @@ const Post = () => {
       showToast("info", "Đang tạo bài viết!");
       const res = await lockerService.uploadMedia(formData);
 
-      setPreviewUrl("");
-      setCaption("");
-      setCroppedImage("");
+      // setPreviewUrl("");
+      // setCaption("");
+      // setCroppedImage("");
       setIsUploading(false);
 
       showToast("success", "Đăng bài viết thành công!");

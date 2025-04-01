@@ -1,6 +1,6 @@
-//const BASE_API_URL = "https://my-api-locket.vercel.app"; //http://localhost:5004
-//const BASE_API_URL = "http://localhost:5004";https://my-api-locket-production.up.railway.app/
-const BASE_API_URL = "https://my-api-locket-production.up.railway.app";
+const BASE_API_URL = "https://my-api-locket.vercel.app"; //http://localhost:5004
+//const BASE_API_URL = "http://localhost:5004";//https://my-api-locket-production.up.railway.app/
+//const BASE_API_URL = "https://my-api-locket-production.up.railway.app";
 
 const LOCKET_URL = "/locket";
 

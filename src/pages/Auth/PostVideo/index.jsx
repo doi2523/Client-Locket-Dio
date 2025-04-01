@@ -11,7 +11,6 @@ import { showToast } from "../../../components/Toast/index.jsx";
 import * as lockerService from "../../../services/locketService.js";
 import * as utils from "../../../utils";
 import LoadingRing from "../../../components/UI/Loading/ring.jsx";
-import { cropVideoToSquare } from "../../../helpers/Media/cropMedia.js";
 import Hourglass from "../../../components/UI/Loading/hourglass.jsx";
 
 const PostVideo = () => {
@@ -21,7 +20,6 @@ const PostVideo = () => {
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const [countdown, setCountdown] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
 
   const [colorTop, setColorTop] = useState(null);
@@ -30,7 +28,7 @@ const PostVideo = () => {
 
   const handleTriggerUploadFile = () => fileRef.current?.click();
 
-  const handleSelectFile = async (event) => {
+  const handleSelectFile = (event) => {
     const selectedFile = event.target.files[0];
     if (!selectedFile) return;
 
@@ -39,26 +37,15 @@ const PostVideo = () => {
       return;
     }
 
-    try {
-      setLoading(true);
-      const videoBlob = new Blob([selectedFile], { type: selectedFile.type });
+    setLoading(true);
 
-      // Cắt video thành hình vuông
-      const croppedBlob = await cropVideoToSquare(videoBlob, setCountdown);
-      const videoUrl = URL.createObjectURL(croppedBlob);
+    const videoUrl = URL.createObjectURL(selectedFile);
+    setSelectedFile({ type: "video", data: videoUrl });
+    setPreviewUrl(videoUrl);
+    setFile(selectedFile);
 
-      // Cập nhật state
-      setSelectedFile({ type: "video", data: videoUrl });
-      setPreviewUrl(videoUrl);
-      setFile(croppedBlob); // ✅ Cập nhật file để upload
-
-      setLoading(false);
-      showToast("success", "Tải video thành công!");
-    } catch (error) {
-      console.error("Lỗi khi xử lý video:", error);
-      showToast("error", "Không thể xử lý video!");
-      setLoading(false);
-    }
+    setLoading(false);
+    showToast("success", "Tải video thành công!");
   };
 
   const handleUploadFile = async () => {
@@ -69,9 +56,11 @@ const PostVideo = () => {
 
     setIsUploading(true);
     const formData = new FormData();
-    formData.append("videos", file); // ✅ Sử dụng video đã xử lý
-    console.log(file)
+    formData.append("videos", file);
     formData.append("caption", caption);
+    formData.append("text_color", colorText || "#FFFFFF")
+    formData.append("colorTop", colorTop || "#00FA9A");
+    formData.append("colorBottom", colorBottom || "#1E90FF");
     formData.append("idToken", utils.getAuthCookies().idToken);
     formData.append("localId", utils.getAuthCookies().localId);
 
