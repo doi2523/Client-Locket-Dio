@@ -203,7 +203,6 @@ const Post = () => {
 
         <div className="text-center mb-6">
           <h2 className="text-3xl font-semibold  mb-4">Customize Caption</h2>
-          <p>Đang phát triển</p>
           {/* Chọn màu */}
           <div className="p-4 rounded-md shadow-md w-full max-w-md border">
             <h3 className="text-lg font-semibold  mb-3 text-left flex flex-row items-center">

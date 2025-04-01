@@ -87,7 +87,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                     className={`flex items-center px-3 py-3 rounded-lg transition ${location.pathname === "/home" ? "bg-base-300" : "hover:bg-base-200"}`}
                     onClick={() => setIsOpen(false)}
                   >
-                    <Home size={22} /> Home
+                    <Home size={22} /> Trang chủ
                   </Link>
                 </li>
                 <li>
@@ -96,7 +96,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                     className={`flex items-center px-3 py-3 rounded-lg transition ${location.pathname === "/timeline" ? "bg-base-300" : "hover:bg-base-200"}`}
                     onClick={() => setIsOpen(false)}
                   >
-                    <LucideTimer size={22} /> Timeline
+                    <LucideTimer size={22} /> Lịch sử
                   </Link>
                 </li>
                 <li>
@@ -105,7 +105,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                     className={`flex items-center px-3 py-3 rounded-lg transition ${location.pathname === "/post" ? "bg-base-300" : "hover:bg-base-200"}`}
                     onClick={() => setIsOpen(false)}
                   >
-                    <Upload size={22} /> Post
+                    <Upload size={22} /> Đăng ảnh
                   </Link>
                 </li>
                 <li>
@@ -114,7 +114,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                     className={`flex items-center px-3 py-3 rounded-lg transition ${location.pathname === "/postvideo" ? "bg-base-300" : "hover:bg-base-200"}`}
                     onClick={() => setIsOpen(false)}
                   >
-                    <Upload size={22} /> Post Video
+                    <Upload size={22} /> Đăng Video
                   </Link>
                 </li>
                 <li>
@@ -132,7 +132,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                     className={`flex items-center px-3 py-3 rounded-lg transition ${location.pathname === "/profile" ? "bg-base-300" : "hover:bg-base-200"}`}
                     onClick={() => setIsOpen(false)}
                   >
-                    <User size={22} /> Profile
+                    <User size={22} /> Hồ sơ
                   </Link>
                 </li>
                 <li className="mt-5">

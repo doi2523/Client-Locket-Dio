@@ -100,31 +100,36 @@ export const getLatestMoment = async (idToken) => {
     throw error; // Quăng lỗi để xử lý trong component
   }
 };
-export const uploadMedia = async (formData) => {
-    let timeOutId;
-  
-    try {
+export const uploadMedia = async (formData, setUploadProgress) => {
+  let timeOutId;
+
+  try {
       const fileType = formData.get("images") ? "image" : "video"; 
-  
+
       // Thời gian chờ tùy vào loại file
       timeOutId = setTimeout(() => {
-        console.log("⏳ Uploading is taking longer than expected...");
+          console.log("⏳ Uploading is taking longer than expected...");
       }, fileType === "image" ? 5000 : 10000);
-  
+
       const response = await axios.post(utils.API_URL.UPLOAD_MEDIA_URL, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+          onUploadProgress: (progressEvent) => {
+              const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              console.log(`📤 Uploading: ${percent}%`);
+              setUploadProgress(percent); // Cập nhật tiến trình tải lên
+          },
       });
-  
+
       clearTimeout(timeOutId);
       
       console.log("✅ Upload thành công:", response.data);
       return response.data;
-    } catch (error) {
+  } catch (error) {
       clearTimeout(timeOutId);
-  
       console.error("❌ Lỗi khi upload:", error.response?.data || error.message);
       throw error;
-    }
-  };
+  }
+};
+
   
