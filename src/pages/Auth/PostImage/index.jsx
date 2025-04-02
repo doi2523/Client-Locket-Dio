@@ -95,9 +95,9 @@ const Post = () => {
       showToast("info", "Đang tạo bài viết!");
       const res = await lockerService.uploadMedia(formData);
 
-      // setPreviewUrl("");
-      // setCaption("");
-      // setCroppedImage("");
+      setPreviewUrl("");
+      setCaption("");
+      setCroppedImage("");
       setIsUploading(false);
 
       showToast("success", "Đăng bài viết thành công!");
@@ -119,7 +119,7 @@ const Post = () => {
             onClick={handleTriggerUploadFile}
           >
             <FolderOpen size={20} className="" />
-            <p className="">Click to Upload Image</p>
+            <p className="">Click để chọn ảnh nhỏ hơn 5MB</p>
             <input
               type="file"
               ref={fileRef}

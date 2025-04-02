@@ -8,7 +8,7 @@ import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
 import Timeline from "../pages/Public/Timeline";
 import UploadForm from "../pages/Test";
-import CameraCapture from "../pages/UILocket/Home";
+import CameraCapture from "../pages/UILocket";
 
 const APP_NAME = "💛Locket Pro - Đăng ảnh & Video lên Locket";
 

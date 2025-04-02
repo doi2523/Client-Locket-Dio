@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 
-const AutoResizeTextarea = ({ value, onChange, placeholder }) => {
+const AutoResizeTextarea = ({ value, onChange, placeholder, selectedColors }) => {
   const textareaRef = useRef(null);
-
+  
   // Điều chỉnh chiều cao tự động
   const adjustHeight = () => {
     if (textareaRef.current) {
@@ -47,6 +47,7 @@ const AutoResizeTextarea = ({ value, onChange, placeholder }) => {
         overflow: "hidden",
         minHeight: "40px",
         whiteSpace: "pre-wrap",
+        background: `linear-gradient(to top, ${selectedColors.top}, ${selectedColors.bottom})`, // Apply gradient using the top and bottom values
       }}
     />
   );
