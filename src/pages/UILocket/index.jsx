@@ -21,10 +21,11 @@ import LeftHomeScreen from "./ExtendPage/leftHomeScreen.jsx";
 import { AuthContext } from "../../context/AuthLocket.jsx";
 
 import RightHomeScreen from "./ExtendPage/rightHomeScreen.jsx";
-import FiltersSelector from "./ControlPage/filtersSelector.jsx";
+
 import Navbar from "./ExtendPage/\bNavbar.jsx";
 import CameraControls from "./ControlPage/ActionButtons.jsx";
 import MediaPreview from "./ExtendPage/MediaDisplay.jsx";
+import FiltersSelector from "./controlPage/filtersSelector.jsx";
 
 const CameraCapture = ({ onCapture }) => {
   const { user, setUser } = useContext(AuthContext);
