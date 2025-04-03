@@ -25,7 +25,7 @@ import RightHomeScreen from "./ExtendPage/rightHomeScreen.jsx";
 import Navbar from "./ExtendPage/\bNavbar.jsx";
 import CameraControls from "./ControlPage/ActionButtons.jsx";
 import MediaPreview from "./ExtendPage/MediaDisplay.jsx";
-import FiltersSelector from "./controlPage/filtersSelector.jsx";
+import FiltersSelector from "./ControlPage/FiltersSelector.jsx";
 
 const CameraCapture = ({ onCapture }) => {
   const { user, setUser } = useContext(AuthContext);
