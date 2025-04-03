@@ -22,8 +22,9 @@ import * as utils from "../../utils/index.js";
 import * as lockerService from "../../services/locketService.js";
 import LeftHomeScreen from "./ExtendPage/leftHomeScreen.jsx";
 import { AuthContext } from "../../context/AuthLocket.jsx";
+
 import RightHomeScreen from "./ExtendPage/rightHomeScreen.jsx";
-import FiltersSelector from "./controlPage/filtersSelector.jsx";
+import FiltersSelector from "./ControlPage/filtersSelector.jsx";
 import Navbar from "./ExtendPage/\bNavbar.jsx";
 import CameraControls from "./ControlPage/ActionButtons.jsx";
 import MediaPreview from "./ExtendPage/MediaDisplay.jsx";
