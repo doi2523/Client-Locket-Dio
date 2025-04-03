@@ -27,7 +27,7 @@ const LeftHomeScreen = ({ isOpen, onClose }) => {
       }`}
     >
       {/* Navbar */}
-      <div className="flex items-center justify-between px-4 pt-2 pb-4 text-base-content">
+      <div className="flex items-center shadow-lg justify-between px-4 pt-2 pb-4 text-base-content">
         <div className="font-lovehouse text-2xl font-semibold px-3 pt-1 border-base-content border rounded-xl">
           Locket Pro
         </div>

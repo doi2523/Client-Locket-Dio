@@ -9,7 +9,7 @@ const Navbar = ({ setIsProfileOpen, setIsHomeOpen }) => {
         className="relative flex items-center justify-center w-12 h-12"
       >
         {/* Vòng tròn nền */}
-        <div className="bg-base-content/20 w-12 h-12 rounded-full absolute"></div>
+        <div className="bg-base-200 w-12 h-12 rounded-full absolute"></div>
 
         {/* Ảnh nằm trên và căn giữa */}
         <img

@@ -30,7 +30,10 @@ export const AuthProvider = ({ children }) => {
           utils.clearAuthCookies();
           utils.removeUser();
           setUser(null);
-          showToast("error", "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!");
+          showToast(
+            "error",
+            "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!"
+          );
           window.location.href = "/login"; // Chuyển hướng đến trang đăng nhập
         }
       } finally {

@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { publicRoutes, authRoutes, locketRoutes } from "./routes";
-import DefaultLayout from "./layouts/mainLayout";
 import { AuthProvider, AuthContext } from "./context/AuthLocket";
 import { ThemeProvider } from "./context/ThemeContext"; // 🟢 Import ThemeProvider
 import { showToast } from "./components/Toast";

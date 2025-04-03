@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect, useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
   X,
   Home,
@@ -10,12 +10,12 @@ import {
   LucideTimer,
   Smartphone,
 } from "lucide-react";
-import { showToast } from "../Toast";
-import * as locketService from "../../services/locketService";
-import * as ultils from "../../utils";
+import { AuthContext } from "../../../context/AuthLocket";
+import { showToast } from "../../../components/Toast";
+import * as ultils from "../../../utils";
 
-const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
-  const navigate = useNavigate();
+const SidebarLocket = ({ isOpen, onClose }) => {
+  const { user, setUser } = useContext(AuthContext);
   const location = useLocation();
 
   useEffect(() => {
@@ -24,6 +24,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
     } else {
       document.body.classList.remove("overflow-hidden");
     }
+
     return () => {
       document.body.classList.remove("overflow-hidden");
     };
@@ -31,12 +32,11 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
 
   const handleLogout = async () => {
     try {
-      await locketService.logout();
       setUser(null);
       ultils.clearAuthData();
       ultils.removeUser();
       showToast("success", "Đăng xuất thành công!");
-      navigate("/login");
+      onClose();
     } catch (error) {
       showToast("error", "Đăng xuất thất bại!");
       console.error("❌ Lỗi khi đăng xuất:", error);
@@ -45,22 +45,19 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
 
   return (
     <>
-      {/* Overlay */}
       <div
-        className={`fixed z-60 inset-0 bg-base-100/10 backdrop-blur-[2px] transition-opacity duration-500 ${
-          isOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+        className={`fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 z-[55] ${
+          isOpen ? "opacity-100" : "opacity-0"
         }`}
-        onClick={() => setIsOpen(false)}
-      ></div>
+        onClick={onClose}
+      />
 
-      {/* Sidebar */}
       <div
-        className={`fixed z-60 top-0 right-0 h-full w-60 shadow-xl transform transition-transform duration-300 bg-base-100 ${
+        className={`fixed z-60 top-0 right-0 h-full w-64 shadow-xl transform transition-transform duration-300 bg-base-100 border-l border-base-300 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
+        {/* Header */}
         <div className="flex justify-between items-center py-3 px-5 border-b border-base-300">
           <Link to="/" className="flex items-center gap-1">
             <img
@@ -74,13 +71,14 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
             </span>
           </Link>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={onClose}
             className="p-2 rounded-md transition cursor-pointer btn"
           >
             <X size={24} />
           </button>
         </div>
 
+        {/* Menu */}
         <div className="h-[calc(100vh-56px)] overflow-y-auto bg-base-100 text-base-content">
           <ul className="menu bg-base-100 text-base-content w-full py-4 px-2 text-md font-semibold space-y-1">
             {user ? (
@@ -93,7 +91,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                         ? "bg-base-300"
                         : "hover:bg-base-200"
                     }`}
-                    onClick={() => setIsOpen(false)}
+                    onClick={onClose}
                   >
                     <Home size={22} /> Trang chủ
                   </Link>
@@ -106,7 +104,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                         ? "bg-base-300"
                         : "hover:bg-base-200"
                     }`}
-                    onClick={() => setIsOpen(false)}
+                    onClick={onClose}
                   >
                     <LucideTimer size={22} /> Lịch sử
                   </Link>
@@ -119,7 +117,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                         ? "bg-base-300"
                         : "hover:bg-base-200"
                     }`}
-                    onClick={() => setIsOpen(false)}
+                    onClick={onClose}
                   >
                     <Upload size={22} /> Đăng ảnh
                   </Link>
@@ -132,7 +130,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                         ? "bg-base-300"
                         : "hover:bg-base-200"
                     }`}
-                    onClick={() => setIsOpen(false)}
+                    onClick={onClose}
                   >
                     <Upload size={22} /> Đăng Video
                   </Link>
@@ -145,7 +143,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                         ? "bg-base-300"
                         : "hover:bg-base-200"
                     }`}
-                    onClick={() => setIsOpen(false)}
+                    onClick={onClose}
                   >
                     <Smartphone size={22} /> Locket UI
                   </Link>
@@ -158,7 +156,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                         ? "bg-base-300"
                         : "hover:bg-base-200"
                     }`}
-                    onClick={() => setIsOpen(false)}
+                    onClick={onClose}
                   >
                     <User size={22} /> Hồ sơ
                   </Link>
@@ -168,7 +166,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                     className="flex items-center w-full px-3 py-3 rounded-lg btn transition"
                     onClick={() => {
                       handleLogout();
-                      setIsOpen(false);
+                      onClose();
                     }}
                   >
                     <LogOut size={22} /> Đăng xuất
@@ -184,7 +182,7 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
                       ? "bg-base-300"
                       : "hover:bg-base-200"
                   }`}
-                  onClick={() => setIsOpen(false)}
+                  onClick={onClose}
                 >
                   <LogIn size={22} /> Đăng nhập
                 </Link>
@@ -197,4 +195,4 @@ const Sidebar = ({ isOpen, setIsOpen, user, setUser }) => {
   );
 };
 
-export default Sidebar;
+export default SidebarLocket;

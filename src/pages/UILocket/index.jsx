@@ -8,15 +8,12 @@ import {
   Menu,
   MenuIcon,
 } from "lucide-react";
-import AutoResizeTextarea from "./ExtendPage/AutoResizeTextarea.jsx";
 import { showToast } from "../../components/Toast/index.jsx";
-import Hourglass from "../../components/UI/Loading/hourglass.jsx";
 import {
   cropVideoToSquare,
   cropVideoToSquareV2,
 } from "../../helpers/Media/cropMedia.js";
 import { correctFrontCameraVideo } from "../../helpers/Media/flipVideoHorizontal.js";
-import ThemeSelector from "../../components/Theme/ThemeSelector.jsx";
 import Sidebar from "../../components/Sidebar/index.jsx";
 import * as utils from "../../utils/index.js";
 import * as lockerService from "../../services/locketService.js";
@@ -43,7 +40,7 @@ const CameraCapture = ({ onCapture }) => {
   const [rotation, setRotation] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
   const [holdTime, setHoldTime] = useState(0);
-  const [permissionChecked, setPermissionChecked] = useState(true); //Đổi false để hỏi xin camera
+  const [permissionChecked, setPermissionChecked] = useState(false); //Đổi false để hỏi xin camera
   const holdTimeout = useRef(null);
   const intervalRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -58,9 +55,8 @@ const CameraCapture = ({ onCapture }) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedColors, setSelectedColors] = useState({
     top: "transparent", // Màu nền mặc định là trong suốt
-    bottom: "transparent"
+    bottom: "transparent",
   });
-  
 
   useEffect(() => {
     if (!permissionChecked) {
@@ -363,7 +359,7 @@ const CameraCapture = ({ onCapture }) => {
 
   const handleSelectFilter = (filter) => {
     console.log("Selected Filter:", filter);
-    setSelectedColors(filter)
+    setSelectedColors(filter);
     setIsFilterOpen(false); // Close the filter selector after selection
   };
 

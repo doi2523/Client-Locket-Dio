@@ -20,6 +20,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-easy-crop": "^5.4.1",
+    "react-fast-marquee": "^1.6.5",
     "react-router-dom": "^7.2.0",
     "react-toastify": "^11.0.5"
   },
