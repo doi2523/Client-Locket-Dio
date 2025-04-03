@@ -18,7 +18,7 @@ const Login = () => {
       const res = await locketService.login(email, password);
       if (!res) throw new Error("Lỗi: Server không trả về dữ liệu!");
       // Lưu token & localId ngay sau khi login
-      utils.setAuthCookies(res.user.idToken, res.user.localId, parseInt(res.user.expiresIn, 10));
+      utils.setAuthCookies(res.data.idToken, res.data.localId, parseInt(res.data.expiresIn, 10));
       showToast("success", "Đăng nhập thành công!");
 
       // Lấy token sau khi lưu
@@ -33,14 +33,38 @@ const Login = () => {
       utils.saveUser(userData);
       setUser(userData);
     } catch (error) {
-      showToast("error", error.message || "Đăng nhập thất bại!");
+      if (error.status) {
+        // 🔥 Xử lý lỗi từ server trả về
+        const { status, message, code } = error;
+
+        switch (status) {
+            case 400:
+                showToast("error", "Tài khoản hoặc mật khẩu không đúng!");
+                break;
+            case 401:
+                showToast("error", "Tài khoản hoặc mật khẩu không đúng!");
+                break;
+            case 403:
+                showToast("error", "Bạn không có quyền truy cập.");
+                window.location.href = "/login";
+                break;
+            case 500:
+                showToast("error", "Lỗi hệ thống, vui lòng thử lại sau!");
+                break;
+            default:
+                showToast("error", message || "Đăng nhập thất bại!");
+        }
+    } else {
+        // 🔥 Lỗi ngoài server (mạng, không phản hồi,...)
+        showToast("error", error.message || "Lỗi kết nối! Vui lòng kiểm tra lại mạng.");
+    }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-base-200">
+    <div className="flex items-center justify-center h-screen bg-base-200">
       <div className="w-full max-w-md mx-7 p-7 space-y-6 shadow-lg rounded-xl bg-opacity-50 backdrop-blur-3xl bg-base-100 border-base-300 text-base-content">
         <h1 className="text-3xl font-bold text-center">Đăng Nhập Locket</h1>
         <form onSubmit={handleLogin} className="space-y-4">

@@ -18,11 +18,11 @@ export const login = async (email, password) => {
 
     return res.data; // Trả về dữ liệu từ server
   } catch (error) {
-    console.error(
-      "Login error:",
-      error.response?.data?.message || error.message
-    );
-    return null;
+    if (error.response && error.response.data?.error) {
+      throw error.response.data.error; // ⬅️ Ném lỗi từ `error.response.data.error`
+    }
+    console.error("❌ Network Error:", error.message);
+    throw new Error("Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút.");
   }
 };
 //Logout
