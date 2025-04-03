@@ -1,6 +1,4 @@
 import React from "react";
-import AssistiveButton from "../components/UI/AssistiveButton";
-import FiltersSelector from "../pages/UILocket/controlPage/filtersSelector";
 
 const LocketLayout = ({ children }) => {
   return (
