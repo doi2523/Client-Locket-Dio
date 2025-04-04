@@ -1,80 +1,57 @@
-import { useState } from "react";
-import axios from "axios";
+import React, { useState } from 'react';
+import axios from 'axios';
 
-const SERVER_URL = "http://localhost:5005"; // Thay bằng URL của bạn
+const UploadForm = () => {
+  const [file, setFile] = useState(null);
+  const [uploadStatus, setUploadStatus] = useState('');
 
-export default function UploadForm() {
-    const [file, setFile] = useState(null);
-    const [type, setType] = useState("video-crop");
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState("");
-    const [resultUrl, setResultUrl] = useState(""); // Lưu URL file sau xử lý
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
 
-    const handleUpload = async (e) => {
-        e.preventDefault();
-        if (!file) return alert("Vui lòng chọn file!");
-    
-        const formData = new FormData();
-        formData.append("video", file);  // Tên "file" phải trùng với tên bạn gửi trong FormData
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) {
+      setUploadStatus("Please select a file to upload.");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('file', file);
+  
+    setUploadStatus("Uploading...");
+  
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/webdio-20ca8/us-central1/uploadFile", 
+        formData, 
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+  
+      if (response.status === 200) {
+        setUploadStatus(`File uploaded successfully! URL: ${response.data.fileUrl}`);
+      } else {
+        setUploadStatus(`Error: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setUploadStatus("Error uploading file.");
+    }
+  };
+  
+  return (
+    <div>
+      <h2>Upload File</h2>
+      <form id="uploadForm" encType="multipart/form-data" onSubmit={handleSubmit}>
+        <input type="file" id="media" name="file" onChange={handleFileChange} />
+        <button type="submit">Upload</button>
+      </form>
+      <p>{uploadStatus}</p>
+    </div>
+  );
+};
 
-        let endpoint = "";
-        if (type === "video-crop") endpoint = "/video/cropvideo";
-        if (type === "video-compress") endpoint = "/video/compress";
-        if (type === "image-crop") endpoint = "/image/crop";
-    
-        setLoading(true);
-        setMessage("");
-        setResultUrl("");
-
-        try {
-            const res = await axios.post(`${SERVER_URL}${endpoint}`, formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-
-            console.log(res); // Kiểm tra phản hồi từ server
-
-            if (res.data && res.data.videoUrl) {
-                setMessage("Xử lý thành công!");
-                setResultUrl(`${SERVER_URL}${res.data.videoUrl}`); // Đảm bảo trả về URL video
-            } else {
-                setMessage("Lỗi: Không nhận được URL video!");
-            }
-        } catch (error) {
-            setMessage("Lỗi xử lý file: " + (error.response?.data || error.message));
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <div className="flex flex-col items-center p-4 border rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4">Upload File</h2>
-            <input type="file" onChange={(e) => setFile(e.target.files[0])} className="mb-2" />
-            <select onChange={(e) => setType(e.target.value)} className="mb-4 p-2 border rounded">
-                <option value="video-crop">Cắt Video Thành Vuông</option>
-                <option value="video-compress">Nén Video</option>
-                <option value="image-crop">Cắt Ảnh Thành Vuông</option>
-            </select>
-            <button
-                onClick={handleUpload}
-                className="bg-blue-500 text-white p-2 rounded"
-                disabled={loading}
-            >
-                {loading ? "Đang xử lý..." : "Upload & Xử lý"}
-            </button>
-            <div className="mt-4">{message}</div>
-
-            {/* Hiển thị kết quả */}
-            {resultUrl && (
-                <div className="mt-4">
-                    <h3 className="font-bold">Kết quả:</h3>
-                    {type.includes("video") ? (
-                        <video controls src={resultUrl} className="mt-2 w-64 border rounded-lg"></video>
-                    ) : (
-                        <img src={resultUrl} alt="Processed Image" className="mt-2 w-64 border rounded-lg" />
-                    )}
-                </div>
-            )}
-        </div>
-    );
-}
+export default UploadForm;
