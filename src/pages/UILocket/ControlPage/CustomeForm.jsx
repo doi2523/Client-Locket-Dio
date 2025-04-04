@@ -70,7 +70,7 @@ const FiltersSelector = () => {
   return (
     <div
       className={`fixed bottom-0 left-0 right-0 transform transition-transform duration-500 ${
-        isFilterOpen ? "translate-y-0" : "translate-y-full"
+        isFilterOpen ? "translate-y-0" : "translate-y-0"
       }`}
     >
       <div
@@ -125,7 +125,7 @@ const FiltersSelector = () => {
                       background: `linear-gradient(to top, ${color.top}, ${color.bottom})`,
                       cursor: "pointer",
                     }}
-                    onClick={() => handleSelectFilter(color.top, color.bottom)}
+                    onClick={() => handleColorSelect(color.top, color.bottom)}
                   >
                     {`Màu ${index + 1}`}
                   </button>

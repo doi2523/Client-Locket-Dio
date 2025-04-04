@@ -1,11 +1,11 @@
 import React from "react";
 import AutoResizeTextarea from "./AutoResizeTextarea";
 import Hourglass from "../../../components/UI/Loading/hourglass";
+import { useApp } from "../../../context/AppContext";
 
 const MediaPreview = ({
   loading,
   countdown,
-  selectedFile,
   cameraActive,
   videoRef,
   cameraMode,
@@ -14,6 +14,8 @@ const MediaPreview = ({
   setCaption,
   selectedColors
 }) => {
+    const {post} = useApp();
+    const { selectedFile } = post;
   return (
     <>
       <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">
@@ -76,12 +78,7 @@ const MediaPreview = ({
         )}
 
         {(capturedMedia || selectedFile) && (
-          <AutoResizeTextarea
-            value={caption}
-            selectedColors={selectedColors} // Pass the gradient colors here
-            onChange={(e) => setCaption(e.target.value)}
-            placeholder="Nhập tin nhắn..."
-          />
+          <AutoResizeTextarea/>
         )}
       </div>
     </>

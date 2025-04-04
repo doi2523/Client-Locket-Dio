@@ -6,7 +6,6 @@ export const useCamera = () => {
   const canvasRef = useRef(null);
   const [capturedMedia, setCapturedMedia] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [caption, setCaption] = useState("");
   const [rotation, setRotation] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -19,8 +18,6 @@ export const useCamera = () => {
     setCapturedMedia,
     selectedFile,
     setSelectedFile,
-    caption,
-    setCaption,
     rotation,
     setRotation,
     isHolding,
