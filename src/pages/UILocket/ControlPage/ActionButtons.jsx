@@ -1,18 +1,24 @@
 import { X, Send, Sparkles, ImageUp, RefreshCcw } from "lucide-react";
+import LoadingRing from "../../../components/UI/Loading/ring";
 
-const MediaControls = ({ handleDelete, handleSubmit, setIsFilterOpen }) => {
+const MediaControls = ({ handleDelete, handleSubmit, setIsFilterOpen, loading }) => {
   return (
     <>
-      <button className="cursor-pointer" onClick={handleDelete}>
+      <button className="cursor-pointer" onClick={handleDelete} disabled={loading}>
         <X size={35} />
       </button>
       <button
         onClick={handleSubmit}
-        className="rounded-full w-22 h-22 duration-300 outline-base-300 bg-base-300/50 backdrop-blur-4xl mx-4 text-center flex items-center justify-center"
+        className="rounded-full w-22 h-22 duration-300 outline-base-300 bg-base-300/50 backdrop-blur-4xl mx-4 text-center flex items-center justify-center disabled:opacity-50"
+        disabled={loading} // Ngăn nhấn khi loading
       >
-        <Send size={40} className="mr-1 mt-1" />
+        {loading ? (
+          <LoadingRing size={40} stroke={3}/> // Hiệu ứng xoay khi loading
+        ) : (
+          <Send size={40} className="mr-1 mt-1" />
+        )}
       </button>
-      <button onClick={() => setIsFilterOpen(true)}>
+      <button onClick={() => setIsFilterOpen(true)} disabled={loading}>
         <Sparkles size={35} />
       </button>
     </>

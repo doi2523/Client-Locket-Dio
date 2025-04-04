@@ -3,13 +3,17 @@ import { AuthContext } from "../../../context/AuthLocket";
 import { ChevronRight, Settings } from "lucide-react";
 import React from "react";
 import LoadingRing from "../../../components/UI/Loading/ring";
+import { useApp } from "../../../context/AppContext";
 
-const LeftHomeScreen = ({ isOpen, onClose }) => {
+const LeftHomeScreen = () => {
   const { user, setUser } = useContext(AuthContext);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  
+  const { navigation, useloading } = useApp();
+  const { isProfileOpen, setIsProfileOpen } = navigation;
+  const { imageLoaded, setImageLoaded} = useloading;
   // Khóa / Mở cuộn ngang khi component mở hoặc đóng
   useEffect(() => {
-    if (isOpen) {
+    if (isProfileOpen) {
       document.body.classList.add("overflow-hidden");
     } else {
       document.body.classList.remove("overflow-hidden");
@@ -18,12 +22,12 @@ const LeftHomeScreen = ({ isOpen, onClose }) => {
     return () => {
       document.body.classList.remove("overflow-hidden"); // Cleanup khi unmount
     };
-  }, [isOpen]);
+  }, [isProfileOpen]);
 
   return (
     <div
       className={`fixed inset-0 flex flex-col transition-transform duration-500 z-50 ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
+        isProfileOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
       {/* Navbar */}
@@ -35,7 +39,10 @@ const LeftHomeScreen = ({ isOpen, onClose }) => {
           <button>
             <Settings size={30} />
           </button>
-          <button onClick={onClose} className="flex items-center">
+          <button
+            onClick={() => setIsProfileOpen(false)}
+            className="flex items-center"
+          >
             <ChevronRight size={40} className="" />
           </button>
         </div>

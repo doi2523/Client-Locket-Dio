@@ -9,7 +9,7 @@ import { useContext, useEffect } from "react";
 import { publicRoutes, authRoutes, locketRoutes } from "./routes";
 import { AuthProvider, AuthContext } from "./context/AuthLocket";
 import { ThemeProvider } from "./context/ThemeContext"; // 🟢 Import ThemeProvider
-import { showToast } from "./components/Toast";
+import { AppProvider } from "./context/AppContext";
 import Loading from "./components/Loading";
 import ToastProvider from "./components/Toast";
 import NotFoundPage from "./components/404";
@@ -19,14 +19,17 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
-          <AppContent />
-        </Router>
-        <ToastProvider />
+        <AppProvider> {/* 🟢 Thêm AppProvider ở đây */}
+          <Router>
+            <AppContent />
+          </Router>
+          <ToastProvider />
+        </AppProvider>
       </AuthProvider>
     </ThemeProvider>
   );
 }
+
 
 function AppContent() {
   const { user, loading } = useContext(AuthContext);

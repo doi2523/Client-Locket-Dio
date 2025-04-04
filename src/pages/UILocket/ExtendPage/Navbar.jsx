@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { Menu } from "lucide-react";
+import { useApp } from "../../../context/AppContext";
 
-const Navbar = ({ setIsProfileOpen, setIsHomeOpen }) => {
+const Navbar = () => {
+  const { navigation } = useApp();
+
+  const { setIsProfileOpen, setIsHomeOpen } = navigation;
   return (
     <div className="navbar top-0 left-0 flex items-center justify-between px-6">
       <button
@@ -9,13 +13,13 @@ const Navbar = ({ setIsProfileOpen, setIsHomeOpen }) => {
         className="relative flex items-center justify-center w-12 h-12"
       >
         {/* Vòng tròn nền */}
-        <div className="bg-base-200 w-12 h-12 rounded-full absolute"></div>
+        <div className="bg-primary/40 backdrop-blur-3xl w-12 h-12 rounded-full absolute"></div>
 
         {/* Ảnh nằm trên và căn giữa */}
         <img
           src="/prvlocket.png"
           alt=""
-          className="rounded-full h-10 w-10 relative"
+          className="rounded-full h-10 w-10 relative backdrop-blur-3xl"
         />
       </button>
       <div className="flex items-center">

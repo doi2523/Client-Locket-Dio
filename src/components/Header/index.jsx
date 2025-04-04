@@ -1,14 +1,14 @@
 import React, { useState, useContext } from "react";
 import "./header.css";
 import { Menu } from "lucide-react";
-import { AuthContext } from "../../context/AuthLocket";
-import ThemeDropdown from "../Theme";
 import Sidebar from "../Sidebar";
 import { Link } from "react-router-dom";
+import { useApp } from "../../context/AppContext";
 
 const Header = () => {
-  const { user, setUser } = useContext(AuthContext);
-  const [isOpen, setIsOpen] = useState(false);
+  const { navigation } = useApp();
+
+  const { setIsSidebarOpen } = navigation;
 
   return (
     <>
@@ -28,7 +28,7 @@ const Header = () => {
         <div className="flex items-center gap-2">
           {/* <ThemeDropdown /> */}
           <button
-            onClick={() => setIsOpen(true)}
+            onClick={() => setIsSidebarOpen(true)}
             className="p-2 rounded-md transition cursor-pointer btn"
           >
             <Menu size={28} strokeWidth={2} />
@@ -36,7 +36,7 @@ const Header = () => {
         </div>
       </header>
 
-      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} user={user} setUser={setUser} />
+      <Sidebar />
     </>
   );
 };
