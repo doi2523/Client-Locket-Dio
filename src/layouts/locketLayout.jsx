@@ -5,7 +5,7 @@ const LocketLayout = ({ children }) => {
     <div className="grid grid-rows-[auto_1fr_auto] max-h-screen relative w-full">
       {/* <AssistiveButton/> */}
       {/* Nội dung chính */}
-      <main className="w-full h-full bg-base-100 text-base-content">
+      <main className="overflow-auto bg-base-100 text-base-content">
         {children}
       </main>
     </div>

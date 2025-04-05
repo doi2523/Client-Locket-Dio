@@ -12,7 +12,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="navbar fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 shadow-xsm bg-base-100 text-base-content border-base-300">
+      <header className="navbar flex items-center justify-between px-6 py-3 shadow-xsm bg-base-100 text-base-content border-base-300">
         <Link to="/" className="flex items-center gap-2">
           <span className="font-semibold gradient-text disable-select">
             Locket Pro

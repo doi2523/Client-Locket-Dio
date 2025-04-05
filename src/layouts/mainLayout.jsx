@@ -15,9 +15,9 @@ const DefaultLayout = ({ children }) => {
   }, [location.pathname]);
 
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] min-h-screen relative">
+    <div className="grid grid-rows-[auto_1fr_auto] max-h-screen relative">
       {/* Header cố định */}
-      <div className="fixed top-0 left-0 w-full z-50">
+      <div className="top-0 left-0 w-full">
         <Header />
       </div>
 

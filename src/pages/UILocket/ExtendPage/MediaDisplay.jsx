@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AutoResizeTextarea from "./AutoResizeTextarea";
 import Hourglass from "../../../components/UI/Loading/hourglass";
 import { useApp } from "../../../context/AppContext";
@@ -14,8 +14,9 @@ const MediaPreview = ({
   setCaption,
   selectedColors
 }) => {
-    const {post} = useApp();
+    const {post, useloading} = useApp();
     const { selectedFile } = post;
+    const { isCaptionLoading, setIsCaptionLoading } = useloading;
 
     const startHold = () => {
       setIsHolding(true);
@@ -140,6 +141,14 @@ const MediaPreview = ({
         }
       }, 100);
     };
+    // Use effect to trigger the visibility change when capturedMedia or selectedFile is present
+  useEffect(() => {
+    if (capturedMedia || selectedFile) {
+      setIsCaptionLoading(true);
+    } else {
+      setIsCaptionLoading(false);
+    }
+  }, [capturedMedia, selectedFile]);
   return (
     <>
       <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">
@@ -197,13 +206,20 @@ const MediaPreview = ({
           <img
             src={selectedFile.data}
             alt="Selected File"
-            className="w-full h-full object-cover select-none"
+            className="w-full h-full object-cover"
           />
         )}
 
-        {(capturedMedia || selectedFile) && (
-          <AutoResizeTextarea/>
-        )}
+<div
+      className={`transition-opacity duration-500 ${
+        isCaptionLoading ? "opacity-100" : "opacity-0"
+      }`}
+      style={{
+        transition: "opacity 0.5s linear",
+      }}
+    >
+      {(capturedMedia || selectedFile) && <AutoResizeTextarea />}
+    </div>
       </div>
     </>
   );
