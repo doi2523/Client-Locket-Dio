@@ -1,16 +1,72 @@
 import { X, Send, Sparkles, ImageUp, RefreshCcw } from "lucide-react";
+import * as utils from "../../../utils";
 import LoadingRing from "../../../components/UI/Loading/ring";
 import { useApp } from "../../../context/AppContext";
 import { showToast } from "../../../components/Toast";
 import { useCallback } from "react";
 
 const MediaControls = ({
-  handleDelete,
-  handleSubmit,
   loading,
 }) => {
-  const { navigation } = useApp();
+  const { navigation, post } = useApp();
   const { setIsFilterOpen } = navigation;
+  const { caption, setCaption, selectedFile, setSelectedFile, selectedColors } = post;
+
+  const handleDelete = useCallback(() => {
+    setSelectedFile(null);
+    setCaption("");
+    // Thực hiện các thao tác cần thiết khác, ví dụ:
+    // setCapturedMedia(null);
+    // setCameraActive(true);
+    // setIsHolding(false);
+    // Các thao tác khác liên quan đến stream có thể để lại nếu cần
+  }, [setSelectedFile, setCaption]);
+  const handleSubmit = async () => {
+    if (!selectedFile) {
+      console.error("Không có dữ liệu để tải lên.");
+      return;
+    }
+  
+    // Tải nội dung Blob từ URL
+    const response = await fetch(selectedFile.data);
+    const blob = await response.blob();
+  
+    // Chuyển Blob thành File
+    const file = new File(
+      [blob],
+      blob.type.includes("video")
+        ? "captured_video.mp4"
+        : "captured_image.jpg",
+      { type: blob.type }
+    );
+  
+    // Tạo FormData để gửi lên server
+    const formData = new FormData();
+    formData.append("caption", caption);
+    formData.append("text_color", "#FFFFFF");
+    formData.append("colorTop", selectedColors.top);
+    formData.append("colorBottom", selectedColors.bottom);
+    formData.append("idToken", utils.getAuthCookies().idToken);
+    formData.append("localId", utils.getAuthCookies().localId);
+  
+    // Xác định loại file và append đúng key
+    if (file.type.includes("image")) {
+      formData.append("images", file); // key phải đúng với backend
+    } else if (file.type.includes("video")) {
+      formData.append("videos", file); // key phải đúng với backend
+    } else {
+      showToast("warning", "File không hợp lệ!");
+      setLoading(false);
+      return;
+    }
+  
+    // Duyệt qua các cặp key-value trong FormData và in ra
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+  };
+  
+
   return (
     <>
       <button
@@ -31,10 +87,9 @@ const MediaControls = ({
           <Send size={40} className="mr-1 mt-1" />
         )}
       </button>
-      <button
+      <button className="cursor-pointer"
   onClick={() => {
     setIsFilterOpen(true);
-    alert("Chức năng này chưa khả dụng");
   }}
 >
   <Sparkles size={35} />
@@ -44,15 +99,11 @@ const MediaControls = ({
   );
 };
 
-const MediaCapture = ({
-  startHold,
-  endHold,
-  handleRotateCamera,
-  rotation,
-  isHolding,
-}) => {
+const MediaCapture = () => {
   const { post, navigation, camera } = useApp();
   const { selectedFile, setSelectedFile } = post;
+  const { rotation,isHolding,  setIsHolding,    permissionChecked, setPermissionChecked,
+    holdTime, setHoldTime, } = camera;
   const handleFileChange = useCallback(
     (event) => {
       const file = event.target.files[0];
@@ -69,9 +120,103 @@ const MediaCapture = ({
     },
     [setSelectedFile]
   );
-  
-  
+  const startHold = () => {
+    setIsHolding(true);
+    setHoldTime(0);
+    // setCountdown(null);
 
+    // intervalRef.current = setInterval(() => {
+    //   setHoldTime((prev) => prev + 0.1);
+    // }, 100);
+
+    // holdTimeout.current = setTimeout(() => {
+    //   if (videoRef.current?.srcObject) {
+    //     const stream = videoRef.current.srcObject;
+    //     const recorder = new MediaRecorder(stream);
+    //     mediaRecorderRef.current = recorder;
+    //     const chunks = [];
+    //     const startTime = Date.now(); // Lưu thời điểm bắt đầu quay
+
+    //     recorder.ondataavailable = (e) => {
+    //       if (e.data.size > 0) {
+    //         chunks.push(e.data);
+    //       }
+    //     };
+
+    //     recorder.onstop = async () => {
+    //       setCameraActive(false);
+    //       setLoading(true);
+
+    //       // Tính độ dài video
+    //       let duration = (Date.now() - startTime) / 1000;
+    //       if (cameraMode === "user") {
+    //         duration *= 2; // Tăng gấp đôi thời gian đếm ngược nếu là camera trước
+    //       }
+    //       setCountdown(duration); // Bắt đầu đếm ngược
+
+    //       // Tạo bộ đếm ngược
+    //       const countdownRecordvideo = setInterval(() => {
+    //         setCountdown((prev) => {
+    //           const newValue = (parseFloat(prev) - 0.1).toFixed(1);
+    //           return newValue > 0 ? newValue : null;
+    //         });
+    //       }, 100);
+
+    //       showToast("info", "Đang xử lý video...");
+    //       const blob = new Blob(chunks, { type: "video/mp4" });
+
+    //       const videoUrl =
+    //         cameraMode === "user"
+    //           ? URL.createObjectURL(await correctFrontCameraVideo(blob))
+    //           : URL.createObjectURL(await cropVideoToSquareV2(blob));
+
+    //       setSelectedFile({ type: "video", data: videoUrl });
+
+    //       setLoading(false);
+    //       clearInterval(countdownRecordvideo); // Dừng đếm ngược
+    //       showToast("success", "Xử lý video thành công!");
+    //     };
+
+    //     recorder.start();
+    //     setIsRecording(true);
+
+    //     setTimeout(() => {
+    //       if (mediaRecorderRef.current?.state === "recording") {
+    //         mediaRecorderRef.current.stop();
+    //         setIsRecording(false);
+    //       }
+    //     }, MAX_RECORD_TIME * 1000);
+    //   }
+    // }, 1000);
+  };
+
+  const endHold = () => {
+    setIsHolding(false);
+    // clearTimeout(holdTimeout.current);
+    // clearInterval(intervalRef.current);
+
+  };
+  const handleRotateCamera = async () => {
+    setRotation((prev) => prev + 180);
+    const newMode = cameraMode === "user" ? "environment" : "user";
+    setCameraMode(newMode);
+
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: newMode },
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (error) {
+      console.error("Lỗi khi đổi camera:", error);
+    }
+  };
   return (
     <>
       <input

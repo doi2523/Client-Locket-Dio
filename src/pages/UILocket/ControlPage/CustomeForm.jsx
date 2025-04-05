@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ThemeSelector from "../../../components/Theme/ThemeSelector";
 import { useApp } from "../../../context/AppContext";
 
-const FiltersSelector = () => {
+const CustomeForm = () => {
   const popupRef = useRef(null);
   const { navigation, post } = useApp();
 
@@ -27,8 +27,9 @@ const FiltersSelector = () => {
 
   const handleColorSelect = (topColor, bottomColor) => {
     setSelectedColors({ top: topColor, bottom: bottomColor });
-    if (onSelect) {
-      onSelect({ top: topColor, bottom: bottomColor });
+    if (selectedColors) {
+      setSelectedColors({ top: topColor, bottom: bottomColor });
+      setIsFilterOpen(false)
     }
   };
   useEffect(() => {
@@ -68,12 +69,7 @@ const FiltersSelector = () => {
   // }, [isFilterOpen]);
 
   return (
-    <div
-      className={`fixed bottom-0 left-0 right-0 transform transition-transform duration-500 ${
-        isFilterOpen ? "translate-y-0" : "translate-y-0"
-      }`}
-    >
-      <div
+      <div 
         className={`fixed inset-0 z-90 flex justify-center items-end transition-transform duration-500 ${
           isFilterOpen ? "" : "pointer-events-none"
         }`}
@@ -94,7 +90,7 @@ const FiltersSelector = () => {
           }`}
         >
           {/* Header - Ghim cố định */}
-          <div className="flex justify-between rounded-t-4xl items-center shadow-md py-2 px-4 bg-base-100 sticky top-0 left-0 right-0 z-50">
+          <div className="flex justify-between rounded-t-4xl items-center py-2 px-4 bg-base-100 sticky top-0 left-0 right-0 z-50">
             <div className="flex items-center space-x-2">
               <Palette size={22} className="text-primary" />
               <div className="text-2xl font-lovehouse mt-1.5 font-semibold text-primary">
@@ -103,7 +99,7 @@ const FiltersSelector = () => {
             </div>
             <button
               onClick={() => setIsFilterOpen(false)}
-              className="text-primary"
+              className="text-primary cursor-pointer"
             >
               <X size={30} />
             </button>
@@ -143,8 +139,7 @@ const FiltersSelector = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
-export default FiltersSelector;
+export default CustomeForm;

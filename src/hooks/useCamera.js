@@ -5,9 +5,10 @@ export const useCamera = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [capturedMedia, setCapturedMedia] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [permissionChecked, setPermissionChecked] = useState(true);
   const [rotation, setRotation] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
+  const [holdTime, setHoldTime] = useState(0);
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(null);
 
@@ -16,12 +17,11 @@ export const useCamera = () => {
     canvasRef,
     capturedMedia,
     setCapturedMedia,
-    selectedFile,
-    setSelectedFile,
+    permissionChecked, setPermissionChecked,
+    holdTime, setHoldTime,
     rotation,
     setRotation,
-    isHolding,
-    setIsHolding,
+    isHolding, setIsHolding,
     loading,
     setLoading,
     countdown,

@@ -10,7 +10,7 @@ const Navbar = () => {
     <div className="navbar top-0 left-0 flex items-center justify-between px-6">
       <button
         onClick={() => setIsProfileOpen(true)}
-        className="relative flex items-center justify-center w-12 h-12"
+        className="relative flex items-center justify-center w-12 h-12 cursor-pointer"
       >
         {/* Vòng tròn nền */}
         <div className="bg-primary/40 backdrop-blur-3xl w-12 h-12 rounded-full absolute"></div>
