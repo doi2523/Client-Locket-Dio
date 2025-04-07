@@ -17,7 +17,7 @@ const AuthHome = () => {
             Lưu giữ và chia sẻ những kỷ niệm đáng nhớ của bạn với bạn bè và gia đình.
           </p>
           <Link
-            to="/post"
+            to="/postmoments"
             className="mt-6 px-6 py-4 rounded-lg shadow btn btn-primary text-lg font-semibold hover:bg-primary-focus transition"
           >
             Khám phá ngay
@@ -28,7 +28,7 @@ const AuthHome = () => {
             <div className="mockup-browser-toolbar">
               <div className="input p-1">{iframeUrl}</div>
             </div>
-            <div className="h-80 w-full relative overflow-hidden select-none">
+            <div className="h-80 w-full relative overflow-hidden select-none disable-select">
               <iframe
                 src="https://locket-pro.vercel.app"
                 sandbox="allow-scripts allow-same-origin"

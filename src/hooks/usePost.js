@@ -10,12 +10,14 @@ export const usePost = () => {
   const [ preview, setPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [ isTextColor, setTextColor] = useState(null);
+  const [ isSizeMedia, setSizeMedia ] = useState(null);
 
   return {
     caption,setCaption,
     selectedColors,setSelectedColors,
     selectedFile,setSelectedFile,
     preview, setPreview,
-    isTextColor, setTextColor
+    isTextColor, setTextColor,
+    isSizeMedia, setSizeMedia
   };
 };
