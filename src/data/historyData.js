@@ -1,5 +1,30 @@
 export const defaultHistorys = [
   {
+    "date": "16-03-2025",
+    "title": "Cập nhật tính năng theo dõi trạng thái Server",
+    "description": "Ra mắt tính năng mới giúp người dùng dễ dàng theo dõi và kiểm tra trạng thái hoạt động của Server, nâng cao khả năng quản lý và tối ưu hiệu suất hệ thống."
+  },
+  {
+    date: "16-03-2025",
+    title: "Cải thiện và tối ưu giao diện",
+    description: "Cập nhật và tối ưu giao diện để mang lại trải nghiệm người dùng tốt hơn, giúp nền tảng trở nên dễ sử dụng và mượt mà hơn."
+  },
+  {
+    date: "15-03-2025",
+    title: "Bổ sung trang About & Docs",
+    description: "Bổ sung thêm trang giới thiệu về Dio và trang tài liệu (Docs) để người dùng dễ dàng tìm hiểu và sử dụng nền tảng."
+  },
+  {
+    date: "13-03-2025",
+    title: "Nâng cấp Server & API V2.0",
+    description: "Hệ thống đã hỗ trợ đăng ảnh, video kèm chú thích có màu sắc tùy chỉnh. Đồng thời tối ưu dung lượng để hạn chế lỗi trong quá trình gửi yêu cầu."
+  },  
+  {
+    date: "12-03-2025",
+    title: "Xây dựng giao diện Locket",
+    description: "Xây dựng giao diện Locket để tối ưu trải nghiệm giống như trên app, thao tác dễ dàng hơn."
+  },  
+  {
     date: "09-03-2025",
     title: "Triển khai website lên Firebase Hosting",
     description: "Hoàn tất việc triển khai website lên Firebase Hosting! Giờ đây, trang web có thể hoạt động trực tuyến một cách nhanh chóng và ổn định, sẵn sàng để mọi người truy cập."

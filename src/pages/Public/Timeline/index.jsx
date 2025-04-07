@@ -3,8 +3,8 @@ import { defaultHistorys } from "../../../data/historyData";
 
 export default function Timeline() {
   return (
-    <div className="w-full md:w-[50%] mx-auto py-10 px-7 h-full">
-    <div className="h-16"></div>
+    <div className="w-full md:w-[90%] max-w-2xl mx-auto py-10 px-7">
+              <div className="h-16"></div>
       <h1 className="text-3xl font-bold text-center mb-8">Lịch sử cập nhật</h1>
       <ul className="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
         {defaultHistorys.map((update, index) => (

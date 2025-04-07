@@ -1,28 +1,36 @@
-import React from "react";
-import "./notfound.css";
+import React, { useEffect } from 'react';
+import { Link } from "react-router-dom";
 
 const NotFoundPage = () => {
+  useEffect(() => {
+    // Tắt cuộn trang khi trang NotFoundPage được tải
+    document.body.style.overflow = 'hidden';
+
+    // Khi component bị unmount, bật lại cuộn trang
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   return (
-    <section className="page_404 bg-base-200">
-      <div className="container">
-        <div className="row">
-          <div className="col-sm-12 ">
-            <div className="col-sm-10 col-sm-offset-1 text-center">
-              <div className="four_zero_four_bg">
-                <h1 className="text-center ">404</h1>
-              </div>
-              <div className="contant_box_404">
-                <h3 className="h2">Look like you're lost</h3>
-                <p>the page you are looking for not avaible!</p>
-                <a href="/" className="link_404">
-                  Go to Home
-                </a>
-              </div>
-            </div>
-          </div>
+    <div className="flex items-center justify-center min-h-screen bg-base-100 overflow-hidden text-base-content">
+      <div className="text-center px-8 rounded-lg max-w-md w-full">
+        <h1 className="text-6xl font-extrabold text-primary">404</h1>
+        <p className="mt-4 text-xl font-medium">
+          Oops! The page you're looking for doesn't exist.
+        </p>
+        <p className="mt-2">It seems we've lost this page somewhere.</p>
+        <div className="mt-6">
+          <Link
+
+            to="/"
+            className="px-6 py-3 btn btn-info text-lg font-semibold"
+          >
+            Go to Home
+          </Link>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

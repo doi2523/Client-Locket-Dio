@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
+import Footer from "../components/Footer";
 
 const DefaultLayout = ({ children }) => {
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Hiển thị loading khi thay đổi route
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => setIsLoading(false), 500);
@@ -15,19 +15,20 @@ const DefaultLayout = ({ children }) => {
   }, [location.pathname]);
 
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] max-h-screen relative">
-      {/* Header cố định */}
-      <div className="top-0 left-0 w-full">
-        <Header />
-      </div>
+    <div className="flex flex-col min-h-screen overflow-hidden">
+      {/* Header */}
+      <Header />
 
       {/* Loading Overlay */}
       {isLoading && <Loading />}
 
-      {/* Nội dung chính */}
-      <main className="overflow-auto bg-base-200 text-base-content">
+      {/* Main content scrollable */}
+      <main className="flex-1 overflow-y-scroll bg-base-200 text-base-content">
         {children}
       </main>
+
+      {/* Footer cố định dưới */}
+      <Footer />
     </div>
   );
 };

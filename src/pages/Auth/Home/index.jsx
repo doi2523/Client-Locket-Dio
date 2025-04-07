@@ -7,7 +7,7 @@ const AuthHome = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-10 bg-base-200">
-      <div className="h-16"></div>
+              <div className="h-16"></div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl w-full items-center">
         <div className="text-center lg:text-left">
           <h1 className="text-4xl font-extrabold leading-tight">
@@ -32,7 +32,7 @@ const AuthHome = () => {
               <iframe
                 src="https://locket-pro.vercel.app"
                 sandbox="allow-scripts allow-same-origin"
-                className="absolute top-0 left-0 w-[125%] h-[125%] border-0 rounded-b-lg scale-[0.8] origin-top-left pointer-events-none"
+                className="absolute  disable-select top-0 left-0 w-[125%] h-[125%] border-0 rounded-b-lg scale-[0.8] origin-top-left pointer-events-none"
               ></iframe>
             </div>
           </div>
@@ -40,7 +40,7 @@ const AuthHome = () => {
       </div>
 
       {/* Section giới thiệu */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full mt-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full mt-12 mb-7">
         <div className="p-6 bg-base-100 shadow-lg rounded-xl text-center">
           <h2 className="text-xl font-semibold mb-3">📷 Chia sẻ dễ dàng</h2>
           <p className="text-base-content">

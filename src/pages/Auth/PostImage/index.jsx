@@ -110,7 +110,6 @@ const Post = () => {
 
   return (
     <div className="flex justify-center items-center flex-col min-h-screen p-6 bg-base-200">
-      <div className="h-16"></div>
       <div className="p-6 rounded-lg shadow-md w-full max-w-md bg-base-100">
         <div className="text-center mb-6">
           <h2 className="text-3xl font-semibold mb-4">Upload Image</h2>

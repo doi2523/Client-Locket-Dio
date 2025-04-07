@@ -27,7 +27,7 @@ const RightHomeScreen = () => {
       <div className="flex items-center shadow-lg justify-between px-4 py-3 text-base-content">
         <button
           onClick={() => setIsHomeOpen(false)}
-          className="p-2 rounded-md hover:bg-base-200 transition"
+          className="p-2 rounded-md hover:bg-base-200 transition cursor-pointer"
         >
           <ChevronLeft size={30} />
         </button>
@@ -36,7 +36,7 @@ const RightHomeScreen = () => {
         </div>
         <button
           onClick={() => setIsSidebarOpen(true)}
-          className="p-2 rounded-lg bg-base-200 hover:bg-base-300 transition"
+          className="p-2 rounded-lg bg-base-200 hover:bg-base-300 transition cursor-pointer"
         >
           <Menu size={30} />
         </button>

@@ -9,9 +9,10 @@ import {
   LogIn,
   LucideTimer,
   Smartphone,
+  Briefcase,
+  BookMarked
 } from "lucide-react";
 import { showToast } from "../Toast";
-import * as locketService from "../../services/locketService";
 import * as ultils from "../../utils";
 import { useApp } from "../../context/AppContext";
 import { AuthContext } from "../../context/AuthLocket";
@@ -37,7 +38,7 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
-      await locketService.logout();
+      // await locketService.logout();
       setUser(null);
       ultils.clearAuthData();
       ultils.removeUser();
@@ -106,6 +107,19 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
+                    to="/aboutdio"
+                    className={`flex items-center px-3 py-3 rounded-lg transition ${
+                      location.pathname === "/aboutdio"
+                        ? "bg-base-300"
+                        : "hover:bg-base-200"
+                    }`}
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    <Briefcase size={22} /> Giới thiệu
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to="/timeline"
                     className={`flex items-center px-3 py-3 rounded-lg transition ${
                       location.pathname === "/timeline"
@@ -119,28 +133,15 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
-                    to="/post"
+                    to="/postmoments"
                     className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/post"
+                      location.pathname === "/postmoments"
                         ? "bg-base-300"
                         : "hover:bg-base-200"
                     }`}
                     onClick={() => setIsSidebarOpen(false)}
                   >
-                    <Upload size={22} /> Đăng ảnh
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/postvideo"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/postvideo"
-                        ? "bg-base-300"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Upload size={22} /> Đăng Video
+                    <Upload size={22} /> Đăng ảnh, video
                   </Link>
                 </li>
                 <li>
@@ -167,6 +168,19 @@ const Sidebar = () => {
                     onClick={() => setIsSidebarOpen(false)}
                   >
                     <User size={22} /> Hồ sơ
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/docs"
+                    className={`flex items-center px-3 py-3 rounded-lg transition ${
+                      location.pathname === "/docs"
+                        ? "bg-base-300"
+                        : "hover:bg-base-200"
+                    }`}
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    <BookMarked size={22} /> Docs
                   </Link>
                 </li>
                 <li className="mt-5">

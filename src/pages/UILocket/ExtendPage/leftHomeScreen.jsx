@@ -41,7 +41,7 @@ const LeftHomeScreen = () => {
           </button>
           <button
             onClick={() => setIsProfileOpen(false)}
-            className="flex items-center"
+            className="rounded-lg hover:bg-base-200 transition cursor-pointer"
           >
             <ChevronRight size={40} className="" />
           </button>

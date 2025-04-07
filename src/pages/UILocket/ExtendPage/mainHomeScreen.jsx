@@ -1,8 +1,8 @@
 import React from "react";
 import Navbar from "./Navbar";
 import MediaPreview from "./MediaDisplay";
-import CameraControls from "../ControlPage/ActionButtons";
 import { useApp } from "../../../context/AppContext";
+import ActionControls from "../ControlPage/ActionControls";
 
 const MainHomeScreen = () => {
   const { navigation } = useApp();
@@ -22,7 +22,7 @@ const MainHomeScreen = () => {
       <div className="flex select-none flex-col items-center justify-start">
         <Navbar />
         <MediaPreview />
-        <CameraControls />
+        <ActionControls />
         <canvas className="hidden" />
       </div>
     </div>

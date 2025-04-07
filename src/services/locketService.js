@@ -171,3 +171,41 @@ export const uploadMedia = async (formData, setUploadProgress) => {
     throw error;
   }
 };
+export const uploadMediaV2 = async (payload) => {
+  try {
+    // Lấy mediaInfo từ payload
+    const { mediaInfo } = payload;
+
+    // Lấy type từ mediaInfo để xác định là ảnh hay video
+    const fileType = mediaInfo.type;
+
+    // Đặt timeout tùy theo loại tệp (ảnh hoặc video)
+    const timeoutDuration = fileType === "image" ? 5000 : fileType === "video" ? 10000 : 5000;
+    const timeoutId = setTimeout(() => {
+      console.log("⏳ Uploading is taking longer than expected...");
+    }, timeoutDuration);
+
+    // Gửi request với payload và header Content-Type: application/json
+    const response = await axios.post(utils.API_URL.UPLOAD_MEDIA_URL, payload, {
+      headers: {
+        "Content-Type": "application/json", // Sử dụng JSON thay vì FormData
+      },
+    });
+
+    clearTimeout(timeoutId);  // Hủy timeout khi upload thành công
+    console.log("✅ Upload thành công:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Lỗi khi upload:", error.response?.data || error.message);
+
+    if (error.response) {
+      console.error("📡 Server Error:", error.response);
+    } else {
+      console.error("🌐 Network Error:", error.message);
+    }
+
+    throw error;
+  }
+};
+
+
