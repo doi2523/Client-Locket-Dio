@@ -27,6 +27,7 @@ const MediaPreview = ({
       setIsCaptionLoading(false);
     }
   }, [capturedMedia, selectedFile]);
+  
   return (
     <>
       <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">

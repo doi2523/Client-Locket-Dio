@@ -15,6 +15,8 @@ import LoadingRing from "../../../components/UI/Loading/ring.jsx";
 import { useApp } from "../../../context/AppContext.jsx";
 import { Link } from "react-router-dom";
 import Hourglass from "../../../components/UI/Loading/hourglass.jsx";
+import { RiEmotionHappyLine } from "react-icons/ri";
+import { TbMoodCrazyHappy } from "react-icons/tb";
 
 const PostMoments = () => {
   const { post, useloading } = useApp();
@@ -22,16 +24,11 @@ const PostMoments = () => {
     useloading;
 
   const {
-    caption,
-    setCaption,
-    preview,
-    setPreview,
-    selectedFile,
-    setSelectedFile,
-    selectedColors,
-    setSelectedColors,
-    isSizeMedia,
-    setSizeMedia,
+    caption,setCaption,
+    preview,setPreview,
+    selectedFile,setSelectedFile,
+    selectedColors,setSelectedColors,
+    isSizeMedia,setSizeMedia,
   } = post;
 
   const [colorTop, setColorTop] = useState(selectedColors.top || "#00FA9A");
@@ -44,12 +41,10 @@ const PostMoments = () => {
   useEffect(() => {
     setSelectedColors({ top: colorTop, bottom: colorBottom, text: colorText });
   }, [colorTop, colorBottom, colorText]);
-
+  //Handle tải file
   const handleFileChange = useCallback(async (event) => {
     const rawFile = event.target.files[0];
     if (!rawFile) return;
-    setUploadLoading(true);
-
     const localPreviewUrl = URL.createObjectURL(rawFile);
     const fileType = rawFile.type.startsWith("image/")
       ? "image"
@@ -68,80 +63,48 @@ const PostMoments = () => {
     const fileSizeInMB = rawFile.size / (1024 * 1024); // size in MB
     setSizeMedia(fileSizeInMB.toFixed(2)); // Store the size in MB, rounded to 2 decimal places
 
-    showToast("info", `Đang tải ${fileType === "image" ? "ảnh" : "video"}...`);
-    setUploadLoading(false); // Reset loading state once upload is finished (adjust based on your flow)
+    setSelectedFile(rawFile); // Lưu file đã chọn
   }, []);
+  //Gửi bài viết
+
   const handleSubmit = async () => {
     if (!selectedFile) {
-      console.error("Không có dữ liệu để tải lên.");
+      showToast("error", "Không có dữ liệu để tải lên.");
       return;
     }
 
     try {
       setSendLoading(true);
+      showToast("info", `Đang chuẩn bị ${preview.type === "video" ? "video" : "ảnh"} !`);
+      //Gọi hàm upload ảnh/video lên Cloud và nhận về thông tin File
+      const fileData = await utils.uploadToCloudinary(selectedFile,preview.type);
 
-      // Chuẩn bị object mediaInfo tùy theo loại
-      let mediaInfo = {
-        type: selectedFile.type,
-        url: selectedFile.url,
-        public_id: selectedFile.public_id,
-        size: selectedFile.size,
-      };
+      //Gửi thông tin File để chuẩn hoá
+      const mediaInfo = utils.prepareMediaInfo(fileData);
 
-      if (selectedFile.type === "image") {
-        mediaInfo = {
-          ...mediaInfo,
-          format: selectedFile.format,
-          width: selectedFile.width,
-          height: selectedFile.height,
-        };
-      } else if (selectedFile.type === "video") {
-        mediaInfo = {
-          ...mediaInfo,
-          duration: selectedFile.duration,
-          thumbnail: selectedFile.thumbnail,
-        };
-      } else {
-        showToast("warning", "File không hợp lệ!");
-        setSendLoading(false);
-        return;
-      }
+      //Tạo payload để gửi cho server với thông tin file
+      const payload = utils.createRequestPayload( mediaInfo,caption,selectedColors);
 
-      // Tạo payload từ hàm createRequestPayload
-      const payload = utils.createRequestPayload(
-        mediaInfo,
-        caption,
-        selectedColors
-      );
+      //Gửi payload cho server
+      showToast("info", `Đang tạo bài viết !`);
+      await lockerService.uploadMediaV2(payload);
 
-      // Gửi lên server
-      try {
-        await lockerService.uploadMediaV2(payload);
-        showToast(
-          "success",
-          `${
-            selectedFile.type === "video" ? "Video" : "Hình ảnh"
-          } đã được tải lên!`
-        );
-        setPreview(null);
-        setSelectedFile(null);
-        setCaption("");
-        setSelectedColors({
-          top: "#00FA9A",
-          bottom: "#1E90FF",
-          text: "#FFFFFF",
-        });
-      } catch (error) {
-        console.error(error);
-        const errorMessage =
-          error.response?.data?.message ||
-          error.message ||
-          "Lỗi không xác định"; // Kiểm tra lỗi từ server nếu có
-        showToast("error", `Lỗi khi tải lên: ${errorMessage}`); // Hiển thị thông báo chi tiết hơn
-      }
+      showToast("success",`${fileData.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`);
+
+      // Reset state
+      setPreview(null);
+      setSelectedFile(null);
+      setCaption("");
+      setSelectedColors({
+        top: "#00FA9A",
+        bottom: "#1E90FF",
+        text: "#FFFFFF",
+      });
     } catch (error) {
-      console.error("Lỗi khi tải lên:", error);
-      showToast("error", "Lỗi hệ thống!");
+      const errorMessage = error?.response?.data?.message || error.message || "Lỗi không xác định";
+
+      showToast("error", `Lỗi khi tải lên: ${errorMessage}`);
+      console.error("Lỗi khi gửi bài:", error);
     } finally {
       setSendLoading(false);
     }
@@ -166,7 +129,7 @@ const PostMoments = () => {
             type="file"
             onChange={handleFileChange}
             className="hidden"
-            accept="image/*,video/*"
+            accept="image/jpeg,image/jpg,image/png,image/webp,video/mp4,video/webm,video/quicktime"
           />
         </div>
         <div className="text-left">
@@ -181,8 +144,8 @@ const PostMoments = () => {
           </p>
         </div>
         {/* Preview */}
-        <div className="text-center my-3">
-          <h2 className="text-3xl font-semibold mb-4">Preview</h2>
+        <div className="text-center my-3 mb-10">
+          <h2 className="text-3xl font-semibold mb-2">Preview</h2>
           <div className="relative w-full max-w-[400px] rounded-[40px] aspect-square border border-base-content overflow-hidden flex items-center justify-center">
             {uploadLoading ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50 gap-3 text-white text-lg font-medium">
@@ -237,27 +200,39 @@ const PostMoments = () => {
             )}
           </div>
 
-          <div
-            className={`text-left text-sm mt-3 ${
-              preview?.type === "image"
-                ? isSizeMedia > 1
-                  ? "text-error"
-                  : "text-success"
-                : preview?.type === "video"
-                ? isSizeMedia > 5
-                  ? "text-error"
-                  : "text-success"
-                : ""
-            }`}
-          >
-            Dung lượng file{" "}
-            {preview?.type === "image"
-              ? "ảnh"
-              : preview?.type === "video"
-              ? "video"
-              : ""}
-            : {isSizeMedia}MB
-          </div>
+          {preview?.type && isSizeMedia && (
+            <div className="text-left text-sm mt-3 absolute">
+              <div
+                className={`flex items-center gap-1 ${
+                  preview.type === "image"
+                    ? isSizeMedia > 1
+                      ? "text-red-500"
+                      : "text-green-500"
+                    : preview.type === "video"
+                    ? isSizeMedia > 5
+                      ? "text-red-500"
+                      : "text-green-500"
+                    : ""
+                }`}
+              >
+                Dung lượng file {preview.type === "image" ? "ảnh" : "video"} là{" "}
+                {isSizeMedia}MB
+                {preview.type === "image" ? (
+                  isSizeMedia > 1 ? (
+                    <TbMoodCrazyHappy className="text-lg" />
+                  ) : (
+                    <RiEmotionHappyLine className="text-lg" />
+                  )
+                ) : preview.type === "video" ? (
+                  isSizeMedia > 5 ? (
+                    <TbMoodCrazyHappy className="text-lg" />
+                  ) : (
+                    <RiEmotionHappyLine className="text-lg" />
+                  )
+                ) : null}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Caption & Color */}
@@ -318,7 +293,11 @@ const PostMoments = () => {
           <button
             onClick={handleSubmit}
             className="btn btn-primary rounded-xl disabled:bg-gray-400"
-            disabled={sendLoading}
+            disabled={
+              sendLoading ||
+              (preview?.type === "image" && isSizeMedia > 1) ||
+              (preview?.type === "video" && isSizeMedia > 5)
+            }
           >
             {sendLoading ? (
               <>

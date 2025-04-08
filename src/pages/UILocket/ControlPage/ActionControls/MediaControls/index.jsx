@@ -10,7 +10,12 @@ const MediaControls = () => {
   const { navigation, post, useloading } = useApp();
   const { setIsFilterOpen } = navigation;
   const { sendLoading, setSendLoading } = useloading;
-  const { setPreview, caption, setCaption, selectedFile, setSelectedFile, selectedColors, setSelectedColors } = post;
+  const { 
+    preview, setPreview, 
+    caption, setCaption, 
+    selectedFile, setSelectedFile, 
+    selectedColors, setSelectedColors,
+    isSizeMedia,setSizeMedia, } = post;
 
   const handleDelete = useCallback(() => {
     setSelectedFile(null);
@@ -25,91 +30,44 @@ const MediaControls = () => {
     // Các thao tác khác liên quan đến stream có thể để lại nếu cần
   }, [setSelectedFile, setCaption]);
 
-  const createRequestPayload = (mediaInfo, caption, selectedColors) => {
-    // Tạo đối tượng token (bao gồm idToken và localId)
-    const tokenData = {
-      idToken: utils.getAuthCookies().idToken,
-      localId: utils.getAuthCookies().localId,
-    };
-  
-    // Tạo đối tượng options (bao gồm các lựa chọn như caption, colors...)
-    const optionsData = {
-      caption: caption,
-      text_color: "#FFFFFF",
-      colorTop: selectedColors.top,
-      colorBottom: selectedColors.bottom,
-    };
-  
-    // Tạo đối tượng payload chứa tất cả dữ liệu cần gửi
-    const payload = {
-      userData: tokenData,
-      options: optionsData,
-      model: "uploadmediaV2",
-      mediaInfo: mediaInfo,
-    };
-  
-    return payload;
-  };
-  
-  
   const handleSubmit = async () => {
     if (!selectedFile) {
-      console.error("Không có dữ liệu để tải lên.");
+      showToast("error", "Không có dữ liệu để tải lên.");
       return;
     }
-  
+
     try {
       setSendLoading(true);
-  
-      // Chuẩn bị object mediaInfo tùy theo loại
-      let mediaInfo = {
-        type: selectedFile.type,
-        url: selectedFile.url,
-        public_id: selectedFile.public_id,
-        size: selectedFile.size,
-      };
-  
-      if (selectedFile.type === "image") {
-        mediaInfo = {
-          ...mediaInfo,
-          format: selectedFile.format,
-          width: selectedFile.width,
-          height: selectedFile.height,
-        };
-      } else if (selectedFile.type === "video") {
-        mediaInfo = {
-          ...mediaInfo,
-          duration: selectedFile.duration,
-          thumbnail: selectedFile.thumbnail,
-        };
-      } else {
-        showToast("warning", "File không hợp lệ!");
-        setSendLoading(false);
-        return;
-      }
-  
-    // Tạo payload từ hàm createRequestPayload
-    const payload = createRequestPayload(mediaInfo, caption, selectedColors);
-  
-      // Gửi lên server
-      try {
-        await lockerService.uploadMediaV2(payload);
-        showToast(
-          "success",
-          `${selectedFile.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
-        );
-        setPreview(null);
-        setSelectedFile(null);
-        setCaption("");
-        setSelectedColors({ top: "#00FA9A", bottom: "#1E90FF", text: "#FFFFFF" });
-      } catch (error) {
-        console.error(error);
-        const errorMessage = error.response?.data?.message || error.message || "Lỗi không xác định"; // Kiểm tra lỗi từ server nếu có
-        showToast("error", `Lỗi khi tải lên: ${errorMessage}`); // Hiển thị thông báo chi tiết hơn
-      }
+      showToast("info", `Đang chuẩn bị ${preview.type === "video" ? "video" : "ảnh"} !`);
+      //Gọi hàm upload ảnh/video lên Cloud và nhận về thông tin File
+      const fileData = await utils.uploadToCloudinary(selectedFile,preview.type);
+
+      //Gửi thông tin File để chuẩn hoá
+      const mediaInfo = utils.prepareMediaInfo(fileData);
+
+      //Tạo payload để gửi cho server với thông tin file
+      const payload = utils.createRequestPayload( mediaInfo,caption,selectedColors);
+      
+      //Gửi payload cho server
+      showToast("info", `Đang tạo bài viết !`);
+      await lockerService.uploadMediaV2(payload);
+
+      showToast("success",`${fileData.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`);
+
+      // Reset state
+      setPreview(null);
+      setSelectedFile(null);
+      setCaption("");
+      setSelectedColors({
+        top: "#00FA9A",
+        bottom: "#1E90FF",
+        text: "#FFFFFF",
+      });
     } catch (error) {
-      console.error("Lỗi khi tải lên:", error);
-      showToast("error", "Lỗi hệ thống!");
+      const errorMessage = error?.response?.data?.message || error.message || "Lỗi không xác định";
+
+      showToast("error", `Lỗi khi tải lên: ${errorMessage}`);
+      console.error("Lỗi khi gửi bài:", error);
     } finally {
       setSendLoading(false);
     }

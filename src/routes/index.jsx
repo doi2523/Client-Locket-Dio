@@ -1,5 +1,3 @@
-import Login1 from "../hooks/TestLogin";
-import Upload from "../hooks/UploadPost";
 import AboutMe from "../pages/Auth/AboutMe";
 import AuthHome from "../pages/Auth/Home";
 import Post from "../pages/Auth/PostImage";
@@ -10,7 +8,6 @@ import Docs from "../pages/Public/Docs";
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
 import Timeline from "../pages/Public/Timeline";
-import UploadForm from "../pages/Test";
 import CameraCapture from "../pages/UILocket";
 
 const APP_NAME = "Locket Pro - Đăng ảnh & Video lên Locket";

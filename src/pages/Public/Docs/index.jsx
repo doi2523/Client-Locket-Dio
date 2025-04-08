@@ -21,6 +21,7 @@ const Docs = () => {
           <li>Custome caption theo ý thích.</li>
           <li>Lưu phiên đăng nhập <span className='text-secondary'>(coming soon)</span>.</li>
           <li>Forums chia sẻ màu caption <span className='text-secondary'>(coming soon)</span>.</li>
+          <li>Tăng chất lượng ảnh/video <span className='text-secondary'>(coming soon)</span>.</li>
           <li>Quay video hoặc chụp ảnh trực tiếp trên web <span className='text-secondary'>(coming soon)</span>.</li>
         </ul>
 
@@ -28,7 +29,7 @@ const Docs = () => {
         <h2 className="text-2xl font-semibold mt-6">3. Các Lưu Ý Quan Trọng</h2>
         <ul className="list-disc ml-5 text-sm">
           <li><b>Kích thước tệp:</b> Đối với ảnh nhỏ hơn 1MB và video có thể có kích thước tối đa 10MB.</li>
-          <li><b>Định dạng hỗ trợ:</b> Ảnh: JPG, PNG,...; Video: MP4, MOV.</li>
+          <li><b>Định dạng hỗ trợ:</b> Ảnh: JPG, JPEG, PNG; Video: MP4, MOV.</li>
           <li><b>Kích cỡ phương tiện:</b> Sau khi tải lên web phương tiện sẽ tự động được cắt vuông. Vì vậy bạn nên cắt vuông trước khi tải lên.</li>
           <li><b>Quyền riêng tư:</b> Các tệp tin tải lên sẽ được bảo mật, nhưng hãy chắc chắn rằng bạn không chia sẻ thông tin nhạy cảm.</li>
         </ul>

@@ -1,4 +1,4 @@
-import { getAuthCookies } from "./cookieUtils";
+import { getAuthCookies } from "../cookie/cookieUtils";
 
 export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
   // Tạo đối tượng token (bao gồm idToken và localId)

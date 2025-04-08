@@ -175,7 +175,6 @@ export const uploadMediaV2 = async (payload) => {
   try {
     // Lấy mediaInfo từ payload
     const { mediaInfo } = payload;
-
     // Lấy type từ mediaInfo để xác định là ảnh hay video
     const fileType = mediaInfo.type;
 
