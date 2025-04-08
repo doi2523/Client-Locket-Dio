@@ -23,9 +23,7 @@ const Login = () => {
       // Lưu token & localId ngay sau khi login
       utils.setAuthCookies(
         res.data.idToken,
-        res.data.localId,
-        parseInt(res.data.expiresIn, 10)
-      );
+        res.data.localId);
       if (!res) throw new Error("Không thể lấy thông tin người dùng!");
 
       // Lưu user vào localStorage và cập nhật state

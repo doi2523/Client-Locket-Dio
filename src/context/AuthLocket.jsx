@@ -14,17 +14,14 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuth = async () => {
       try {
-        const idToken = utils.getAuthCookies().idToken;
-        const localId = utils.getAuthCookies().localId;
-
+        const idToken = user.idToken || utils.getAuthCookies().idToken;
+        const localId = user.localId || utils.getAuthCookies().localId;
         if (!idToken || !localId) {
           utils.clearAuthCookies();
           utils.removeUser();
           setUser(null);
           return;
         }
-
-        // Không gọi API nữa, giữ nguyên user từ localStorage
       } catch (error) {
         if (isMounted) {
           utils.clearAuthCookies();

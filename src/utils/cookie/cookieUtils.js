@@ -1,7 +1,7 @@
 // cookies.js
 
-// Hàm đặt cookie với giá trị mặc định max-age là 3600 giây
-export const setCookie = (name, value, maxAgeSeconds = 3600) => {
+// Hàm đặt cookie
+export const setCookie = (name, value, maxAgeSeconds) => {
   document.cookie = `${name}=${value}; path=/; Secure; SameSite=None; max-age=${maxAgeSeconds}`;
 };
 
@@ -28,8 +28,8 @@ export const getAuthCookies = () => ({
   localId: getCookie("localId"),
 });
 
-// Lưu idToken & localId (mặc định sống 3600 giây)
-export const setAuthCookies = (idToken, localId, expiresInSeconds = 3600) => {
+// Lưu idToken & localId
+export const setAuthCookies = (idToken, localId, expiresInSeconds) => {
   setCookie("idToken", idToken, expiresInSeconds);
   setCookie("localId", localId, expiresInSeconds);
 };
