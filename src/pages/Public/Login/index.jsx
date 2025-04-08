@@ -26,19 +26,12 @@ const Login = () => {
         res.data.localId,
         parseInt(res.data.expiresIn, 10)
       );
-      showToast("success", "Đăng nhập thành công!");
-
-      // Lấy token sau khi lưu
-      const idToken = utils.getAuthCookies().idToken;
-      const localId = utils.getAuthCookies().localId;
-
-      // Lấy thông tin người dùng
-      const userData = await locketService.getInfo(idToken, localId);
-      if (!userData) throw new Error("Không thể lấy thông tin người dùng!");
+      if (!res) throw new Error("Không thể lấy thông tin người dùng!");
 
       // Lưu user vào localStorage và cập nhật state
-      utils.saveUser(userData);
-      setUser(userData);
+      utils.saveUser(res.data);
+      setUser(res.data);
+      showToast("success", "Đăng nhập thành công!");
     } catch (error) {
       if (error.status) {
         // 🔥 Xử lý lỗi từ server trả về

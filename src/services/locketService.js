@@ -5,7 +5,7 @@ import * as utils from "../utils";
 export const login = async (email, password) => {
   try {
     const res = await axios.post(
-      utils.API_URL.LOGIN_URL,
+      utils.API_URL.LOGIN_URL_V2,
       { email, password },
       { withCredentials: true } // Nhận cookie từ server
     );
