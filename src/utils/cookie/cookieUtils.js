@@ -1,7 +1,7 @@
 // cookies.js
 
 // Hàm đặt cookie
-export const setCookie = (name, value, maxAgeSeconds) => {
+export const setCookie = (name, value, maxAgeSeconds = 3600) => {
   document.cookie = `${name}=${value}; path=/; Secure; SameSite=None; max-age=${maxAgeSeconds}`;
 };
 
@@ -22,19 +22,23 @@ export const deleteCookie = (name) => {
   document.cookie = `${name}=; path=/; max-age=0; Secure; SameSite=None`;
 };
 
-// Hàm lấy cả idToken & localId từ cookie
+// Lấy cả idToken & localId từ cookie
 export const getAuthCookies = () => ({
   idToken: getCookie("idToken"),
   localId: getCookie("localId"),
 });
 
-// Lưu idToken & localId
-export const setAuthCookies = (idToken, localId, expiresInSeconds) => {
+// ✅ Hàm lưu cookie với giá trị mặc định là 1 giờ (3600 giây)
+export const setAuthCookies = (
+  idToken,
+  localId,
+  expiresInSeconds = 3600
+) => {
   setCookie("idToken", idToken, expiresInSeconds);
   setCookie("localId", localId, expiresInSeconds);
 };
 
-// Xóa idToken & localId khỏi cookie
+// Xóa cookies
 export const clearAuthCookies = () => {
   deleteCookie("idToken");
   deleteCookie("localId");

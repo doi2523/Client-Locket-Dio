@@ -1,13 +1,10 @@
 import { getAuthCookies } from "../cookie/cookieUtils";
-import { getUser } from "../sessionStorage/helpers";
 
 export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
-  const user = getUser(); // đã là object hoặc null nếu không có
-
   // Tạo đối tượng token (bao gồm idToken và localId)
   const tokenData = {
-    idToken: getAuthCookies().idToken || user?.idToken,
-    localId: getAuthCookies().localId || user?.localId,
+    idToken: getAuthCookies().idToken,
+    localId: getAuthCookies().localId,
   };
 
   // Tạo đối tượng options (bao gồm các lựa chọn như caption, colors...)
