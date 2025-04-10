@@ -11,6 +11,7 @@ const Login = () => {
   const { setUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const { useloading } = useApp();
   const { isStatusServer, isLoginLoading, setIsLoginLoading } = useloading;
 
@@ -21,9 +22,7 @@ const Login = () => {
       const res = await locketService.login(email, password);
       if (!res) throw new Error("Lỗi: Server không trả về dữ liệu!");
       // Lưu token & localId ngay sau khi login
-      utils.setAuthCookies(
-        res.data.idToken,
-        res.data.localId);
+      utils.setAuthCookies(res.data.idToken, res.data.localId);
       if (!res) throw new Error("Không thể lấy thông tin người dùng!");
 
       // Lưu user vào localStorage và cập nhật state
@@ -66,8 +65,8 @@ const Login = () => {
 
   return (
     <>
-      <div className="flex items-center justify-center h-screen bg-base-200">
-        <div className="w-full max-w-md mx-7 p-7 space-y-6 shadow-lg rounded-xl bg-opacity-50 backdrop-blur-3xl bg-base-100 border-base-300 text-base-content">
+      <div className="flex items-center justify-center h-screen bg-base-200 px-6">
+        <div className="w-full max-w-md p-7 shadow-lg rounded-xl bg-opacity-50 backdrop-blur-3xl bg-base-100 border-base-300 text-base-content">
           <h1 className="text-3xl font-bold text-center">Đăng Nhập Locket</h1>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -92,11 +91,31 @@ const Login = () => {
                 required
               />
             </div>
+            <div className="flex items-center gap-2">
+              <input
+                id="rememberMe"
+                type="checkbox"
+                className="checkbox checkbox-primary checkbox-sm"
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+              />
+              <label
+                htmlFor="rememberMe"
+                className="cursor-pointer select-none text-sm"
+              >
+                Ghi nhớ đăng nhập
+              </label>
+            </div>
+
             <button
               type="submit"
               className={`
                 w-full btn btn-primary py-2 text-lg font-semibold rounded-lg transition flex items-center justify-center gap-2
-                ${isStatusServer !== true ? "bg-blue-400 cursor-not-allowed opacity-80" : ""}
+                ${
+                  isStatusServer !== true
+                    ? "bg-blue-400 cursor-not-allowed opacity-80"
+                    : ""
+                }
               `}
               disabled={isStatusServer !== true || isLoginLoading}
             >
@@ -116,7 +135,6 @@ const Login = () => {
       </div>
     </>
   );
-  
 };
 
 export default Login;

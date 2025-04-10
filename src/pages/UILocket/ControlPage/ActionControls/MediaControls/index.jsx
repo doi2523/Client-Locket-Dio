@@ -22,7 +22,7 @@ const MediaControls = () => {
     setCaption("");
     setPreview(null);
     setSelectedFile(null);
-    setSelectedColors({ top: "#00FA9A", bottom: "#1E90FF", text: "#FFFFFF" });
+    setSelectedColors({ top: "", bottom: "", text: "#FFFFFF" });
     // Thực hiện các thao tác cần thiết khác, ví dụ:
     // setCapturedMedia(null);
     // setCameraActive(true);
@@ -35,43 +35,54 @@ const MediaControls = () => {
       showToast("error", "Không có dữ liệu để tải lên.");
       return;
     }
-
+  
+    // Kiểm tra dung lượng file
+    const isImage = preview?.type === "image";
+    const isVideo = preview?.type === "video";
+  
+    if ((isImage && isSizeMedia > 1) || (isVideo && isSizeMedia > 10)) {
+      showToast(
+        "error",
+        `${isImage ? "Ảnh" : "Video"} vượt quá giới hạn dung lượng. ${
+          isImage ? "Tối đa 1MB" : "Tối đa 10MB"
+        }.`
+      );
+      return;
+    }
+  
     try {
       setSendLoading(true);
-      showToast("info", `Đang chuẩn bị ${preview.type === "video" ? "video" : "ảnh"} !`);
-      //Gọi hàm upload ảnh/video lên Cloud và nhận về thông tin File
-      const fileData = await utils.uploadToCloudinary(selectedFile,preview.type);
-
-      //Gửi thông tin File để chuẩn hoá
+      showToast("info", `Đang chuẩn bị ${isVideo ? "video" : "ảnh"} !`);
+  
+      const fileData = await utils.uploadToCloudinary(selectedFile, preview.type);
+  
       const mediaInfo = utils.prepareMediaInfo(fileData);
-
-      //Tạo payload để gửi cho server với thông tin file
-      const payload = utils.createRequestPayload( mediaInfo,caption,selectedColors);
-      
-      //Gửi payload cho server
+  
+      const payload = utils.createRequestPayloadV2(
+        mediaInfo,
+        caption,
+        selectedColors
+      );
+  
       showToast("info", `Đang tạo bài viết !`);
       await lockerService.uploadMediaV2(payload);
-
-      showToast("success",`${fileData.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`);
-
+  
+      showToast("success", `${fileData.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`);
+  
       // Reset state
       setPreview(null);
       setSelectedFile(null);
       setCaption("");
-      setSelectedColors({
-        top: "#00FA9A",
-        bottom: "#1E90FF",
-        text: "#FFFFFF",
-      });
+      setSelectedColors(null);
     } catch (error) {
       const errorMessage = error?.response?.data?.message || error.message || "Lỗi không xác định";
-
       showToast("error", `Lỗi khi tải lên: ${errorMessage}`);
       console.error("Lỗi khi gửi bài:", error);
     } finally {
       setSendLoading(false);
     }
   };
+  
   
   
   return (
@@ -81,7 +92,7 @@ const MediaControls = () => {
         onClick={handleDelete}
         disabled={sendLoading}
       >
-        <X size={35} />
+        <X size={35}/>
       </button>
       <button
         onClick={handleSubmit}

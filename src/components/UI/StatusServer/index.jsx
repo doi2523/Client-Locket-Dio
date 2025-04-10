@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useApp } from "../../../context/AppContext";
 import BouncyLoader from "../Loading/Bouncy";
+import * as utils from "../../../utils";
 import { RiEmotionHappyLine } from "react-icons/ri";
 import { TbMoodCrazyHappy } from "react-icons/tb";
 
@@ -12,7 +13,7 @@ const StatusServer = () => {
   useEffect(() => {
     const checkServer = async () => {
       try {
-        const response = await axios.get("https://apilocket-diov2.onrender.com/");
+        const response = await axios.get(utils.API_URL.CHECK_SERVER);
         setIsStatusServer(response.status === 200);
       } catch (error) {
         setIsStatusServer(false);

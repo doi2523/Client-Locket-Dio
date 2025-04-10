@@ -6,7 +6,7 @@ import LeftHomeScreen from "./ExtendPage/leftHomeScreen.jsx";
 import RightHomeScreen from "./ExtendPage/rightHomeScreen.jsx";
 import MainHomeScreen from "./ExtendPage/mainHomeScreen.jsx";
 
-import CustomeForm from "./ControlPage/CustomeForm.jsx";
+import CustomeForm from "./ExtendPage/CustomeForm.jsx";
 
 const CameraCapture = () => {
   const { user, setUser } = useContext(AuthContext);

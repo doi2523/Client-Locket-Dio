@@ -6,8 +6,16 @@ export const usePost = () => {
     bottom: "", // Trong suốt
     text: "#FFFFFF", 
   });  
-  const [caption, setCaption] = useState("");
-  const [ preview, setPreview] = useState(null);
+  const [custome, setCustome] = useState({
+    id: "",            // hoặc null
+    top: "transparent",
+    bottom: "transparent",
+    text: "#FFFFFF",
+    caption: "",
+  });
+  
+  const [caption, setCaption ] = useState("");
+  const [ preview, setPreview ] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [ isTextColor, setTextColor] = useState(null);
   const [ isSizeMedia, setSizeMedia ] = useState(null);
@@ -18,6 +26,7 @@ export const usePost = () => {
     selectedFile,setSelectedFile,
     preview, setPreview,
     isTextColor, setTextColor,
-    isSizeMedia, setSizeMedia
+    isSizeMedia, setSizeMedia,
+    custome, setCustome
   };
 };

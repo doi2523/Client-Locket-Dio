@@ -9,7 +9,7 @@ const ActionControls = () => {
   const { capturedMedia } = camera;
 
   return (
-    <div className="flex gap-4 w-full h-40 max-w-md justify-evenly items-center">
+    <div className="flex gap-4 w-full h-30 max-w-md justify-evenly items-center">
       {capturedMedia || selectedFile ? <MediaControls /> : <MediaCapture />}
     </div>
   );

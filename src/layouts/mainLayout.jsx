@@ -8,6 +8,7 @@ const DefaultLayout = ({ children }) => {
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
 
+  // Handle loading state on route change
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => setIsLoading(false), 500);
@@ -15,20 +16,28 @@ const DefaultLayout = ({ children }) => {
   }, [location.pathname]);
 
   return (
-    <div className="flex flex-col min-h-screen overflow-hidden">
-      {/* Header */}
-      <Header />
+    <div className="flex flex-col min-h-screen">
+      {/* Fixed Header */}
+      <header className="sticky top-0 z-50">
+        <Header />
+      </header>
 
-      {/* Loading Overlay */}
-      {isLoading && <Loading />}
-
-      {/* Main content scrollable */}
-      <main className="flex-1 overflow-y-scroll bg-base-200 text-base-content">
-        {children}
+      {/* Main Content with Scroll */}
+      <main className="flex-1 overflow-y-auto bg-base-200 text-base-content relative py-6">
+        {isLoading && (
+          <div className="absolute inset-0 z-20">
+            <Loading />
+          </div>
+        )}
+        <div className="relative z-10">
+          {children}
+        </div>
       </main>
 
-      {/* Footer cố định dưới */}
-      <Footer />
+      {/* Footer at the bottom of main content */}
+      <footer className="bg-base-300">
+        <Footer />
+      </footer>
     </div>
   );
 };

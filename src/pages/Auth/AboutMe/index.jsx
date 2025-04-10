@@ -10,6 +10,7 @@ import {
   Coffee,
   Globe,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import ImageMarquee from "../../../components/Marquee/LanguageMarquee";
 import {
   FaReact,
@@ -21,11 +22,12 @@ import {
   FaNodeJs,
 } from "react-icons/fa";
 import { RiTailwindCssFill, RiVercelFill } from "react-icons/ri";
+import DonateHistory from "../../Public/HistoryDonate";
 
 const AboutMe = () => {
   return (
     <>
-      <div className="min-h-screen flex flex-col px-4 py-10 pt-20 items-center">
+      <div className="min-h-screen flex flex-col px-4 items-center">
         {/* Avatar + Name */}
         <div className="flex flex-col items-center mb-10">
           <img
@@ -149,7 +151,7 @@ const AboutMe = () => {
         </div>
         {/* Phần Donate */}
       </div>
-      <div className="relative mb-10 text-center px-3">
+      <div className="relative mb-10 text-center px-3 mt-6">
         {/* Phần Donate */}
         <h3 className="flex justify-center items-center text-2xl font-semibold mb-4 gap-2">
           <Coffee /> Give me a coffee</h3>
@@ -166,8 +168,10 @@ const AboutMe = () => {
           <p className="mt-4 text-sm">
             Mọi đóng góp đều giúp mình cải thiện dịch vụ và duy trì trang web. Cảm ơn sự ủng hộ của bạn!
           </p>
+          {/* <Link className="underline text-sm" to="/donatehistory">Lịch sử đóng góp</Link> */}
         </div>
       </div>
+      <DonateHistory/>
     </>
   );
 };

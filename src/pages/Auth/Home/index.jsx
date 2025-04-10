@@ -6,8 +6,7 @@ const AuthHome = () => {
   const [iframeUrl] = useState("https://locket-dio.web.app");
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-10 bg-base-200">
-              <div className="h-16"></div>
+    <div className="min-h-screen flex flex-col items-center justify-center py-6 bg-base-200">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl w-full items-center">
         <div className="text-center lg:text-left">
           <h1 className="text-4xl font-extrabold leading-tight">

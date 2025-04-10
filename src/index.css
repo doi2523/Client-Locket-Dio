@@ -11,7 +11,6 @@
   -moz-osx-font-smoothing: grayscale;
   /* --theme-color: #ffffff: */
 }
-
 .no-save {
   pointer-events: none; /* Ngăn mọi tương tác chuột */
   -webkit-user-drag: none; /* Chrome, Edge, Opera */
@@ -224,3 +223,23 @@
   animation: border-run 2s linear infinite;
 }
 
+/* styles.css */
+.gradient-text-v2 {
+  font-family: "LoveHouse", sans-serif;
+  background: linear-gradient(45deg, #ff0000, #1a53ff, #ea01ff, #fcfc00);
+  background-clip: text;
+  color: transparent;
+  background-size: 400% 400%;
+  animation: gradient 3s ease infinite;
+}
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

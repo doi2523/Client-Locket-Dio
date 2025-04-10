@@ -71,8 +71,7 @@ export default function Profile() {
   }, []); // ✅ Dependency array rỗng => chỉ chạy khi component mount
 
   return (
-    <div className="flex flex-col items-center min-h-screen w-full px-6 py-10">
-              <div className="h-16"></div>
+    <div className="flex flex-col items-center min-h-screen w-full">
       <h1 className="text-3xl font-bold pb-6">
         Chào mừng, "
         <span className="">

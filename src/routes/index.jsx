@@ -5,6 +5,7 @@ import PostMoments from "../pages/Auth/PostMoments";
 import PostVideo from "../pages/Auth/PostVideo";
 import Profile from "../pages/Auth/Profile";
 import Docs from "../pages/Public/Docs";
+import DonateHistory from "../pages/Public/HistoryDonate";
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
 import Timeline from "../pages/Public/Timeline";
@@ -32,6 +33,7 @@ const authRoutes = [
   { path: "/timeline", component: Timeline, title: `${APP_NAME} | Dòng Thời Gian` },
   { path: "/aboutdio", component: AboutMe, title: `${APP_NAME} | Về Dio` },
   { path: "/docs", component: Docs, title: `${APP_NAME} | Docs` },
+  { path: "/donatehistory", component: DonateHistory, title: `${APP_NAME} | DonateHistory` },
 
   { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Trang Chủ` },
 ];

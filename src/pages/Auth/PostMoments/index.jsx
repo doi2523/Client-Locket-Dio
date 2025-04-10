@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import Hourglass from "../../../components/UI/Loading/hourglass.jsx";
 import { RiEmotionHappyLine } from "react-icons/ri";
 import { TbMoodCrazyHappy } from "react-icons/tb";
+import MediaSizeInfo from "../../../components/UI/MediaSizeInfo/index.jsx";
 
 const PostMoments = () => {
 
@@ -40,8 +41,15 @@ const PostMoments = () => {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    setSelectedColors({ top: colorTop, bottom: colorBottom, text: colorText });
-  }, [colorTop, colorBottom, colorText]);
+    setSelectedColors({
+      id: "custome",
+      top: colorTop,
+      bottom: colorBottom,
+      caption,
+      text: colorText
+    });    
+    // setSelectedColors({ top: colorTop, bottom: colorBottom, text: colorText });
+  }, [colorTop, colorBottom, colorText, caption]);
   //Handle tải file
   const handleFileChange = useCallback(async (event) => {
     const rawFile = event.target.files[0];
@@ -84,7 +92,7 @@ const PostMoments = () => {
       const mediaInfo = utils.prepareMediaInfo(fileData);
 
       //Tạo payload để gửi cho server với thông tin file
-      const payload = utils.createRequestPayload( mediaInfo,caption,selectedColors);
+      const payload = utils.createRequestPayloadV2( mediaInfo,caption,selectedColors);
 
       //Gửi payload cho server
       showToast("info", `Đang tạo bài viết !`);
@@ -112,8 +120,7 @@ const PostMoments = () => {
   };
 
   return (
-    <div className="flex justify-center items-center flex-col min-h-screen p-6 bg-base-200">
-      <div className="h-16"></div>
+    <div className="flex justify-center items-center flex-col min-h-screen bg-base-200">
       <div className="p-6 rounded-lg shadow-md w-full max-w-md bg-base-100">
         <h2 className="text-3xl font-semibold mb-4 text-center">
           Upload Video hoặc Ảnh
@@ -200,40 +207,7 @@ const PostMoments = () => {
               </div>
             )}
           </div>
-
-          {preview?.type && isSizeMedia && (
-            <div className="text-left text-sm mt-3 absolute">
-              <div
-                className={`flex items-center gap-1 ${
-                  preview.type === "image"
-                    ? isSizeMedia > 1
-                      ? "text-red-500"
-                      : "text-green-500"
-                    : preview.type === "video"
-                    ? isSizeMedia > 5
-                      ? "text-red-500"
-                      : "text-green-500"
-                    : ""
-                }`}
-              >
-                Dung lượng file {preview.type === "image" ? "ảnh" : "video"} là{" "}
-                {isSizeMedia}MB
-                {preview.type === "image" ? (
-                  isSizeMedia > 1 ? (
-                    <TbMoodCrazyHappy className="text-lg" />
-                  ) : (
-                    <RiEmotionHappyLine className="text-lg" />
-                  )
-                ) : preview.type === "video" ? (
-                  isSizeMedia > 5 ? (
-                    <TbMoodCrazyHappy className="text-lg" />
-                  ) : (
-                    <RiEmotionHappyLine className="text-lg" />
-                  )
-                ) : null}
-              </div>
-            </div>
-          )}
+          <MediaSizeInfo/>
         </div>
 
         {/* Caption & Color */}

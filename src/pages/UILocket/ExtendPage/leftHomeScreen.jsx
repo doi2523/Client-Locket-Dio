@@ -26,7 +26,7 @@ const LeftHomeScreen = () => {
 
   return (
     <div
-      className={`fixed inset-0 flex flex-col transition-transform duration-500 z-50 ${
+      className={`fixed inset-0 h-screen flex flex-col transition-transform duration-500 z-50 ${
         isProfileOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >

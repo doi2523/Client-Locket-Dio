@@ -5,9 +5,10 @@ import { useApp } from "../../../context/AppContext";
 import ActionControls from "../ControlPage/ActionControls";
 
 const MainHomeScreen = () => {
-  const { navigation } = useApp();
+  const { navigation, post } = useApp();
 
   const { isHomeOpen, isProfileOpen } = navigation;
+  const { isSizeMedia,setSizeMedia, preview, setPreview } = post;
 
   return (
     <div
@@ -17,9 +18,9 @@ const MainHomeScreen = () => {
           : isHomeOpen
           ? "-translate-x-full"
           : "translate-x-0"
-      }`}
+      } overflow-hidden`}
     >
-      <div className="flex select-none flex-col items-center justify-start">
+      <div className="flex select-none flex-col items-center justify-start overflow-hidden">
         <Navbar />
         <MediaPreview />
         <ActionControls />

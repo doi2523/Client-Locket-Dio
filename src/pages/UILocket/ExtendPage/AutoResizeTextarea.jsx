@@ -50,6 +50,7 @@ const AutoResizeTextarea = () => {
       className="absolute text-white px-4 font-semibold bottom-4 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl py-2 text-md outline-none max-w-[90%] w-auto resize-none overflow-hidden transition-all"
       style={{
         width: `${width}px`,
+        color: `${selectedColors.text}`,
         height : "40px",
         whiteSpace: "pre-wrap",
         overflow: "hidden",
