@@ -1,61 +1,62 @@
-import { useRef, useState } from "react";
 import React from "react";
-import "./SquareProgress.css"; // Nhớ import
 
-const SquareProgress = () => {
-  const [running, setRunning] = useState(false);
-  const pathRef = useRef(null);
-
-  const handleStart = () => {
-    if (!pathRef.current) return;
-    pathRef.current.style.animationPlayState = "running";
-    setRunning(true);
-  };
-
-  const handlePause = () => {
-    if (!pathRef.current) return;
-    pathRef.current.style.animationPlayState = "paused";
-    setRunning(false);
-  };
+const BorderProgress = ({ show = false, running = false }) => {
+  if (!show) return null;
 
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center">
-      <svg viewBox="0 0 210 210" className="square-progress w-full h-full">
+    <>
+      <svg
+        className="absolute w-full h-full z-50"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        style={{ borderRadius: "65px", overflow: "hidden" }}
+      >
+        <defs>
+          <clipPath id="roundedClip">
+            <rect x="0" y="0" width="100" height="100" rx="15" ry="15" />
+          </clipPath>
+        </defs>
+
         <path
-          className="path-bg"
+          clipPath="url(#roundedClip)"
           d="
-            M110,10
-            H190
-            A10,10 0 0 1 200,20
-            V190
-            A10,10 0 0 1 190,200
-            H30
-            A10,10 0 0 1 20,190
-            V20
-            A10,10 0 0 1 30,10
-            H110
+            M15,0 H85 A15,15 0 0 1 100,15
+            V85 A15,15 0 0 1 85,100
+            H15 A15,15 0 0 1 0,85
+            V15 A15,15 0 0 1 15,0 Z
           "
+          stroke="#444"
+          strokeWidth="2"
+          fill="none"
         />
+
         <path
-          ref={pathRef}
-          className="path-progress"
+          clipPath="url(#roundedClip)"
           d="
-            M110,10
-            H190
-            A10,10 0 0 1 200,20
-            V190
-            A10,10 0 0 1 190,200
-            H30
-            A10,10 0 0 1 20,190
-            V20
-            A10,10 0 0 1 30,10
-            H110
+            M50,0 H85 A15,15 0 0 1 100,15
+            V85 A15,15 0 0 1 85,100
+            H15 A15,15 0 0 1 0,85
+            V15 A15,15 0 0 1 15,0 Z
           "
+          stroke="#00ccff"
+          strokeWidth="4"
+          fill="none"
+          strokeLinecap="butt"
+          strokeDasharray="400"
+          strokeDashoffset="400"
+          style={{
+            animation: running ? "pathProgress 5s linear forwards" : "none",
+          }}
         />
       </svg>
-    </div>
+
+      <style>{`
+        @keyframes pathProgress {
+          to { stroke-dashoffset: 0; }
+        }
+      `}</style>
+    </>
   );
-  
 };
 
-export default SquareProgress;
+export default BorderProgress;
