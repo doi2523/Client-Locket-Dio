@@ -10,9 +10,12 @@ const LOCKET_URL = "/locket";
 export const API_URL = {
   LOGIN_URL: `${BASE_API_URL}${LOCKET_URL}/login`,
   LOGIN_URL_V2: `${BASE_API_URL}${LOCKET_URL}/loginV2`,
+
   LOGOUT_URL: `${BASE_API_URL}${LOCKET_URL}/logout`,
   CHECK_AUTH_URL: `${BASE_API_URL}${LOCKET_URL}/checkauth`,
   GET_INFO_URL: `${BASE_API_URL}${LOCKET_URL}/getinfo`,
+
+  REFESH_TOKEN_URL: `${BASE_API_URL}${LOCKET_URL}/refresh-token`,
   
   UPLOAD_MEDIA_URL: `${BASE_API_URL}${LOCKET_URL}/post`,
   GET_LASTEST_URL: `${BASE_API_URL}${LOCKET_URL}/getmoment`,

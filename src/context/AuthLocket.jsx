@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuth = async () => {
       try {
+        
         const idToken = utils.getAuthCookies().idToken;
         const localId = utils.getAuthCookies().localId;
         if (!idToken || !localId) {

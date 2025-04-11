@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ThemeSelector from "../../../components/Theme/ThemeSelector";
+import RefreshTokenButton from "../../Test";
 
 const AuthHome = () => {
   const [iframeUrl] = useState("https://locket-dio.web.app");
@@ -22,6 +23,7 @@ const AuthHome = () => {
             Khám phá ngay
           </Link>
         </div>
+        {/* <RefreshTokenButton/> */}
         <div className="flex justify-center disable-select">
           <div className="mockup-browser border border-base-300 w-full">
             <div className="mockup-browser-toolbar">

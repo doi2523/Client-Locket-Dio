@@ -1,10 +1,12 @@
 import { getAuthCookies } from "../cookie/cookieUtils";
+import { getAuthStorage } from "../storage";
 
 export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
   // Tạo đối tượng token (bao gồm idToken và localId)
+  const { idToken, localId } = getAuthCookies();
   const tokenData = {
-    idToken: getAuthCookies().idToken,
-    localId: getAuthCookies().localId,
+    idToken: idToken,
+    localId: localId,
   };
 
   // Tạo đối tượng options (bao gồm các lựa chọn như caption, colors...)
@@ -27,9 +29,10 @@ export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
 };
 export const createRequestPayloadV2 = (mediaInfo, caption, selectedColors) => {
   // Tạo đối tượng token (bao gồm idToken và localId)
+  const { idToken, localId } = getAuthCookies();
   const tokenData = {
-    idToken: getAuthCookies().idToken,
-    localId: getAuthCookies().localId,
+    idToken: idToken,
+    localId: localId,
   };
 
   // Tạo đối tượng options (bao gồm các lựa chọn như caption, colors...)

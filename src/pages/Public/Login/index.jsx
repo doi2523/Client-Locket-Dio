@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { showToast } from "../../../components/Toast";
 import * as locketService from "../../../services/locketService";
 import { AuthContext } from "../../../context/AuthLocket";
@@ -11,10 +11,14 @@ const Login = () => {
   const { setUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  // const [rememberMe, setRememberMe] = useState(
+  //   localStorage.getItem("rememberMe") === "true"
+  // );
   const { useloading } = useApp();
   const { isStatusServer, isLoginLoading, setIsLoginLoading } = useloading;
-
+  // useEffect(() => {
+  //   localStorage.setItem("rememberMe", rememberMe.toString());
+  // }, [rememberMe]);
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoginLoading(true);
@@ -22,8 +26,10 @@ const Login = () => {
       const res = await locketService.login(email, password);
       if (!res) throw new Error("Lỗi: Server không trả về dữ liệu!");
       // Lưu token & localId ngay sau khi login
-      utils.setAuthCookies(res.data.idToken, res.data.localId);
-      if (!res) throw new Error("Không thể lấy thông tin người dùng!");
+      const { idToken, refreshToken, localId } = res.data;
+      //Luu refreshToken Cookie
+      utils.setRefreshTokenCookie(refreshToken);
+      utils.setAuthCookies(idToken, localId);
 
       // Lưu user vào localStorage và cập nhật state
       utils.saveUser(res.data);
@@ -91,7 +97,7 @@ const Login = () => {
                 required
               />
             </div>
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <input
                 id="rememberMe"
                 type="checkbox"
@@ -105,7 +111,7 @@ const Login = () => {
               >
                 Ghi nhớ đăng nhập
               </label>
-            </div>
+            </div> */}
 
             <button
               type="submit"

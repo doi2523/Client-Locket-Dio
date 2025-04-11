@@ -25,6 +25,28 @@ export const login = async (email, password) => {
     throw new Error("Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút.");
   }
 };
+export const refreshIdToken = async (refreshToken) => {
+  try {
+    const res = await axios.post(
+      utils.API_URL.REFESH_TOKEN_URL,
+      { refreshToken },
+      { withCredentials: true } // Nhận cookie từ server
+    );
+    // Kiểm tra nếu API trả về lỗi nhưng vẫn có status 200
+    // if (res.data?.success === false) {
+    //   console.error("Login failed:", res.data.message);
+    //   return null;
+    // }
+
+    return res.data.idToken; // Trả về dữ liệu từ server
+  } catch (error) {
+    if (error.response && error.response.data?.error) {
+      throw error.response.data.error; // ⬅️ Ném lỗi từ `error.response.data.error`
+    }
+    console.error("❌ Network Error:", error.message);
+    throw new Error("Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút.");
+  }
+};
 //Logout
 export const logout = async () => {
   try {
@@ -64,7 +86,6 @@ export const getInfocheckAuth = async (idToken, localId) => {
     }
   }
 };
-
 export const getInfo = async (idToken, localId) => {
   try {
     if (!idToken) {
