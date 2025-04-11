@@ -3,6 +3,7 @@ import AutoResizeTextarea from "./AutoResizeTextarea";
 import Hourglass from "../../../components/UI/Loading/hourglass";
 import { useApp } from "../../../context/AppContext";
 import MediaSizeInfo from "../../../components/UI/MediaSizeInfo";
+import SquareProgress from "../../../components/UI/SquareProgress";
 
 const MediaPreview = ({
   loading,
@@ -94,7 +95,8 @@ const MediaPreview = ({
             <AutoResizeTextarea />
           </div>
         )}
-      </div>
+        {/* <div className="absolute w-full h-full border-8 rounded-[65px] z-50"></div> */}
+        </div>
 
       {/* Hiển thị thông tin dung lượng file ngay dưới khung */}
       <div className="mt-2 text-sm flex items-center justify-center pl-3">

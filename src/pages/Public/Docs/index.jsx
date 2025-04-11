@@ -18,7 +18,6 @@ const Docs = () => {
           <li>Đăng nhập vào hệ thống.</li>
           <li>Tải ảnh và video lên Locket.</li>
           <li>Custome caption theo ý thích.</li>
-          <li>Lưu phiên đăng nhập <span className='text-secondary'>(coming soon)</span>.</li>
           <li>Forums chia sẻ màu caption <span className='text-secondary'>(coming soon)</span>.</li>
           <li>Tăng chất lượng ảnh/video <span className='text-secondary'>(coming soon)</span>.</li>
           <li>Quay video hoặc chụp ảnh trực tiếp trên web <span className='text-secondary'>(coming soon)</span>.</li>
