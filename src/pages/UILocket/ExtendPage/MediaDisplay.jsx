@@ -66,7 +66,7 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
       >
         {/* Overlay loading */}
         {uploadLoading && (
-          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/30 gap-3 text-white text-lg font-medium">
+          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-3 text-white text-lg font-medium">
             <Hourglass
               size={50}
               stroke={2}
@@ -99,9 +99,7 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
             loop
             muted
             playsInline
-            className={`w-full h-full object-cover ${
-              cameraMode === "user" ? "scale-x-[-1]" : ""
-            }`}
+            className={`w-full h-full object-cover`}
           />
         )}
 

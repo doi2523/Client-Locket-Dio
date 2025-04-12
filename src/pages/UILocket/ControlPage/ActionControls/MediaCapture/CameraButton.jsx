@@ -21,7 +21,7 @@ const CameraButton = () => {
     setLoading
   } = camera;
   const { preview, setPreview, setSelectedFile, setSizeMedia} = post;
-  const { setIsCaptionLoading } = useloading;
+  const { setIsCaptionLoading, uploadLoading, setUploadLoading } = useloading;
 
   const holdStartTimeRef = useRef(null);
   const holdTimeoutRef = useRef(null);
@@ -53,25 +53,34 @@ const CameraButton = () => {
           if (e.data.size > 0) chunks.push(e.data);
         };
 
-        recorder.onstop = () => {
+        recorder.onstop = async () => {
           setCameraActive(false);
           setLoading(true);
-
+        
           const blob = new Blob(chunks, { type: "video/webm" });
-          const file = new File([blob], "video.mp4", { type: "video/mp4" });
-          const videoUrl = URL.createObjectURL(file);          
+        
+          let finalBlob = blob;
+          // setUploadLoading(true);
+          // Nếu đang quay bằng camera trước, lật video
+          if (cameraMode === "user") {
+            finalBlob = await correctFrontCameraVideo(blob); // Blob đã lật
+          }
 
+          const file = new File([finalBlob], "video.mp4", { type: "video/mp4" });
+          const videoUrl = URL.createObjectURL(file);
+        
           const fileSizeInMB = file.size / (1024 * 1024); // size in MB
           setSizeMedia(fileSizeInMB.toFixed(2));
           
           setPreview({ type: "video", data: videoUrl });
-
           setSelectedFile(file);
           setCameraActive(false);
-          setIsCaptionLoading(true)
-          stopCamera()
+          setIsCaptionLoading(true);
+          stopCamera();
           setLoading(false);
+                    setUploadLoading(false);
         };
+        
 
         recorder.start();
         setTimeout(() => {
@@ -159,7 +168,55 @@ const CameraButton = () => {
       console.error("Lỗi khi đổi camera:", error);
     }
   };
+  const correctFrontCameraVideo = (blob) => {
+    return new Promise((resolve) => {
+      const video = document.createElement("video");
+      video.src = URL.createObjectURL(blob);
+      video.muted = true; // tránh phát âm thanh
+      video.playsInline = true;
 
+      // setUploadLoading(true);
+      video.onloadedmetadata = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+  
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+  
+        const stream = canvas.captureStream();
+        const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+        const chunks = [];
+  
+        recorder.ondataavailable = (e) => chunks.push(e.data);
+        recorder.onstop = () => {
+          const correctedBlob = new Blob(chunks, { type: "video/webm" });
+          resolve(correctedBlob);
+        };
+  
+        recorder.start();
+        video.play();
+  
+        const drawFrame = () => {
+          if (video.ended || video.paused) {
+            recorder.stop();
+            return;
+          }
+  
+          ctx.save();
+          // Lật ngang khung hình
+          ctx.translate(canvas.width, 0);
+          ctx.scale(-1, 1);
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          ctx.restore();
+  
+          requestAnimationFrame(drawFrame);
+        };
+  
+        requestAnimationFrame(drawFrame);
+      };
+    });
+  };
+  
   return (
     <>
       <button
