@@ -8,7 +8,8 @@ import BorderProgress from "../../../components/UI/SquareProgress";
 const MediaPreview = ({ loading, countdown, capturedMedia }) => {
   const { post, useloading, camera } = useApp();
   const { selectedFile, preview, isSizeMedia } = post;
-  const { streamRef, videoRef, cameraActive, setCameraActive, cameraMode } = camera;
+  const { streamRef, videoRef, cameraActive, setCameraActive, cameraMode } =
+    camera;
   const { isCaptionLoading, uploadLoading } = useloading;
 
   // Bật camera nếu cần
@@ -16,7 +17,13 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
     const startCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: cameraMode || "user" },
+          video: {
+            facingMode: cameraMode || "user",
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            // iOS không hỗ trợ zoom trực tiếp nhưng vẫn nên thử
+            zoom: 1,
+          },
           audio: false,
         });
         streamRef.current = stream;
@@ -35,23 +42,38 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
   }, [cameraActive, cameraMode]);
 
   useEffect(() => {
-    console.log("📷 useEffect kiểm tra media", { preview, selectedFile, capturedMedia });
+    console.log("📷 useEffect kiểm tra media", {
+      preview,
+      selectedFile,
+      capturedMedia,
+    });
     if (!preview && !selectedFile && !capturedMedia) {
       console.log("✅ Không có media -> Bật lại camera");
       setCameraActive(true);
     }
   }, [preview, selectedFile, capturedMedia, setCameraActive]);
-  
 
   return (
     <>
-      <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">Locket Camera</h1>
+      <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">
+        Locket Camera
+      </h1>
 
-      <div className={`relative w-full max-w-md aspect-square bg-gray-800 rounded-[65px] overflow-hidden ${loading ? "border border-red-500" : ""}`}>
+      <div
+        className={`relative w-full max-w-md aspect-square bg-gray-800 rounded-[65px] overflow-hidden ${
+          loading ? "border border-red-500" : ""
+        }`}
+      >
         {/* Overlay loading */}
         {uploadLoading && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/30 gap-3 text-white text-lg font-medium">
-            <Hourglass size={50} stroke={2} bgOpacity={0.1} speed={1.5} color="white" />
+            <Hourglass
+              size={50}
+              stroke={2}
+              bgOpacity={0.1}
+              speed={1.5}
+              color="white"
+            />
             <div>Đang xử lý tệp...</div>
           </div>
         )}
@@ -63,7 +85,9 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
             autoPlay
             playsInline
             muted
-            className={`w-full h-full object-cover ${cameraMode === "user" ? "scale-x-[-1]" : ""}`}
+            className={`w-full h-full object-cover ${
+              cameraMode === "user" ? "scale-x-[-1]" : ""
+            }`}
           />
         )}
 
@@ -89,7 +113,11 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
 
         {/* Caption */}
         {preview && selectedFile && (
-          <div className={`absolute z-50 inset-x-0 bottom-0 px-4 pb-4 transition-opacity duration-500 ${isCaptionLoading ? "opacity-100" : "opacity-0"}`}>
+          <div
+            className={`absolute z-50 inset-x-0 bottom-0 px-4 pb-4 transition-opacity duration-500 ${
+              isCaptionLoading ? "opacity-100" : "opacity-0"
+            }`}
+          >
             <AutoResizeTextarea />
           </div>
         )}
