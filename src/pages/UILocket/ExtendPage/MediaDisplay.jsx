@@ -99,7 +99,9 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
             loop
             muted
             playsInline
-            className="w-full h-full object-cover"
+            className={`w-full h-full object-cover ${
+              cameraMode === "user" ? "scale-x-[-1]" : ""
+            }`}
           />
         )}
 

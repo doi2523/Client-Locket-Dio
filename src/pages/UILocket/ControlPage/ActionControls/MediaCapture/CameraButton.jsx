@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useApp } from "../../../../../context/AppContext";
 import { RefreshCcw } from "lucide-react";
 
-const MAX_RECORD_TIME = 10; // giây
+const MAX_RECORD_TIME = 5; // giây
 
 const CameraButton = () => {
   const { camera, post, useloading } = useApp();
