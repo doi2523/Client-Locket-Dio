@@ -3,22 +3,15 @@ import AutoResizeTextarea from "./AutoResizeTextarea";
 import Hourglass from "../../../components/UI/Loading/hourglass";
 import { useApp } from "../../../context/AppContext";
 import MediaSizeInfo from "../../../components/UI/MediaSizeInfo";
-import SquareProgress from "../../../components/UI/SquareProgress";
 import BorderProgress from "../../../components/UI/SquareProgress";
 
 const MediaPreview = ({ loading, countdown, capturedMedia }) => {
   const { post, useloading, camera } = useApp();
-  const { selectedFile, preview, setPreview, isSizeMedia } = post;
-  const {
-    streamRef,
-    videoRef,
-    isHolding,
-    setIsHolding,
-    cameraActive,
-    cameraMode,
-  } = camera;
-  const { isCaptionLoading, setIsCaptionLoading, uploadLoading } = useloading;
+  const { selectedFile, preview, isSizeMedia } = post;
+  const { streamRef, videoRef, cameraActive, setCameraActive, cameraMode } = camera;
+  const { isCaptionLoading, uploadLoading } = useloading;
 
+  // Bật camera nếu cần
   useEffect(() => {
     const startCamera = async () => {
       try {
@@ -27,106 +20,87 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
           audio: false,
         });
         streamRef.current = stream;
-        if (videoRef.current) {
+        if (videoRef.current && !videoRef.current.srcObject) {
           videoRef.current.srcObject = stream;
-          console.log("🎥 Đã gán stream vào videoRef", stream);
+          console.log("🎥 Gán stream vào videoRef", stream);
         }
       } catch (err) {
         console.error("🚫 Không thể truy cập camera:", err);
       }
     };
 
-    // Chỉ bật khi active
     if (cameraActive && !streamRef.current) {
       startCamera();
     }
-  }, [cameraActive, cameraMode, videoRef]);
-  console.log(cameraMode);
-  const renderMedia = () => {
-    if (!selectedFile && cameraActive) {
-      return (
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted
-          className={`w-full h-full object-cover ${
-            cameraMode === "user" ? "scale-x-[-1]" : ""
-          }`}
-        />
-      );
-    }
+  }, [cameraActive, cameraMode]);
 
-    if (preview?.type === "video") {
-      return (
-        <video
-          src={preview.data}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover"
-          onClick={(e) => e.preventDefault()}
-        />
-      );
+  useEffect(() => {
+    console.log("📷 useEffect kiểm tra media", { preview, selectedFile, capturedMedia });
+    if (!preview && !selectedFile && !capturedMedia) {
+      console.log("✅ Không có media -> Bật lại camera");
+      setCameraActive(true);
     }
-
-    if (preview?.type === "image") {
-      return (
-        <img
-          src={preview.data}
-          alt="Selected File"
-          className="w-full h-full object-cover"
-        />
-      );
-    }
-
-    return null;
-  };
+  }, [preview, selectedFile, capturedMedia, setCameraActive]);
+  
 
   return (
     <>
-      <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">
-        Locket Camera
-      </h1>
+      <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">Locket Camera</h1>
 
-      {/* Wrapper Media */}
-      {/* Wrapper Media */}
-      <div
-        className={`relative w-full max-w-md aspect-square transform bg-gray-700 rounded-[65px] overflow-hidden ${
-          loading ? "border border-red-500" : ""
-        }`}
-      >
+      <div className={`relative w-full max-w-md aspect-square bg-gray-800 rounded-[65px] overflow-hidden ${loading ? "border border-red-500" : ""}`}>
+        {/* Overlay loading */}
         {uploadLoading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 z-50 gap-3 text-white text-lg font-medium">
-            <Hourglass
-              size={50}
-              stroke={2}
-              bgOpacity={0.1}
-              speed={1.5}
-              color="white"
-            />
+          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/30 gap-3 text-white text-lg font-medium">
+            <Hourglass size={50} stroke={2} bgOpacity={0.1} speed={1.5} color="white" />
             <div>Đang xử lý tệp...</div>
           </div>
         )}
 
-        {/* Hiển thị media */}
-        {renderMedia()}
+        {/* Hiển thị camera nếu chưa có media */}
+        {!preview && !selectedFile && !capturedMedia && cameraActive && (
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className={`w-full h-full object-cover ${cameraMode === "user" ? "scale-x-[-1]" : ""}`}
+          />
+        )}
 
-        {/* Caption textarea */}
-        {(capturedMedia || preview) && (
-          <div
-            className={`absolute inset-x-0 bottom-0 px-4 pb-4 transition-opacity duration-500 ${
-              isCaptionLoading ? "opacity-100" : "opacity-0"
-            }`}
-          >
+        {/* Preview media */}
+        {preview?.type === "video" && (
+          <video
+            src={preview.data}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+          />
+        )}
+
+        {preview?.type === "image" && (
+          <img
+            src={preview.data}
+            alt="Preview"
+            className="w-full h-full object-cover select-none"
+          />
+        )}
+
+        {/* Caption */}
+        {preview && selectedFile && (
+          <div className={`absolute z-50 inset-x-0 bottom-0 px-4 pb-4 transition-opacity duration-500 ${isCaptionLoading ? "opacity-100" : "opacity-0"}`}>
             <AutoResizeTextarea />
           </div>
         )}
-        <BorderProgress show={isHolding} running={isHolding} />
+
+        {/* Viền loading */}
+        <div className="absolute inset-0 z-50 pointer-events-none">
+          <BorderProgress />
+        </div>
       </div>
 
-      {/* Hiển thị thông tin dung lượng file ngay dưới khung */}
+      {/* Media size info */}
       <div className="mt-2 text-sm flex items-center justify-center pl-3">
         <MediaSizeInfo />
       </div>

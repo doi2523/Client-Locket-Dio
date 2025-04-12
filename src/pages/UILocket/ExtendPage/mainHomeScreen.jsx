@@ -5,10 +5,11 @@ import { useApp } from "../../../context/AppContext";
 import ActionControls from "../ControlPage/ActionControls";
 
 const MainHomeScreen = () => {
-  const { navigation, post } = useApp();
+  const { navigation, post, camera } = useApp();
 
   const { isHomeOpen, isProfileOpen } = navigation;
   const { isSizeMedia,setSizeMedia, preview, setPreview } = post;
+  const { canvasRef } = camera;
 
   return (
     <div
@@ -24,7 +25,7 @@ const MainHomeScreen = () => {
         <Navbar />
         <MediaPreview />
         <ActionControls />
-        <canvas className="hidden" />
+        <canvas ref={canvasRef} className="hidden" />
       </div>
     </div>
   );

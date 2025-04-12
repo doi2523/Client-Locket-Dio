@@ -1,19 +1,25 @@
 import React from "react";
+import { useApp } from "../../../context/AppContext";
 
-const BorderProgress = ({ show = false, running = false }) => {
-  if (!show) return null;
+const BorderProgress = () => {
+    const { camera } = useApp();
+    const {
+      isHolding,
+      setIsHolding,
+    } = camera;
+  if (!isHolding) return null;
 
   return (
     <>
       <svg
-        className="absolute w-full h-full z-50"
+        className="absolute w-full h-full z-50 border-none"
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
-        style={{ borderRadius: "65px", overflow: "hidden" }}
+        style={{ borderRadius: "30px", overflow: "hidden" }}
       >
         <defs>
           <clipPath id="roundedClip">
-            <rect x="0" y="0" width="100" height="100" rx="15" ry="15" />
+            <rect x="0" y="0" width="105" height="105" rx="0" ry="0" />
           </clipPath>
         </defs>
 
@@ -25,7 +31,7 @@ const BorderProgress = ({ show = false, running = false }) => {
             H15 A15,15 0 0 1 0,85
             V15 A15,15 0 0 1 15,0 Z
           "
-          stroke="#444"
+          // stroke="#444"
           strokeWidth="2"
           fill="none"
         />
@@ -45,7 +51,7 @@ const BorderProgress = ({ show = false, running = false }) => {
           strokeDasharray="400"
           strokeDashoffset="400"
           style={{
-            animation: running ? "pathProgress 5s linear forwards" : "none",
+            animation: isHolding ? "pathProgress 5s linear forwards" : "none",
           }}
         />
       </svg>

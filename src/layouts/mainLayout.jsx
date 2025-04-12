@@ -23,7 +23,7 @@ const DefaultLayout = ({ children }) => {
       </header>
 
       {/* Main Content with Scroll */}
-      <main className="flex-1 overflow-y-auto bg-base-200 text-base-content relative py-6">
+      <main className="flex-1 overflow-y-auto bg-base-200 text-base-content relative">
         {isLoading && (
           <div className="absolute inset-0 z-20">
             <Loading />

@@ -7,39 +7,48 @@ import { useCallback } from "react";
 import { showToast } from "../../../../../components/Toast/index.jsx";
 
 const MediaControls = () => {
-  const { navigation, post, useloading } = useApp();
+  const { navigation, post, useloading, camera } = useApp();
   const { setIsFilterOpen } = navigation;
   const { sendLoading, setSendLoading } = useloading;
-  const { 
-    preview, setPreview, 
-    caption, setCaption, 
-    selectedFile, setSelectedFile, 
-    selectedColors, setSelectedColors,
-    isSizeMedia,setSizeMedia, } = post;
+  const {
+    preview,
+    setPreview,
+    caption,
+    setCaption,
+    selectedFile,
+    setSelectedFile,
+    selectedColors,
+    setSelectedColors,
+    isSizeMedia,
+    setSizeMedia,
+  } = post;
+  const { cameraActive, setCameraActive } = camera;
 
   const handleDelete = useCallback(() => {
+    // Dừng stream cũ nếu có
+    if (camera.streamRef.current) {
+      camera.streamRef.current.getTracks().forEach((track) => track.stop());
+      camera.streamRef.current = null;
+    }
     setSelectedFile(null);
-    setCaption("");
     setPreview(null);
-    setSelectedFile(null);
+    setCaption("");
+    setSizeMedia(null);
     setSelectedColors({ top: "", bottom: "", text: "#FFFFFF" });
-    // Thực hiện các thao tác cần thiết khác, ví dụ:
-    // setCapturedMedia(null);
-    // setCameraActive(true);
-    // setIsHolding(false);
-    // Các thao tác khác liên quan đến stream có thể để lại nếu cần
-  }, [setSelectedFile, setCaption]);
+
+    setCameraActive(true); // Giữ dòng này để trigger useEffect
+  }, []);
 
   const handleSubmit = async () => {
     if (!selectedFile) {
       showToast("error", "Không có dữ liệu để tải lên.");
       return;
     }
-  
+
     // Kiểm tra dung lượng file
     const isImage = preview?.type === "image";
     const isVideo = preview?.type === "video";
-  
+
     if ((isImage && isSizeMedia > 1) || (isVideo && isSizeMedia > 10)) {
       showToast(
         "error",
@@ -49,42 +58,47 @@ const MediaControls = () => {
       );
       return;
     }
-  
+
     try {
       setSendLoading(true);
       showToast("info", `Đang chuẩn bị ${isVideo ? "video" : "ảnh"} !`);
-  
-      const fileData = await utils.uploadToCloudinary(selectedFile, preview.type);
-  
+
+      const fileData = await utils.uploadToCloudinary(
+        selectedFile,
+        preview.type
+      );
+
       const mediaInfo = utils.prepareMediaInfo(fileData);
-  
+
       const payload = utils.createRequestPayloadV2(
         mediaInfo,
         caption,
         selectedColors
       );
-  
+
       showToast("info", `Đang tạo bài viết !`);
       await lockerService.uploadMediaV2(payload);
-  
-      showToast("success", `${fileData.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`);
-  
+
+      showToast(
+        "success",
+        `${fileData.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
+      );
+
       // Reset state
       setPreview(null);
       setSelectedFile(null);
       setCaption("");
       setSelectedColors(null);
     } catch (error) {
-      const errorMessage = error?.response?.data?.message || error.message || "Lỗi không xác định";
+      const errorMessage =
+        error?.response?.data?.message || error.message || "Lỗi không xác định";
       showToast("error", `Lỗi khi tải lên: ${errorMessage}`);
       console.error("Lỗi khi gửi bài:", error);
     } finally {
       setSendLoading(false);
     }
   };
-  
-  
-  
+
   return (
     <>
       <button
@@ -92,7 +106,7 @@ const MediaControls = () => {
         onClick={handleDelete}
         disabled={sendLoading}
       >
-        <X size={35}/>
+        <X size={35} />
       </button>
       <button
         onClick={handleSubmit}
