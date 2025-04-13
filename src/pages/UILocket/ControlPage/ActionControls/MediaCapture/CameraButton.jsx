@@ -12,15 +12,20 @@ const CameraButton = () => {
     canvasRef,
     cameraRef,
     rotation,
-    isHolding, setIsHolding,
-    permissionChecked, setPermissionChecked,
-    holdTime, setHoldTime,
+    isHolding,
+    setIsHolding,
+    permissionChecked,
+    setPermissionChecked,
+    holdTime,
+    setHoldTime,
     setRotation,
-    cameraMode, setCameraMode,
-    cameraActive, setCameraActive,
-    setLoading
+    cameraMode,
+    setCameraMode,
+    cameraActive,
+    setCameraActive,
+    setLoading,
   } = camera;
-  const { preview, setPreview, setSelectedFile, setSizeMedia} = post;
+  const { preview, setPreview, setSelectedFile, setSizeMedia } = post;
   const { setIsCaptionLoading, uploadLoading, setUploadLoading } = useloading;
 
   const holdStartTimeRef = useRef(null);
@@ -38,43 +43,44 @@ const CameraButton = () => {
   };
   const startHold = () => {
     holdStartTimeRef.current = Date.now();
-  
+
     holdTimeoutRef.current = setTimeout(() => {
       console.log("📹 Bắt đầu quay video");
       setIsHolding(true);
-  
+
       const video = videoRef.current;
       if (!video) return;
-  
+
       // Tạo canvas vuông
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-  
+
       const side = Math.min(video.videoWidth, video.videoHeight);
-      canvas.width = side;
-      canvas.height = side;
-  
+      const outputSize = 1080;
+      canvas.width = outputSize;
+      canvas.height = outputSize;
+
       // Capture từ canvas
       const canvasStream = canvas.captureStream();
       // const recorder = new MediaRecorder(canvasStream, { mimeType: "video/webm" });
       const recorder = new MediaRecorder(canvasStream);
       mediaRecorderRef.current = recorder;
-  
+
       const chunks = [];
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunks.push(e.data);
       };
-  
+
       recorder.onstop = async () => {
         setCameraActive(false);
-  
+
         const blob = new Blob(chunks, { type: "video/webm" });
         const file = new File([blob], "video.mp4", { type: "video/mp4" });
         const videoUrl = URL.createObjectURL(file);
-  
+
         const fileSizeInMB = file.size / (1024 * 1024);
         setSizeMedia(fileSizeInMB.toFixed(2));
-  
+
         setPreview({ type: "video", data: videoUrl });
         setSelectedFile(file);
         setCameraActive(false);
@@ -82,33 +88,32 @@ const CameraButton = () => {
         stopCamera();
         setLoading(false);
       };
-  
+
       recorder.start();
-  
+
       // Hàm vẽ mỗi frame vào canvas
       const drawFrame = () => {
-        if (video.paused || video.ended || recorder.state !== "recording") return;
-  
+        if (video.paused || video.ended || recorder.state !== "recording")
+          return;
+
         ctx.save();
-  
-        // Lật nếu là camera trước
+
         if (cameraMode === "user") {
-          ctx.translate(canvas.width, 0);
+          ctx.translate(outputSize, 0);
           ctx.scale(-1, 1);
         }
-  
-        // Cắt vùng vuông từ video
+
         const sx = (video.videoWidth - side) / 2;
         const sy = (video.videoHeight - side) / 2;
-        ctx.drawImage(video, sx, sy, side, side, 0, 0, side, side);
-  
+        ctx.drawImage(video, sx, sy, side, side, 0, 0, outputSize, outputSize);
+
         ctx.restore();
-  
+
         requestAnimationFrame(drawFrame);
       };
-  
+
       drawFrame();
-  
+
       setTimeout(() => {
         if (recorder.state === "recording") {
           recorder.stop();
@@ -117,7 +122,6 @@ const CameraButton = () => {
       }, MAX_RECORD_TIME * 1000);
     }, 300);
   };
-  
 
   const endHold = () => {
     const heldTime = Date.now() - holdStartTimeRef.current;
@@ -137,9 +141,12 @@ const CameraButton = () => {
       const ctx = canvas.getContext("2d");
       canvas.width = 720;
       canvas.height = 720;
-      
-      let sx = 0, sy = 0, sw = video.videoWidth, sh = video.videoHeight;
-      
+
+      let sx = 0,
+        sy = 0,
+        sw = video.videoWidth,
+        sh = video.videoHeight;
+
       if (video.videoWidth > video.videoHeight) {
         const offset = (video.videoWidth - video.videoHeight) / 2;
         sx = offset;
@@ -149,14 +156,14 @@ const CameraButton = () => {
         sy = offset;
         sh = video.videoWidth;
       }
-      
+
       if (cameraMode === "user") {
         ctx.translate(canvas.width, 0);
         ctx.scale(-1, 1);
       }
-      
+
       ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
-      
+
       canvas.toBlob((blob) => {
         if (blob) {
           const file = new File([blob], "photo.png", { type: "image/png" });
@@ -167,7 +174,7 @@ const CameraButton = () => {
           setSizeMedia(fileSizeInMB.toFixed(2));
 
           setSelectedFile(file);
-          setIsCaptionLoading(true)
+          setIsCaptionLoading(true);
           setCameraActive(false);
         }
       }, "image/png");
@@ -197,7 +204,7 @@ const CameraButton = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: newMode },
-        audio: false
+        audio: false,
       });
       streamRef.current = stream;
       if (videoRef.current) {
@@ -207,7 +214,7 @@ const CameraButton = () => {
       console.error("Lỗi khi đổi camera:", error);
     }
   };
-  
+
   return (
     <>
       <button
