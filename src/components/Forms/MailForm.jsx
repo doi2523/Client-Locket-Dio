@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 const MailForm = ({ defaultEmail = "doibncm2003@gmail.com" }) => {
-  const [email, setEmail] = useState(defaultEmail);
-  const [subject, setSubject] = useState("");
+  const [email] = useState(defaultEmail);
+  const [subject] = useState("Góp ý về website Locket Pro");
   const [body, setBody] = useState("");
 
   const handleSendEmail = () => {
@@ -13,43 +13,33 @@ const MailForm = ({ defaultEmail = "doibncm2003@gmail.com" }) => {
   return (
     <div className="w-full max-w-3xl">
       {/* Tiêu đề */}
-      <h1 className="font-lovehouse text-3xl font-semibold">Send Email</h1>
+      <h1 className="font-lovehouse text-center text-3xl font-semibold">Send Email</h1>
 
       {/* Form Gửi Email */}
       <fieldset className="p-4 border rounded-lg shadow-lg w-full">
-        <legend className="font-semibold text-lg">📧 Điền thông tin Email:</legend>
+        <legend className="font-semibold text-lg">📧 Gửi góp ý cho Locket Pro</legend>
 
-        {/* Email */}
-        <label className="block">
-          <span className="text-gray-700 font-semibold">Đến:</span>
-          <input
-            type="email"
-            disabled
-            className="w-full p-2 border rounded mt-1"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </label>
+        {/* Email (readonly text) */}
+        <p className="">
+          <span className="font-semibold">Đến:</span>{" "}
+          <span className="text-primary">{email}</span>
+        </p>
 
-        {/* Tiêu đề */}
-        <label className="block mt-3">
-          <span className="text-gray-700 font-semibold">Tiêu đề:</span>
-          <input
-            type="text"
-            className="w-full p-2 border rounded mt-1"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-          />
-        </label>
+        {/* Subject (readonly text) */}
+        <p className="mt-2">
+          <span className="font-semibold">Tiêu đề:</span>{" "}
+          <span className="text-primary">{subject}</span>
+        </p>
 
         {/* Nội dung */}
-        <label className="block mt-3">
-          <span className="text-gray-700 font-semibold">Nội dung:</span>
+        <label className="block mt-4">
+          <span className="font-semibold">Nội dung:</span>
           <textarea
-            className="w-full p-2 border rounded mt-1"
+            className="w-full p-2 border rounded mt-1 textarea"
             rows="4"
             value={body}
             onChange={(e) => setBody(e.target.value)}
+            placeholder="Nhập nội dung góp ý..."
           />
         </label>
 

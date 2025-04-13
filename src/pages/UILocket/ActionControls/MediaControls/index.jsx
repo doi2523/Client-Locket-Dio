@@ -1,10 +1,10 @@
 import { X, Send, Sparkles } from "lucide-react";
-import * as utils from "../../../../../utils";
-import * as lockerService from "../../../../../services/locketService";
-import LoadingRing from "../../../../../components/UI/Loading/ring.jsx";
-import { useApp } from "../../../../../context/AppContext.jsx";
+import * as utils from "../../../../utils/index.js";
+import * as lockerService from "../../../../services/locketService.js";
+import LoadingRing from "../../../../components/UI/Loading/ring.jsx";
+import { useApp } from "../../../../context/AppContext.jsx";
 import { useCallback } from "react";
-import { showToast } from "../../../../../components/Toast/index.jsx";
+import { showToast } from "../../../../components/Toast/index.jsx";
 
 const MediaControls = () => {
   const { navigation, post, useloading, camera } = useApp();
@@ -34,7 +34,7 @@ const MediaControls = () => {
     setPreview(null);
     setCaption("");
     setSizeMedia(null);
-    setSelectedColors({id:"", top: "", bottom: "", text: "#FFFFFF" });
+    setSelectedColors({ id: "", top: "", bottom: "", text: "#FFFFFF" });
 
     setCameraActive(true); // Giữ dòng này để trigger useEffect
   }, []);

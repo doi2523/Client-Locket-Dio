@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useApp } from "../../../../../context/AppContext";
+import { useApp } from "../../../../context/AppContext";
 import { RefreshCcw } from "lucide-react";
 
 const MAX_RECORD_TIME = 5; // giây

@@ -20,7 +20,7 @@ const Docs = () => {
           <li>Custome caption theo ý thích.</li>
           <li>Forums chia sẻ màu caption <span className='text-secondary'>(coming soon)</span>.</li>
           <li>Tăng chất lượng ảnh/video <span className='text-secondary'>(coming soon)</span>.</li>
-          <li>Quay video hoặc chụp ảnh trực tiếp trên web <span className='text-secondary'>(coming soon)</span>.</li>
+          <li>Quay video hoặc chụp ảnh trực tiếp trên web.</li>
         </ul>
 
         {/* Các Lưu Ý Quan Trọng */}

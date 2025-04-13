@@ -1,8 +1,18 @@
 export const defaultHistorys = [
   {
-    "date": "16-03-2025",
-    "title": "Cập nhật tính năng theo dõi trạng thái Server",
-    "description": "Ra mắt tính năng mới giúp người dùng dễ dàng theo dõi và kiểm tra trạng thái hoạt động của Server, nâng cao khả năng quản lý và tối ưu hiệu suất hệ thống."
+    date: "18-03-2025",
+    title: "Thêm tính năng gửi email góp ý",
+    description: "Bạn muốn góp ý? Tới ngay giao diện bên phải của Locket UI."
+  },
+  {
+    date: "18-03-2025",
+    title: "Tích hợp thêm chụp ảnh/quay video trực tiếp",
+    description: "Giờ đây quay video hay chụp ảnh nhanh hơn rồi sử dụng giống như app Locket thực thụ."
+  },
+  {
+    date: "16-03-2025",
+    title: "Cập nhật tính năng theo dõi trạng thái Server",
+    description: "Ra mắt tính năng mới giúp người dùng dễ dàng theo dõi và kiểm tra trạng thái hoạt động của Server, nâng cao khả năng quản lý và tối ưu hiệu suất hệ thống."
   },
   {
     date: "16-03-2025",

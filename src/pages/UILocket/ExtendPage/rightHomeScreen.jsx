@@ -5,6 +5,7 @@ import Sidebar from "../../../components/Sidebar";
 import ThemeSelector from "../../../components/Theme/ThemeSelector";
 import MailForm from "../../../components/Forms/MailForm";
 import { useApp } from "../../../context/AppContext";
+import FeatureList from "../../../components/UI/FeatureList";
 
 const RightHomeScreen = () => {
   const { user, setUser } = useContext(AuthContext);
@@ -19,10 +20,10 @@ const RightHomeScreen = () => {
 
   return (
     <div
-    className={`fixed inset-0 flex flex-col transition-transform duration-500 z-50 bg-base-100 ${
-      isHomeOpen ? "translate-x-0" : "translate-x-full"
-    } overflow-hidden`} // ❌ Không cuộn div to
-  >
+      className={`fixed inset-0 flex flex-col transition-transform duration-500 z-50 bg-base-100 ${
+        isHomeOpen ? "translate-x-0" : "translate-x-full"
+      } overflow-hidden`} // ❌ Không cuộn div to
+    >
       {/* Navbar */}
       <div className="flex items-center shadow-lg justify-between px-4 py-3 text-base-content">
         <button
@@ -43,11 +44,12 @@ const RightHomeScreen = () => {
       </div>
       {/* Nội dung */}
       <div className="flex flex-col flex-1 px-4 py-6 overflow-y-scroll space-y-5 justify-start items-center">
-        {/* <MailForm /> */}
+        <FeatureList />
+        <MailForm />
         <ThemeSelector />
       </div>
       {/* Sidebar */}
-      <Sidebar/>
+      <Sidebar />
     </div>
   );
 };

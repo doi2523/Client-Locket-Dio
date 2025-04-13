@@ -1,17 +1,18 @@
 import React, { useCallback } from "react";
-import { useApp } from "../../../../../context/AppContext";
-import { showToast } from "../../../../../components/Toast";
+import { useApp } from "../../../../context/AppContext";
+import { showToast } from "../../../../components/Toast";
 import { ImageUp } from "lucide-react";
 
 const UploadFile = () => {
   const { post, useloading, camera } = useApp();
-  const { selectedFile, setSelectedFile, preview, setPreview, setSizeMedia } = post;
+  const { selectedFile, setSelectedFile, preview, setPreview, setSizeMedia } =
+    post;
   const { uploadLoading, setUploadLoading, setIsCaptionLoading } = useloading;
   const { cameraActive, setCameraActive } = camera;
 
   //Handle tải file
   const handleFileChange = useCallback(async (event) => {
-    setCameraActive(false)
+    setCameraActive(false);
     setSelectedFile(null);
     const rawFile = event.target.files[0];
     if (!rawFile) return;

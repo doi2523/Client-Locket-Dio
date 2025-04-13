@@ -1,6 +1,6 @@
 import React from "react";
-import { useApp } from "../../../../context/AppContext.jsx";
-import MediaControls from "./MediaControls";
+import { useApp } from "../../../context/AppContext.jsx";
+import MediaControls from "./MediaControls/index.jsx";
 import MediaCapture from "./MediaCapture/index.jsx";
 
 const ActionControls = () => {

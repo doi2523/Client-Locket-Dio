@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../context/AuthLocket";
-import { ChevronRight, Settings } from "lucide-react";
+import { ChevronRight, Heart, Settings } from "lucide-react";
 import React from "react";
 import LoadingRing from "../../../components/UI/Loading/ring";
 import { useApp } from "../../../context/AppContext";
@@ -23,6 +23,30 @@ const LeftHomeScreen = () => {
       document.body.classList.remove("overflow-hidden"); // Cleanup khi unmount
     };
   }, [isProfileOpen]);
+    // Mock danh sách bài viết
+    const posts = [
+      {
+        id: 1,
+        image: "/demo-post.jpg",
+        caption: "Một ngày đẹp trời ☀️",
+        likes: 128,
+        user: {
+          name: "Dio",
+          avatar: user?.profilePicture || "/default-avatar.png",
+        },
+      },
+      {
+        id: 2,
+        image: "/demo-post2.jpg",
+        caption: "Enjoy the moment 🎉",
+        likes: 245,
+        user: {
+          name: "Locket User",
+          avatar: "/default-avatar.png",
+        },
+      },
+      // Thêm bài viết nếu muốn...
+    ];
 
   return (
     <div
@@ -84,17 +108,34 @@ const LeftHomeScreen = () => {
             </a>
           </div>
         </div>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
-        <h1 className="text-4xl">Helo qứoa</h1>
+
+        {posts.map((post) => (
+          <div
+            key={post.id}
+            className="w-full max-w-2xl bg-base-200 rounded-xl shadow-lg overflow-hidden"
+          >
+            {/* Header người dùng */}
+            <div className="flex items-center p-4 gap-3">
+              <img
+                src={post.user.avatar}
+                alt="Avatar"
+                className="w-10 h-10 rounded-full border object-cover"
+              />
+              <span className="font-semibold">{post.user.name}</span>
+            </div>
+
+            {/* Ảnh bài viết */}
+            <img src={post.image} alt="Post" className="w-full object-cover" />
+
+            {/* Caption & Like */}
+            <div className="p-4 space-y-2">
+              <div className="flex items-center gap-2 text-pink-500 font-semibold">
+                <Heart className="w-5 h-5" /> {post.likes} lượt thích
+              </div>
+              <p className="text-base-content">{post.caption}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -20,7 +20,7 @@ const ThemeSelector = () => {
     <div className="w-full flex justify-center">
       {/* Custom Theme */}
       <div className="w-full max-w-6xl">
-        <h1 className="font-lovehouse text-3xl font-semibold text-left">Custom Theme</h1>
+        <h1 className="font-lovehouse text-center text-3xl font-semibold">Custom Theme</h1>
 
         <fieldset className="p-4 border rounded-lg shadow-lg w-full">
           <legend className="font-semibold text-lg text-left">🎨 Chọn Giao Diện:</legend>

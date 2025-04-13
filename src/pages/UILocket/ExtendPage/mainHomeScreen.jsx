@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "./Navbar";
 import MediaPreview from "./MediaDisplay";
 import { useApp } from "../../../context/AppContext";
-import ActionControls from "../ControlPage/ActionControls";
+import ActionControls from "../ActionControls";
 
 const MainHomeScreen = () => {
   const { navigation, post, camera } = useApp();
