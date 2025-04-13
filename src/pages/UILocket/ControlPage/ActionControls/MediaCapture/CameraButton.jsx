@@ -61,9 +61,10 @@ const CameraButton = () => {
         
           let finalBlob = blob;
           // setUploadLoading(true);
-          // Nếu đang quay bằng camera trước, lật video
           if (cameraMode === "user") {
-            finalBlob = await correctFrontCameraVideo(blob); // Blob đã lật
+            // ⚠️ Đợi 100ms cho chắc là blob đã hoàn thành
+            await new Promise((r) => setTimeout(r, 100));
+            finalBlob = await correctFrontCameraVideo(blob);
           }
 
           const file = new File([finalBlob], "video.mp4", { type: "video/mp4" });
@@ -172,10 +173,10 @@ const CameraButton = () => {
     return new Promise((resolve) => {
       const video = document.createElement("video");
       video.src = URL.createObjectURL(blob);
-      video.muted = true;
+      video.muted = true; // tránh phát âm thanh
       video.playsInline = true;
-      video.crossOrigin = "anonymous"; // Tránh CORS nếu cần
-  
+
+      // setUploadLoading(true);
       video.onloadedmetadata = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
@@ -184,12 +185,12 @@ const CameraButton = () => {
         canvas.height = video.videoHeight;
   
         const stream = canvas.captureStream();
-        const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+        const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
         const chunks = [];
   
         recorder.ondataavailable = (e) => chunks.push(e.data);
         recorder.onstop = () => {
-          const correctedBlob = new Blob(chunks, { type: "video/webm" });
+          const correctedBlob = new Blob(chunks, { type: "video/mp4" });
           resolve(correctedBlob);
         };
   
@@ -197,30 +198,25 @@ const CameraButton = () => {
         video.play();
   
         const drawFrame = () => {
+          if (video.ended || video.paused) {
+            recorder.stop();
+            return;
+          }
+  
           ctx.save();
+          // Lật ngang khung hình
           ctx.translate(canvas.width, 0);
           ctx.scale(-1, 1);
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
           ctx.restore();
-          if (!video.ended) {
-            requestAnimationFrame(drawFrame);
-          }
+  
+          requestAnimationFrame(drawFrame);
         };
   
         requestAnimationFrame(drawFrame);
-  
-        // 🛠 Thời lượng fallback
-        const fallbackDuration = video.duration && video.duration !== Infinity
-          ? video.duration
-          : 4; // fallback 4s nếu không lấy được duration
-  
-        setTimeout(() => {
-          recorder.stop();
-        }, fallbackDuration * 1000);
       };
     });
   };
-  
   
   return (
     <>
