@@ -109,8 +109,8 @@ const CameraButton = () => {
       if (!video || !canvas) return;
 
       const ctx = canvas.getContext("2d");
-      canvas.width = 1440;
-      canvas.height = 1440;
+      canvas.width = 720;
+      canvas.height = 720;
       
       let sx = 0, sy = 0, sw = video.videoWidth, sh = video.videoHeight;
       
