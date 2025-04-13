@@ -1,14 +1,15 @@
-import { cropVideoToSquareV2 } from "./cropMedia";
+// import { cropVideoToSquareV2 } from "./cropMedia";
+import React from "react";
 
 export const correctFrontCameraVideo = (blob) => {
   return new Promise(async (resolve) => {
     try {
       // Cắt video thành hình vuông trước
-      const croppedBlob = await cropVideoToSquareV2(blob);
+      // const croppedBlob = await cropVideoToSquareV2(blob);
 
-      // Tạo video từ blob đã cắt
-      const video = document.createElement("video");
-      video.src = URL.createObjectURL(croppedBlob);
+      // // Tạo video từ blob đã cắt
+      // const video = document.createElement("video");
+      video.src = URL.createObjectURL(blob);
       video.muted = true;
       video.playsInline = true;
 

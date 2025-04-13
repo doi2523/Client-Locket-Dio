@@ -184,12 +184,12 @@ const CameraButton = () => {
         canvas.height = video.videoHeight;
   
         const stream = canvas.captureStream();
-        const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+        const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
         const chunks = [];
   
         recorder.ondataavailable = (e) => chunks.push(e.data);
         recorder.onstop = () => {
-          const correctedBlob = new Blob(chunks, { type: "video/webm" });
+          const correctedBlob = new Blob(chunks, { type: "video/mp4" });
           resolve(correctedBlob);
         };
   
