@@ -34,7 +34,7 @@ const MediaControls = () => {
     setPreview(null);
     setCaption("");
     setSizeMedia(null);
-    setSelectedColors({ top: "", bottom: "", text: "#FFFFFF" });
+    setSelectedColors({id:"", top: "", bottom: "", text: "#FFFFFF" });
 
     setCameraActive(true); // Giữ dòng này để trigger useEffect
   }, []);

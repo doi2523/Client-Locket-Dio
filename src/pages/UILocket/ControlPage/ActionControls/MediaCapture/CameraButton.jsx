@@ -28,9 +28,9 @@ const CameraButton = () => {
   const mediaRecorderRef = useRef(null);
   const intervalRef = useRef(null);
 
-  useEffect(() => {
-    console.log("🎬 Trạng thái isHolding thay đổi:", isHolding);
-  }, [isHolding]);
+  // useEffect(() => {
+  //   console.log("🎬 Trạng thái isHolding thay đổi:", isHolding);
+  // }, [isHolding]);
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
@@ -206,54 +206,6 @@ const CameraButton = () => {
     } catch (error) {
       console.error("Lỗi khi đổi camera:", error);
     }
-  };
-  const correctFrontCameraVideo = (blob) => {
-    return new Promise((resolve) => {
-      const video = document.createElement("video");
-      video.src = URL.createObjectURL(blob);
-      video.muted = true; // tránh phát âm thanh
-      video.playsInline = true;
-
-      // setUploadLoading(true);
-      video.onloadedmetadata = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-  
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-  
-        const stream = canvas.captureStream();
-        const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
-        const chunks = [];
-  
-        recorder.ondataavailable = (e) => chunks.push(e.data);
-        recorder.onstop = () => {
-          const correctedBlob = new Blob(chunks, { type: "video/mp4" });
-          resolve(correctedBlob);
-        };
-  
-        recorder.start();
-        video.play();
-  
-        const drawFrame = () => {
-          if (video.ended || video.paused) {
-            recorder.stop();
-            return;
-          }
-  
-          ctx.save();
-          // Lật ngang khung hình
-          ctx.translate(canvas.width, 0);
-          ctx.scale(-1, 1);
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          ctx.restore();
-  
-          requestAnimationFrame(drawFrame);
-        };
-  
-        requestAnimationFrame(drawFrame);
-      };
-    });
   };
   
   return (
