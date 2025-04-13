@@ -56,7 +56,8 @@ const CameraButton = () => {
   
       // Capture từ canvas
       const canvasStream = canvas.captureStream();
-      const recorder = new MediaRecorder(canvasStream, { mimeType: "video/webm" });
+      // const recorder = new MediaRecorder(canvasStream, { mimeType: "video/webm" });
+      const recorder = new MediaRecorder(canvasStream);
       mediaRecorderRef.current = recorder;
   
       const chunks = [];
