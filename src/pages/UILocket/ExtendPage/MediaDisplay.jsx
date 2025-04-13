@@ -18,7 +18,7 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: cameraMode === "user" ? "environment" : "user", // ⚡️ đổi ngược
+            facingMode: cameraMode || "user",
             width: { ideal: 720 },
             height: { ideal: 720 },
             // iOS không hỗ trợ zoom trực tiếp nhưng vẫn nên thử
