@@ -62,9 +62,9 @@ const CameraButton = () => {
           let finalBlob = blob;
           // setUploadLoading(true);
           // Nếu đang quay bằng camera trước, lật video
-          if (cameraMode === "user") {
-            finalBlob = await correctFrontCameraVideo(blob); // Blob đã lật
-          }
+          // if (cameraMode === "user") {
+          //   finalBlob = await correctFrontCameraVideo(blob); // Blob đã lật
+          // }
 
           const file = new File([finalBlob], "video.mp4", { type: "video/mp4" });
           const videoUrl = URL.createObjectURL(file);
