@@ -45,7 +45,7 @@ const BorderProgress = () => {
             V15 A15,15 0 0 1 15,0 Z
           "
           stroke="#00ccff"
-          strokeWidth="4"
+          strokeWidth="3"
           fill="none"
           strokeLinecap="butt"
           strokeDasharray="400"
