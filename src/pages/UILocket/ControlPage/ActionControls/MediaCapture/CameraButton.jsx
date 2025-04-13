@@ -55,16 +55,15 @@ const CameraButton = () => {
 
         recorder.onstop = async () => {
           setCameraActive(false);
-          setLoading(true);
+          // setLoading(true);
         
           const blob = new Blob(chunks, { type: "video/webm" });
         
           let finalBlob = blob;
           // setUploadLoading(true);
+          // Nếu đang quay bằng camera trước, lật video
           if (cameraMode === "user") {
-            // ⚠️ Đợi 100ms cho chắc là blob đã hoàn thành
-            await new Promise((r) => setTimeout(r, 100));
-            finalBlob = await correctFrontCameraVideo(blob);
+            finalBlob = await correctFrontCameraVideo(blob); // Blob đã lật
           }
 
           const file = new File([finalBlob], "video.mp4", { type: "video/mp4" });
@@ -79,7 +78,7 @@ const CameraButton = () => {
           setIsCaptionLoading(true);
           stopCamera();
           setLoading(false);
-                    setUploadLoading(false);
+                    // setUploadLoading(false);
         };
         
 
