@@ -38,60 +38,85 @@ const CameraButton = () => {
   };
   const startHold = () => {
     holdStartTimeRef.current = Date.now();
+  
     holdTimeoutRef.current = setTimeout(() => {
-      // Bắt đầu quay video
       console.log("📹 Bắt đầu quay video");
       setIsHolding(true);
-
-      if (videoRef.current?.srcObject) {
-        const stream = videoRef.current.srcObject;
-        const recorder = new MediaRecorder(stream);
-        mediaRecorderRef.current = recorder;
-        const chunks = [];
-
-        recorder.ondataavailable = (e) => {
-          if (e.data.size > 0) chunks.push(e.data);
-        };
-
-        recorder.onstop = async () => {
-          setCameraActive(false);
-          // setLoading(true);
-        
-          const blob = new Blob(chunks, { type: "video/webm" });
-        
-          let finalBlob = blob;
-          // setUploadLoading(true);
-          // Nếu đang quay bằng camera trước, lật video
-          // if (cameraMode === "user") {
-          //   finalBlob = await correctFrontCameraVideo(blob); // Blob đã lật
-          // }
-
-          const file = new File([finalBlob], "video.mp4", { type: "video/mp4" });
-          const videoUrl = URL.createObjectURL(file);
-        
-          const fileSizeInMB = file.size / (1024 * 1024); // size in MB
-          setSizeMedia(fileSizeInMB.toFixed(2));
-          
-          setPreview({ type: "video", data: videoUrl });
-          setSelectedFile(file);
-          setCameraActive(false);
-          setIsCaptionLoading(true);
-          stopCamera();
-          setLoading(false);
-                    // setUploadLoading(false);
-        };
-        
-
-        recorder.start();
-        setTimeout(() => {
-          if (recorder.state === "recording") {
-            recorder.stop();
-            setIsHolding(false);
-          }
-        }, MAX_RECORD_TIME * 1000);
-      }
+  
+      const video = videoRef.current;
+      if (!video) return;
+  
+      // Tạo canvas vuông
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+  
+      const side = Math.min(video.videoWidth, video.videoHeight);
+      canvas.width = side;
+      canvas.height = side;
+  
+      // Capture từ canvas
+      const canvasStream = canvas.captureStream();
+      const recorder = new MediaRecorder(canvasStream, { mimeType: "video/webm" });
+      mediaRecorderRef.current = recorder;
+  
+      const chunks = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+  
+      recorder.onstop = async () => {
+        setCameraActive(false);
+  
+        const blob = new Blob(chunks, { type: "video/webm" });
+        const file = new File([blob], "video.mp4", { type: "video/mp4" });
+        const videoUrl = URL.createObjectURL(file);
+  
+        const fileSizeInMB = file.size / (1024 * 1024);
+        setSizeMedia(fileSizeInMB.toFixed(2));
+  
+        setPreview({ type: "video", data: videoUrl });
+        setSelectedFile(file);
+        setCameraActive(false);
+        setIsCaptionLoading(true);
+        stopCamera();
+        setLoading(false);
+      };
+  
+      recorder.start();
+  
+      // Hàm vẽ mỗi frame vào canvas
+      const drawFrame = () => {
+        if (video.paused || video.ended || recorder.state !== "recording") return;
+  
+        ctx.save();
+  
+        // Lật nếu là camera trước
+        if (cameraMode === "user") {
+          ctx.translate(canvas.width, 0);
+          ctx.scale(-1, 1);
+        }
+  
+        // Cắt vùng vuông từ video
+        const sx = (video.videoWidth - side) / 2;
+        const sy = (video.videoHeight - side) / 2;
+        ctx.drawImage(video, sx, sy, side, side, 0, 0, side, side);
+  
+        ctx.restore();
+  
+        requestAnimationFrame(drawFrame);
+      };
+  
+      drawFrame();
+  
+      setTimeout(() => {
+        if (recorder.state === "recording") {
+          recorder.stop();
+          setIsHolding(false);
+        }
+      }, MAX_RECORD_TIME * 1000);
     }, 300);
   };
+  
 
   const endHold = () => {
     const heldTime = Date.now() - holdStartTimeRef.current;
