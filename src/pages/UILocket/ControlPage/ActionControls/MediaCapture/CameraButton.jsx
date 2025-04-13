@@ -109,8 +109,8 @@ const CameraButton = () => {
       if (!video || !canvas) return;
 
       const ctx = canvas.getContext("2d");
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      canvas.width = 1440;
+      canvas.height = 1440;
 
       if (cameraMode === "user") {
         ctx.translate(canvas.width, 0);
