@@ -111,13 +111,26 @@ const CameraButton = () => {
       const ctx = canvas.getContext("2d");
       canvas.width = 1440;
       canvas.height = 1440;
-
+      
+      let sx = 0, sy = 0, sw = video.videoWidth, sh = video.videoHeight;
+      
+      if (video.videoWidth > video.videoHeight) {
+        const offset = (video.videoWidth - video.videoHeight) / 2;
+        sx = offset;
+        sw = video.videoHeight;
+      } else {
+        const offset = (video.videoHeight - video.videoWidth) / 2;
+        sy = offset;
+        sh = video.videoWidth;
+      }
+      
       if (cameraMode === "user") {
         ctx.translate(canvas.width, 0);
         ctx.scale(-1, 1);
       }
-
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+      
       canvas.toBlob((blob) => {
         if (blob) {
           const file = new File([blob], "photo.png", { type: "image/png" });
