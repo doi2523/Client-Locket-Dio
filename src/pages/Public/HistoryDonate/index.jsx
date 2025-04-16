@@ -12,7 +12,7 @@ const DonateHistory = () => {
   ];
 
   return (
-    <div className="max-w-2xl mx-auto p-6 rounded-xl bg-base-100 shadow-md border border-base-300">
+    <div className="max-w-2xl mx-auto px-6 p-6 rounded-xl bg-base-100 shadow-md border border-base-300">
       <h1 className="text-2xl font-bold mb-4 text-center">Lịch sử đóng góp</h1>
       <div className="max-h-80 overflow-y-auto space-y-4 pr-1">
         {donations.map((donate, index) => (

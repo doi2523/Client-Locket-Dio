@@ -121,6 +121,7 @@ const PostMoments = () => {
 
   return (
     <div className="flex justify-center items-center flex-col min-h-screen bg-base-200">
+      <div className="h-16"></div>
       <div className="p-6 rounded-lg shadow-md w-full max-w-md bg-base-100">
         <h2 className="text-3xl font-semibold mb-4 text-center">
           Upload Video hoặc Ảnh

@@ -16,28 +16,19 @@ const DefaultLayout = ({ children }) => {
   }, [location.pathname]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="overflow-hidden grid grid-rows-[auto_1fr_auto]">
       {/* Fixed Header */}
-      <header className="sticky top-0 z-50">
-        <Header />
-      </header>
-
-      {/* Main Content with Scroll */}
-      <main className="flex-1 overflow-y-auto bg-base-200 text-base-content relative">
-        {isLoading && (
-          <div className="absolute inset-0 z-20">
-            <Loading />
-          </div>
-        )}
-        <div className="relative z-10">
-          {children}
+      <Header />
+      {isLoading && (
+        <div className="absolute inset-0 z-20">
+          <Loading />
         </div>
+      )}
+      {/* Main Content with Scroll */}
+      <main className="flex-1 overflow-hidden bg-base-200 text-base-content relative">
+        <div className="relative z-10 overflow-y-scroll">{children}</div>
       </main>
-
-      {/* Footer at the bottom of main content */}
-      <footer className="bg-base-300">
-        <Footer />
-      </footer>
+      <Footer />
     </div>
   );
 };

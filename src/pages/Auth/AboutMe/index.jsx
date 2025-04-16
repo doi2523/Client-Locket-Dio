@@ -26,8 +26,9 @@ import DonateHistory from "../../Public/HistoryDonate";
 
 const AboutMe = () => {
   return (
-    <>
-      <div className="min-h-screen flex flex-col px-4 items-center">
+    <>        <div className="h-20"></div>
+      <div className="min-h-screen flex flex-col px-6 items-center">
+
         {/* Avatar + Name */}
         <div className="flex flex-col items-center mb-10">
           <img
