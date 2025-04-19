@@ -11,7 +11,7 @@ import {
   Globe,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import ImageMarquee from "../../../components/Marquee/LanguageMarquee";
+import ImageMarquee from "../../../components/UI/Marquee/LanguageMarquee";
 import {
   FaReact,
   FaGithub,

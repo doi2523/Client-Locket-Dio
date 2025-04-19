@@ -9,7 +9,7 @@ const MediaSizeInfo = () => {
 
   const isImage = preview?.type === "image";
   const isVideo = preview?.type === "video";
-  const isTooBig = isImage ? isSizeMedia > 1 : isVideo ? isSizeMedia > 5 : false;
+  const isTooBig = isImage ? isSizeMedia > 1 : isVideo ? isSizeMedia > 10 : false;
   const colorClass = isTooBig ? "text-red-500" : "text-green-500";
 
   return (

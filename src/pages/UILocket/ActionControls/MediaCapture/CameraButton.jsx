@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { useApp } from "../../../../context/AppContext";
 import { RefreshCcw } from "lucide-react";
+import * as constant from "../../../../constants";
 
-const MAX_RECORD_TIME = 5; // giây
+//const MAX_RECORD_TIME = 10; // giây
 
 const CameraButton = () => {
   const { camera, post, useloading } = useApp();
@@ -119,7 +120,7 @@ const CameraButton = () => {
           recorder.stop();
           setIsHolding(false);
         }
-      }, MAX_RECORD_TIME * 1000);
+      }, constant.MAX_RECORD_TIME * 1000);
     }, 300);
   };
 

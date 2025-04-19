@@ -1,4 +1,10 @@
-import React, { useState, useRef, useCallback, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useContext,
+} from "react";
 import {
   FolderOpen,
   Video,
@@ -20,17 +26,21 @@ import { TbMoodCrazyHappy } from "react-icons/tb";
 import MediaSizeInfo from "../../../components/UI/MediaSizeInfo/index.jsx";
 
 const PostMoments = () => {
-
   const { post, useloading } = useApp();
   const { sendLoading, setSendLoading, uploadLoading, setUploadLoading } =
     useloading;
 
   const {
-    caption,setCaption,
-    preview,setPreview,
-    selectedFile,setSelectedFile,
-    selectedColors,setSelectedColors,
-    isSizeMedia,setSizeMedia,
+    caption,
+    setCaption,
+    preview,
+    setPreview,
+    selectedFile,
+    setSelectedFile,
+    selectedColors,
+    setSelectedColors,
+    isSizeMedia,
+    setSizeMedia,
   } = post;
 
   const [colorTop, setColorTop] = useState(selectedColors.top || "#00FA9A");
@@ -46,8 +56,8 @@ const PostMoments = () => {
       top: colorTop,
       bottom: colorBottom,
       caption,
-      text: colorText
-    });    
+      text: colorText,
+    });
     // setSelectedColors({ top: colorTop, bottom: colorBottom, text: colorText });
   }, [colorTop, colorBottom, colorText, caption]);
   //Handle tải file
@@ -84,21 +94,34 @@ const PostMoments = () => {
 
     try {
       setSendLoading(true);
-      showToast("info", `Đang chuẩn bị ${preview.type === "video" ? "video" : "ảnh"} !`);
+      showToast(
+        "info",
+        `Đang chuẩn bị ${preview.type === "video" ? "video" : "ảnh"} !`
+      );
       //Gọi hàm upload ảnh/video lên Cloud và nhận về thông tin File
-      const fileData = await utils.uploadToCloudinary(selectedFile,preview.type);
+      const fileData = await utils.uploadToCloudinary(
+        selectedFile,
+        preview.type
+      );
 
       //Gửi thông tin File để chuẩn hoá
       const mediaInfo = utils.prepareMediaInfo(fileData);
 
       //Tạo payload để gửi cho server với thông tin file
-      const payload = utils.createRequestPayloadV2( mediaInfo,caption,selectedColors);
+      const payload = utils.createRequestPayloadV2(
+        mediaInfo,
+        caption,
+        selectedColors
+      );
 
       //Gửi payload cho server
       showToast("info", `Đang tạo bài viết !`);
       await lockerService.uploadMediaV2(payload);
 
-      showToast("success",`${fileData.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`);
+      showToast(
+        "success",
+        `${fileData.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
+      );
 
       // Reset state
       setPreview(null);
@@ -110,7 +133,8 @@ const PostMoments = () => {
         text: "#FFFFFF",
       });
     } catch (error) {
-      const errorMessage = error?.response?.data?.message || error.message || "Lỗi không xác định";
+      const errorMessage =
+        error?.response?.data?.message || error.message || "Lỗi không xác định";
 
       showToast("error", `Lỗi khi tải lên: ${errorMessage}`);
       console.error("Lỗi khi gửi bài:", error);
@@ -208,7 +232,7 @@ const PostMoments = () => {
               </div>
             )}
           </div>
-          <MediaSizeInfo/>
+          <MediaSizeInfo />
         </div>
 
         {/* Caption & Color */}

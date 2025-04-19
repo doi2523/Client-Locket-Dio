@@ -3,7 +3,7 @@ import { AuthContext } from "../../../context/AuthLocket";
 import { ChevronLeft, Menu } from "lucide-react";
 import Sidebar from "../../../components/Sidebar";
 import ThemeSelector from "../../../components/Theme/ThemeSelector";
-import MailForm from "../../../components/Forms/MailForm";
+import MailForm from "../../../components/UI/SupportForms/MailForm";
 import { useApp } from "../../../context/AppContext";
 import FeatureList from "../../../components/UI/FeatureList";
 

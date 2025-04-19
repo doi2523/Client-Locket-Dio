@@ -18,36 +18,36 @@ export default function Profile() {
   };
   const formatDateTime = (timestamp) => {
     if (!timestamp) return "Không có dữ liệu";
-    
+
     const date = new Date(parseInt(timestamp));
     const options = {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
       hour12: false, // 24-hour format
       timeZone: "Asia/Ho_Chi_Minh",
     };
-    
+
     return date.toLocaleString("vi-VN", options);
   };
   const formatDateTimeV2 = (timestamp) => {
     if (!timestamp) return "Không có dữ liệu";
-    
+
     const date = new Date(timestamp);
     const options = {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
       hour12: false, // 24-hour format
       timeZone: "Asia/Ho_Chi_Minh",
     };
-    
+
     return date.toLocaleString("vi-VN", options);
   };
   useEffect(() => {
@@ -85,19 +85,19 @@ export default function Profile() {
       <div className="flex flex-row items-center bg-base-100 border-base-300 text-base-content p-6 rounded-lg shadow-lg w-full max-w-2xl">
         <div className="avatar relative w-24 h-24  disable-select">
           <div className=" rounded-full shadow-md outline-4 outline-amber-400 flex justify-items-center">
-          {!imageLoaded && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <LoadingRing size={40} stroke={2} color="blue" />
-            </div>
-          )}
-          <img
-            src={user?.profilePicture || "/default-avatar.png"}
-            alt="Profile"
-            className={`w-24 h-24 transition-opacity duration-300 ${
-              imageLoaded ? "opacity-100" : "opacity-0"
-            }`}
-            onLoad={() => setImageLoaded(true)}
-          />
+            {!imageLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <LoadingRing size={40} stroke={2} color="blue" />
+              </div>
+            )}
+            <img
+              src={user?.profilePicture || "/default-avatar.png"}
+              alt="Profile"
+              className={`w-24 h-24 transition-opacity duration-300 ${
+                imageLoaded ? "opacity-100" : "opacity-0"
+              }`}
+              onLoad={() => setImageLoaded(true)}
+            />
           </div>
         </div>
         <div className="flex flex-col pl-5 text-center items-start space-y-1">
@@ -129,7 +129,10 @@ export default function Profile() {
             label="Đăng nhập lần cuối"
             value={formatDateTime(user?.lastLoginAt)}
           />
-          <InfoRow label="Ngày tạo tài khoản" value={formatDateTimeV2(user?.createdAt)} />
+          <InfoRow
+            label="Ngày tạo tài khoản"
+            value={formatDateTimeV2(user?.createdAt)}
+          />
           <InfoRow
             label="Mật khẩu cập nhật lần cuối"
             value={formatDate(user?.lastRefreshAt)}

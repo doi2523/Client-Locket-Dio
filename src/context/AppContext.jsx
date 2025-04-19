@@ -1,9 +1,9 @@
 // src/context/AppContext.jsx
 import { createContext, useContext } from "react";
-import { useNavigation } from "../hooks/useNavigation";
-import { useCamera } from "../hooks/useCamera";
-import { useLoading } from "../hooks/useLoading";
-import { usePost } from "../hooks/usePost";
+import { useNavigation } from "../storages/useNavigation";
+import { useCamera } from "../storages/useCamera";
+import { useLoading } from "../storages/useLoading";
+import { usePost } from "../storages/usePost";
 
 const AppContext = createContext();
 

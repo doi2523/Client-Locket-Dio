@@ -1,5 +1,6 @@
 import React from "react";
 import { useApp } from "../../../context/AppContext";
+import * as constant from "../../../constants";
 
 const BorderProgress = () => {
     const { camera } = useApp();
@@ -51,7 +52,9 @@ const BorderProgress = () => {
           strokeDasharray="400"
           strokeDashoffset="400"
           style={{
-            animation: isHolding ? "pathProgress 5s linear forwards" : "none",
+            animation: isHolding
+              ? `pathProgress ${constant.MAX_RECORD_TIME}s linear forwards`
+              : "none",
           }}
         />
       </svg>

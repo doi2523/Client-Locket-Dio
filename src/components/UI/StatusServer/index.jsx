@@ -8,7 +8,7 @@ import { TbMoodCrazyHappy } from "react-icons/tb";
 
 const StatusServer = () => {
   const { useloading } = useApp();
-  const {isStatusServer, setIsStatusServer} = useloading; // null: đang kiểm tra, true/false: kết quả
+  const { isStatusServer, setIsStatusServer } = useloading; // null: đang kiểm tra, true/false: kết quả
 
   useEffect(() => {
     const checkServer = async () => {
@@ -30,7 +30,9 @@ const StatusServer = () => {
           <div className="inline-grid *:[grid-area:1/1]">
             <div className="status status-warning animate-bounce"></div>
           </div>
-          <span className="text-orange-600 font-medium">Server is running <BouncyLoader size={20} color="orange"/> </span>
+          <span className="text-orange-600 font-medium">
+            Server is running <BouncyLoader size={20} color="orange" />{" "}
+          </span>
         </>
       ) : isStatusServer ? (
         <>
@@ -38,14 +40,18 @@ const StatusServer = () => {
             <div className="status status-success animate-ping"></div>
             <div className="status status-success"></div>
           </div>
-          <span className="text-green-600 font-medium flex items-center">Server is live <RiEmotionHappyLine className="ml-1"/> </span>
+          <span className="text-green-600 font-medium flex items-center">
+            Server is live <RiEmotionHappyLine className="ml-1" />{" "}
+          </span>
         </>
       ) : (
         <>
           <div className="inline-grid *:[grid-area:1/1]">
             <div className="status status-error"></div>
           </div>
-          <span className="text-red-600 font-medium flex items-center">Server is down <TbMoodCrazyHappy className="ml-1"/> </span>
+          <span className="text-red-600 font-medium flex items-center">
+            Server is down <TbMoodCrazyHappy className="ml-1" />{" "}
+          </span>
         </>
       )}
     </div>

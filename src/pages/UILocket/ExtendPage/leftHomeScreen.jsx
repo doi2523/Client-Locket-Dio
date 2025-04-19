@@ -7,10 +7,10 @@ import { useApp } from "../../../context/AppContext";
 
 const LeftHomeScreen = () => {
   const { user, setUser } = useContext(AuthContext);
-  
+
   const { navigation, useloading } = useApp();
   const { isProfileOpen, setIsProfileOpen } = navigation;
-  const { imageLoaded, setImageLoaded} = useloading;
+  const { imageLoaded, setImageLoaded } = useloading;
   // Khóa / Mở cuộn ngang khi component mở hoặc đóng
   useEffect(() => {
     if (isProfileOpen) {
@@ -23,30 +23,30 @@ const LeftHomeScreen = () => {
       document.body.classList.remove("overflow-hidden"); // Cleanup khi unmount
     };
   }, [isProfileOpen]);
-    // Mock danh sách bài viết
-    const posts = [
-      {
-        id: 1,
-        image: "/demo-post.jpg",
-        caption: "Một ngày đẹp trời ☀️",
-        likes: 128,
-        user: {
-          name: "Dio",
-          avatar: user?.profilePicture || "/default-avatar.png",
-        },
+  // Mock danh sách bài viết
+  const posts = [
+    {
+      id: 1,
+      image: "/demo-post.jpg",
+      caption: "Một ngày đẹp trời ☀️",
+      likes: 128,
+      user: {
+        name: "Dio",
+        avatar: user?.profilePicture || "/default-avatar.png",
       },
-      {
-        id: 2,
-        image: "/demo-post2.jpg",
-        caption: "Enjoy the moment 🎉",
-        likes: 245,
-        user: {
-          name: "Locket User",
-          avatar: "/default-avatar.png",
-        },
+    },
+    {
+      id: 2,
+      image: "/demo-post2.jpg",
+      caption: "Enjoy the moment 🎉",
+      likes: 245,
+      user: {
+        name: "Locket User",
+        avatar: "/default-avatar.png",
       },
-      // Thêm bài viết nếu muốn...
-    ];
+    },
+    // Thêm bài viết nếu muốn...
+  ];
 
   return (
     <div
