@@ -22,7 +22,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="flex flex-col py-6 items-center justify-center min-h-screen w-full text-center bg-gradient-to-r from-blue-400 to-purple-500 px-6">
+    <div className="flex flex-col py-6 items-center justify-center min-h-screen w-full text-center bg-gradient-to-r from-blue-400 to-purple-500">
       <h1 className="text-3xl md:text-6xl font-extrabold text-white drop-shadow-lg">
         <span
           key={index}

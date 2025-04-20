@@ -8,6 +8,7 @@ const DefaultCustomes = ({ onSelect }) => {
     { id: "party_time", top: "#FCFF57", bottom: "#5EFFF5", caption: "🪩 Party Time!", text: "#000000E6" }, //Done
     { id: "ootd", top: "#FFFFFF", bottom: "#DBDBDB", caption: "🕶 OOTD", text: "#101010E6" }, //Done
     { id: "miss_you", top: "#EC0C00", bottom: "#FF493F", caption: "🥰 Miss you", text: "#FFFFFFDB" },
+    { id: "easter_2025", caption: "🐣 Happy Easter!", top: "#FFFD89", bottom: "#FFDA58", text: "#E24B6C" },
   ];
 
   return (

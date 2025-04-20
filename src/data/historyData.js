@@ -1,5 +1,10 @@
 export const defaultHistorys = [
   {
+    date: "20-04-2025",
+    title: "🐣 Happy Easter đã có mặt!",
+    description: "Cùng lan tỏa không khí Phục Sinh với theme rực rỡ và lời chúc an lành đến mọi người."
+  },  
+  {
     date: "18-03-2025",
     title: "Thêm tính năng gửi email góp ý",
     description: "Bạn muốn góp ý? Tới ngay giao diện bên phải của Locket UI."
