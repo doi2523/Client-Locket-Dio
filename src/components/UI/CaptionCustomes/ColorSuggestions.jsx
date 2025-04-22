@@ -26,7 +26,7 @@ const ColorSuggestions = ({ onSelect }) => {
               custome.top,
               custome.bottom,
               "",
-              custome.text
+              custome.text_color
             )
           }
         >

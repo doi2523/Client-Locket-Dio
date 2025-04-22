@@ -5,13 +5,15 @@ import { useApp } from "../../../context/AppContext";
 import ColorSuggestions from "../../../components/UI/CaptionCustomes/ColorSuggestions";
 import DefaultCustomes from "../../../components/UI/CaptionCustomes/DefaultCustomes";
 import DevCustomes from "../../../components/UI/CaptionCustomes/DevCustomes";
+import ThemesCustomes from "../../../components/UI/CaptionCustomes/ThemesCustomes";
 
 const CustomeForm = () => {
   const popupRef = useRef(null);
-  const { navigation, post } = useApp();
+  const { navigation, post, captiontheme } = useApp();
 
   const { isFilterOpen, setIsFilterOpen } = navigation;
   const { selectedColors, setSelectedColors, caption, setCaption } = post;
+  const { captionThemes } = captiontheme;
 
   const handleCloseOnClickOutside = (e) => {
     if (popupRef.current && !popupRef.current.contains(e.target)) {
@@ -47,12 +49,12 @@ const CustomeForm = () => {
     setIsFilterOpen(false); // Close the filter selector
   };
 
-  const handleCustomeSelect = (id, top, bottom, caption, text) => {
-    setSelectedColors({ id, top, bottom, caption, text });
-    setCaption(caption)
+  const handleCustomeSelect = (preset_id, icon, top, bottom, caption, text_color, type) => {
+    setSelectedColors({ preset_id, icon, top, bottom, caption, text_color, type });
+    setCaption(`${icon} ${caption}`);
     setIsFilterOpen(false);
   };
-  
+
   return (
     <div
       className={`fixed inset-0 z-90 flex justify-center items-end transition-transform duration-500 ${
@@ -91,37 +93,24 @@ const CustomeForm = () => {
         </div>
         {/* Nội dung - Cuộn được */}
         <div className="flex-1 overflow-y-auto px-4">
-          <div className="pb-2">
-            <div className="text-md font-semibold text-primary">
-              Suggest Theme
-            </div>
-
-            {/* Scrollable Container for Colors */}
-            <div className="flex overflow-x-auto gap-3 pt-2">
-              <ColorSuggestions onSelect={handleCustomeSelect} />
-            </div>
-          </div>
+        <ThemesCustomes
+            title="🎨 Suggest Theme"
+            presets={captionThemes.background}
+            onSelect={handleCustomeSelect}
+          />
           {/* Decorative by Locket */}
-          <div className="">
-            <h2 className="text-md font-semibold text-primary">
-              Decorative by Locket
-            </h2>
-            <div>
-              <DefaultCustomes onSelect={handleCustomeSelect}/>
-            </div>
-          </div>
+          <ThemesCustomes
+            title="🎨 Decorative by Locket"
+            presets={captionThemes.default}
+            onSelect={handleCustomeSelect}
+          />
+          <ThemesCustomes
+            title="🎨 New Custome by Dio"
+            presets={captionThemes.custom} 
+            onSelect={handleCustomeSelect}
+          />
 
-          <div>
-            <h2 className="text-md font-semibold text-primary">
-              New Custome by Dio
-            </h2>
-            <div>
-              <DevCustomes onSelect={handleCustomeSelect}/>
-            </div>
-          </div>
         </div>
-
-        
       </div>
     </div>
   );

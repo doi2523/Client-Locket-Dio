@@ -37,9 +37,12 @@ export const createRequestPayloadV2 = (mediaInfo, caption, selectedColors) => {
 
   // Tạo đối tượng options (bao gồm các lựa chọn như caption, colors...)
   const optionsData = {
-    id: selectedColors.id,
     caption: caption,
-    text_color: selectedColors.text,
+    theme_caption: selectedColors.caption,
+    id: selectedColors.preset_id,
+    type: selectedColors.type,
+    icon: selectedColors.icon,
+    text_color: selectedColors.text_color,
     colorTop: selectedColors.top,
     colorBottom: selectedColors.bottom,
   };

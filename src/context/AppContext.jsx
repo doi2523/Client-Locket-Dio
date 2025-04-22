@@ -4,6 +4,7 @@ import { useNavigation } from "../storages/useNavigation";
 import { useCamera } from "../storages/useCamera";
 import { useLoading } from "../storages/useLoading";
 import { usePost } from "../storages/usePost";
+import { useThemes } from "../storages/useThemes";
 
 const AppContext = createContext();
 
@@ -13,6 +14,7 @@ export const AppProvider = ({ children }) => {
   const camera = useCamera();
   const useloading = useLoading();
   const post = usePost();
+  const captiontheme = useThemes();
 
   return (
     <AppContext.Provider
@@ -20,7 +22,8 @@ export const AppProvider = ({ children }) => {
         navigation,
         camera,
         useloading,
-        post
+        post,
+        captiontheme
       }}
     >
       {children}
