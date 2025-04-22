@@ -1,4 +1,19 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
+
+const sortByOrderIndex = (themes) => {
+  return [...themes].sort(
+    (a, b) => (a.order_index ?? 9999) - (b.order_index ?? 9999)
+  );
+};
+
+const groupThemesByType = (themes) => {
+  return {
+    default: sortByOrderIndex(themes.filter((t) => t.type === "default")),
+    custom: sortByOrderIndex(themes.filter((t) => t.type === "custom")),
+    background: sortByOrderIndex(themes.filter((t) => t.type === "background")),
+  };
+};
 
 export const useThemes = () => {
   const [captionThemes, setCaptionThemes] = useState({
@@ -10,27 +25,8 @@ export const useThemes = () => {
   useEffect(() => {
     const fetchThemes = async () => {
       try {
-        const [defaultRes, customRes, backgroundRes] = await Promise.all([
-          fetch("https://server-admin-xi.vercel.app/themes?type=default"),
-          fetch("https://server-admin-xi.vercel.app/themes?type=custom"),
-          fetch("https://server-admin-xi.vercel.app/themes?type=background"),
-        ]);
-
-        const [defaultData, customData, backgroundData] = await Promise.all([
-          defaultRes.json(),
-          customRes.json(),
-          backgroundRes.json(),
-        ]);
-
-        // Hàm sắp xếp theo order_index
-        const sortByOrder = (arr) =>
-          [...arr].sort((a, b) => (a.order_index ?? 9999) - (b.order_index ?? 9999));
-
-        setCaptionThemes({
-          default: sortByOrder(defaultData),
-          custom: sortByOrder(customData),
-          background: sortByOrder(backgroundData),
-        });
+        const { data } = await axios.get("https://server-admin-xi.vercel.app/themes");
+        setCaptionThemes(groupThemesByType(data));
       } catch (error) {
         console.error("Lỗi khi fetch themes:", error);
       }
