@@ -1,13 +1,9 @@
 import { Palette, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import ThemeSelector from "../../../components/Theme/ThemeSelector";
 import { useApp } from "../../../context/AppContext";
-import ColorSuggestions from "../../../components/UI/CaptionCustomes/ColorSuggestions";
-import DefaultCustomes from "../../../components/UI/CaptionCustomes/DefaultCustomes";
-import DevCustomes from "../../../components/UI/CaptionCustomes/DevCustomes";
 import ThemesCustomes from "../../../components/UI/CaptionCustomes/ThemesCustomes";
 
-const CustomeForm = () => {
+const ScreenCustomeStudio = () => {
   const popupRef = useRef(null);
   const { navigation, post, captiontheme } = useApp();
 
@@ -116,4 +112,4 @@ const CustomeForm = () => {
   );
 };
 
-export default CustomeForm;
+export default ScreenCustomeStudio;

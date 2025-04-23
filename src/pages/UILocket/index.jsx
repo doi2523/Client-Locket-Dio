@@ -6,7 +6,7 @@ import LeftHomeScreen from "./ExtendPage/leftHomeScreen.jsx";
 import RightHomeScreen from "./ExtendPage/rightHomeScreen.jsx";
 import MainHomeScreen from "./ExtendPage/mainHomeScreen.jsx";
 
-import CustomeForm from "./ExtendPage/CustomeForm.jsx";
+import ScreenCustomeStudio from "./ExtendPage/ScreenCustomeStudio.jsx";
 
 const CameraCapture = () => {
   const { user, setUser } = useContext(AuthContext);
@@ -18,7 +18,7 @@ const CameraCapture = () => {
       <LeftHomeScreen />
       {/* right */}
       <RightHomeScreen />
-      <CustomeForm/>
+      <ScreenCustomeStudio/>
     </>
   );
 };
