@@ -13,8 +13,8 @@ export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
   const optionsData = {
     caption: caption,
     text_color: "#FFFFFF",
-    colorTop: selectedColors.top,
-    colorBottom: selectedColors.bottom,
+    colorTop: selectedColors.bottom,
+    colorBottom: selectedColors.top,
   };
 
   // Tạo đối tượng payload chứa tất cả dữ liệu cần gửi
@@ -43,8 +43,8 @@ export const createRequestPayloadV2 = (mediaInfo, caption, selectedColors) => {
     type: selectedColors.type,
     icon: selectedColors.icon,
     text_color: selectedColors.text_color,
-    colorTop: selectedColors.top,
-    colorBottom: selectedColors.bottom,
+    colorTop: selectedColors.bottom,
+    colorBottom: selectedColors.top,
   };
 
   // Tạo đối tượng payload chứa tất cả dữ liệu cần gửi

@@ -3,7 +3,7 @@ import { Edit, X } from "lucide-react";
 import { AuthContext } from "../../../context/AuthLocket";
 import axios from "axios";
 
-const AddPostButton = () => {
+const AddPostButton = ({ onNewPost }) => {
   const { user } = useContext(AuthContext);
   const [showForm, setShowForm] = useState(false);
   const [icon, setIcon] = useState("");
@@ -15,8 +15,8 @@ const AddPostButton = () => {
 
   // Hàm xử lý gửi form
   const handleSubmit = (e) => {
-    e.preventDefault(); // Ngừng việc tải lại trang khi gửi form
-
+    e.preventDefault();
+  
     const postData = {
       uid: user.uid,
       icon,
@@ -29,20 +29,30 @@ const AddPostButton = () => {
       display_name: user.displayName,
       username: user.username,
     };
-    
-
-    // Gửi dữ liệu đến API bằng axios
+  
     axios
       .post("https://server-admin-xi.vercel.app/posts", postData)
       .then((response) => {
         console.log("Response from API:", response.data);
-        // Xử lý phản hồi từ API (nếu cần)
+        alert("Bài viết đã được thêm thành công! 🎉");
+  
+        // Reset form
+        setIcon("");
+        setCaption("");
+        setColorTop("#FF9500");
+        setColorBot("#FF2D95");
+        setColorText("#FFFFFF");
+        setContent("");
+  
+        // Đóng form
+        setShowForm(false);
       })
       .catch((error) => {
         console.error("Error sending data:", error);
-        // Xử lý lỗi (nếu có)
+        alert("Có lỗi xảy ra khi gửi bài viết. Vui lòng thử lại!");
       });
   };
+  
 
   // Hàm để xử lý sự kiện click
   const toggleForm = () => {
@@ -61,8 +71,8 @@ const AddPostButton = () => {
 
       {/* Form thêm bài viết */}
       {showForm && (
-        <div className="fixed inset-0 bg-base-100/20 backdrop-blur-[2px] bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-gray-50 text-base-content p-6 rounded-lg w-96 shadow-lg">
+        <div className="fixed inset-0 bg-base-100/50 backdrop-blur-[2px] bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-base-100 border text-base-content p-6 rounded-lg w-96 shadow-lg">
             <div className="flex justify-between mb-4">
               <h2 className="text-xl font-semibold">Thêm bài viết</h2>
               <button type="button" onClick={() => setShowForm(false)}>
@@ -80,6 +90,7 @@ const AddPostButton = () => {
                       type="text"
                       id="icon"
                       name="icon"
+                      placeholder="Icon"
                       className="mt-1 p-2 w-full border border-gray-300 rounded-md"
                       value={icon}
                       onChange={(e) => setIcon(e.target.value)}
@@ -97,6 +108,7 @@ const AddPostButton = () => {
                       type="text"
                       id="caption"
                       name="caption"
+                      placeholder="Caption"
                       className="mt-1 p-2 w-full border border-gray-300 rounded-md"
                       value={caption}
                       onChange={(e) => setCaption(e.target.value)}
@@ -182,6 +194,7 @@ const AddPostButton = () => {
                   id="content"
                   name="content"
                   rows="4"
+                  placeholder="Thêm lời nhắn..."
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md"
                   value={content}
                   onChange={(e) => setContent(e.target.value)}

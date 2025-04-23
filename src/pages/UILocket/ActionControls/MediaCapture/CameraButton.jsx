@@ -46,7 +46,7 @@ const CameraButton = () => {
     holdStartTimeRef.current = Date.now();
 
     holdTimeoutRef.current = setTimeout(() => {
-      console.log("📹 Bắt đầu quay video");
+      // console.log("📹 Bắt đầu quay video");
       setIsHolding(true);
 
       const video = videoRef.current;
@@ -133,7 +133,7 @@ const CameraButton = () => {
 
     if (heldTime < 300) {
       // Chụp ảnh
-      console.log("📸 Chụp ảnh");
+      // console.log("📸 Chụp ảnh");
 
       const video = videoRef.current;
       const canvas = canvasRef.current;

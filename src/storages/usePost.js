@@ -5,6 +5,7 @@ export const usePost = () => {
     top: "", // Trong suốt
     bottom: "", // Trong suốt
     text: "#FFFFFF", 
+    // type: "none"
   });  
   const [custome, setCustome] = useState({
     id: "",            // hoặc null

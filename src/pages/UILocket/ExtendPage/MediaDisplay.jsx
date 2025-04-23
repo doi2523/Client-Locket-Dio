@@ -29,7 +29,7 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
         streamRef.current = stream;
         if (videoRef.current && !videoRef.current.srcObject) {
           videoRef.current.srcObject = stream;
-          console.log("🎥 Gán stream vào videoRef", stream);
+          // console.log("🎥 Gán stream vào videoRef", stream);
         }
       } catch (err) {
         console.error("🚫 Không thể truy cập camera:", err);
@@ -42,13 +42,8 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
   }, [cameraActive, cameraMode]);
 
   useEffect(() => {
-    console.log("📷 useEffect kiểm tra media", {
-      preview,
-      selectedFile,
-      capturedMedia,
-    });
     if (!preview && !selectedFile && !capturedMedia) {
-      console.log("✅ Không có media -> Bật lại camera");
+      // console.log("✅ Không có media -> Bật lại camera");
       setCameraActive(true);
     }
   }, [preview, selectedFile, capturedMedia, setCameraActive]);
@@ -85,9 +80,11 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
             autoPlay
             playsInline
             muted
-            className={`w-full h-full object-cover ${
-              cameraMode === "user" ? "scale-x-[-1]" : ""
-            }`}
+            className={`
+    w-full h-full object-cover transition-all duration-200 ease-in-out
+    ${cameraMode === "user" ? "scale-x-[-1]" : ""}
+    ${cameraActive ? "opacity-100 scale-100" : "opacity-0 scale-95"}
+  `}
           />
         )}
 

@@ -86,6 +86,7 @@ const MediaControls = () => {
 
       // Reset state
       setPreview(null);
+      setCameraActive(true);
       setSelectedFile(null);
       setCaption("");
       setSelectedColors(null);
