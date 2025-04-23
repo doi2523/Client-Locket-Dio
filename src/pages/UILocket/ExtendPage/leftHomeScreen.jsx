@@ -52,7 +52,7 @@ const LeftHomeScreen = () => {
       <AddPostButton />
 
       {/* Header */}
-      <div className="flex flex-col shadow-lg px-4 pt-2 pb-2 text-base-content relative overflow-hidden">
+      <div className="flex flex-col shadow-lg px-4 py-2 text-base-content relative overflow-hidden">
         <div className="flex items-center justify-between">
           <div className="font-lovehouse text-2xl font-semibold px-3 pt-1 border-base-content border rounded-xl">
             Locket Pro
@@ -65,7 +65,7 @@ const LeftHomeScreen = () => {
           </div>
         </div>
 
-        <div className={`relative transition-all z-30 duration-500 ease-in-out ${isScrolled ? "h-0 opacity-0" : "h-20 mt-2"}`}>
+        <div className={`relative transition-all z-30 duration-500 ease-in-out ${isScrolled ? "h-0 opacity-0" : "h-19 mt-2"}`}>
           <div className="flex flex-row justify-between items-center text-base-content w-full">
             <div className="flex flex-col text-center items-start space-y-1">
               <p className="text-2xl font-semibold">{user?.displayName || "Name"}</p>
@@ -78,7 +78,7 @@ const LeftHomeScreen = () => {
                 @{user?.username}
               </a>
             </div>
-            <div className="avatar w-19 h-19 disable-select">
+            <div className="avatar w-18 h-18 disable-select">
               <div className="rounded-full shadow-md outline-4 outline-amber-400 p-1 flex justify-items-center">
                 {!imageLoaded && (
                   <div className="absolute inset-0 flex items-center justify-center">

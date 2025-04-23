@@ -1,14 +1,29 @@
 // components/PostCard.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Check, Download, Heart, MessageCircle, Send, Share2 } from "lucide-react";
 
 const PostCard = ({ post }) => {
   const [isDownloaded, setIsDownloaded] = useState(false);
 
-const toggleDownload = () => {
-  setIsDownloaded((prev) => !prev);
-  // TODO: Gọi API hoặc cập nhật state download tại đây nếu cần
-};
+  useEffect(() => {
+    const savedPosts = JSON.parse(localStorage.getItem("savedPosts") || "[]");
+    const exists = savedPosts.some((p) => p.id === post.id);
+    setIsDownloaded(exists);
+  }, [post.id]);
+
+  const toggleDownload = () => {
+    const savedPosts = JSON.parse(localStorage.getItem("savedPosts") || "[]");
+
+    if (isDownloaded) {
+      const updated = savedPosts.filter((p) => p.id !== post.id);
+      localStorage.setItem("savedPosts", JSON.stringify(updated));
+    } else {
+      localStorage.setItem("savedPosts", JSON.stringify([...savedPosts, post]));
+    }
+
+    setIsDownloaded((prev) => !prev);
+  };
+  
 
   return (
     <div className="w-full max-w-md mx-auto bg-white border border-gray-200 rounded-lg shadow-sm mb-6">
@@ -58,25 +73,25 @@ const toggleDownload = () => {
       <div className="px-4 py-3 text-sm text-gray-800">{post.content}</div>
 
       <div className="px-4 pb-4 flex w-full justify-between items-center">
-    {/* Bên trái: icon action */}
-    <div className="flex gap-4 text-gray-600">
-      <button className="flex items-center font-semibold gap-1 hover:text-pink-500">
-        <Heart className="w-5 h-5" />
-        <span>{post.hearts || 0}</span>
-      </button>
-      {/* <button className="flex items-center gap-1 hover:text-blue-500">
-        <MessageCircle className="w-5 h-5" />
-        <span>{post.downloads || 0}</span>
-      </button> */}
-      <div className="flex items-center gap-1 font-semibold">
-        <Download className="w-5 h-5" />
-        <span>{post.downloads || 0}</span>
-      </div>
-      {/* <button className="flex items-center gap-1 hover:text-green-500">
-        <Send className="w-5 h-5" />
-        <span>{post.downloads || 0}</span>
-      </button> */}
-    </div>
+      <div className="flex gap-4 text-gray-600">
+  <button className="flex items-center font-semibold gap-1 hover:text-pink-500">
+    <Heart className="w-5 h-5" />
+    <span>{post.hearts || 0}</span>
+  </button>
+  <button className="flex items-center gap-1 hover:text-blue-500">
+    <MessageCircle className="w-5 h-5" />
+    <span>{post.comments || 0}</span>
+  </button>
+  <div className="flex items-center gap-1 font-semibold text-gray-500">
+    <Download className="w-5 h-5" />
+    <span>{post.downloads || 0}</span>
+  </div>
+  <button className="flex items-center gap-1 hover:text-green-500">
+    <Send className="w-5 h-5" />
+    <span>{post.shares || 0}</span>
+  </button>
+</div>
+
 
     {/* Bên phải: lượt tải và nút tải/lưu */}
     <div className="flex items-center gap-2">

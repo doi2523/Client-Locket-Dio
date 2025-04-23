@@ -16,17 +16,17 @@ const ThemesCustomes = ({ title = "Chọn preset", presets = [], onSelect }) => 
               key={preset.preset_id || preset.id}
               className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
               style={{
-                background: `linear-gradient(to top, ${preset.top || preset.color_top}, ${preset.bottom || preset.color_bottom})`,
-                color: preset.text || preset.text_color,
+                background: `linear-gradient(to top, ${preset.top || preset.color_top}, ${preset.color_bot || preset.color_bottom})`,
+                color: preset.color_text || preset.text_color,
               }}
               onClick={() =>
                 onSelect(
                   preset.preset_id,
                   preset.icon,
                   preset.top || preset.color_top,
-                  preset.bottom || preset.color_bottom,
+                  preset.color_bot || preset.color_bottom,
                   preset.caption || preset.preset_caption,
-                  preset.text || preset.text_color,
+                  preset.color_text || preset.text_color,
                   preset.type
                 )
               }

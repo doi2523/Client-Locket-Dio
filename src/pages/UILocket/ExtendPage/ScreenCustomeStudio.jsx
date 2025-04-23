@@ -35,6 +35,22 @@ const ScreenCustomeStudio = () => {
     };
   }, [isFilterOpen]);
 
+const [savedPosts, setSavedPosts] = useState([]);
+
+useEffect(() => {
+  if (isFilterOpen) {
+    const stored = localStorage.getItem("savedPosts");
+    if (stored) {
+      try {
+        setSavedPosts(JSON.parse(stored));
+      } catch (e) {
+        console.error("Error parsing savedPosts:", e);
+      }
+    }
+  }
+}, [isFilterOpen]);
+
+
   const handleSelectFilter = (filter) => {
     console.log("Selected Filter:", filter);
     setSelectedColors(filter);
@@ -47,7 +63,7 @@ const ScreenCustomeStudio = () => {
 
   const handleCustomeSelect = (preset_id, icon, top, bottom, caption, text_color, type) => {
     setSelectedColors({ preset_id, icon, top, bottom, caption, text_color, type });
-    setCaption(`${icon} ${caption}`);
+    setCaption(`${icon} ${caption || "Caption"}`);
     setIsFilterOpen(false);
   };
 
@@ -89,6 +105,11 @@ const ScreenCustomeStudio = () => {
         </div>
         {/* Nội dung - Cuộn được */}
         <div className="flex-1 overflow-y-auto px-4">
+        <ThemesCustomes
+            title="🎨 Your Saved Theme"
+            presets={savedPosts}
+            onSelect={handleCustomeSelect}
+          />
         <ThemesCustomes
             title="🎨 Suggest Theme"
             presets={captionThemes.background}
