@@ -86,10 +86,16 @@ const MediaControls = () => {
 
       // Reset state
       setPreview(null);
-      setCameraActive(true);
+
       setSelectedFile(null);
       setCaption("");
-      setSelectedColors(null);
+      setSelectedColors({
+        top: "", // Trong suốt
+        bottom: "", // Trong suốt
+        text: "#FFFFFF", 
+        // type: "none"
+      });
+      setCameraActive(true);
     } catch (error) {
       const errorMessage =
         error?.response?.data?.message || error.message || "Lỗi không xác định";
