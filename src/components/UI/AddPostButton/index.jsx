@@ -172,7 +172,7 @@ const AddPostButton = ({ onNewPost }) => {
                   <div
                     className="mt-2 p-2 px-3 font-semibold max-w-fit flex justify-center items-center rounded-3xl"
                     style={{
-                      background: `linear-gradient(to top, ${colorTop}, ${colorBot})`,
+                      background: `linear-gradient(to bottom, ${colorTop}, ${colorBot})`,
                     }}
                   >
                     <div

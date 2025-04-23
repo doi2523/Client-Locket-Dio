@@ -54,7 +54,7 @@ const AutoResizeTextarea = () => {
         height : "40px",
         whiteSpace: "pre-wrap",
         overflow: "hidden",
-        background: `linear-gradient(to top, ${selectedColors.top}, ${selectedColors.bottom})`,
+        background: `linear-gradient(to bottom, ${selectedColors.top}, ${selectedColors.bottom})`,
       }}
     />
   );

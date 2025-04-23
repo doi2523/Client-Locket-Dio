@@ -16,7 +16,7 @@ const ThemesCustomes = ({ title = "Chọn preset", presets = [], onSelect }) => 
               key={preset.preset_id || preset.id}
               className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
               style={{
-                background: `linear-gradient(to top, ${preset.top || preset.color_top}, ${preset.color_bot || preset.color_bottom})`,
+                background: `linear-gradient(to bottom, ${preset.top || preset.color_top}, ${preset.color_bot || preset.color_bottom})`,
                 color: preset.color_text || preset.text_color,
               }}
               onClick={() =>

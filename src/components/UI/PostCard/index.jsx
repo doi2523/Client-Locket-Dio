@@ -58,7 +58,7 @@ const PostCard = ({ post }) => {
         <button
           className="flex flex-col whitespace-nowrap drop-shadow-lg items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
           style={{
-            background: `linear-gradient(to top, ${post.color_top}, ${post.color_bot})`,
+            background: `linear-gradient(to bottom, ${post.color_top}, ${post.color_bot})`,
             color: post.color_text,
           }}
         >
