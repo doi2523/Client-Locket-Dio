@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Edit, X } from "lucide-react";
 import { AuthContext } from "../../../context/AuthLocket";
 import axios from "axios";
+import { showError, showSuccess } from "../../Toast";
 
 const AddPostButton = ({ onNewPost }) => {
   const { user } = useContext(AuthContext);
@@ -34,7 +35,7 @@ const AddPostButton = ({ onNewPost }) => {
       .post("https://server-admin-xi.vercel.app/posts", postData)
       .then((response) => {
         console.log("Response from API:", response.data);
-        alert("Bài viết đã được thêm thành công! 🎉");
+        showSuccess("Bài viết đã được thêm thành công! 🎉");
   
         // Reset form
         setIcon("");
@@ -49,7 +50,7 @@ const AddPostButton = ({ onNewPost }) => {
       })
       .catch((error) => {
         console.error("Error sending data:", error);
-        alert("Có lỗi xảy ra khi gửi bài viết. Vui lòng thử lại!");
+        showError("Có lỗi xảy ra khi gửi bài viết. Vui lòng thử lại!");
       });
   };
   

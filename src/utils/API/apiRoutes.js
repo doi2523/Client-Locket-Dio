@@ -3,7 +3,10 @@
 //const BASE_API_URL = "https://my-api-locket-production.up.railway.app";https://my-api-locket.onrender.com
 //const BASE_API_URL = "https://apilocket-diov2.onrender.com";
 //const BASE_API_URL = "https://api-locket-dio-v2.vercel.app";
-const BASE_API_URL = "https://apilocket-diov2-production.up.railway.app";
+// constants.js
+const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
+
+//const BASE_API_URL = "https://apilocket-diov2-production.up.railway.app";
 
 const LOCKET_URL = "/locket";
 
