@@ -18,7 +18,7 @@ const AuthHome = () => {
             Lưu giữ và chia sẻ những kỷ niệm đáng nhớ của bạn với bạn bè và gia đình.
           </p>
           <Link
-            to="/postmoments"
+            to="/locket"
             className="mt-6 px-6 py-4 rounded-lg shadow btn btn-primary text-lg font-semibold hover:bg-primary-focus transition"
           >
             Khám phá ngay

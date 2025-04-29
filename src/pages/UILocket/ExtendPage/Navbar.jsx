@@ -14,7 +14,7 @@ const Navbar = () => {
         className="relative flex items-center justify-center w-11 h-11 cursor-pointer"
       >
         {/* Vòng tròn nền */}
-        <div className="bg-primary/50 backdrop-blur-3xl w-12 h-12 rounded-full absolute"></div>
+        <div className="bg-primary/50 backdrop-blur-3xl opacity-60 w-12 h-12 rounded-full absolute"></div>
 
         {/* Ảnh nằm trên và căn giữa */}
         <img

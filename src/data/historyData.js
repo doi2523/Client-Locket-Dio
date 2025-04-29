@@ -1,9 +1,24 @@
 export const defaultHistorys = [
   {
+    date: "29-04-2025",
+    title: "🇻🇳 Chào mừng 30/4!",
+    description: "Hòa cùng không khí lịch sử 30/4, hãy gửi lời chúc ý nghĩa và lan tỏa niềm tự hào dân tộc qua những tấm hình rực rỡ."
+  },
+  {
+    date: "22-04-2025",
+    title: "🌎 Earth Day đã có mặt!",
+    description: "Hãy cùng nhau bảo vệ hành tinh xanh bằng cách lan tỏa thông điệp yêu thiên nhiên qua các khoảnh khắc đầy cảm hứng."
+  },  
+  {
     date: "20-04-2025",
     title: "🐣 Happy Easter đã có mặt!",
     description: "Cùng lan tỏa không khí Phục Sinh với theme rực rỡ và lời chúc an lành đến mọi người."
   },  
+  {
+    date: "19-03-2025",
+    title: "Sửa lỗi giao diện caption trên LocketUI",
+    description: "Lỗi là phải sửa, thật khó chịu khi caption ngắn mà bị xuống dòng."
+  },
   {
     date: "18-03-2025",
     title: "Thêm tính năng gửi email góp ý",

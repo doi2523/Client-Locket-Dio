@@ -56,7 +56,7 @@ const Sidebar = () => {
     <>
       {/* Overlay */}
       <div
-        className={`fixed z-60 inset-0 bg-base-100/10 backdrop-blur-[2px] transition-opacity duration-500 ${
+        className={`fixed h-screen z-60 inset-0 bg-base-100/10 backdrop-blur-[2px] transition-opacity duration-500 ${
           isSidebarOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"

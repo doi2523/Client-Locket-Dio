@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../../context/AuthLocket";
-import { ChevronRight, Settings } from "lucide-react";
+import { ChevronRight, Link, Settings } from "lucide-react";
 import { useApp } from "../../../context/AppContext";
 import AddPostButton from "../../../components/UI/AddPostButton";
 import axios from "axios";
@@ -73,9 +73,9 @@ const LeftHomeScreen = () => {
                 href={`https://locket.cam/${user?.username}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link underline font-semibold"
+                className="link underline font-semibold flex items-center justify-between"
               >
-                @{user?.username}
+                @{user?.username} <Link className="ml-2" size={18}/>
               </a>
             </div>
             <div className="avatar w-18 h-18 disable-select">
