@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "../utils";
 
 const sortByOrderIndex = (themes) => {
   return [...themes].sort(
@@ -24,11 +25,25 @@ export const useThemes = () => {
 
   useEffect(() => {
     const fetchThemes = async () => {
-      try {
-        const { data } = await axios.get("https://server-admin-xi.vercel.app/themes");
-        setCaptionThemes(groupThemesByType(data));
-      } catch (error) {
-        console.error("Lỗi khi fetch themes:", error);
+      // Kiểm tra xem dữ liệu đã có trong sessionStorage chưa
+      const cachedThemes = sessionStorage.getItem("captionThemes");
+
+      if (cachedThemes) {
+        // Nếu có, sử dụng dữ liệu trong sessionStorage
+        setCaptionThemes(JSON.parse(cachedThemes));
+      } else {
+        try {
+          // Nếu chưa có, gọi API để fetch dữ liệu
+          const { data } = await axios.get(API_URL.GET_CAPTION_THEMES);
+
+          // Lưu dữ liệu vào sessionStorage để tránh gọi API lại sau này
+          sessionStorage.setItem("captionThemes", JSON.stringify(groupThemesByType(data)));
+
+          // Cập nhật state
+          setCaptionThemes(groupThemesByType(data));
+        } catch (error) {
+          console.error("Lỗi khi fetch themes:", error);
+        }
       }
     };
 
