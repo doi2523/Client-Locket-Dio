@@ -25,8 +25,8 @@ const DefaultLayout = ({ children }) => {
         </div>
       )}
       {/* Main Content with Scroll */}
-      <main className="flex-1 overflow-hidden bg-base-200 text-base-content relative">
-        <div className="relative z-10 overflow-y-scroll">{children}</div>
+      <main className="flex-1 h-[93vh] overflow-y-scroll bg-base-200 text-base-content relative">
+        {children}
       </main>
       <Footer />
     </div>
