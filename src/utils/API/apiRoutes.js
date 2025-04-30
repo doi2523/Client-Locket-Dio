@@ -21,6 +21,8 @@ export const API_URL = {
   REFESH_TOKEN_URL: `${BASE_API_URL}${LOCKET_URL}/refresh-token`,
 
   GET_CAPTION_THEMES: `${BASE_DB_API_URL}/themes`,
+  GET_TIMELINE: `${BASE_DB_API_URL}/timeline`,
+  DONATE_URL: `${BASE_DB_API_URL}/donate`,
   
   UPLOAD_MEDIA_URL: `${BASE_API_URL}${LOCKET_URL}/post`,
   GET_LASTEST_URL: `${BASE_API_URL}${LOCKET_URL}/getmoment`,
