@@ -71,7 +71,7 @@ const Login = () => {
 
   return (
     <>
-      <div className="flex items-center justify-center h-full bg-base-200 px-6">
+      <div className="flex items-center justify-center h-screen bg-base-200 px-6">
         <div className="w-full max-w-md p-7 shadow-lg rounded-xl bg-opacity-50 backdrop-blur-3xl bg-base-100 border-base-300 text-base-content">
           <h1 className="text-3xl font-bold text-center">Đăng Nhập Locket</h1>
           <form onSubmit={handleLogin} className="space-y-4">
