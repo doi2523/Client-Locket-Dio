@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ThemeSelector from "../../../components/Theme/ThemeSelector";
 import RefreshTokenButton from "../../Test";
+import MockupiPhone from "../../../components/UI/MockupiPhone";
 
 const AuthHome = () => {
   const [iframeUrl] = useState("https://locket-dio.web.app");
@@ -26,7 +27,7 @@ const AuthHome = () => {
         </div>
         {/* <RefreshTokenButton/> */}
         <div className="flex justify-center disable-select">
-          <div className="mockup-browser border border-base-300 w-full">
+          {/* <div className="mockup-browser border border-base-300 w-full">
             <div className="mockup-browser-toolbar">
               <div className="input p-1">{iframeUrl}</div>
             </div>
@@ -37,7 +38,8 @@ const AuthHome = () => {
                 className="absolute  disable-select top-0 left-0 w-[125%] h-[125%] border-0 rounded-b-lg scale-[0.8] origin-top-left pointer-events-none"
               ></iframe>
             </div>
-          </div>
+          </div> */}
+          <MockupiPhone/>
         </div>
       </div>
 

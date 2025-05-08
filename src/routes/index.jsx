@@ -14,7 +14,7 @@ const APP_NAME = "Locket Pro - Đăng ảnh & Video lên Locket";
 // 📌 Các route dành cho người chưa đăng nhập
 const publicRoutes = [
   { path: "/", component: Home, title: `${APP_NAME} | Trang Chủ` },
-  { path: "/test", component: CameraCapture, title: `${APP_NAME} | Test` },
+  { path: "/test", component: AuthHome, title: `${APP_NAME} | Test` },
   { path: "/login", component: Login, title: `${APP_NAME} | Đăng Nhập` },
   // { path: "/testv1", component: AboutMe, title: `${APP_NAME} | Test` },
   // { path: "/testv2", component: Docs, title: `${APP_NAME} | Đăng Moment Mới` },
