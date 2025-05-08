@@ -111,7 +111,7 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
         {/* Caption */}
         {preview && selectedFile && (
           <div
-            className={`absolute z-50 inset-x-0 bottom-0 px-4 pb-4 transition-opacity duration-500 ${
+            className={`absolute z-50 inset-x-0 bottom-0 px-4 pb-4 transition-opacity duration-200 ${
               isCaptionLoading ? "opacity-100" : "opacity-0"
             }`}
           >

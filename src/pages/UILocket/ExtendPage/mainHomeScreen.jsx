@@ -3,6 +3,7 @@ import Navbar from "./Navbar";
 import MediaPreview from "./MediaDisplay";
 import { useApp } from "../../../context/AppContext";
 import ActionControls from "../ActionControls";
+import HistoryArrow from "./\bHistoryButton";
 
 const MainHomeScreen = () => {
   const { navigation, post, camera } = useApp();
@@ -21,10 +22,11 @@ const MainHomeScreen = () => {
           : "translate-x-0"
       } overflow-hidden`}
     >
-      <div className="flex select-none flex-col items-center justify-start overflow-hidden">
+      <div className="flex h-full select-none flex-col items-center justify-start overflow-hidden">
         <Navbar />
         <MediaPreview />
         <ActionControls />
+        {/* <HistoryArrow/> */}
         <canvas ref={canvasRef} className="hidden" />
       </div>
     </div>

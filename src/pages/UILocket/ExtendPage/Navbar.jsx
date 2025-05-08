@@ -1,9 +1,12 @@
 import { ChevronRight, Menu } from "lucide-react";
 import { useApp } from "../../../context/AppContext";
 import Sidebar from "../../../components/Sidebar";
+import { useContext } from "react";
+import { AuthContext } from "../../../context/AuthLocket";
 
 const Navbar = () => {
   const { navigation } = useApp();
+  const { user, setUser } = useContext(AuthContext);
   const { setIsProfileOpen, setIsHomeOpen, setIsSidebarOpen } = navigation;
 
   return (
@@ -18,7 +21,7 @@ const Navbar = () => {
 
         {/* Ảnh nằm trên và căn giữa */}
         <img
-          src="/prvlocket.png"
+          src={user?.profilePicture || "/prvlocket.png"}
           alt=""
           className="rounded-full h-10 w-10 relative backdrop-blur-3xl"
         />

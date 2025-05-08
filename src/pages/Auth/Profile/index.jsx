@@ -3,6 +3,7 @@ import { AuthContext } from "../../../context/AuthLocket";
 import LoadingRing from "../../../components/UI/Loading/ring";
 import * as locketService from "../../../services/locketService";
 import * as utils from "../../../utils";
+import axios from "axios";
 
 export default function Profile() {
   const { user, setUser } = useContext(AuthContext);
@@ -69,6 +70,26 @@ export default function Profile() {
 
     fetchLatestMoment();
   }, []); // ✅ Dependency array rỗng => chỉ chạy khi component mount
+  const { idToken, localId } = utils.getAuthCookies();
+  const updateProfile = async () => {
+    try {
+      const response = await axios.post("http://localhost:5004/locket/changeProfileInfo", {
+        badge: "locket_gold",
+        idToken,
+        celebrity: true,
+        // additionalData: {
+        //   username: "Dio",
+        //   bio: "Developer",
+        // },
+      });
+      console.log("✅ Cập nhật thành công:", response.data);
+    } catch (error) {
+      console.error("❌ Lỗi khi cập nhật profile:", error.message);
+    }
+  };
+  
+  // updateProfile();
+  
 
   return (
     <div className="flex flex-col items-center min-h-screen w-full px-6 py-5">
