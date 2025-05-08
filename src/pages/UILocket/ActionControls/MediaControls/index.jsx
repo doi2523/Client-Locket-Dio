@@ -45,33 +45,27 @@ const MediaControls = () => {
       return;
     }
 
-    // Kiểm tra dung lượng file
-    const isImage = preview?.type === "image";
-    const isVideo = preview?.type === "video";
-
-    if ((isImage && isSizeMedia > 1) || (isVideo && isSizeMedia > 10)) {
+    const { type: previewType } = preview || {};
+    const isImage = previewType === "image";
+    const isVideo = previewType === "video";
+    const maxFileSize = isImage ? 1 : 10;
+  
+    if (isSizeMedia > maxFileSize) {
       showToast(
         "error",
-        `${isImage ? "Ảnh" : "Video"} vượt quá giới hạn dung lượng. ${
-          isImage ? "Tối đa 1MB" : "Tối đa 10MB"
-        }.`
+        `${isImage ? "Ảnh" : "Video"} vượt quá giới hạn dung lượng. Tối đa ${maxFileSize}MB.`
       );
       return;
     }
+  
 
     try {
       setSendLoading(true);
       showToast("info", `Đang chuẩn bị ${isVideo ? "video" : "ảnh"} !`);
 
-      const fileData = await utils.uploadToCloudinary(
+      const payload = await utils.createRequestPayloadV3(
         selectedFile,
-        preview.type
-      );
-
-      const mediaInfo = utils.prepareMediaInfo(fileData);
-
-      const payload = utils.createRequestPayloadV2(
-        mediaInfo,
+        previewType,
         caption,
         selectedColors
       );
@@ -81,21 +75,10 @@ const MediaControls = () => {
 
       showToast(
         "success",
-        `${fileData.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
+        `${previewType === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
       );
-
-      // Reset state
-      setPreview(null);
-
-      setSelectedFile(null);
-      setCaption("");
-      setSelectedColors({
-        top: "", // Trong suốt
-        bottom: "", // Trong suốt
-        text: "#FFFFFF", 
-        // type: "none"
-      });
-      setCameraActive(true);
+      
+      handleDelete();
     } catch (error) {
       const errorMessage =
         error?.response?.data?.message || error.message || "Lỗi không xác định";
@@ -105,6 +88,33 @@ const MediaControls = () => {
       setSendLoading(false);
     }
   };
+//   const handleSubmit = async () => {
+//     if (!selectedFile) {
+//         showToast("error", "Không có dữ liệu để tải lên.");
+//         return;
+//     }
+
+//     const { type: previewType } = preview || {};
+//     const postData = {
+//         selectedFile,
+//         previewType,
+//         caption,
+//         selectedColors,
+//     };
+
+//     try {
+//         // Lưu vào hàng đợi trong sessionStorage
+//         const queue = JSON.parse(sessionStorage.getItem("postQueue")) || [];
+//         queue.push(postData);
+//         sessionStorage.setItem("postQueue", JSON.stringify(queue));
+
+//         console.log("Bài viết đã được thêm vào hàng đợi:", postData);
+//         showToast("success", "Bài viết đã được lưu vào hàng đợi!");
+//     } catch (error) {
+//         console.error("Lỗi khi lưu bài viết vào hàng đợi:", error);
+//         showToast("error", "Lỗi khi lưu vào hàng đợi!");
+//     }
+// };
 
   return (
     <>

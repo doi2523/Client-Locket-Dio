@@ -1,5 +1,5 @@
+import { prepareMediaInfo, uploadToCloudinary } from "../cloudinary/uploadFileAndGetInfo";
 import { getAuthCookies } from "../cookie/cookieUtils";
-import { getAuthStorage } from "../storage";
 
 export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
   // Tạo đối tượng token (bao gồm idToken và localId)
@@ -56,4 +56,46 @@ export const createRequestPayloadV2 = (mediaInfo, caption, selectedColors) => {
   };
 
   return payload;
+};
+
+// utils.js
+
+export const createRequestPayloadV3 = async (selectedFile, previewType, caption, selectedColors) => {
+  try {
+    // Upload file lên Cloudinary
+    const fileData = await uploadToCloudinary(selectedFile, previewType);
+    const mediaInfo = prepareMediaInfo(fileData);
+
+    // Lấy token từ cookie
+    const { idToken, localId } = getAuthCookies();
+    const tokenData = {
+      idToken: idToken,
+      localId: localId,
+    };
+
+    // Tạo đối tượng options (bao gồm các lựa chọn như caption, colors...)
+    const optionsData = {
+      caption: caption,
+      theme_caption: selectedColors.caption,
+      id: selectedColors.preset_id,
+      type: selectedColors.type,
+      icon: selectedColors.icon,
+      text_color: selectedColors.text_color,
+      colorTop: selectedColors.top,
+      colorBottom: selectedColors.bottom,
+    };
+
+    // Tạo đối tượng payload chứa tất cả dữ liệu cần gửi
+    const payload = {
+      userData: tokenData,
+      options: optionsData,
+      model: "Version-UploadmediaV3",
+      mediaInfo: mediaInfo,
+    };
+
+    return payload;
+  } catch (error) {
+    console.error("Lỗi khi tạo payload:", error);
+    throw error;
+  }
 };
