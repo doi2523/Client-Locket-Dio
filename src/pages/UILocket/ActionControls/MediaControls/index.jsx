@@ -4,7 +4,7 @@ import * as lockerService from "../../../../services/locketService.js";
 import LoadingRing from "../../../../components/UI/Loading/ring.jsx";
 import { useApp } from "../../../../context/AppContext.jsx";
 import { useCallback } from "react";
-import { showToast } from "../../../../components/Toast/index.jsx";
+import { showError, showInfo, showSuccess } from "../../../../components/Toast/index.jsx";
 
 const MediaControls = () => {
   const { navigation, post, useloading, camera } = useApp();
@@ -39,82 +39,62 @@ const MediaControls = () => {
     setCameraActive(true); // Giữ dòng này để trigger useEffect
   }, []);
 
-  const handleSubmit = async () => {
-    if (!selectedFile) {
-      showToast("error", "Không có dữ liệu để tải lên.");
-      return;
-    }
-
-    const { type: previewType } = preview || {};
-    const isImage = previewType === "image";
-    const isVideo = previewType === "video";
-    const maxFileSize = isImage ? 1 : 10;
+  const uploadQueue = [];
+  let isUploading = false;
   
-    if (isSizeMedia > maxFileSize) {
-      showToast(
-        "error",
-        `${isImage ? "Ảnh" : "Video"} vượt quá giới hạn dung lượng. Tối đa ${maxFileSize}MB.`
-      );
-      return;
-    }
+  const handleQueueUpload = async () => {
+      if (isUploading || uploadQueue.length === 0) return;
+      isUploading = true;
   
-
-    try {
-      setSendLoading(true);
-      showToast("info", `Đang chuẩn bị ${isVideo ? "video" : "ảnh"} !`);
-
-      const payload = await utils.createRequestPayloadV3(
-        selectedFile,
-        previewType,
-        caption,
-        selectedColors
-      );
-
-      showToast("info", `Đang tạo bài viết !`);
-      await lockerService.uploadMediaV2(payload);
-
-      showToast(
-        "success",
-        `${previewType === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
-      );
-      
-      handleDelete();
-    } catch (error) {
-      const errorMessage =
-        error?.response?.data?.message || error.message || "Lỗi không xác định";
-      showToast("error", `Lỗi khi tải lên: ${errorMessage}`);
-      console.error("Lỗi khi gửi bài:", error);
-    } finally {
-      setSendLoading(false);
-    }
+      try {
+          const { selectedFile, previewType, caption, selectedColors } = uploadQueue.shift();
+          const payload = await utils.createRequestPayloadV3(
+              selectedFile,
+              previewType,
+              caption,
+              selectedColors
+          );
+  
+          showInfo(`Đang tạo bài viết !`);
+          await lockerService.uploadMediaV2(payload);
+          showSuccess(`${previewType === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`);
+      } catch (error) {
+          const errorMessage = error?.response?.data?.message || error.message || "Lỗi không xác định";
+          showError(`Lỗi khi tải lên: ${errorMessage}`);
+          console.error("Lỗi khi gửi bài:", error);
+      } finally {
+          isUploading = false;
+          handleQueueUpload();
+      }
   };
-//   const handleSubmit = async () => {
-//     if (!selectedFile) {
-//         showToast("error", "Không có dữ liệu để tải lên.");
-//         return;
-//     }
-
-//     const { type: previewType } = preview || {};
-//     const postData = {
-//         selectedFile,
-//         previewType,
-//         caption,
-//         selectedColors,
-//     };
-
-//     try {
-//         // Lưu vào hàng đợi trong sessionStorage
-//         const queue = JSON.parse(sessionStorage.getItem("postQueue")) || [];
-//         queue.push(postData);
-//         sessionStorage.setItem("postQueue", JSON.stringify(queue));
-
-//         console.log("Bài viết đã được thêm vào hàng đợi:", postData);
-//         showToast("success", "Bài viết đã được lưu vào hàng đợi!");
-//     } catch (error) {
-//         console.error("Lỗi khi lưu bài viết vào hàng đợi:", error);
-//         showToast("error", "Lỗi khi lưu vào hàng đợi!");
-//     }
-// };
+  
+  const handleSubmit = async () => {
+      if (!selectedFile) {
+          showError("Không có dữ liệu để tải lên.");
+          return;
+      }
+  
+      const { type: previewType } = preview || {};
+      const isImage = previewType === "image";
+      const isVideo = previewType === "video";
+      const maxFileSize = isImage ? 1 : 10;
+  
+      if (isSizeMedia > maxFileSize) {
+          showError(`${isImage ? "Ảnh" : "Video"} vượt quá giới hạn dung lượng. Tối đa ${maxFileSize}MB.`);
+          return;
+      }
+  
+      // setSendLoading(true);
+      //Thêm vào hàng đợi để xử lý
+      uploadQueue.push({ selectedFile, previewType, caption, selectedColors });
+      //Làm mới
+      handleDelete();
+      //Gọi hàm xử lý hàng đợi
+      handleQueueUpload();
+  
+      setSendLoading(false);
+  };
+  
 
   return (
     <>
