@@ -10,7 +10,8 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
   const { selectedFile, preview, isSizeMedia } = post;
   const { streamRef, videoRef, cameraActive, setCameraActive, cameraMode } =
     camera;
-  const { isCaptionLoading, uploadLoading } = useloading;
+  const { isCaptionLoading, uploadLoading, sendLoading, setSendLoading } =
+    useloading;
 
   // Bật camera nếu cần
   useEffect(() => {
@@ -55,9 +56,7 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
       </h1>
 
       <div
-        className={`relative w-full max-w-md aspect-square bg-gray-800 rounded-[65px] overflow-hidden ${
-          loading ? "border border-red-500" : ""
-        }`}
+        className={`relative w-full max-w-md aspect-square bg-gray-800 rounded-[65px] overflow-hidden transition-transform duration-300`}
       >
         {/* Overlay loading */}
         {uploadLoading && (
