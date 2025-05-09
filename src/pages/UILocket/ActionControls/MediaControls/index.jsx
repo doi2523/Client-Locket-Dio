@@ -26,10 +26,10 @@ const MediaControls = () => {
 
   const handleDelete = useCallback(() => {
     // Dừng stream cũ nếu có
-    if (camera.streamRef.current) {
-      camera.streamRef.current.getTracks().forEach((track) => track.stop());
-      camera.streamRef.current = null;
-    }
+    // if (camera.streamRef.current) {
+    //   camera.streamRef.current.getTracks().forEach((track) => track.stop());
+    //   camera.streamRef.current = null;
+    // }
     setSelectedFile(null);
     setPreview(null);
     setCaption("");

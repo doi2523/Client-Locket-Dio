@@ -3,7 +3,7 @@ import Navbar from "./Navbar";
 import MediaPreview from "./MediaDisplay";
 import { useApp } from "../../../context/AppContext";
 import ActionControls from "../ActionControls";
-import HistoryArrow from "./\bHistoryButton";
+import HistoryArrow from "./HistoryButton";
 
 const MainHomeScreen = () => {
   const { navigation, post, camera } = useApp();
@@ -26,7 +26,7 @@ const MainHomeScreen = () => {
         <Navbar />
         <MediaPreview />
         <ActionControls />
-        {/* <HistoryArrow/> */}
+        {/* <HistoryArrow /> */}
         <canvas ref={canvasRef} className="hidden" />
       </div>
     </div>

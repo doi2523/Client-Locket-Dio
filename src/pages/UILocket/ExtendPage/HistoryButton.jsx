@@ -2,12 +2,12 @@ import React from "react";
 
 const HistoryArrow = () => {
   return (
-    <div className="flex flex-col items-center space-y-1">
+    <div className="relative flex flex-col items-center h-20 pt-4">
       <div className="flex items-center justify-center space-x-2">
-        <div className="bg-base-content text-accent font-semibold px-2.5 py-1 rounded-lg shadow-md">
+        <div className="bg-base-content text-accent font-semibold px-2 py-0.5 rounded-lg shadow-md">
           8
         </div>
-        <span className="text-xl font-semibold text-gray-800">Lịch sử</span>
+        <span className="text-md font-semibold text-gray-800">Lịch sử</span>
       </div>
       <svg
         width="40"
