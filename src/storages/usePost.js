@@ -22,6 +22,8 @@ export const usePost = () => {
   const [isTextColor, setTextColor] = useState(null);
   const [isSizeMedia, setSizeMedia] = useState(null);
 
+  const [recentPosts, setRecentPosts] = useState([]);
+
   return {
     caption,
     setCaption,
@@ -37,5 +39,6 @@ export const usePost = () => {
     setSizeMedia,
     moment,
     setMoment,
+    recentPosts, setRecentPosts
   };
 };

@@ -8,7 +8,7 @@ import HistoryArrow from "./HistoryButton";
 const MainHomeScreen = () => {
   const { navigation, post, camera, useloading } = useApp();
 
-  const { isHomeOpen, isProfileOpen } = navigation;
+  const { isHomeOpen, isProfileOpen, isBottomOpen } = navigation;
   const { sendLoading, setSendLoading } = useloading;
   const { isSizeMedia, setSizeMedia, preview, setPreview } = post;
   const { canvasRef } = camera;
@@ -20,24 +20,26 @@ const MainHomeScreen = () => {
           ? "translate-x-full"
           : isHomeOpen
           ? "-translate-x-full"
+          : isBottomOpen
+          ? "-translate-y-full"
           : "translate-x-0"
       }`}
     >
-<div
-  className={`flex h-full select-none flex-col items-center duration-500 justify-start overflow-hidden ${
-    sendLoading
-      ? "transition-all -translate-y-full opacity-0 scale-0"
-      : "transition-all opacity-100 scale-100"
-  }`}
->
-  <Navbar />
-  <MediaPreview />
-  <ActionControls />
-  {/* <HistoryArrow /> */}
-  <canvas ref={canvasRef} className="hidden" />
-</div>
-
-      
+      <div
+        className={`flex h-full select-none flex-col items-center justify-start overflow-hidden ${
+          sendLoading === true
+            ? "animate-slide-up"
+            : sendLoading === false
+            ? "animate-reset"
+            : ""
+        }`}
+      >
+        <Navbar />
+        <MediaPreview />
+        <ActionControls />
+        <HistoryArrow/>
+        <canvas ref={canvasRef} className="hidden" />
+      </div>
     </div>
   );
 };

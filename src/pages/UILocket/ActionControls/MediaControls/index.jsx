@@ -25,6 +25,8 @@ const MediaControls = () => {
     setSelectedColors,
     isSizeMedia,
     setSizeMedia,
+    recentPosts,
+    setRecentPosts,
   } = post;
   const { cameraActive, setCameraActive } = camera;
 
@@ -54,11 +56,18 @@ const MediaControls = () => {
       const { selectedFile, previewType, caption, selectedColors } =
         uploadQueue.shift();
       const payload = await utils.createRequestPayloadV3(
-          selectedFile,
-          previewType,
-          caption,
-          selectedColors
+        selectedFile,
+        previewType,
+        caption,
+        selectedColors
       );
+      // Lưu payload vào localStorage
+      const savedPayloads = JSON.parse(
+        localStorage.getItem("uploadPayloads") || "[]"
+      );
+      savedPayloads.push(payload);
+      setRecentPosts(savedPayloads);
+      localStorage.setItem("uploadPayloads", JSON.stringify(savedPayloads));
 
       // showInfo(`Đang tạo bài viết !`);
       await lockerService.uploadMediaV2(payload);

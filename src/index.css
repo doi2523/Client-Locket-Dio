@@ -243,3 +243,48 @@
     background-position: 0% 50%;
   }
 }
+/* Animation send new moments */
+@layer utilities {
+  .animate-slide-up {
+    animation: slide-up 0.5s forwards;
+  }
+
+  .animate-reset {
+    animation: reset 0s forwards, scale-up 0.5s 0.1s forwards;
+  }
+
+  @keyframes slide-up {
+    0% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1) translateY(-100vh); /* Đẩy lên khỏi màn hình */
+    }
+  }
+
+  @keyframes reset {
+    0% {
+      opacity: 0;
+      transform: scale(0) translateY(-100vh);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0) translateY(0);
+    }
+  }
+
+  @keyframes scale-up {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+
