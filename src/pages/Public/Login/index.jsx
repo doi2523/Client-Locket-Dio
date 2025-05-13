@@ -6,6 +6,7 @@ import * as utils from "../../../utils";
 import LoadingRing from "../../../components/UI/Loading/ring";
 import StatusServer from "../../../components/UI/StatusServer";
 import { useApp } from "../../../context/AppContext";
+import PushNotificationButton from "../../../components/PushNotificationButton";
 
 const Login = () => {
   const { setUser } = useContext(AuthContext);
@@ -136,6 +137,7 @@ const Login = () => {
             </button>
             <span className="text-xs">Vui lòng chờ Server khởi động.</span>
             <StatusServer />
+            <PushNotificationButton/>
           </form>
         </div>
       </div>
