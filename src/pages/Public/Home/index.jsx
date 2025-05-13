@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./styles.css";
 import { Link } from "react-router-dom";
 import AnimatedButton from "../../../components/3dButton";
+import PushNotificationButton from "../../../components/PushNotificationButton";
 
 const words = [
   "Welcome to Locket Pro! 🚀",
@@ -40,6 +41,7 @@ const Home = () => {
       >
         Login now
       </Link>
+      {/* <PushNotificationButton/> */}
       {/* <div className="loader">
           <p>loading</p>
           <div className="words text-4xl text-base-300 font-lovehouse">

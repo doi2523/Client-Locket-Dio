@@ -1,6 +1,7 @@
 // src/components/PushNotificationButton.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../utils';
 
 const PushNotificationButton = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -25,7 +26,7 @@ const PushNotificationButton = () => {
       });
 
       // Gửi Subscription đến backend để lưu vào Supabase
-      const { data } = await axios.post('http://localhost:3001/locketpro/subscribe', {
+      const { data } = await axios.post(API_URL.SUBCRIBE, {
         endpoint: subscription.endpoint,
         keys: subscription.toJSON().keys,
       });

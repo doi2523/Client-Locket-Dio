@@ -45,13 +45,13 @@ function AppContent() {
 
   if (loading) return <Loading isLoading={true} />;
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js').then(registration => {
-      console.log('Service Worker đăng ký thành công: ', registration);
-    }).catch(error => {
-      console.log('Service Worker đăng ký thất bại: ', error);
-    });
-  }
+  // if ('serviceWorker' in navigator) {
+  //   navigator.serviceWorker.register('/service-worker.js').then(registration => {
+  //     console.log('Service Worker đăng ký thành công: ', registration);
+  //   }).catch(error => {
+  //     console.log('Service Worker đăng ký thất bại: ', error);
+  //   });
+  // }
 
   
   return (

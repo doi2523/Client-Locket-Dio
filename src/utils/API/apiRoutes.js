@@ -9,6 +9,7 @@ const BASE_DB_API_URL = import.meta.env.VITE_BASE_API_URL_DB
 // const BASE_API_URL = "https://apilocket-diov2-production.up.railway.app";
 
 const LOCKET_URL = "/locket";
+const LOCKET_PRO = "/locketpro";
 
 export const API_URL = {
   LOGIN_URL: `${BASE_API_URL}${LOCKET_URL}/login`,
@@ -19,13 +20,17 @@ export const API_URL = {
   GET_INFO_URL: `${BASE_API_URL}${LOCKET_URL}/getinfo`,
 
   REFESH_TOKEN_URL: `${BASE_API_URL}${LOCKET_URL}/refresh-token`,
+  UPLOAD_MEDIA_URL: `${BASE_API_URL}${LOCKET_PRO}/post`,
 
-  GET_CAPTION_THEMES: `${BASE_DB_API_URL}/themes`,
-  GET_TIMELINE: `${BASE_DB_API_URL}/timeline`,
-  DONATE_URL: `${BASE_DB_API_URL}/donate`,
-  
-  UPLOAD_MEDIA_URL: `${BASE_API_URL}${LOCKET_URL}/post`,
-  GET_LASTEST_URL: `${BASE_API_URL}${LOCKET_URL}/getmoment`,
+  GET_LASTEST_URL: `${BASE_API_URL}${LOCKET_PRO}/getmoment`,
+
+  GET_CAPTION_THEMES: `${BASE_DB_API_URL}${LOCKET_PRO}/themes`,
+  GET_TIMELINE: `${BASE_DB_API_URL}${LOCKET_PRO}/timeline`,
+  DONATE_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/donate`,
+
+  USER_THEMES_POSTS_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/user-themes/posts`,
+
+  SUBCRIBE: `${BASE_DB_API_URL}${LOCKET_PRO}/subscribe`,
   //Cloudinary
   UPLOAD_IMAGE_TO_CLOUD: `https://api.cloudinary.com/v1_1/diocloud/image/upload`,
   UPLOAD_VIDEO_TO_CLOUD: `https://api.cloudinary.com/v1_1/diocloud/video/upload`,

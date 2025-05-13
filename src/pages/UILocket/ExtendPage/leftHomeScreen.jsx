@@ -6,6 +6,7 @@ import AddPostButton from "../../../components/UI/AddPostButton";
 import axios from "axios";
 import LoadingRing from "../../../components/UI/Loading/ring";
 import PostCard from "../../../components/UI/PostCard";
+import { API_URL } from "../../../utils";
 
 const LeftHomeScreen = () => {
   const { user } = useContext(AuthContext);
@@ -29,7 +30,7 @@ const LeftHomeScreen = () => {
   useEffect(() => {
     const getPosts = async () => {
       try {
-        const response = await axios.get("https://server-admin-xi.vercel.app/posts");
+        const response = await axios.get(API_URL.USER_THEMES_POSTS_URL);
         setPosts(response.data);
       } catch (error) {
         console.error("Error fetching posts:", error);

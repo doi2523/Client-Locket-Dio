@@ -137,7 +137,7 @@ const Login = () => {
             </button>
             <span className="text-xs">Vui lòng chờ Server khởi động.</span>
             <StatusServer />
-            <PushNotificationButton/>
+            {/* <PushNotificationButton/> */}
           </form>
         </div>
       </div>
