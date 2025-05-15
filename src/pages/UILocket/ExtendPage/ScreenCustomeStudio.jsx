@@ -1,29 +1,18 @@
 import { Palette, X } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useApp } from "../../../context/AppContext";
 import ThemesCustomes from "../../../components/UI/CaptionCustomes/ThemesCustomes";
+import { AuthContext } from "../../../context/AuthLocket";
 
 const ScreenCustomeStudio = () => {
   const popupRef = useRef(null);
+  const { user, setUser } = useContext(AuthContext);
   const { navigation, post, captiontheme } = useApp();
 
   const { isFilterOpen, setIsFilterOpen } = navigation;
   const { selectedColors, setSelectedColors, caption, setCaption } = post;
   const { captionThemes } = captiontheme;
 
-  const handleCloseOnClickOutside = (e) => {
-    if (popupRef.current && !popupRef.current.contains(e.target)) {
-      () => setIsFilterOpen(false);
-    }
-  };
-
-  const handleColorSelect = (topColor, bottomColor) => {
-    setSelectedColors({ top: topColor, bottom: bottomColor });
-    if (selectedColors) {
-      setSelectedColors({ top: topColor, bottom: bottomColor });
-      setIsFilterOpen(false);
-    }
-  };
   useEffect(() => {
     if (isFilterOpen) {
       document.body.classList.add("overflow-hidden");
@@ -35,21 +24,20 @@ const ScreenCustomeStudio = () => {
     };
   }, [isFilterOpen]);
 
-const [savedPosts, setSavedPosts] = useState([]);
+  const [savedPosts, setSavedPosts] = useState([]);
 
-useEffect(() => {
-  if (isFilterOpen) {
-    const stored = localStorage.getItem("savedPosts");
-    if (stored) {
-      try {
-        setSavedPosts(JSON.parse(stored));
-      } catch (e) {
-        console.error("Error parsing savedPosts:", e);
+  useEffect(() => {
+    if (isFilterOpen) {
+      const stored = localStorage.getItem("savedPosts");
+      if (stored) {
+        try {
+          setSavedPosts(JSON.parse(stored));
+        } catch (e) {
+          console.error("Error parsing savedPosts:", e);
+        }
       }
     }
-  }
-}, [isFilterOpen]);
-
+  }, [isFilterOpen]);
 
   const handleSelectFilter = (filter) => {
     console.log("Selected Filter:", filter);
@@ -61,9 +49,37 @@ useEffect(() => {
     setIsFilterOpen(false); // Close the filter selector
   };
 
-  const handleCustomeSelect = (preset_id, icon, top, bottom, caption, text_color, type) => {
-    setSelectedColors({ preset_id, icon, top, bottom, caption, text_color, type });
+  const handleCustomeSelect = (
+    preset_id,
+    icon,
+    top,
+    bottom,
+    caption,
+    text_color,
+    type
+  ) => {
+    setSelectedColors({
+      preset_id,
+      icon,
+      top,
+      bottom,
+      caption,
+      text_color,
+      type,
+    });
     setCaption(`${icon} ${caption || "Caption"}`);
+    setIsFilterOpen(false);
+  };
+  const handleCustomeSelectTest = (
+    icon,
+    caption,
+    type,
+  ) => {
+    setSelectedColors({
+      icon,
+      caption,
+      type,
+    });
     setIsFilterOpen(false);
   };
 
@@ -105,12 +121,12 @@ useEffect(() => {
         </div>
         {/* Nội dung - Cuộn được */}
         <div className="flex-1 overflow-y-auto px-4">
-        <ThemesCustomes
+          <ThemesCustomes
             title="🎨 Your Saved Theme"
             presets={savedPosts}
             onSelect={handleCustomeSelect}
           />
-        <ThemesCustomes
+          <ThemesCustomes
             title="🎨 Suggest Theme"
             presets={captionThemes.background}
             onSelect={handleCustomeSelect}
@@ -123,9 +139,27 @@ useEffect(() => {
           />
           <ThemesCustomes
             title="🎨 New Custome by Dio"
-            presets={captionThemes.custom} 
+            presets={captionThemes.custom}
             onSelect={handleCustomeSelect}
           />
+{/* <div className="">
+  <h2 className="text-md font-semibold text-primary mb-2">
+    Caption Test
+  </h2>
+  <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
+    <button
+      onClick={() =>
+        handleCustomeSelectTest(user.profilePicture, "Caption", "test")
+      }
+      className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
+    >
+      <span className="text-base flex flex-row items-center">
+        <img src={user.profilePicture} alt="" className="w-5 h-5 mr-2" />
+        {"Caption"}
+      </span>
+    </button>
+  </div>
+</div> */}
 
         </div>
       </div>
