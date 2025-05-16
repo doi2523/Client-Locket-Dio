@@ -85,14 +85,24 @@ console.table([
     setIsFilterOpen(false);
   };
 
-  const handleCustomeSelectTest = (icon, caption, type) => {
-    setSelectedColors({
-      icon,
-      caption,
-      type,
+  const handleCustomeSelectTest = (preset) => {
+    // Kiểm tra xem preset có đủ thông tin cần thiết không
+    if (!preset) return;
+  
+    // Cập nhật postOverlay từ giá trị preset
+    setPostOverlay({
+      overlay_id: preset.preset_id || "standard",
+      color_top: preset.color_top || "",
+      color_bottom: preset.color_bottom || "",
+      text_color: preset.text_color || "#FFFFFF",
+      icon: preset.icon || "",
+      caption: preset.preset_caption || "",
+      type: preset.type || "image_icon",
     });
+  
     setIsFilterOpen(false);
   };
+  
 
   return (
     <div
@@ -153,32 +163,30 @@ console.table([
             presets={captionThemes.custome}
             onSelect={handleCustomeSelect}
           />
-          {/* <div className="">
-            <h2 className="text-md font-semibold text-primary mb-2">
-              Caption Test
-            </h2>
-            <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
-              <button
-                onClick={() =>
-                  handleCustomeSelectTest(
-                    // user.profilePicture,
-                    "Caption",
-                    "test"
-                  )
-                }
-                className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
-              >
-                <span className="text-base flex flex-row items-center">
-                  <img
-                    // src={user.profilePicture}
-                    alt=""
-                    className="w-5 h-5 mr-2"
-                  />
-                  {"Caption"}
-                </span>
-              </button>
-            </div>
-          </div> */}
+<div className="">
+  <h2 className="text-md font-semibold text-primary mb-2">
+    Caption Test
+  </h2>
+  <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
+    {captionThemes.image_icon.map((preset) => (
+      <button
+        key={preset.id}
+        onClick={() => handleCustomeSelectTest(preset)}
+        className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
+      >
+        <span className="text-base flex flex-row items-center">
+          <img
+            src={preset.icon}
+            alt=""
+            className="w-5 h-5 mr-2"
+          />
+          {preset.preset_caption || "Caption"}
+        </span>
+      </button>
+    ))}
+  </div>
+</div>
+
         </div>
       </div>
     </div>

@@ -13,6 +13,7 @@ const groupThemesByType = (themes) => {
     decorative: sortByOrderIndex(themes.filter((t) => t.type === "decorative")),
     custome: sortByOrderIndex(themes.filter((t) => t.type === "custome")),
     background: sortByOrderIndex(themes.filter((t) => t.type === "background")),
+    image_icon: sortByOrderIndex(themes.filter((t) => t.type === "image_icon")),
   };
 };
 
@@ -21,6 +22,7 @@ export const useThemes = () => {
     decorative: [],
     custome: [],
     background: [],
+    image_icon: [],
   });
 
   useEffect(() => {

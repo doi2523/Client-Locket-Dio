@@ -1,33 +1,36 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useApp } from "../../../context/AppContext";
 
-const AutoResizeTextarea = () => {
+const AutoResizeCaption = () => {
   const textareaRef = useRef(null);
+  const imageIconRef = useRef(null);
   const parentRef = useRef(null);
   const canvasRef = useRef(document.createElement("canvas"));
   const { post } = useApp();
   const { postOverlay, setPostOverlay } = post;
 
   const placeholder = "Nhập tin nhắn...";
-  const [width, setWidth] = useState(1000);
+  const defaultImageIconWidth = 200; // Thêm width mặc định cho image_icon
+  const [width, setWidth] = useState(defaultImageIconWidth);
   const [shouldWrap, setShouldWrap] = useState(false);
 
-  const adjustHeight = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+  const adjustHeight = (ref) => {
+    if (ref.current) {
+      ref.current.style.height = "auto";
+      ref.current.style.height = `${ref.current.scrollHeight}px`;
     }
   };
 
-  const getTextWidth = (text) => {
+  const getTextWidth = (text, ref) => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
-    if (!context || !textareaRef.current) return 100;
+    if (!context || !ref.current) return 100;
 
-    const style = getComputedStyle(textareaRef.current);
+    const style = getComputedStyle(ref.current);
     context.font = `${style.fontSize} ${style.fontFamily}`;
 
-    const emojiRegex = /([\uD800-\uDBFF][\uDC00-\uDFFF])|(\p{Extended_Pictographic})/gu;
+    const emojiRegex =
+      /([\uD800-\uDBFF][\uDC00-\uDFFF])|(\p{Extended_Pictographic})/gu;
     const textOnly = text.replace(emojiRegex, "");
     const emojiMatches = text.match(emojiRegex) || [];
 
@@ -38,10 +41,19 @@ const AutoResizeTextarea = () => {
   };
 
   useEffect(() => {
-    adjustHeight();
+    adjustHeight(textareaRef);
+    adjustHeight(imageIconRef);
 
-    const combinedText = `${postOverlay.icon || ""} ${postOverlay.caption || placeholder}`.trim();
-    const baseWidth = getTextWidth(combinedText);
+    const combinedText =
+      postOverlay.type === "image_icon"
+        ? postOverlay.caption || placeholder
+        : `${postOverlay.icon || ""} ${
+            postOverlay.caption || placeholder
+          }`.trim();
+    const baseWidth = getTextWidth(
+      combinedText,
+      postOverlay.type === "image_icon" ? imageIconRef : textareaRef
+    );
     const padding = 32;
     const finalWidth = baseWidth + padding;
 
@@ -50,18 +62,22 @@ const AutoResizeTextarea = () => {
       maxAllowedWidth = parentRef.current.clientWidth;
     }
 
-    const adjustedWidth = finalWidth > maxAllowedWidth ? maxAllowedWidth : finalWidth;
+    const adjustedWidth =
+      finalWidth > maxAllowedWidth ? maxAllowedWidth : finalWidth;
 
-    setWidth(adjustedWidth);
+    setWidth(
+      postOverlay.type === "image_icon" && finalWidth < defaultImageIconWidth
+        ? defaultImageIconWidth
+        : adjustedWidth
+    );
     setShouldWrap(finalWidth > maxAllowedWidth);
-  }, [postOverlay.icon, postOverlay.caption, placeholder]);
+  }, [postOverlay.icon, postOverlay.caption, postOverlay.type, placeholder]);
 
   const handleChange = (e) => {
     const inputValue = e.target.value;
     const icon = postOverlay.icon || "";
     const prefix = icon ? `${icon} ` : "";
 
-    // Xử lý loại 1: Icon + Caption
     if (inputValue.startsWith(prefix)) {
       const newCaption = inputValue.slice(prefix.length);
       setPostOverlay((prev) => ({
@@ -69,7 +85,6 @@ const AutoResizeTextarea = () => {
         caption: newCaption,
       }));
     } else {
-      // Xử lý loại 2: Chỉ Caption (không có icon)
       setPostOverlay((prev) => ({
         ...prev,
         caption: inputValue,
@@ -81,28 +96,62 @@ const AutoResizeTextarea = () => {
 
   return (
     <div ref={parentRef} className="relative w-full">
-      <textarea
-        ref={textareaRef}
-        value={
-          postOverlay.icon
-            ? `${postOverlay.icon} ${postOverlay.caption || ""}`.trim()
-            : postOverlay.caption || ""
-        }
-        onChange={handleChange}
-        placeholder={placeholder}
-        rows={1}
-        className="absolute z-50 text-white px-4 font-semibold bottom-2 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl py-2 text-md outline-none max-w-[90%] resize-none overflow-hidden transition-all"
-        style={{
-          width: `${width}px`,
-          color: postOverlay.text_color,
-          whiteSpace: shouldWrap ? "pre-wrap" : "nowrap",
-          background: `linear-gradient(to bottom, ${postOverlay.color_top}, ${postOverlay.color_bottom})`,
-        }}
-        disabled={!isEditable}
-        wrap={shouldWrap ? "soft" : "off"}
-      />
+      {postOverlay.type === "image_icon" ? (
+        <div
+          className="flex items-center bg-white/50 gap-2 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2"
+          style={{
+            width: `${width}px`,
+            background: `linear-gradient(to bottom, ${postOverlay.color_top}, ${postOverlay.color_bottom})`,
+          }}
+        >
+          <img
+            src={postOverlay.icon}
+            alt="Icon"
+            className="w-6 h-6 rounded-full object-cover"
+          />
+          <textarea
+            ref={imageIconRef}
+            value={postOverlay.caption || ""}
+            onChange={(e) =>
+              setPostOverlay((prev) => ({
+                ...prev,
+                caption: e.target.value,
+              }))
+            }
+            placeholder={placeholder}
+            rows={1}
+            className="font-semibold outline-none w-auto resize-none overflow-hidden transition-all"
+            style={{
+              width: `${width}px`,
+              color: postOverlay.text_color,
+              whiteSpace: shouldWrap ? "pre-wrap" : "nowrap",
+            }}
+          />
+        </div>
+      ) : (
+        <textarea
+          ref={textareaRef}
+          value={
+            postOverlay.icon
+              ? `${postOverlay.icon} ${postOverlay.caption || ""}`.trim()
+              : postOverlay.caption || ""
+          }
+          onChange={handleChange}
+          placeholder={placeholder}
+          rows={1}
+          className="absolute z-50 text-white px-4 font-semibold bottom-2 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl py-2 text-md outline-none max-w-[90%] resize-none overflow-hidden transition-all"
+          style={{
+            width: `${width}px`,
+            color: postOverlay.text_color,
+            whiteSpace: shouldWrap ? "pre-wrap" : "nowrap",
+            background: `linear-gradient(to bottom, ${postOverlay.color_top}, ${postOverlay.color_bottom})`,
+          }}
+          disabled={!isEditable}
+          wrap={shouldWrap ? "soft" : "off"}
+        />
+      )}
     </div>
   );
 };
 
-export default AutoResizeTextarea;
+export default AutoResizeCaption;
