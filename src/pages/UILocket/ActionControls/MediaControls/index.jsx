@@ -9,6 +9,7 @@ import {
   showInfo,
   showSuccess,
 } from "../../../../components/Toast/index.jsx";
+import { defaultPostOverlay } from "../../../../storages/usePost.js";
 
 const MediaControls = () => {
   const { navigation, post, useloading, camera } = useApp();
@@ -17,18 +18,16 @@ const MediaControls = () => {
   const {
     preview,
     setPreview,
-    caption,
-    setCaption,
     selectedFile,
     setSelectedFile,
-    selectedColors,
-    setSelectedColors,
     isSizeMedia,
     setSizeMedia,
     recentPosts,
     setRecentPosts,
+    postOverlay,
+    setPostOverlay,
   } = post;
-  const { cameraActive, setCameraActive } = camera;
+  const { setCameraActive } = camera;
 
   const handleDelete = useCallback(() => {
     // Dừng stream cũ nếu có
@@ -38,10 +37,8 @@ const MediaControls = () => {
     }
     setSelectedFile(null);
     setPreview(null);
-    setCaption("");
     setSizeMedia(null);
-    setSelectedColors({ id: "", top: "", bottom: "", text: "#FFFFFF" });
-
+    setPostOverlay(defaultPostOverlay);
     setCameraActive(true); // Giữ dòng này để trigger useEffect
   }, []);
 
@@ -53,13 +50,11 @@ const MediaControls = () => {
     isUploading = true;
 
     try {
-      const { selectedFile, previewType, caption, selectedColors } =
-        uploadQueue.shift();
+      const { selectedFile, previewType, postOverlay } = uploadQueue.shift();
       const payload = await utils.createRequestPayloadV3(
         selectedFile,
         previewType,
-        caption,
-        selectedColors
+        postOverlay
       );
       // Lưu payload vào localStorage
       const savedPayloads = JSON.parse(
@@ -71,12 +66,9 @@ const MediaControls = () => {
 
       // showInfo(`Đang tạo bài viết !`);
       await lockerService.uploadMediaV2(payload);
-      showSuccess(
-        `${previewType === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
-      );
+      showSuccess(`${previewType === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`);
     } catch (error) {
-      const errorMessage =
-        error?.response?.data?.message || error.message || "Lỗi không xác định";
+      const errorMessage = error?.response?.data?.message || error.message || "Lỗi không xác định";
       showError(`Lỗi khi tải lên: ${errorMessage}`);
       console.error("Lỗi khi gửi bài:", error);
     } finally {
@@ -107,7 +99,7 @@ const MediaControls = () => {
 
     setSendLoading(true);
     //Thêm vào hàng đợi để xử lý
-    uploadQueue.push({ selectedFile, previewType, caption, selectedColors });
+    uploadQueue.push({ selectedFile, previewType, postOverlay });
     //Làm mới
     setTimeout(() => {
       setSendLoading(false);

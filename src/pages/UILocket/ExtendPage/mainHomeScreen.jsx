@@ -6,11 +6,10 @@ import ActionControls from "../ActionControls";
 import HistoryArrow from "./HistoryButton";
 
 const MainHomeScreen = () => {
-  const { navigation, post, camera, useloading } = useApp();
+  const { navigation, camera, useloading } = useApp();
 
   const { isHomeOpen, isProfileOpen, isBottomOpen } = navigation;
-  const { sendLoading, setSendLoading } = useloading;
-  const { isSizeMedia, setSizeMedia, preview, setPreview } = post;
+  const { sendLoading } = useloading;
   const { canvasRef } = camera;
 
   return (

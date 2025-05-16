@@ -10,16 +10,16 @@ const sortByOrderIndex = (themes) => {
 
 const groupThemesByType = (themes) => {
   return {
-    default: sortByOrderIndex(themes.filter((t) => t.type === "default")),
-    custom: sortByOrderIndex(themes.filter((t) => t.type === "custom")),
+    decorative: sortByOrderIndex(themes.filter((t) => t.type === "decorative")),
+    custome: sortByOrderIndex(themes.filter((t) => t.type === "custome")),
     background: sortByOrderIndex(themes.filter((t) => t.type === "background")),
   };
 };
 
 export const useThemes = () => {
   const [captionThemes, setCaptionThemes] = useState({
-    default: [],
-    custom: [],
+    decorative: [],
+    custome: [],
     background: [],
   });
 

@@ -1,5 +1,15 @@
 import { useState } from "react";
 
+export const defaultPostOverlay = {
+  overlay_id: "standard",
+  color_top: "",
+  color_bottom: "",
+  text_color: "#FFFFFF",
+  icon: "",
+  caption: "",
+  type: "default",
+};
+
 export const usePost = () => {
   const [selectedColors, setSelectedColors] = useState({
     top: "", // Trong suốt
@@ -7,14 +17,7 @@ export const usePost = () => {
     text: "#FFFFFF",
     // type: "none"
   });
-  const [moment, setMoment] = useState({
-    overlay_id: "standard",
-    color_top: "",
-    color_bottom: "",
-    text_color: "#FFFFFF",
-    icon: "",
-    caption: "",
-  });
+  const [postOverlay, setPostOverlay] = useState(defaultPostOverlay);
 
   const [caption, setCaption] = useState("");
   const [preview, setPreview] = useState(null);
@@ -37,8 +40,7 @@ export const usePost = () => {
     setTextColor,
     isSizeMedia,
     setSizeMedia,
-    moment,
-    setMoment,
+    postOverlay, setPostOverlay,
     recentPosts, setRecentPosts
   };
 };

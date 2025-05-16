@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import AutoResizeTextarea from "./AutoResizeTextarea";
+import AutoResizeCaption from "./AutoResizeCaption";
 import Hourglass from "../../../components/UI/Loading/hourglass";
 import { useApp } from "../../../context/AppContext";
 import MediaSizeInfo from "../../../components/UI/MediaSizeInfo";
@@ -114,7 +114,7 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
               isCaptionLoading ? "opacity-100" : "opacity-0"
             }`}
           >
-            <AutoResizeTextarea />
+            <AutoResizeCaption />
           </div>
         )}
 

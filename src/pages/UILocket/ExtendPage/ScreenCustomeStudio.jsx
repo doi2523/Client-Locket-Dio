@@ -10,7 +10,14 @@ const ScreenCustomeStudio = () => {
   const { navigation, post, captiontheme } = useApp();
 
   const { isFilterOpen, setIsFilterOpen } = navigation;
-  const { selectedColors, setSelectedColors, caption, setCaption } = post;
+  const {
+    selectedColors,
+    setSelectedColors,
+    caption,
+    setCaption,
+    postOverlay,
+    setPostOverlay,
+  } = post;
   const { captionThemes } = captiontheme;
 
   useEffect(() => {
@@ -39,42 +46,46 @@ const ScreenCustomeStudio = () => {
     }
   }, [isFilterOpen]);
 
-  const handleSelectFilter = (filter) => {
-    console.log("Selected Filter:", filter);
-    setSelectedColors(filter);
-    setIsFilterOpen(false); // Close the filter selector after selection
-  };
-
-  const handleCloseFilter = () => {
-    setIsFilterOpen(false); // Close the filter selector
-  };
-
   const handleCustomeSelect = (
     preset_id,
     icon,
-    top,
-    bottom,
+    color_top,
+    color_bottom,
     caption,
     text_color,
     type
   ) => {
-    setSelectedColors({
-      preset_id,
-      icon,
-      top,
-      bottom,
-      caption,
-      text_color,
-      type,
+    // Cập nhật postOverlay
+    setPostOverlay({
+      overlay_id: preset_id || "standard",
+      color_top: color_top || "",
+      color_bottom: color_bottom || "",
+      text_color: text_color || "#FFFFFF",
+      icon: icon || "",
+      caption: caption || "",
+      // type: "decorative" || "default",
+      type: type || "default",
     });
-    setCaption(`${icon} ${caption || "Caption"}`);
+
+// Log để kiểm tra dữ liệu dưới dạng bảng
+console.table([
+  {
+    overlay_id: preset_id || "standard",
+    color_top: color_top || "",
+    color_bottom: color_bottom || "",
+    text_color: text_color || "#FFFFFF",
+    icon: icon || "",
+    caption: caption || "",
+    type: type || "default",
+  },
+]);
+
+
+    // Đóng bộ lọc
     setIsFilterOpen(false);
   };
-  const handleCustomeSelectTest = (
-    icon,
-    caption,
-    type,
-  ) => {
+
+  const handleCustomeSelectTest = (icon, caption, type) => {
     setSelectedColors({
       icon,
       caption,
@@ -134,33 +145,40 @@ const ScreenCustomeStudio = () => {
           {/* Decorative by Locket */}
           <ThemesCustomes
             title="🎨 Decorative by Locket"
-            presets={captionThemes.default}
+            presets={captionThemes.decorative}
             onSelect={handleCustomeSelect}
           />
           <ThemesCustomes
             title="🎨 New Custome by Dio"
-            presets={captionThemes.custom}
+            presets={captionThemes.custome}
             onSelect={handleCustomeSelect}
           />
-{/* <div className="">
-  <h2 className="text-md font-semibold text-primary mb-2">
-    Caption Test
-  </h2>
-  <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
-    <button
-      onClick={() =>
-        handleCustomeSelectTest(user.profilePicture, "Caption", "test")
-      }
-      className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
-    >
-      <span className="text-base flex flex-row items-center">
-        <img src={user.profilePicture} alt="" className="w-5 h-5 mr-2" />
-        {"Caption"}
-      </span>
-    </button>
-  </div>
-</div> */}
-
+          {/* <div className="">
+            <h2 className="text-md font-semibold text-primary mb-2">
+              Caption Test
+            </h2>
+            <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
+              <button
+                onClick={() =>
+                  handleCustomeSelectTest(
+                    // user.profilePicture,
+                    "Caption",
+                    "test"
+                  )
+                }
+                className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
+              >
+                <span className="text-base flex flex-row items-center">
+                  <img
+                    // src={user.profilePicture}
+                    alt=""
+                    className="w-5 h-5 mr-2"
+                  />
+                  {"Caption"}
+                </span>
+              </button>
+            </div>
+          </div> */}
         </div>
       </div>
     </div>

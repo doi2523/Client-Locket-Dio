@@ -34,7 +34,6 @@ export const createRequestPayloadV2 = (mediaInfo, caption, selectedColors) => {
     idToken: idToken,
     localId: localId,
   };
-
   // Tạo đối tượng options (bao gồm các lựa chọn như caption, colors...)
   const optionsData = {
     caption: caption,
@@ -59,8 +58,8 @@ export const createRequestPayloadV2 = (mediaInfo, caption, selectedColors) => {
 };
 
 // utils.js
-
-export const createRequestPayloadV3 = async (selectedFile, previewType, caption, selectedColors) => {
+//Main
+export const createRequestPayloadV3 = async (selectedFile, previewType, postOverlay) => {
   try {
     // Upload file lên Cloudinary
     const fileData = await uploadToCloudinary(selectedFile, previewType);
@@ -75,21 +74,20 @@ export const createRequestPayloadV3 = async (selectedFile, previewType, caption,
 
     // Tạo đối tượng options (bao gồm các lựa chọn như caption, colors...)
     const optionsData = {
-      caption: caption,
-      theme_caption: selectedColors.caption,
-      id: selectedColors.preset_id,
-      type: selectedColors.type,
-      icon: selectedColors.icon,
-      text_color: selectedColors.text_color,
-      colorTop: selectedColors.top,
-      colorBottom: selectedColors.bottom,
+      caption: postOverlay.caption,
+      overlay_id: postOverlay.overlay_id,
+      type: postOverlay.type,
+      icon: postOverlay.icon,
+      text_color: postOverlay.text_color,
+      color_top: postOverlay.color_top,
+      color_bottom: postOverlay.color_bottom,
     };
 
     // Tạo đối tượng payload chứa tất cả dữ liệu cần gửi
     const payload = {
       userData: tokenData,
       options: optionsData,
-      model: "Version-UploadmediaV3",
+      model: "Version-UploadmediaV3.1",
       mediaInfo: mediaInfo,
     };
 
