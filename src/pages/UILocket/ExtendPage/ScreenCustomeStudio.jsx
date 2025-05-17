@@ -173,6 +173,10 @@ console.table([
         key={preset.id}
         onClick={() => handleCustomeSelectTest(preset)}
         className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
+        style={{
+          background: `linear-gradient(to bottom, ${preset.top || preset.color_top}, ${preset.color_bot || preset.color_bottom})`,
+          color: preset.color_text || preset.text_color,
+        }}
       >
         <span className="text-base flex flex-row items-center">
           <img
