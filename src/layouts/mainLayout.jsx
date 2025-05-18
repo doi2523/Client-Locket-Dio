@@ -16,7 +16,7 @@ const DefaultLayout = ({ children }) => {
   }, [location.pathname]);
 
   return (
-    <div className="overflow-hidden grid grid-rows-[auto_1fr_auto]">
+    <div className="grid grid-rows-[auto_1fr_auto]">
       {/* Fixed Header */}
       <Header />
       {isLoading && (
@@ -25,8 +25,8 @@ const DefaultLayout = ({ children }) => {
         </div>
       )}
       {/* Main Content with Scroll */}
-      <main className="flex-1 overflow-hidden bg-base-200 text-base-content relative">
-        <div className="relative z-10 overflow-y-scroll">{children}</div>
+      <main className="overflow-hidden bg-base-200 text-base-content relative">
+        <div className="relative z-10">{children}</div>
       </main>
       <Footer />
     </div>
