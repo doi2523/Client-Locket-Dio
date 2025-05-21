@@ -108,8 +108,8 @@ console.table([
       text_color: preset.text_color || "#FFFFFF",
       icon: preset.icon || "",
       caption: preset.preset_caption || "",
-      // type: preset.type || "image_link",
-      type: "image_link",
+      type: preset.type || "image_link",
+      // type: "image_link",
     });
   
     setIsFilterOpen(false);
