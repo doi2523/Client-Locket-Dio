@@ -99,6 +99,7 @@ const MediaControls = () => {
 
     setSendLoading(true);
     //Thêm vào hàng đợi để xử lý
+    showInfo(`Gửi bài viết vào hàng chờ thành công vui lòng đợi!`);
     uploadQueue.push({ selectedFile, previewType, postOverlay });
     //Làm mới
     setTimeout(() => {
