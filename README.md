@@ -38,9 +38,13 @@ Với giao diện hiện đại, hiệu năng tối ưu và các tính năng ti�
 ## 🤝 Đóng góp & Hỗ trợ
 
 Nếu bạn có ý tưởng hay phát hiện lỗi, đừng ngần ngại tạo **Issue** hoặc **Pull Request** để cùng mình cải thiện dự án.
-
 <p align="left">
-  <img src="./public/donate.jpg" alt="Ủng hộ" width="300px">
+  <a href="https://buymeacoffee.com/quockhanh2004" target="_blank">
+    <img src="./public/images/buymeacoffe.png" alt="Image">
+  </a>
+</p>
+<p align="left">
+  <img src="./public/images/donate.jpg" alt="Ủng hộ" width="300px">
 </p>
 
 ---

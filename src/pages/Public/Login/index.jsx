@@ -135,11 +135,26 @@ const Login = () => {
                 "Đăng Nhập"
               )}
             </button>
-            <span className="text-xs">Vui lòng chờ Server khởi động.</span>
+            <span className="text-xs">Vui lòng chờ Server02 khởi động.</span>
             <StatusServer />
             {/* <PushNotificationButton/> */}
           </form>
         </div>
+        <div className="absolute bottom-24 text-center w-full">
+  <p>Hiện Server 1 đã bị sập do quá tải</p>
+  <p>
+    Thông báo —{' '}
+    <a
+      href="https://t.me/ddevdio"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-500 underline hover:text-blue-700"
+    >
+      Tham gia kênh Telegram
+    </a>
+  </p>
+</div>
+
       </div>
     </>
   );
