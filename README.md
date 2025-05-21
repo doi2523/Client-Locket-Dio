@@ -27,7 +27,8 @@ Với giao diện hiện đại, hiệu năng tối ưu và các tính năng ti�
 <details>
   <summary>Nhấn để xem ảnh giao diện</summary>
 
-  <img src="./assets/images/screenshot1.png" width="300px" alt="Screenshot 1">
+  <img src="./public/images/preview_1.jpg" width="300px" alt="Screenshot 1">
+  <img src="./public/images/preview_2.jpg" width="300px" alt="Screenshot 1">
   <!-- Thêm các ảnh khác nếu có -->
   
 </details>
