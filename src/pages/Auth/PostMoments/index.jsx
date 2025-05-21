@@ -178,7 +178,7 @@ const PostMoments = () => {
         </div>
         {/* Preview */}
         <div className="text-center my-3 mb-10">
-          <h2 className="text-3xl font-semibold mb-2">Preview</h2>
+          <h2 className="text-3xl font-semibold mb-2">Preview (Bảo trì)</h2>
           <div className="relative w-full max-w-[400px] rounded-[40px] aspect-square border border-base-content overflow-hidden flex items-center justify-center">
             {uploadLoading ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50 gap-3 text-white text-lg font-medium">

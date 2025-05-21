@@ -88,7 +88,18 @@ console.table([
   const handleCustomeSelectTest = (preset) => {
     // Kiểm tra xem preset có đủ thông tin cần thiết không
     if (!preset) return;
-  
+  // Log để kiểm tra dữ liệu dưới dạng bảng
+console.table([
+  {
+    overlay_id: preset.preset_id || "standard",
+    color_top: preset.color_top || "",
+    color_bottom: preset.color_bottom || "",
+    text_color: preset.text_color || "#FFFFFF",
+    icon: preset.icon || "",
+    caption: preset.preset_caption || "",
+    type: preset.type || "image_link",
+  },
+]);
     // Cập nhật postOverlay từ giá trị preset
     setPostOverlay({
       overlay_id: preset.preset_id || "standard",
@@ -97,13 +108,50 @@ console.table([
       text_color: preset.text_color || "#FFFFFF",
       icon: preset.icon || "",
       caption: preset.preset_caption || "",
-      type: preset.type || "image_icon",
+      // type: preset.type || "image_link",
+      type: "image_link",
     });
   
     setIsFilterOpen(false);
   };
-  
-
+  const captionThemesTest = {
+    image_icon: [
+      {
+        id: 1,
+        color_top: "#FF5733",
+        color_bottom: "#C70039",
+        text_color: "#FFF",
+        icon: "/path/to/icon1.png",
+        preset_caption: "Vibes",
+      },
+      {
+        id: 2,
+        color_top: "#3498DB",
+        color_bottom: "#2980B9",
+        text_color: "#FFF",
+        icon: "/path/to/icon2.png",
+        preset_caption: "Chill",
+      },
+    ],
+    music_icon: [
+      {
+        id: 1,
+        color_top: "",
+        color_bottom: "",
+        text_color: "",
+        icon: "/path/to/music_icon1.png",
+        preset_caption: "Click vào đây đi",
+      },
+      {
+        id: 2,
+        color_top: "#3498DB",
+        color_bottom: "#2980B9",
+        text_color: "#FFF",
+        icon: "/path/to/music_icon2.png",
+        preset_caption: "Stay",
+      },
+    ],
+  };
   return (
     <div
       className={`fixed inset-0 z-90 flex justify-center items-end transition-transform duration-500 ${
@@ -191,6 +239,30 @@ console.table([
   </div>
 </div>
 
+      {/* Music Icon Section */}
+      {/* <div>
+        <h2 className="text-md font-semibold text-primary mb-2">
+          Music Icon Test
+        </h2>
+        <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
+          {captionThemesTest.music_icon.map((preset) => (
+            <button
+              key={preset.id}
+              onClick={() => handleCustomeSelectTest(preset)}
+              className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
+              style={{
+                background: `linear-gradient(to bottom, ${preset.color_top}, ${preset.color_bottom})`,
+                color: preset.text_color,
+              }}
+            >
+              <span className="text-base flex flex-row items-center">
+                <img src={preset.icon} alt="" className="w-5 h-5 mr-2" />
+                {preset.preset_caption || "Caption"}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div> */}
         </div>
       </div>
     </div>

@@ -41,17 +41,6 @@ const Home = () => {
       >
         Login now
       </Link>
-      {/* <PushNotificationButton/> */}
-      {/* <div className="loader">
-          <p>loading</p>
-          <div className="words text-4xl text-base-300 font-lovehouse">
-            <span className="word">buttons</span>
-            <span className="word">forms</span>
-            <span className="word">switches</span>
-            <span className="word">cards</span>
-            <span className="word">buttons</span>
-          </div>
-        </div> */}
     </div>
   );
 };

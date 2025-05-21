@@ -1,5 +1,5 @@
 // src/context/AppContext.jsx
-import { createContext, useContext } from "react";
+import React, { createContext, useContext } from "react";
 import { useNavigation } from "../storages/useNavigation";
 import { useCamera } from "../storages/useCamera";
 import { useLoading } from "../storages/useLoading";

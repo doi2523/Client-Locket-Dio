@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import Loading from "../components/Loading";
 
 export const ThemeContext = createContext();
