@@ -39,7 +39,7 @@ Với giao diện hiện đại, hiệu năng tối ưu và các tính năng ti�
 
 Nếu bạn có ý tưởng hay phát hiện lỗi, đừng ngần ngại tạo **Issue** hoặc **Pull Request** để cùng mình cải thiện dự án.
 <p align="left">
-  <a href="https://buymeacoffee.com/quockhanh2004" target="_blank">
+  <a target="_blank">
     <img src="./public/images/buymeacoffe.png" alt="Image">
   </a>
 </p>
