@@ -51,7 +51,6 @@ Nếu bạn có ý tưởng hay phát hiện lỗi, đừng ngần ngại tạo 
 
 ## 📢 Ghi chú
 
-- Đây là dự án **phi thương mại**, được phát triển cá nhân nhằm mở rộng trải nghiệm người dùng cho Locket Widget.
 - Hệ thống **không lưu trữ thông tin người dùng**. Tất cả dữ liệu chỉ phục vụ chức năng tải ảnh/video.
 - **Backend hiện chưa được public** do chứa nhiều thành phần nội bộ và chưa sẵn sàng chia sẻ.
 
@@ -59,4 +58,9 @@ Nếu bạn có ý tưởng hay phát hiện lỗi, đừng ngần ngại tạo 
 
 ⭐ Nếu bạn thấy dự án hữu ích, hãy để lại một ⭐ trên repo để ủng hộ mình nhé!  
 📬 Tham gia kênh **Telegram**: https://t.me/ddevdio để cập nhật sự kiện và tính năng mới sớm nhất!
+
+---
+
+© 2025 [Locket Pro](https://locket-dio.web.app) by Dio. All rights reserved.  
+This project is licensed under the MIT License.
 
