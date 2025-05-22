@@ -269,7 +269,7 @@ const PostMoments = () => {
             disabled={
               sendLoading ||
               (preview?.type === "image" && isSizeMedia > 1) ||
-              (preview?.type === "video" && isSizeMedia > 5)
+              (preview?.type === "video" && isSizeMedia > 10)
             }
           >
             {sendLoading ? (
