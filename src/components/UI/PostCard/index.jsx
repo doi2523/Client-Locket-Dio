@@ -35,12 +35,18 @@ const PostCard = ({ post }) => {
             alt="Avatar"
             className="w-10 h-10 rounded-full object-cover"
           />
-          <div>
-            <p className="text-sm font-semibold text-gray-800">
-              {post.display_name}
-            </p>
-            <p className="text-xs text-gray-500">@{post.username}</p>
-          </div>
+<div>
+  <p className="text-sm font-semibold text-gray-800 flex items-center gap-1">
+    {post.display_name}
+    {post.username === "diodio" && (
+      <span className="ml-1 px-2 py-0.5 text-xs rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold shadow">
+        Admin
+      </span>
+    )}
+  </p>
+  <p className="text-xs text-gray-500">@{post.username}</p>
+</div>
+
         </div>
         <span className="text-xs text-gray-400">
           {new Date(post.created_at).toLocaleString("vi-VN", {

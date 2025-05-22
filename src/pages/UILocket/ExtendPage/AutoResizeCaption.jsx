@@ -139,7 +139,7 @@ const AutoResizeCaption = () => {
           onChange={handleChange}
           placeholder={placeholder}
           rows={1}
-          className="absolute z-50 text-white px-4 font-semibold bottom-2 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl py-2 text-md outline-none max-w-[90%] resize-none overflow-hidden transition-all"
+          className="absolute z-10 text-white px-4 font-semibold bottom-2 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl py-2 text-md outline-none max-w-[90%] resize-none overflow-hidden transition-all"
           style={{
             width: `${width}px`,
             color: postOverlay.text_color,

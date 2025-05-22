@@ -27,7 +27,7 @@ export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
 
   return payload;
 };
-export const createRequestPayloadV2 = (mediaInfo, caption, selectedColors) => {
+export const createRequestPayloadV2 = (mediaInfo, postOverlay) => {
   // Tạo đối tượng token (bao gồm idToken và localId)
   const { idToken, localId } = getAuthCookies();
   const tokenData = {
@@ -36,14 +36,13 @@ export const createRequestPayloadV2 = (mediaInfo, caption, selectedColors) => {
   };
   // Tạo đối tượng options (bao gồm các lựa chọn như caption, colors...)
   const optionsData = {
-    caption: caption,
-    theme_caption: selectedColors.caption,
-    id: selectedColors.preset_id,
-    type: selectedColors.type,
-    icon: selectedColors.icon,
-    text_color: selectedColors.text_color,
-    colorTop: selectedColors.top,
-    colorBottom: selectedColors.bottom,
+    caption: postOverlay.caption,
+    overlay_id: postOverlay.overlay_id,
+    type: postOverlay.type,
+    icon: postOverlay.icon,
+    text_color: postOverlay.text_color,
+    color_top: postOverlay.color_top,
+    color_bottom: postOverlay.color_bottom,
   };
 
   // Tạo đối tượng payload chứa tất cả dữ liệu cần gửi

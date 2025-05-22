@@ -82,34 +82,34 @@ const BottomHomeScreen = () => {
       </div>
 
       <div
-  className={`flex flex-wrap overflow-y-auto p-2 transition-all duration-0 ${
-    selectedAnimate ? "opacity-0 scale-0" : "opacity-100 scale-100"
-  }`}
->
-  {payloads.length === 0 ? (
-    <div className="w-full h-full text-center text-lg text-base-content font-semibold">
-      Không có gì ở đây :(
-    </div>
-  ) : (
-    payloads.map((payload, index) => (
-      <div
-        key={index}
-        className="w-1/3 md:w-1/6 aspect-square overflow-hidden p-1 cursor-pointer"
-        onClick={() => handleOpenImage(payload.mediaInfo.url, payload)}
+        className={`flex flex-wrap overflow-y-auto p-2 transition-all duration-0 ${
+          selectedAnimate ? "opacity-0 scale-0" : "opacity-100 scale-100"
+        }`}
       >
-        <img
-          src={payload.mediaInfo.url}
-          alt={payload.options.caption || "Image"}
-          className={`object-cover w-full h-full rounded-3xl transition-all duration-300 transform ${
-            selectedImage === payload.mediaInfo.url
-              ? "scale-110"
-              : "scale-95"
-          }`}
-        />
+        {payloads.length === 0 ? (
+          <div className="w-full h-full text-center text-lg text-base-content font-semibold">
+            Không có gì ở đây :(
+          </div>
+        ) : (
+          payloads.map((payload, index) => (
+            <div
+              key={index}
+              className="w-1/3 md:w-1/6 aspect-square overflow-hidden p-1 cursor-pointer"
+              onClick={() => handleOpenImage(payload.mediaInfo.url, payload)}
+            >
+              <img
+                src={payload.mediaInfo.url}
+                alt={payload.options.caption || "Image"}
+                className={`object-cover w-full h-full rounded-3xl transition-all duration-300 transform ${
+                  selectedImage === payload.mediaInfo.url
+                    ? "scale-110"
+                    : "scale-95"
+                }`}
+              />
+            </div>
+          ))
+        )}
       </div>
-    ))
-  )}
-</div>
 
       {/* Image Modal */}
       <div
@@ -117,7 +117,7 @@ const BottomHomeScreen = () => {
           selectedAnimate ? "opacity-100 scale-100" : "opacity-0 scale-0"
         }`}
       >
-        <div className="relative max-w-full max-h-full">
+        <div className="relative max-w-md aspect-square">
           <img
             src={selectedImage}
             alt="Selected"
@@ -133,24 +133,35 @@ const BottomHomeScreen = () => {
                 }`}
                 style={{
                   background:
-                    imageInfo.options.colorTop || imageInfo.options.colorBottom
+                    imageInfo.options.color_top || imageInfo.options.color_bottom
                       ? `linear-gradient(to bottom, ${
-                          imageInfo.options.colorTop || "transparent"
-                        }, ${imageInfo.options.colorBottom || "transparent"})`
+                          imageInfo.options.color_top || "transparent"
+                        }, ${imageInfo.options.color_bottom || "transparent"})`
                       : undefined,
                   color:
                     imageInfo.options.text_color ||
-                    (imageInfo.options.colorTop || imageInfo.options.colorBottom
+                    (imageInfo.options.color_top || imageInfo.options.color_bottom
                       ? ""
                       : "white"),
                 }}
               >
-                <span className="text-base">
-                  {(imageInfo.options.icon || "") + " "}
-                  {imageInfo.options.theme_caption ||
-                    imageInfo.options.caption ||
-                    "Không có caption"}
-                </span>
+                {imageInfo.options.type === "image_icon" ? (
+                  <span className="text-base flex flex-row items-center">
+                    <img
+                      src={imageInfo.options.icon}
+                      alt=""
+                      className="w-5 h-5 mr-2"
+                    />
+                    {imageInfo.options.caption || "Caption"}
+                  </span>
+                ) : (
+                  <span className="text-base">
+                    {(imageInfo.options.icon || "") + " "}
+                    {imageInfo.options.theme_caption ||
+                      imageInfo.options.caption ||
+                      ""}
+                  </span>
+                )}
               </div>
             </div>
           )}
@@ -192,6 +203,9 @@ const BottomHomeScreen = () => {
             <Trash2 size={30} />
           </button>
         </div>
+      </div>
+      <div className="absolute bottom-30 z-10">
+        Các hình ảnh ở đây là những hình ảnh đăng tải xoá ở đây nhưng trên Locket sẽ không bị xoá
       </div>
     </div>
   );
