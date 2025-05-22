@@ -32,7 +32,7 @@ const RightHomeScreen = () => {
         </button>
 
         <div className="absolute left-1/2 transform -translate-x-1/2 font-lovehouse text-2xl font-semibold px-4 pt-1.5 border rounded-xl">
-          Locket Pro
+          Locket Dio
         </div>
       </div>
 

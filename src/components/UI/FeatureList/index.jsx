@@ -35,7 +35,7 @@ const FeatureList = () => {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <h2 className="text-3xl font-lovehouse font-bold text-center mb-2">
-        ✨Locket Pro
+        ✨Locket Dio Feature
       </h2>
       <div className="grid sm:grid-cols-2 gap-2">
         {features.map((feature, idx) => (

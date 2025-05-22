@@ -56,7 +56,7 @@ const LeftHomeScreen = () => {
       <div className="flex flex-col shadow-lg px-4 py-2 text-base-content relative overflow-hidden">
         <div className="flex items-center justify-between">
           <div className="font-lovehouse text-2xl font-semibold px-3 pt-1 border-base-content border rounded-xl">
-            Locket Pro
+            Locket Dio
           </div>
           <div className="flex items-center gap-3">
             <button><Settings size={30} /></button>
