@@ -62,5 +62,4 @@ Nếu bạn có ý tưởng hay phát hiện lỗi, đừng ngần ngại tạo 
 ---
 
 © 2025 [Locket Pro](https://locket-dio.web.app) by Dio. All rights reserved.  
-This project is licensed under the MIT License.
 
