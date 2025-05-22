@@ -26,9 +26,10 @@ import DonateHistory from "../../Public/HistoryDonate";
 
 const AboutMe = () => {
   return (
-    <>        <div className="h-20"></div>
+    <>
+      {" "}
+      <div className="h-20"></div>
       <div className="min-h-screen flex flex-col px-6 items-center">
-
         {/* Avatar + Name */}
         <div className="flex flex-col items-center mb-10">
           <img
@@ -94,7 +95,7 @@ const AboutMe = () => {
         {/* Contact */}
         <div className="text-center">
           <h2 className="text-2xl md:text-3xl font-semibold mb-5 flex justify-center items-center gap-2">
-            <Globe/> Liên hệ & Mạng xã hội
+            <Globe /> Liên hệ & Mạng xã hội
           </h2>
           <div className="flex justify-center gap-4 text-2xl md:text-3xl">
             {/* Existing Social Links */}
@@ -155,7 +156,8 @@ const AboutMe = () => {
       <div className="relative mb-10 text-center px-3 mt-6">
         {/* Phần Donate */}
         <h3 className="flex justify-center items-center text-2xl font-semibold mb-4 gap-2">
-          <Coffee /> Give me a coffee</h3>
+          <Coffee /> Give me a coffee
+        </h3>
         <div className="flex flex-col items-center">
           {/* Hình ảnh vuông */}
           <img
@@ -166,13 +168,13 @@ const AboutMe = () => {
           {/* Thông tin tài khoản */}
           <p className="text-lg font-medium">STK: 66222222222266</p>
           <p className="text-lg font-medium">CTK: DAO VAN DOI - MBBANK</p>
-          <p className="mt-4 text-sm">
-            Mọi đóng góp đều giúp mình cải thiện dịch vụ và duy trì trang web. Cảm ơn sự ủng hộ của bạn!
+          <p className="my-4 text-sm">
+            Mọi đóng góp đều giúp mình cải thiện dịch vụ và duy trì trang web.
+            Cảm ơn sự ủng hộ của bạn!
           </p>
-          {/* <Link className="underline text-sm" to="/donatehistory">Lịch sử đóng góp</Link> */}
         </div>
+        <DonateHistory />
       </div>
-      <DonateHistory/>
     </>
   );
 };

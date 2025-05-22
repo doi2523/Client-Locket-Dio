@@ -7,6 +7,7 @@ import LoadingRing from "../../../components/UI/Loading/ring";
 import StatusServer from "../../../components/UI/StatusServer";
 import { useApp } from "../../../context/AppContext";
 import PushNotificationButton from "../../../components/PushNotificationButton";
+import FloatingNotification from "../../../components/UI/FloatingNotification";
 
 const Login = () => {
   const { setUser } = useContext(AuthContext);
@@ -140,21 +141,7 @@ const Login = () => {
             {/* <PushNotificationButton/> */}
           </form>
         </div>
-        <div className="absolute bottom-24 text-center w-full">
-  <p>Hiện Server 1 đã bị sập do quá tải</p>
-  <p>
-    Thông báo —{' '}
-    <a
-      href="https://t.me/ddevdio"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-blue-500 underline hover:text-blue-700"
-    >
-      Tham gia kênh Telegram
-    </a>
-  </p>
-</div>
-
+        <FloatingNotification/>
       </div>
     </>
   );

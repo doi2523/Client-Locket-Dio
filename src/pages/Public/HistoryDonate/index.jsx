@@ -20,11 +20,23 @@ const DonateHistory = () => {
   }, []);
 
   return (
-    <div className="max-w-2xl mb-6 mx-auto px-6 p-6 rounded-xl bg-base-100 shadow-md border border-base-300">
+    <div className="w-full mb-6 mx-auto p-6 rounded-xl bg-base-100 shadow-md border border-base-300">
       <h1 className="text-2xl font-bold mb-4 text-center">Lịch sử đóng góp</h1>
-      <div className="max-h-80 overflow-y-auto space-y-4 pr-1">
+      <div className="max-h-90 overflow-y-auto space-y-4 pr-1">
         {donations.length === 0 ? (
-          <p className="text-center text-gray-500">Chưa có đóng góp nào.</p>
+          <div className="space-y-4">
+          {[1, 2, 3].map((_, i) => (
+            <div key={i} className="p-4 rounded-lg border border-base-300 shadow-sm bg-base-200">
+              <div className="flex justify-between mb-2">
+                <div className="skeleton h-4 w-32"></div>
+                <div className="skeleton h-4 w-20"></div>
+              </div>
+              <div className="skeleton h-4 w-40 mb-2"></div>
+              <div className="skeleton h-3 w-full"></div>
+            </div>
+          ))}
+        </div>
+        
         ) : (
           donations.map((donate, index) => (
             <div
@@ -32,13 +44,17 @@ const DonateHistory = () => {
               className="p-4 rounded-lg border border-base-300 shadow-sm bg-base-200"
             >
               <div className="flex justify-between text-sm text-base-content/60 mb-1">
-                <span>{donate.time} | {donate.date}</span>
+                <span className="text-primary">{donate.date}</span>
                 <span className="font-semibold text-green-600">
                   +{donate.amount.toLocaleString()}₫
                 </span>
               </div>
-              <div className="font-medium text-base-content">{donate.name}</div>
-              <div className="text-sm text-base-content/70 italic">{donate.message}</div>
+              <div className="text-md text-base-content/90 text-left">
+                {donate.donorname}
+              </div>
+              <div className="text-sm text-base-content/70 italic text-left">
+                {donate.message}
+              </div>
             </div>
           ))
         )}

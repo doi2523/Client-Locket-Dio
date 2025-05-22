@@ -25,6 +25,7 @@ export const API_URL = {
   GET_CAPTION_THEMES: `${BASE_DB_API_URL}${LOCKET_PRO}/themes`,
   GET_TIMELINE: `${BASE_DB_API_URL}${LOCKET_PRO}/timelines`,
   DONATE_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/donations`,
+  NOTIFI_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/notification`,
   USER_THEMES_POSTS_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/user-themes/posts`,
   POST_USER_THEMES_POSTS_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/user-themes/posts`,
   SUBCRIBE: `${BASE_DB_API_URL}${LOCKET_PRO}/subscribe`,

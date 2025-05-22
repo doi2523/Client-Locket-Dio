@@ -288,3 +288,46 @@
 }
 
 
+@keyframes shake-rotate-smooth {
+  0% {
+    transform: rotate(0deg);
+    transform-origin: top center;
+  }
+  10% {
+    transform: rotate(-18deg);
+  }
+  20% {
+    transform: rotate(-9deg);
+  }
+  30% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(9deg);
+  }
+  50% {
+    transform: rotate(18deg);
+  }
+  60% {
+    transform: rotate(9deg);
+  }
+  70% {
+    transform: rotate(0deg);
+  }
+  80% {
+    transform: rotate(-9deg);
+  }
+  90% {
+    transform: rotate(-18deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.shake-animation {
+  animation: shake-rotate-smooth 1s linear infinite;
+  transform-origin: top center;
+}
+
+
