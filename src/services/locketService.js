@@ -227,5 +227,78 @@ export const uploadMediaV2 = async (payload) => {
     throw error;
   }
 };
+// export const fetchAndStoreFriends = async (idToken, localId) => {
+//   const allFriends = [];
+//   let nextPageToken = null;
 
+//   try {
+//     do {
+//       const res = await axios.post(`http://localhost:5004/locket/get-friends`, {
+//         idToken,
+//         localId,
+//         pageToken: nextPageToken,
+//       });
+
+//       const friends = res?.data?.data?.friendsList || [];
+//       const cleanedFriends = friends.map(friend => ({
+//         uid: friend.uid,
+//         createdAt: friend.date,
+//       }));
+
+//       allFriends.push(...cleanedFriends);
+
+//       nextPageToken = res?.data?.data?.nextPageToken;
+//     } while (nextPageToken);
+
+//     // Lưu vào sessionStorage ngay trong service
+//     sessionStorage.setItem('friendsList', JSON.stringify(allFriends));
+
+//     return allFriends;
+//   } catch (err) {
+//     console.error("❌ Lỗi khi gọi API get-friends:", err);
+//     return [];
+//   }
+// };
+
+
+export const fetchAndStoreFriends = async (idToken, localId) => {
+  try {
+    const res = await axios.post(`http://localhost:5004/locket/get-friends`, {
+      idToken,
+      localId,
+    });
+
+    const allFriends = res?.data?.data?.friendsList || [];
+
+    const cleanedFriends = allFriends.map(friend => ({
+      uid: friend.uid,
+      createdAt: friend.date,
+    }));
+
+    // Lưu vào sessionStorage
+    sessionStorage.setItem('friendsList', JSON.stringify(cleanedFriends));
+
+    return cleanedFriends;
+  } catch (err) {
+    console.error("❌ Lỗi khi gọi API get-friends:", err);
+    return [];
+  }
+}
+
+export const fetchUser = async (user_uid, idToken) => {
+  return await axios.post(
+    'https://api.locketcamera.com/fetchUserV2',
+    {
+      data: {
+        user_uid,
+      },
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+};
 

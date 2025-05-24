@@ -170,6 +170,7 @@ const AddPostButton = ({ onNewPost }) => {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                 />
+                <p className="absolute">Chỉ bấm gửi một lần tránh spam</p>
               </div>
 
               <div className="flex justify-end">
@@ -177,7 +178,7 @@ const AddPostButton = ({ onNewPost }) => {
                   type="submit"
                   className="bg-blue-500 text-white p-2 rounded-md"
                 >
-                  Thêm
+                  Thêm Caption
                 </button>
               </div>
             </form>

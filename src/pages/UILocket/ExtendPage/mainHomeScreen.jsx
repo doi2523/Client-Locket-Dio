@@ -4,13 +4,15 @@ import MediaPreview from "./MediaDisplay";
 import { useApp } from "../../../context/AppContext";
 import ActionControls from "../ActionControls";
 import HistoryArrow from "./HistoryButton";
+import SelectFiendsList from "./SelectFriendsList";
 
 const MainHomeScreen = () => {
-  const { navigation, camera, useloading } = useApp();
+  const { navigation, camera, useloading, post } = useApp();
 
   const { isHomeOpen, isProfileOpen, isBottomOpen } = navigation;
   const { sendLoading } = useloading;
   const { canvasRef } = camera;
+  const { selectedFile } = post;
 
   return (
     <div
@@ -36,7 +38,11 @@ const MainHomeScreen = () => {
         <Navbar />
         <MediaPreview />
         <ActionControls />
-        <HistoryArrow/>
+        {selectedFile ? (
+          <SelectFiendsList/>
+        ) : (
+          <HistoryArrow />
+        )}{" "}
         <canvas ref={canvasRef} className="hidden" />
       </div>
     </div>

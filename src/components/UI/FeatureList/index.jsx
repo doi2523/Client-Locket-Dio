@@ -6,6 +6,8 @@ import {
   Paintbrush,
   Palette,
   Sparkles,
+  Rocket,
+  Users,
 } from "lucide-react";
 
 const features = [
@@ -16,7 +18,7 @@ const features = [
   },
   {
     icon: <Video className="w-8 h-8 text-red-500" />,
-    title: "Quay video",
+    title: "Quay video - Truy cập sớm",
     description: "Giữ nút để quay video tối đa 10 giây.",
   },
   {
@@ -28,6 +30,16 @@ const features = [
     icon: <Paintbrush className="w-8 h-8 text-purple-600" />,
     title: "Đổi màu caption",
     description: "Tuỳ chỉnh màu sắc caption cho thật nổi bật.",
+  },
+  {
+    icon: <Users className="w-8 h-8 text-yellow-500" />,
+    title: "Forums cộng đồng",
+    description: "Chia sẻ và khám phá màu sắc caption độc đáo từ mọi người.",
+  },
+  {
+    icon: <Rocket className="w-8 h-8 text-orange-600" />,
+    title: "Tính năng mới - Sắp ra mắt",
+    description: "Tralalero Tralala.",
   },
 ];
 

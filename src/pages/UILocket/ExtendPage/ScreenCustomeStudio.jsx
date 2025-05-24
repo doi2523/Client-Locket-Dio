@@ -1,4 +1,5 @@
 import { Palette, X } from "lucide-react";
+import { Link } from "react-router-dom";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useApp } from "../../../context/AppContext";
 import ThemesCustomes from "../../../components/UI/CaptionCustomes/ThemesCustomes";
@@ -151,6 +152,13 @@ const ScreenCustomeStudio = () => {
       },
     ],
   };
+  const preset = {
+    icon: "/clock-icon.png", // Đổi thành icon của bạn
+    preset_caption: new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+  };
   return (
     <div
       className={`fixed inset-0 z-90 flex justify-center items-end transition-transform duration-500 ${
@@ -212,7 +220,7 @@ const ScreenCustomeStudio = () => {
           />
           <div className="">
             <h2 className="text-md font-semibold text-primary mb-2">
-              🎨 Caption Test - Truy cập sớm
+              🎨 Caption Icon - Truy cập sớm
             </h2>
             <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
               {captionThemes.image_icon.map((preset) => (
@@ -234,6 +242,73 @@ const ScreenCustomeStudio = () => {
                 </button>
               ))}
             </div>
+          </div>
+          {/* <div className="">
+            <h2 className="text-md font-semibold text-primary mb-2">
+              🎨 Caption Icon - Truy cập sớm
+            </h2>
+            <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
+                <button
+                  // onClick={() => handleCustomeSelectTest(preset)}
+                  className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
+                >
+                  <span className="text-base flex flex-row items-center">
+                    <img src={preset.icon} alt="" className="w-5 h-5 mr-2" />
+                    {preset.preset_caption || "Caption"}
+                  </span>
+                </button>
+            </div>
+          </div> */}
+          <div className="">
+            <h2 className="text-md font-semibold text-primary mb-2">
+              🎨 Caption ? - Sắp ra mắt
+            </h2>
+            <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start text-base-content">
+              <p>Tung tung tung tung sahur 🎉</p>
+              <p>
+                Phiên bản sắp tới <strong>V3.0.0</strong>
+              </p>
+              <p>
+                Theo dõi kênh{" "}
+                <a
+                  className="text-primary font-semibold underline hover:text-primary-focus"
+                  href="https://t.me/ddevdio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Telegram
+                </a>
+              </p>
+              <p>
+                Mọi đóng góp hỗ trợ xin nhận tại{" "}
+                <Link
+                  to="/aboutdio"
+                  className="text-primary font-semibold underline hover:text-primary-focus"
+                >
+                  trang giới thiệu Dio
+                </Link>
+              </p>
+            </div>
+            {/* <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
+              {captionThemes.image_icon.map((preset) => (
+                <button
+                  key={preset.id}
+                  onClick={() => handleCustomeSelectTest(preset)}
+                  className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
+                  style={{
+                    background: `linear-gradient(to bottom, ${
+                      preset.top || preset.color_top
+                    }, ${preset.color_bot || preset.color_bottom})`,
+                    color: preset.color_text || preset.text_color,
+                  }}
+                >
+                  <span className="text-base flex flex-row items-center">
+                    <img src={preset.icon} alt="" className="w-5 h-5 mr-2" />
+                    {preset.preset_caption || "Caption"}
+                  </span>
+                </button>
+              ))}
+            </div> */}
           </div>
 
           {/* Music Icon Section */}

@@ -13,14 +13,14 @@ const HistoryArrow = () => {
   // Khởi tạo và đồng bộ dữ liệu từ localStorage
   useEffect(() => {
     const savedPayloads = JSON.parse(
-      localStorage.getItem("uploadPayloads") || "[]"
+      localStorage.getItem("uploadedMoments") || "[]"
     );
     setRecentPosts(savedPayloads); // Cập nhật state từ localStorage
   }, [, setRecentPosts]);
 
   return (
     <div
-      className="relative flex flex-col items-center h-20 pt-4 cursor-pointer transition-transform hover:scale-105 active:scale-95"
+      className="relative pl-1 flex flex-col items-center h-20 pt-4 cursor-pointer transition-transform hover:scale-105 active:scale-95"
       onClick={handleClick}
     >
       <div className="flex items-center justify-center space-x-2">

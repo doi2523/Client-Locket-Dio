@@ -7,6 +7,7 @@ export const useNavigation = () => {
   const [isBottomOpen, setIsBottomOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isFriendsTabOpen, setFriendsTabOpen] = useState(false);
 
   return {
     isProfileOpen,
@@ -17,6 +18,7 @@ export const useNavigation = () => {
     setIsSidebarOpen,
     isFilterOpen,
     setIsFilterOpen,
-    isBottomOpen, setIsBottomOpen
+    isBottomOpen, setIsBottomOpen,
+    isFriendsTabOpen, setFriendsTabOpen
   };
 };

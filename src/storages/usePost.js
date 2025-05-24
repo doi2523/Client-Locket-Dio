@@ -25,7 +25,11 @@ export const usePost = () => {
   const [isTextColor, setTextColor] = useState(null);
   const [isSizeMedia, setSizeMedia] = useState(null);
 
-  const [recentPosts, setRecentPosts] = useState([]);
+const [recentPosts, setRecentPosts] = useState(() => {
+  const saved = localStorage.getItem("uploadedMoments");
+  return saved ? JSON.parse(saved) : [];
+});
+
 
   return {
     caption,

@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useApp } from "../../../../context/AppContext";
 import { RefreshCcw } from "lucide-react";
 import * as constant from "../../../../constants";
+import UploadFile from "./UploadFile";
 
 //const MAX_RECORD_TIME = 10; // giây
 
@@ -218,32 +219,35 @@ const CameraButton = () => {
 
   return (
     <>
-      <button
-        onMouseDown={startHold}
-        onMouseUp={endHold}
-        onMouseLeave={endHold}
-        onTouchStart={startHold}
-        onTouchEnd={endHold}
-        className="relative flex items-center justify-center w-22 h-22"
-      >
-        <div
-          className={`absolute w-22 h-22 border-5 border-base-content/50 rounded-full z-10 ${
-            isHolding ? "animate-lightPulse" : ""
-          }`}
-        ></div>
-        <div
-          className={`absolute rounded-full btn w-18 h-18 outline-accent bg-base-content z-0 ${
-            isHolding ? "animate-pulseBeat" : ""
-          }`}
-        ></div>
-      </button>
-      <button className="cursor-pointer" onClick={handleRotateCamera}>
-        <RefreshCcw
-          size={35}
-          className="transition-transform duration-500"
-          style={{ transform: `rotate(${rotation}deg)` }}
-        />
-      </button>
+      <div className="flex gap-4 w-full h-25 max-w-md justify-evenly items-center">
+        <UploadFile />
+        <button
+          onMouseDown={startHold}
+          onMouseUp={endHold}
+          onMouseLeave={endHold}
+          onTouchStart={startHold}
+          onTouchEnd={endHold}
+          className="relative flex items-center justify-center w-22 h-22"
+        >
+          <div
+            className={`absolute w-22 h-22 border-5 border-base-content/50 rounded-full z-10 ${
+              isHolding ? "animate-lightPulse" : ""
+            }`}
+          ></div>
+          <div
+            className={`absolute rounded-full btn w-18 h-18 outline-accent bg-base-content z-0 ${
+              isHolding ? "animate-pulseBeat" : ""
+            }`}
+          ></div>
+        </button>
+        <button className="cursor-pointer" onClick={handleRotateCamera}>
+          <RefreshCcw
+            size={35}
+            className="transition-transform duration-500"
+            style={{ transform: `rotate(${rotation}deg)` }}
+          />
+        </button>
+      </div>
     </>
   );
 };

@@ -10,6 +10,59 @@ export default function Profile() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [userinfo, setUserinfo] = useState({});
 
+  // const getListIdFriend = async (idToken, localId) => {
+  //   const allFriends = [];
+  //   let nextPageToken = null;
+  
+  //   try {
+  //     do {
+  //       // console.log("🔁 Gọi API với pageToken:", nextPageToken);
+  
+  //       const res = await axios.post(`http://localhost:5004/locket/get-friends`, {
+  //         idToken,
+  //         localId,
+  //         pageToken: nextPageToken, // Gửi pageToken nếu có
+  //       });
+  
+  //       const friends = res?.data?.data?.friendsList || [];
+  //       const cleanedFriends = friends.map(friend => ({
+  //         uid: friend.uid,
+  //         createdAt: friend.date,
+  //       }));
+  
+  //       allFriends.push(...cleanedFriends);
+  
+  //       nextPageToken = res?.data?.data?.nextPageToken;
+  //       // console.log("👉 nextPageToken sau lần gọi:", nextPageToken);
+  
+  //     } while (nextPageToken); // Vẫn tiếp tục nếu có token
+  
+  //     return allFriends;
+  //   } catch (err) {
+  //     console.error("❌ Lỗi khi gọi API get-friends:", err);
+  //     return [];
+  //   }
+  // };
+  
+  // useEffect(() => {
+  //   const fetchFriends = async () => {
+  //     try {
+  //       const data = await getListIdFriend(user.idToken, user.localId);
+  //       console.log("✅ Danh sách bạn bè:", data);
+  //       setUserinfo(prev => ({ ...prev, friends: data }));
+  
+  //       // Lưu vào sessionStorage
+  //       sessionStorage.setItem('friendsList', JSON.stringify(data));
+  //     } catch (err) {
+  //       console.error("❌ Lỗi lấy danh sách bạn bè:", err);
+  //     }
+  //   };
+  
+  //   if (user?.idToken && user?.localId) {
+  //     fetchFriends();
+  //   }
+  // }, [user]);
+  
   // Convert timestamp thành ngày giờ đọc được
   const formatDate = (timestamp) => {
     if (!timestamp) return "Không có dữ liệu";

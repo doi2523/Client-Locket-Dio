@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 import { Link } from "react-router-dom";
-import AnimatedButton from "../../../components/3dButton";
-import PushNotificationButton from "../../../components/PushNotificationButton";
 
 const words = [
-  "Welcome to Locket Pro! 🚀",
+  "Welcome to Locket Dio! 🚀",
   "Xây dựng theo ý bạn! ✨",
   "Tính năng chất chơi! 🔥",
   "Khám phá & trải nghiệm! 🌍",

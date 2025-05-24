@@ -1,9 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
   FolderOpen,
   RotateCcw,
@@ -12,7 +7,7 @@ import {
   Pencil,
   FileImage,
 } from "lucide-react";
-import { showToast } from "../../../components/Toast/index.jsx";
+import { showError, showToast } from "../../../components/Toast/index.jsx";
 import * as lockerService from "../../../services/locketService.js";
 import * as utils from "../../../utils";
 import LoadingRing from "../../../components/UI/Loading/ring.jsx";
@@ -39,6 +34,8 @@ const PostMoments = () => {
     setSizeMedia,
     postOverlay,
     setPostOverlay,
+    recentPosts,
+    setRecentPosts,
   } = post;
 
   const fileInputRef = useRef(null);
@@ -71,6 +68,10 @@ const PostMoments = () => {
     setSelectedFile(rawFile);
   }, []);
 
+  // const handleSubmit = async () => {
+  //   showError("Server quá tải...")
+  // };
+
   const handleSubmit = async () => {
     if (!selectedFile) {
       showToast("error", "Không có dữ liệu để tải lên.");
@@ -79,7 +80,10 @@ const PostMoments = () => {
 
     try {
       setSendLoading(true);
-      showToast("info", `Đang chuẩn bị ${preview.type === "video" ? "video" : "ảnh"} !`);
+      showToast(
+        "info",
+        `Đang chuẩn bị ${preview.type === "video" ? "video" : "ảnh"} !`
+      );
 
       const fileData = await utils.uploadToCloudinary(
         selectedFile,
@@ -89,11 +93,32 @@ const PostMoments = () => {
       const mediaInfo = utils.prepareMediaInfo(fileData);
       const payload = utils.createRequestPayloadV2(mediaInfo, postOverlay);
       // console.log("Payload:", payload);
-      
-      showToast("info", `Đang tạo bài viết !`);
-      await lockerService.uploadMediaV2(payload);
 
-      showToast("success", `${fileData.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`);
+      showToast("info", `Đang tạo bài viết !`);
+      // Gọi API upload
+      const response = await lockerService.uploadMediaV2(payload);
+
+      // Lấy dữ liệu cũ
+      const savedResponses = JSON.parse(
+        localStorage.getItem("uploadedMoments") || "[]"
+      );
+
+      // Chuẩn hoá data mới (response.data là 1 object, normalizeMoments nhận mảng, nên bọc vào mảng)
+      const normalizedNewData = utils.normalizeMoments([response?.data]);
+
+      // Ghép dữ liệu cũ với dữ liệu mới đã chuẩn hoá
+      const updatedData = [...savedResponses, ...normalizedNewData];
+
+      // Lưu vào localStorage
+      localStorage.setItem("uploadedMoments", JSON.stringify(updatedData));
+
+      // Cập nhật state với dữ liệu đã chuẩn hoá
+      setRecentPosts(updatedData);
+
+      showToast(
+        "success",
+        `${fileData.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
+      );
 
       setPreview(null);
       setSelectedFile(null);
@@ -112,6 +137,9 @@ const PostMoments = () => {
     setPostOverlay((prev) => ({
       ...prev,
       [key]: value,
+      ...(key === "color_top" || key === "color_bottom" || key === "text_color"
+        ? { type: "background" }
+        : {}),
     }));
   };
 
@@ -141,10 +169,16 @@ const PostMoments = () => {
         <div className="text-left">
           <p className="text-sm text-error mt-2">
             Hệ thống chỉ hỗ trợ ảnh tối đa 1MB và video tối đa 10MB. Nếu gặp lỗi
-            khi tải lên, bạn có thể thử lại sau hoặc gửi ảnh/video qua Zalo/Messenger và tải lại.
-            <Link to="/docs" className="underline"> Xem thêm</Link>
+            khi tải lên, bạn có thể thử lại sau hoặc gửi ảnh/video qua
+            Zalo/Messenger và tải lại.
+            <Link to="/docs" className="underline">
+              {" "}
+              Xem thêm
+            </Link>
           </p>
-          <p className="text-sm text-error">Chế độ demo nếu có lỗi vui lòng báo với QTV</p>
+          <p className="text-sm text-error">
+            Chế độ demo nếu có lỗi vui lòng báo với QTV
+          </p>
         </div>
 
         {/* Preview */}
@@ -153,7 +187,13 @@ const PostMoments = () => {
           <div className="relative w-full max-w-[400px] rounded-[40px] aspect-square border border-base-content overflow-hidden flex items-center justify-center">
             {uploadLoading ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50 gap-3 text-white text-lg font-medium">
-                <Hourglass size={50} stroke={2} bgOpacity={0.1} speed={1.5} color="white" />
+                <Hourglass
+                  size={50}
+                  stroke={2}
+                  bgOpacity={0.1}
+                  speed={1.5}
+                  color="white"
+                />
                 <div>Đang xử lý tệp...</div>
               </div>
             ) : preview ? (
@@ -183,10 +223,14 @@ const PostMoments = () => {
             {caption && !uploadLoading && (
               <div className="absolute bottom-4 w-auto px-3">
                 <div
-                  className="text-white font-semibold backdrop-blur-3xl py-2 px-4 rounded-3xl"
+                  className="text-white font-semibold py-2 px-4 rounded-3xl bg-black/40 backdrop-blur-3xl"
                   style={{
-                    background: `linear-gradient(to bottom, ${postOverlay.color_top}, ${postOverlay.color_bottom})`,
-                    color: postOverlay.text_color,
+                    ...(postOverlay.type !== "default" && {
+                      background: `linear-gradient(to bottom, ${
+                        postOverlay.color_top || "#000000"
+                      }, ${postOverlay.color_bottom || "#000000"})`,
+                    }),
+                    color: postOverlay.text_color || "#FFFFFF",
                   }}
                 >
                   {caption}
@@ -214,20 +258,23 @@ const PostMoments = () => {
                 updateOverlayField("caption", e.target.value);
               }}
             />
-            <h3 className="text-lg font-semibold mb-3 flex items-center">
+            <h3 className="text-lg font-semibold mb-1 flex items-center">
               <Palette size={20} className="mr-1" /> Chọn màu
             </h3>
+            <p className="text-left text-sm mb-3 text-primary">
+              Note: 2 đen 1 trắng là mặc định caption sẽ không có màu
+            </p>
             <div className="flex justify-center items-center gap-4">
               {[
                 {
                   label: "Màu trên",
                   key: "color_top",
-                  value: postOverlay.color_top || "#00FA9A",
+                  value: postOverlay.color_top,
                 },
                 {
                   label: "Màu dưới",
                   key: "color_bottom",
-                  value: postOverlay.color_bottom || "#1E90FF",
+                  value: postOverlay.color_bottom,
                 },
                 {
                   label: "Màu chữ",
@@ -249,9 +296,10 @@ const PostMoments = () => {
             <div className="flex justify-center">
               <button
                 onClick={() => {
-                  updateOverlayField("color_top", "#FFFFFF");
-                  updateOverlayField("color_bottom", "#FFFFFF");
+                  updateOverlayField("color_top", "");
+                  updateOverlayField("color_bottom", "");
                   updateOverlayField("text_color", "#FFFFFF");
+                  updateOverlayField("type", "default");
                 }}
                 className="flex items-center gap-2 px-4 py-2 rounded-md shadow-md mt-4 btn"
               >

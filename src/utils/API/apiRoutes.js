@@ -30,8 +30,10 @@ export const API_URL = {
   POST_USER_THEMES_POSTS_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/user-themes/posts`,
   SUBCRIBE: `${BASE_DB_API_URL}${LOCKET_PRO}/subscribe`,
   //Cloudinary
-  UPLOAD_IMAGE_TO_CLOUD: `https://api.cloudinary.com/v1_1/diocloud/image/upload`,
-  UPLOAD_VIDEO_TO_CLOUD: `https://api.cloudinary.com/v1_1/diocloud/video/upload`,
+  UPLOAD_IMAGE_TO_CLOUD: `https://api.cloudinary.com/v1_1/du018lakt/image/upload`,
+  UPLOAD_VIDEO_TO_CLOUD: `https://api.cloudinary.com/v1_1/du018lakt/video/upload`,
+
+  GET_USER: `https://api.locketcamera.com/fetchUserV2`,
   
   CHECK_SERVER: `${BASE_API_URL}/`
 };
