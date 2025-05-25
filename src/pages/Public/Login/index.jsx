@@ -29,6 +29,13 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showToast("error", "Email không hợp lệ!");
+      return;
+    }
+
     setIsLoginLoading(true);
     try {
       const res = await locketService.login(email, password);
