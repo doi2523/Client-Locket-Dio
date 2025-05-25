@@ -1,25 +1,36 @@
-/**
- * Kiểm tra idToken còn hạn không (client-side)
- * @param {string} idToken - Firebase ID Token
- * @returns {{ valid: boolean, message?: string, payload?: object }}
- */
-export function checkTokenValid(idToken) {
-  if (!idToken) {
-    return { valid: false, message: "Thiếu idToken!" };
-  }
-  try {
-    const payloadBase64 = idToken.split(".")[1];
-    const decodedPayload = JSON.parse(atob(payloadBase64));
-    const now = Math.floor(Date.now() / 1000);
-    if (!decodedPayload.exp) {
-      return { valid: false, message: "Token không hợp lệ!" };
-    }
-    if (decodedPayload.exp < now) {
-      return { valid: false, message: "Token đã hết hạn!" };
-    }
+import { jwtDecode } from "jwt-decode";
 
-    return { valid: true, payload: decodedPayload };
+/**
+ * Kiểm tra idToken còn hạn không
+ * @param {string} idToken - JWT token được cấp bởi Firebase
+ * @param {number} bufferSeconds - Thời gian "dự phòng" (mặc định 5 phút)
+ * @returns {boolean} true nếu hết hạn hoặc không hợp lệ, false nếu vẫn còn hạn
+ */
+export function isIdTokenExpired(idToken, bufferSeconds = 300) {
+  if (!idToken || typeof idToken !== "string") return true;
+
+  // Kiểm tra định dạng token JWT: phải có 3 phần cách nhau bởi dấu '.'
+  const parts = idToken.split(".");
+  if (parts.length !== 3) {
+    console.error("❌ idToken không đúng định dạng JWT:", idToken);
+    return true;
+  }
+
+  try {
+    const decoded = jwtDecode(idToken);
+    if (!decoded.exp) return true;
+
+    const currentTime = Date.now() / 1000;
+    const timeLeft = decoded.exp - currentTime;
+
+    console.log(
+      `⏳ Token còn hạn khoảng ${Math.max(0, Math.floor(timeLeft))} giây`
+    );
+
+    return decoded.exp < currentTime + bufferSeconds;
   } catch (err) {
-    return { valid: false, message: "Không thể giải mã token!" };
+    console.error("❌ Không thể decode idToken:", err);
+    return true;
   }
 }
+

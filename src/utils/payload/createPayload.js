@@ -3,46 +3,50 @@ import {
   prepareMediaInfo,
   uploadToCloudinary,
 } from "../cloudinary/uploadFileAndGetInfo";
-import { getAuthCookies } from "../cookie/cookieUtils";
+import { getToken } from "../storage"; // Import hàm getToken từ utils
 
 export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
-  // Tạo đối tượng token (bao gồm idToken và localId)
-  const { idToken, localId } = getAuthCookies();
+  // Lấy token bằng getToken()
+  const { idToken, localId } = getToken() || {};
+
+  if (!idToken || !localId) {
+    showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+    return null;
+  }
+
   const tokenData = {
-    idToken: idToken,
-    localId: localId,
+    idToken,
+    localId,
   };
 
-  // Tạo đối tượng options (bao gồm các lựa chọn như caption, colors...)
   const optionsData = {
-    caption: caption,
+    caption,
     text_color: "#FFFFFF",
     colorTop: selectedColors.top,
     colorBottom: selectedColors.bottom,
   };
 
-  // Tạo đối tượng payload chứa tất cả dữ liệu cần gửi
-  const payload = {
+  return {
     userData: tokenData,
     options: optionsData,
     model: "uploadmediaV1",
-    mediaInfo: mediaInfo,
+    mediaInfo,
   };
-
-  return payload;
 };
+
 export const createRequestPayloadV2 = (mediaInfo, postOverlay) => {
-  // Tạo đối tượng token (bao gồm idToken và localId)
-  const { idToken, localId } = getAuthCookies();
+  const { idToken, localId } = getToken() || {};
+
   if (!idToken || !localId) {
     showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
     return null;
   }
+
   const tokenData = {
-    idToken: idToken,
-    localId: localId,
+    idToken,
+    localId,
   };
-  // Tạo đối tượng options (bao gồm các lựa chọn như caption, colors...)
+
   const optionsData = {
     caption: postOverlay.caption,
     overlay_id: postOverlay.overlay_id,
@@ -53,40 +57,31 @@ export const createRequestPayloadV2 = (mediaInfo, postOverlay) => {
     color_bottom: postOverlay.color_bottom,
   };
 
-  // Tạo đối tượng payload chứa tất cả dữ liệu cần gửi
-  const payload = {
+  return {
     userData: tokenData,
     options: optionsData,
     model: "uploadmediaV2",
-    mediaInfo: mediaInfo,
+    mediaInfo,
   };
-
-  return payload;
 };
 
 // utils.js
-//Main
 export const createRequestPayloadV3 = async (
   selectedFile,
   previewType,
   postOverlay
 ) => {
   try {
-    // Lấy token từ cookie
-    const { idToken, localId } = getAuthCookies();
-    const tokenData = {
-      idToken: idToken,
-      localId: localId,
-    };
+    const { idToken, localId } = getToken() || {};
+
     if (!idToken || !localId) {
       showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
       return null;
     }
-    // Upload file lên Cloudinary
+
     const fileData = await uploadToCloudinary(selectedFile, previewType);
     const mediaInfo = prepareMediaInfo(fileData);
 
-    // Tạo đối tượng options (bao gồm các lựa chọn như caption, colors...)
     const optionsData = {
       caption: postOverlay.caption,
       overlay_id: postOverlay.overlay_id,
@@ -97,15 +92,12 @@ export const createRequestPayloadV3 = async (
       color_bottom: postOverlay.color_bottom,
     };
 
-    // Tạo đối tượng payload chứa tất cả dữ liệu cần gửi
-    const payload = {
-      userData: tokenData,
+    return {
+      userData: { idToken, localId },
       options: optionsData,
       model: "Version-UploadmediaV3.1",
-      mediaInfo: mediaInfo,
+      mediaInfo,
     };
-
-    return payload;
   } catch (error) {
     console.error("Lỗi khi tạo payload:", error);
     throw error;

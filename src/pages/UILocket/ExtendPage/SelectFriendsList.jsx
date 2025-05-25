@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { FaUserFriends } from "react-icons/fa";
 import { useApp } from "../../../context/AppContext";
 import { AuthContext } from "../../../context/AuthLocket";
 import clsx from "clsx";
@@ -45,7 +46,7 @@ const SelectFriendsList = () => {
             )}
           >
             <div className="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl font-bold text-primary">
-              All
+            <FaUserFriends className="w-6 h-6 text-base-content"/>
             </div>
           </div>
           <span className="text-xs mt-1 text-base-content font-semibold">

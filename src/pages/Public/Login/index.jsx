@@ -13,39 +13,38 @@ const Login = () => {
   const { setUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [rememberMe, setRememberMe] = useState(
-  //   localStorage.getItem("rememberMe") === "true"
-  // );
+  const [rememberMe, setRememberMe] = useState(
+    localStorage.getItem("rememberMe") === "true"
+  );
   const { useloading } = useApp();
   const { isStatusServer, isLoginLoading, setIsLoginLoading } = useloading;
-  // useEffect(() => {
-  //   localStorage.setItem("rememberMe", rememberMe.toString());
-  // }, [rememberMe]);
+  useEffect(() => {
+    localStorage.setItem("rememberMe", rememberMe.toString());
+  }, [rememberMe]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoginLoading(true);
     try {
       const res = await locketService.login(email, password);
       if (!res) throw new Error("Lỗi: Server không trả về dữ liệu!");
-      // Lưu token & localId ngay sau khi login
-      const { idToken, refreshToken, localId } = res.data;
-      //Luu refreshToken Cookie
-      utils.setRefreshTokenCookie(refreshToken);
-      utils.setAuthCookies(idToken, localId);
 
-      // Lưu user vào localStorage và cập nhật state
+      const { idToken, refreshToken, localId } = res.data;
+
+      // ⚡️ Lưu refreshToken theo rememberMe
+      // Khi login thành công:
+      utils.saveToken({ idToken, refreshToken, localId }, rememberMe);
+
+      // ⚡️ Lưu user data toàn bộ (gồm thông tin cá nhân)
       utils.saveUser(res.data);
       setUser(res.data);
+
       showToast("success", "Đăng nhập thành công!");
     } catch (error) {
       if (error.status) {
-        // 🔥 Xử lý lỗi từ server trả về
-        const { status, message, code } = error;
-
+        const { status, message } = error;
         switch (status) {
           case 400:
-            showToast("error", "Tài khoản hoặc mật khẩu không đúng!");
-            break;
           case 401:
             showToast("error", "Tài khoản hoặc mật khẩu không đúng!");
             break;
@@ -60,7 +59,6 @@ const Login = () => {
             showToast("error", message || "Đăng nhập thất bại!");
         }
       } else {
-        // 🔥 Lỗi ngoài server (mạng, không phản hồi,...)
         showToast(
           "error",
           error.message || "Lỗi kết nối! Vui lòng kiểm tra lại mạng."
@@ -99,7 +97,7 @@ const Login = () => {
                 required
               />
             </div>
-            {/* <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <input
                 id="rememberMe"
                 type="checkbox"
@@ -113,7 +111,7 @@ const Login = () => {
               >
                 Ghi nhớ đăng nhập
               </label>
-            </div> */}
+            </div>
 
             <button
               type="submit"
@@ -141,7 +139,7 @@ const Login = () => {
             {/* <PushNotificationButton/> */}
           </form>
         </div>
-        <FloatingNotification/>
+        <FloatingNotification />
       </div>
     </>
   );

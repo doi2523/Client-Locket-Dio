@@ -52,7 +52,7 @@ const AddPostButton = ({ onNewPost }) => {
   };
 
   const toggleForm = () => {
-    setShowForm(!showForm);
+    // setShowForm(!showForm);
   };
 
   return (

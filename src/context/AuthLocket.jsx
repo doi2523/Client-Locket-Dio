@@ -7,7 +7,9 @@ import { fetchAndStoreFriends, fetchUser } from "../services";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(utils.getUser());
+  const [user, setUser] = useState(utils.getUser()); //Thong tin User
+  const [authTokens, setAuthTokens] = useState(() => utils.getToken()); //Thong tin Token
+
   const [loading, setLoading] = useState(false);
 
   const [friends, setFriends] = useState(() => {
@@ -20,6 +22,68 @@ export const AuthProvider = ({ children }) => {
     const saved = localStorage.getItem("friendDetails");
     return saved ? JSON.parse(saved) : [];
   });
+
+  // ✅ Auto refresh token mỗi 50 phút hoặc khi token hết hạn
+  useEffect(() => {
+    let isMounted = true;
+    const refreshInterval = 50 * 60 * 1000; // 50 phút
+  
+    const autoRefresh = async () => {
+      const { idToken, refreshToken } = authTokens || {};
+  
+      // Nếu không có idToken hợp lệ, thử refresh
+      const isIdTokenValid = idToken && typeof idToken === "string" && idToken.trim() !== "";
+  
+      // Nếu không có refreshToken thì logout
+      if (!refreshToken) {
+        if (isMounted) {
+          console.warn("⚠️ Không có refreshToken, tiến hành logout.");
+          setUser(null);
+          setAuthTokens(null);
+          utils.removeUser();
+          utils.removeToken();
+          showToast("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.", "error");
+        }
+        return;
+      }
+  
+      // Nếu token không hợp lệ hoặc đã hết hạn thì làm mới
+      if (!isIdTokenValid || utils.isIdTokenExpired(idToken)) {
+        try {
+          const res = await utils.refreshIdToken(refreshToken);
+          const updatedTokens = {
+            idToken: res?.data?.id_token,
+            refreshToken: res?.data?.refresh_token || refreshToken,
+          };
+  
+          console.log("🔄 Token được làm mới:", updatedTokens);
+  
+          if (isMounted) {
+            setAuthTokens(updatedTokens);
+            utils.saveToken(updatedTokens);
+          }
+        } catch (err) {
+          console.error("❌ Refresh token thất bại:", err);
+          if (isMounted) {
+            setUser(null);
+            setAuthTokens(null);
+            utils.removeUser();
+            utils.removeToken();
+            showToast("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.", "error");
+          }
+        }
+      }
+    };
+  
+    autoRefresh(); // Gọi ngay khi khởi động
+    const interval = setInterval(autoRefresh, refreshInterval); // Gọi định kỳ
+  
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [authTokens]);
+  
 
   // Kiểm tra đăng nhập
   // useEffect(() => {
@@ -157,4 +221,3 @@ AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default AuthProvider;
