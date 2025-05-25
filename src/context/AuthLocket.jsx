@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import * as utils from "../utils";
-import { showToast } from "../components/Toast";
+import { showInfo, showToast } from "../components/Toast";
 import { fetchAndStoreFriends, fetchUser } from "../services";
 
 export const AuthContext = createContext();
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
           setAuthTokens(null);
           utils.removeUser();
           utils.removeToken();
-          showToast("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.", "error");
+          // showToast("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.", "error");
         }
         return;
       }
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
             setAuthTokens(null);
             utils.removeUser();
             utils.removeToken();
-            showToast("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.", "error");
+            showInfo("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
           }
         }
       }

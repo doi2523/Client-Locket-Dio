@@ -6,20 +6,25 @@ import * as utils from "../../../utils";
 import LoadingRing from "../../../components/UI/Loading/ring";
 import StatusServer from "../../../components/UI/StatusServer";
 import { useApp } from "../../../context/AppContext";
-import PushNotificationButton from "../../../components/PushNotificationButton";
 import FloatingNotification from "../../../components/UI/FloatingNotification";
 
 const Login = () => {
   const { setUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(
-    localStorage.getItem("rememberMe") === "true"
-  );
+  const [rememberMe, setRememberMe] = useState(() => {
+    const stored = localStorage.getItem("rememberMe");
+    return stored === null ? true : stored === "true";
+  });
+
   const { useloading } = useApp();
   const { isStatusServer, isLoginLoading, setIsLoginLoading } = useloading;
   useEffect(() => {
-    localStorage.setItem("rememberMe", rememberMe.toString());
+    if (rememberMe) {
+      localStorage.setItem("rememberMe", "true");
+    } else {
+      localStorage.removeItem("rememberMe");
+    }
   }, [rememberMe]);
 
   const handleLogin = async (e) => {
