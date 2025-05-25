@@ -43,6 +43,8 @@ const Sidebar = () => {
       ultils.clearAuthData();
       ultils.removeUser();
       ultils.clearAuthStorage();
+
+      ultils.clearAllLocalData();
       
       showToast("success", "Đăng xuất thành công!");
       navigate("/login");

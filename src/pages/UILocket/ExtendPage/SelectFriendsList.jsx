@@ -1,40 +1,85 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useApp } from "../../../context/AppContext";
+import { AuthContext } from "../../../context/AuthLocket";
+import clsx from "clsx";
 
 const SelectFriendsList = () => {
-  const { navigation } = useApp();
-  const { isFriendsTabOpen, setFirendsTabOpen } = navigation;
+  const { friendDetails } = useContext(AuthContext);
+  const [selectedFriends, setSelectedFriends] = useState([]);
+
+  // Lưu vào localStorage hoặc context nếu cần
+  // useEffect(() => {
+  //   localStorage.setItem("selectedFriends", JSON.stringify(selectedFriends));
+  // }, [selectedFriends]);
+
+  const handleToggle = (uid) => {
+    // setSelectedFriends((prev) =>
+    //   prev.includes(uid) ? prev.filter((id) => id !== uid) : [...prev, uid]
+    // );
+  };
+
+  const handleSelectAll = () => {
+    // if (selectedFriends.length === friendDetails.length) {
+    //   setSelectedFriends([]);
+    // } else {
+    //   const allIds = friendDetails.map((f) => f.uid);
+    //   setSelectedFriends(allIds);
+    // }
+  };
   const handleClick = () => {
     alert("Sắp ra mắt!\n\nChức năng 'Bạn bè' đang được phát triển.\nHãy ủng hộ để giúp duy trì và phát triển trang web nhé ❤️\n\nDio");
     // setFirendsTabOpen(true);
   };
-
   return (
-    <div
-      className="relative pl-1 flex flex-col items-center pt-4 h-20 cursor-pointer transition-transform hover:scale-105 active:scale-95"
-      onClick={handleClick}
-    >
-      <span className="text-md font-semibold text-base-content text-center">
-        <span> ?? {" "}
-        </span>
-        Bạn bè</span>
-      <svg
-        width="35"
-        height="40"
-        viewBox="0 20 40 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="text-base-content mr-1"
-      >
-        <path
-          d="M4 8l14 7l14-7"
-          stroke="currentColor"
-          strokeWidth="4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          transform="rotate(180 20 20)"
-        />
-      </svg>
+    <div className="flex flex-col items-start w-full px-4"
+    onClick={handleClick}>
+      <div className="flex gap-3 overflow-x-auto pb-2 w-full no-scrollbar">
+        {/* Mục "Tất cả" */}
+        <div className="flex flex-col items-center justify-center">
+          <div
+            onClick={handleSelectAll}
+            className={clsx(
+              "flex flex-col items-center justify-center cursor-pointer transition-transform hover:scale-105 active:scale-95",
+              selectedFriends.length === friendDetails.length &&
+                "border-2 p-[3px] rounded-full"
+            )}
+          >
+            <div className="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl font-bold text-primary">
+              All
+            </div>
+          </div>
+          <span className="text-xs mt-1 text-base-content font-semibold">
+            Tất cả
+          </span>
+        </div>
+
+        {/* Danh sách bạn bè */}
+        {friendDetails.map((friend) => {
+          const isSelected = selectedFriends.includes(friend.uid);
+          return (
+            <div
+              key={friend.uid}
+              onClick={() => handleToggle(friend.uid)}
+              className="flex flex-col items-center cursor-pointer transition-transform hover:scale-105 active:scale-95"
+            >
+              <div className="w-10 h-10 aspect-square">
+                <img
+                  src={friend.profilePic || "./default-avatar.png"}
+                  alt={friend.firstName}
+                  className={clsx(
+                    "w-full h-full rounded-full object-cover border-2 p-[1px]",
+                    isSelected ? "border-primary" : "border-transparent"
+                  )}
+                />
+              </div>
+
+              <span className="text-xs mt-1 text-center max-w-[4rem] truncate text-base-content">
+                {friend.firstName}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

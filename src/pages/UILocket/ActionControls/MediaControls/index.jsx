@@ -41,111 +41,93 @@ const MediaControls = () => {
     setPostOverlay(defaultPostOverlay);
     setCameraActive(true); // Giữ dòng này để trigger useEffect
   }, []);
-
   const uploadQueue = [];
   let isUploading = false;
-
+  
   // Hàm xử lý upload tuần tự theo hàng đợi
   const handleQueueUpload = async () => {
-    if (isUploading) return; // Nếu đang upload thì thôi
-    if (uploadQueue.length === 0) return; // Hết hàng đợi thì thôi
-
+    if (isUploading) return;
+    if (uploadQueue.length === 0) return;
+  
     isUploading = true;
-
+  
     try {
-      // Lấy phần tử đầu tiên trong hàng đợi
       const { selectedFile, previewType, postOverlay } = uploadQueue[0];
-
-      // Tạo payload upload
+  
       const payload = await utils.createRequestPayloadV3(
         selectedFile,
         previewType,
         postOverlay
       );
-
-      // Lưu payload vào localStorage (tuỳ bạn dùng hoặc không)
-      const savedPayloads = JSON.parse(
-        localStorage.getItem("uploadPayloads") || "[]"
-      );
+  
+      if (!payload) {
+        throw new Error("Không tạo được payload. Hủy tiến trình tải lên.");
+      }
+  
+      const savedPayloads = JSON.parse(localStorage.getItem("uploadPayloads") || "[]");
       savedPayloads.push(payload);
       // localStorage.setItem("uploadPayloads", JSON.stringify(savedPayloads));
-
-      // Gọi API upload
+  
       const response = await lockerService.uploadMediaV2(payload);
-
-      // Lấy dữ liệu cũ
+  
       const savedResponses = JSON.parse(localStorage.getItem("uploadedMoments") || "[]");
-      
-      // Chuẩn hoá data mới (response.data là 1 object, normalizeMoments nhận mảng, nên bọc vào mảng)
       const normalizedNewData = utils.normalizeMoments([response?.data]);
-      
-      // Ghép dữ liệu cũ với dữ liệu mới đã chuẩn hoá
       const updatedData = [...savedResponses, ...normalizedNewData];
-      
-      // Lưu vào localStorage
+  
       localStorage.setItem("uploadedMoments", JSON.stringify(updatedData));
-      
-      // Cập nhật state với dữ liệu đã chuẩn hoá
       setRecentPosts(updatedData);
-      
-
-      // Hiển thị thông báo thành công
-      showSuccess(
-        `${previewType === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
-      );
-
-      // Sau khi upload thành công, xóa phần tử đầu tiên khỏi hàng đợi
-      uploadQueue.shift();
+  
+      showSuccess(`${previewType === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`);
+  
+      uploadQueue.shift(); // Xóa khỏi hàng đợi sau thành công
+      isUploading = false;
+      handleQueueUpload(); // Gọi tiếp nếu còn
     } catch (error) {
+      isUploading = false;
+  
       const errorMessage =
         error?.response?.data?.message || error.message || "Lỗi không xác định";
-      showError(`Lỗi khi tải lên: ${errorMessage}`);
-      console.error("Lỗi khi gửi bài:", error);
-
-      // Có thể quyết định xóa phần tử lỗi khỏi hàng đợi hoặc không,
-      // nếu muốn bỏ qua lỗi, uncomment dòng dưới:
-      // uploadQueue.shift();
-    } finally {
-      isUploading = false;
-      // Gọi lại để tiếp tục xử lý phần tử tiếp theo (nếu còn)
-      handleQueueUpload();
+      showError(`Tải lên thất bại: ${errorMessage}`);
+  
+      console.error("❌ Upload thất bại, hàng đợi dừng lại tại đây:", error);
+  
+      // KHÔNG gọi lại handleQueueUpload ở đây => dừng hẳn
+      // Nếu muốn cho phép bỏ qua lỗi và tiếp tục, dùng dòng này thay:
+      // uploadQueue.shift(); handleQueueUpload();
     }
   };
-
-  // Hàm submit: đẩy dữ liệu vào hàng đợi và gọi xử lý
+  
+  // Hàm submit
   const handleSubmit = async () => {
     if (!selectedFile) {
       showError("Không có dữ liệu để tải lên.");
       return;
     }
-
+  
     const { type: previewType } = preview || {};
     const isImage = previewType === "image";
     const isVideo = previewType === "video";
-    const maxFileSize = isImage ? 1 : 10; // MB
-
+    const maxFileSize = isImage ? 1 : 10;
+  
     if (isSizeMedia > maxFileSize) {
       showError(
-        `${
-          isImage ? "Ảnh" : "Video"
-        } vượt quá giới hạn dung lượng. Tối đa ${maxFileSize}MB.`
+        `${isImage ? "Ảnh" : "Video"} vượt quá dung lượng. Tối đa ${maxFileSize}MB.`
       );
       return;
     }
-    // Đẩy vào hàng đợi
+  
     uploadQueue.push({ selectedFile, previewType, postOverlay });
     setSendLoading(true);
-    showInfo("Gửi bài viết vào hàng chờ thành công, vui lòng đợi!");
-
-    // Gọi hàm xử lý hàng đợi (nếu chưa đang chạy)
-    handleQueueUpload();
-
-    // Reset UI hoặc xoá dữ liệu
+    showInfo("Đã đưa bài vào hàng chờ. Đang tải lên...");
+  
+    handleQueueUpload(); // bắt đầu xử lý
+  
     setTimeout(() => {
       setSendLoading(false);
       handleDelete();
     }, 500);
   };
+  
 
   return (
     <>

@@ -6,3 +6,4 @@ export * from "./payload/createPayload"; // Xuất tất cả hàm từ createPa
 export * from "./cloudinary/uploadFileAndGetInfo"; // Xuất tất cả hàm từ uploadToCloudinary.js
 export * from "./storage"
 export * from "./standardize"
+export * from "./auth"

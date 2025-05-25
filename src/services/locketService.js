@@ -263,12 +263,12 @@ export const uploadMediaV2 = async (payload) => {
 
 export const fetchAndStoreFriends = async (idToken, localId) => {
   try {
-    const res = await axios.post(`http://localhost:5004/locket/get-friends`, {
+    const res = await axios.post(utils.API_URL.GET_LIST_FRIENDS_URL, {
       idToken,
       localId,
     });
 
-    const allFriends = res?.data?.data?.friendsList || [];
+    const allFriends = res?.data?.data || [];
 
     const cleanedFriends = allFriends.map(friend => ({
       uid: friend.uid,

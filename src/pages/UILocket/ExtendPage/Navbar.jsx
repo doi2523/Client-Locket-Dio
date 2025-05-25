@@ -6,16 +6,8 @@ import { AuthContext } from "../../../context/AuthLocket";
 
 const Navbar = () => {
   const { navigation } = useApp();
-  const { user } = useContext(AuthContext);
+  const { user, friendDetails } = useContext(AuthContext);
   const { setIsProfileOpen, setIsHomeOpen, setIsSidebarOpen, setFriendsTabOpen } = navigation;
-
-  const handleClick = () => {
-    // alert(
-    //   "Sắp ra mắt!\n\nChức năng 'Bạn bè' đang được phát triển.\nHãy ủng hộ để giúp duy trì và phát triển trang web nhé ❤️\n\nDio"
-    // );
-    setFriendsTabOpen(false);
-  };
-  const friendCount = "??"; // hoặc props.friendCount
 
   return (
     <div className="navbar top-0 left-0 w-full px-4 py-2 flex items-center justify-between bg-base-100 z-50 relative">
@@ -33,7 +25,7 @@ const Navbar = () => {
       </button>
 
       <button
-        className="absolute flex justify-center items-center flex-row gap-2 left-1/2 transform -translate-x-1/2 text-lg font-semibold text-base-content bg-base-300 hover:bg-base-300 px-3 py-1.5 rounded-3xl"
+        className="absolute flex justify-center items-center flex-row gap-1 left-1/2 transform -translate-x-1/2 text-lg font-semibold text-base-content bg-base-300 hover:bg-base-300 px-3 py-1.5 rounded-3xl"
         onClick={() => setFriendsTabOpen(true)}
       >
         <svg
@@ -51,7 +43,7 @@ const Navbar = () => {
             clipRule="evenodd"
           />
         </svg>
-        <span>{friendCount}</span> người bạn
+        <span>{friendDetails.length}</span>người bạn
       </button>
 
       {/* Nút bên phải */}

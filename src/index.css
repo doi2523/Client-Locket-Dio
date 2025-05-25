@@ -59,6 +59,31 @@
   font-weight: normal;
   font-style: normal;
 }
+@font-face {
+  font-family: 'SF Compact Rounded Black';
+  src: url('./assets/fonts/SF-Compact-Rounded-Black.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Class để dùng font này */
+.sf-compact-rounded-black {
+  font-family: 'SF Compact Rounded Black', sans-serif;
+}
+/* @font-face {
+  font-family: 'SF Compact Rounded Black';
+  src: url('./assets/fonts/SF-Compact-Rounded-Semibold.ttf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+} */
+
+/* Class để dùng font này */
+/* .sf-compact-rounded-regular {
+  font-family: 'SF Compact Rounded Black', sans-serif;
+} */
+
 .notch-overlay {
   position: fixed;
   top: 0;
