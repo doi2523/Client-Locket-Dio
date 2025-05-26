@@ -96,7 +96,7 @@ const FriendsTab = () => {
     >
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-base-100/10 backdrop-blur-[2px] bg-opacity-50 transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-base-100/10 backdrop-blur-[2px] bg-opacity-50 transition-opacity duration-500 ${
           isFriendsTabOpen ? "opacity-100" : "opacity-0"
         }`}
         onClick={() => setFriendsTabOpen(false)}
@@ -107,7 +107,7 @@ const FriendsTab = () => {
         ref={popupRef}
         className={`
           w-full h-[86vh] bg-base-100 rounded-t-4xl shadow-lg flex flex-col justify-center items-center
-          will-change-transform
+          will-change-transform border-t
         `}
         style={translateStyle}
       >
