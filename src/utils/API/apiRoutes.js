@@ -38,6 +38,6 @@ export const API_URL = {
   GET_USER_PLANS: `${BASE_DB_API_URL}${LOCKET_PRO}/user-plans`,
 
   //API dữ liệu Cloudinary
-  UPLOAD_IMAGE_TO_CLOUD: `https://api.cloudinary.com/v1_1/du018lakt/image/upload`,
-  UPLOAD_VIDEO_TO_CLOUD: `https://api.cloudinary.com/v1_1/du018lakt/video/upload`,
+  UPLOAD_IMAGE_TO_CLOUD: `https://api.cloudinary.com/v1_1/dintnwvzl/image/upload`,
+  UPLOAD_VIDEO_TO_CLOUD: `https://api.cloudinary.com/v1_1/dintnwvzl/video/upload`,
 };

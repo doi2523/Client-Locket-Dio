@@ -104,64 +104,69 @@ export default function RegisterMemberPage() {
   return (
     <div className="min-h-screen bg-pink-50 py-6 px-4">
       <div className="h-16"></div>
-      <h1 className="text-3xl font-bold text-left mb-6">
+      <h1 className="text-3xl font-bold text-center text-base-content mb-6">
         Đăng ký thành viên Locket Dio
       </h1>
 
       {/* 👉 Hiển thị gói hiện tại nếu có */}
       {userPlan && userPlan.plan_info && (
-        <div className="max-w-2xl mx-auto bg-gradient-to-r from-purple-100 to-purple-50 p-6 rounded-2xl shadow-xl mb-6 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-          {/* Ảnh đại diện */}
-          <div className="flex-shrink-0">
-            <img
-              src={userPlan.profile_picture}
-              alt="Avatar"
-              className="w-24 h-24 rounded-full object-cover ring-4 ring-purple-300 shadow-lg"
-            />
-          </div>
+        <div className="max-w-2xl mx-auto bg-white border border-purple-200 p-6 rounded-3xl shadow-lg mb-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 transition hover:shadow-xl">
+  {/* Ảnh đại diện */}
+  <div className="flex-shrink-0">
+    <img
+      src={userPlan.profile_picture}
+      alt="Avatar"
+      className="w-24 h-24 rounded-full object-cover ring-4 ring-purple-300 shadow-md"
+    />
+  </div>
 
-          {/* Thông tin gói */}
-          <div className="flex-1 space-y-4 text-center sm:text-left">
-            <h2 className="text-2xl font-bold text-purple-700 flex flex-col sm:flex-row sm:items-center sm:gap-2">
-              <span>✨ Gói hiện tại</span>
-              <span className="bg-purple-200 text-purple-800 text-sm font-semibold px-2 py-1 rounded-full inline-block mt-2 sm:mt-0">
-                {userPlan.plan_info.name}
-              </span>
-            </h2>
+  {/* Thông tin gói */}
+  <div className="flex-1 space-y-4 text-center sm:text-left">
+    {/* Header: Gói + Badge */}
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <h2 className="text-2xl font-bold text-purple-700">
+        ✨ Gói hiện tại
+      </h2>
+      <span className="bg-purple-100 text-purple-800 text-sm font-semibold px-3 py-1 rounded-full shadow-sm">
+        {userPlan.plan_info.name}
+      </span>
+    </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm">
-              <div className="flex items-center gap-2 justify-center sm:justify-start">
-                <span className="text-xl">🙍‍♂️</span>
-                <span className="font-medium">Tên:</span>
-                <span>{userPlan.display_name}</span>
-              </div>
+    {/* Grid Thông tin */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+      <div className="flex items-center gap-2">
+        <span className="text-xl">🙍‍♂️</span>
+        <span className="font-medium text-gray-600">Tên:</span>
+        <span className="text-gray-800">{userPlan.display_name}</span>
+      </div>
 
-              <div className="flex items-center gap-2 justify-center sm:justify-start">
-                <span className="text-xl">💎</span>
-                <span className="font-medium">Gói:</span>
-                <span>{userPlan.plan_info.name}</span>
-              </div>
+      <div className="flex items-center gap-2">
+        <span className="text-xl">💎</span>
+        <span className="font-medium text-gray-600">Gói:</span>
+        <span className="text-gray-800">{userPlan.plan_info.name}</span>
+      </div>
 
-              <div className="flex items-center gap-2 justify-center sm:justify-start">
-                <span className="text-xl">🟢</span>
-                <span className="font-medium">Bắt đầu:</span>
-                <span>{userPlan.start_date}</span>
-              </div>
+      <div className="flex items-center gap-2">
+        <span className="text-xl">🟢</span>
+        <span className="font-medium text-gray-600">Bắt đầu:</span>
+        <span className="text-gray-800">{userPlan.start_date}</span>
+      </div>
 
-              <div className="flex items-center gap-2 justify-center sm:justify-start">
-                <span className="text-xl">🔚</span>
-                <span className="font-medium">Kết thúc:</span>
-                <span>{userPlan.end_date || "∞"}</span>
-              </div>
+      <div className="flex items-center gap-2">
+        <span className="text-xl">🔚</span>
+        <span className="font-medium text-gray-600">Kết thúc:</span>
+        <span className="text-gray-800">{userPlan.end_date || "∞"}</span>
+      </div>
 
-              <div className="col-span-1 sm:col-span-2 flex items-center gap-2 justify-center sm:justify-start">
-                <span className="text-xl">🗂️</span>
-                <span className="font-medium">Tối đa upload:</span>
-                <span>Không giới hạn ảnh/video</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="sm:col-span-2 flex items-center gap-2">
+        <span className="text-xl">🗂️</span>
+        <span className="font-medium text-gray-600">Tối đa upload:</span>
+        <span className="text-gray-800">Không giới hạn ảnh/video</span>
+      </div>
+    </div>
+  </div>
+</div>
+
       )}
 
       {/* 👉 Danh sách gói để chọn */}
