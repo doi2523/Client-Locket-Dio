@@ -7,7 +7,7 @@ import { AuthContext } from "../../../context/AuthLocket";
 
 const ScreenCustomeStudio = () => {
   const popupRef = useRef(null);
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, userPlan } = useContext(AuthContext);
   const { navigation, post, captiontheme } = useApp();
 
   const { isFilterOpen, setIsFilterOpen } = navigation;
@@ -56,6 +56,12 @@ const ScreenCustomeStudio = () => {
     text_color,
     type
   ) => {
+      // Kiểm tra quyền hạn theo userPlan, ví dụ như userPlan.plan_info.features.custom_theme
+  // Kiểm tra quyền với type tương ứng
+  // if (!userPlan?.plan_info?.features?.[type]) {
+  //   alert("Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói để mở khóa.");
+  //   return;
+  // }
     // Cập nhật postOverlay
     setPostOverlay({
       overlay_id: preset_id || "standard",
@@ -88,6 +94,11 @@ const ScreenCustomeStudio = () => {
   const handleCustomeSelectTest = (preset) => {
     // Kiểm tra xem preset có đủ thông tin cần thiết không
     if (!preset) return;
+      // Kiểm tra quyền với type tương ứng
+  if (!userPlan?.plan_info?.features?.[preset.type]) {
+    alert("Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói để mở khóa.");
+    return;
+  }
     // Log để kiểm tra dữ liệu dưới dạng bảng
     console.table([
       {

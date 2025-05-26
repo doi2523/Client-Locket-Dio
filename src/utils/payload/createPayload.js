@@ -3,7 +3,7 @@ import {
   prepareMediaInfo,
   uploadToCloudinary,
 } from "../cloudinary/uploadFileAndGetInfo";
-import { getToken } from "../storage"; // Import hàm getToken từ utils
+import { checkAndRefreshToken, getToken } from "../storage"; // Import hàm getToken từ utils
 
 export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
   // Lấy token bằng getToken()
@@ -74,7 +74,7 @@ export const createRequestPayloadV3 = async (
   try {
     const { idToken, localId, refreshToken } = getToken() || {};
 
-    const freshIdToken = await checkAndRefreshIdToken(
+    const freshIdToken = await checkAndRefreshToken(
       idToken,
       refreshToken
     );
