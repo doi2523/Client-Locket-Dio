@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(utils.getUser()); //Thong tin User
   const [authTokens, setAuthTokens] = useState(() => utils.getToken()); //Thong tin Token
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [friends, setFriends] = useState(() => {
     const saved = localStorage.getItem("friendsList");
@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }) => {
           utils.removeUser();
           utils.removeToken();
         }
+        if (isMounted) setLoading(false);
         return;
       }
 
@@ -73,6 +74,8 @@ export const AuthProvider = ({ children }) => {
             utils.removeToken();
             showInfo("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
           }
+        }  finally {
+          setLoading(false);
         }
       }
     };
@@ -83,6 +86,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       isMounted = false;
       clearInterval(intervalId);
+      setLoading(false);
     };
   }, [authTokens]);
 
@@ -185,7 +189,6 @@ export const AuthProvider = ({ children }) => {
 
     let isMounted = true;
     const fetchPlan = async () => {
-      setLoading(true);
       try {
         let plan = await utils.fetchUserPlan(user.localId, authTokens.idToken);
         if (!plan) {
@@ -199,8 +202,6 @@ export const AuthProvider = ({ children }) => {
         if (isMounted) setUserPlan(plan);
       } catch (err) {
         console.error("Lỗi khi lấy hoặc đăng ký gói user:", err);
-      } finally {
-        if (isMounted) setLoading(false);
       }
     };
 
