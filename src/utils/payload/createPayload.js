@@ -72,7 +72,12 @@ export const createRequestPayloadV3 = async (
   postOverlay
 ) => {
   try {
-    const { idToken, localId } = getToken() || {};
+    const { idToken, localId, refreshToken } = getToken() || {};
+
+    const freshIdToken = await checkAndRefreshIdToken(
+      idToken,
+      refreshToken
+    );
 
     if (!idToken || !localId) {
       showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");

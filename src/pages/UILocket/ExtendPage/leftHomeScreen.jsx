@@ -7,6 +7,7 @@ import axios from "axios";
 import LoadingRing from "../../../components/UI/Loading/ring";
 import PostCard from "../../../components/UI/PostCard";
 import { API_URL } from "../../../utils";
+import BadgePlan from "./badge/BadgePlan";
 
 const LeftHomeScreen = () => {
   const { user } = useContext(AuthContext);
@@ -55,9 +56,10 @@ const LeftHomeScreen = () => {
       {/* Header */}
       <div className="flex flex-col shadow-lg px-4 py-2 text-base-content relative overflow-hidden">
         <div className="flex items-center justify-between">
-          <div className="font-lovehouse text-2xl font-semibold px-3 pt-1 border-base-content border rounded-xl">
+          {/* <div className="font-lovehouse text-2xl font-semibold px-3 pt-1 border-base-content border rounded-xl">
             Locket Dio
-          </div>
+          </div> */}
+          <BadgePlan/>
           <div className="flex items-center gap-3">
             <button><Settings size={30} /></button>
             <button onClick={() => setIsProfileOpen(false)} className="rounded-lg hover:bg-base-200 transition cursor-pointer">

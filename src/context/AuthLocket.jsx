@@ -22,6 +22,11 @@ export const AuthProvider = ({ children }) => {
     const saved = localStorage.getItem("friendDetails");
     return saved ? JSON.parse(saved) : [];
   });
+  // Load userPlan từ localStorage ngay khi component mount
+  const [userPlan, setUserPlan] = useState(() => {
+    const saved = localStorage.getItem("userPlan");
+    return saved ? JSON.parse(saved) : null;
+  });
 
   // ✅ Auto refresh token mỗi 50 phút hoặc khi token hết hạn
   useEffect(() => {
@@ -83,42 +88,6 @@ export const AuthProvider = ({ children }) => {
       clearInterval(interval);
     };
   }, [authTokens]);
-  
-
-  // Kiểm tra đăng nhập
-  // useEffect(() => {
-  //   let isMounted = true;
-
-  //   const checkAuth = async () => {
-  //     try {
-  //       const { idToken, localId } = utils.getAuthCookies();
-  //       if (!idToken || !localId) {
-  //         utils.clearAuthCookies();
-  //         utils.removeUser();
-  //         utils.clearAllLocalData();
-  //         setUser(null);
-  //         return;
-  //       }
-  //     } catch (error) {
-  //       if (isMounted) {
-  //         utils.clearAuthCookies();
-  //         utils.removeUser();
-  //         utils.clearAllLocalData();
-  //         setUser(null);
-  //         showToast("error", "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!");
-  //         window.location.href = "/login";
-  //       }
-  //     } finally {
-  //       if (isMounted) setLoading(false);
-  //     }
-  //   };
-
-  //   checkAuth();
-
-  //   return () => {
-  //     isMounted = false;
-  //   };
-  // }, []);
 
   // Load friends
   useEffect(() => {
@@ -207,13 +176,37 @@ export const AuthProvider = ({ children }) => {
     loadFriendDetails();
   }, [friends, user?.idToken]);
 
+  // Load hoặc đăng ký gói Free khi user và token có
+  useEffect(() => {
+    if (!user?.localId || !authTokens?.idToken) return;
+
+    setLoading(true);
+    (async () => {
+      try {
+        let plan = await utils.fetchUserPlan(user.localId, authTokens.idToken);
+        if (!plan) {
+          const res = await utils.registerFreePlan(user, authTokens.idToken);
+          if (res?.data) {
+            plan = res.data;
+            // showInfo("Bạn đã được đăng ký gói Free tự động.");
+          }
+        }
+        setUserPlan(plan);
+      } catch (err) {
+        console.error("Lỗi khi lấy hoặc đăng ký gói user:", err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [user, authTokens]);
+
   return useMemo(
     () => (
-      <AuthContext.Provider value={{ user, setUser, loading, friends, setFriends, friendDetails, setFriendDetails }}>
+      <AuthContext.Provider value={{ user, setUser, loading, friends, setFriends, friendDetails, setFriendDetails, userPlan, setUserPlan }}>
         {children}
       </AuthContext.Provider>
     ),
-    [user, loading, friends, friendDetails]
+    [user, loading, friends, friendDetails, userPlan]
   );
 };
 

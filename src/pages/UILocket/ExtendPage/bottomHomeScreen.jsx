@@ -3,6 +3,7 @@ import { AuthContext } from "../../../context/AuthLocket";
 import { MessageCircle, Trash2, LayoutGrid } from "lucide-react";
 import { useApp } from "../../../context/AppContext";
 import { showSuccess } from "../../../components/Toast";
+import BadgePlan from "./badge/BadgePlan";
 
 const BottomHomeScreen = () => {
   const { user } = useContext(AuthContext);
@@ -71,9 +72,7 @@ const BottomHomeScreen = () => {
       {/* Header */}
       <div className="flex flex-col shadow-lg px-4 py-2 text-base-content relative overflow-hidden">
         <div className="flex items-center justify-between">
-          <div className="font-lovehouse text-2xl font-semibold px-3 pt-1 border-base-content border rounded-xl">
-            Locket Dio
-          </div>
+          <BadgePlan/>
           <div className="flex items-center gap-3">
             <button className="rounded-full p-2 bg-base-200 relative">
               <MessageCircle size={30} />

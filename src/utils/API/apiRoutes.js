@@ -33,7 +33,9 @@ export const API_URL = {
   USER_THEMES_POSTS_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/user-themes/posts`,
   POST_USER_THEMES_POSTS_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/user-themes/posts`,
   SUBCRIBE: `${BASE_DB_API_URL}${LOCKET_PRO}/subscribe`,
-
+  REGISTER_USER_PLANS: `${BASE_DB_API_URL}${LOCKET_PRO}/user-plans/register-free`,
+  //Get plan user
+  GET_USER_PLANS: `${BASE_DB_API_URL}${LOCKET_PRO}/user-plans`,
 
   //API dữ liệu Cloudinary
   UPLOAD_IMAGE_TO_CLOUD: `https://api.cloudinary.com/v1_1/du018lakt/image/upload`,
