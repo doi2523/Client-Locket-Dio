@@ -6,6 +6,7 @@ import Docs from "../pages/Public/Docs";
 import DonateHistory from "../pages/Public/HistoryDonate";
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
+import RegisterMemberPage from "../pages/Public/RegisterMemberPage";
 import Timeline from "../pages/Public/Timeline";
 import CameraCapture from "../pages/UILocket";
 
@@ -17,6 +18,7 @@ const publicRoutes = [
   { path: "/test", component: AuthHome, title: `${APP_NAME} | Test` },
   { path: "/login", component: Login, title: `${APP_NAME} | Đăng Nhập` },
   { path: "/testv1", component: CameraCapture, title: `${APP_NAME} | Test` },
+  { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
   // { path: "/testv2", component: Docs, title: `${APP_NAME} | Đăng Moment Mới` },
 ];
 
@@ -30,6 +32,7 @@ const authRoutes = [
   { path: "/aboutdio", component: AboutMe, title: `${APP_NAME} | Về Dio` },
   { path: "/docs", component: Docs, title: `${APP_NAME} | Docs` },
   { path: "/donatehistory", component: DonateHistory, title: `${APP_NAME} | DonateHistory` },
+  { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
 
   { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Trang Chủ` },
 ];

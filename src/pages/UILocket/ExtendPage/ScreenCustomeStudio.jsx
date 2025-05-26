@@ -58,10 +58,10 @@ const ScreenCustomeStudio = () => {
   ) => {
       // Kiểm tra quyền hạn theo userPlan, ví dụ như userPlan.plan_info.features.custom_theme
   // Kiểm tra quyền với type tương ứng
-  // if (!userPlan?.plan_info?.features?.[type]) {
-  //   alert("Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói để mở khóa.");
-  //   return;
-  // }
+  if (!userPlan?.plan_info?.features?.[type]) {
+    alert("Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói để mở khóa.");
+    return;
+  }
     // Cập nhật postOverlay
     setPostOverlay({
       overlay_id: preset_id || "standard",

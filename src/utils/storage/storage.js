@@ -101,13 +101,13 @@ export function saveToken(
 }
 
 export function getToken() {
-  const idToken = storage.get("idToken");
+  const idToken = storage.get("idToken"); // có thể null nếu hết hạn
   const refreshToken = storage.get("refreshToken");
   const localId = storage.get("localId");
 
-  if (!idToken || !refreshToken || !localId) return null;
+  if (!refreshToken || !localId) return null;
 
-  return { idToken, refreshToken, localId };
+  return { idToken, refreshToken, localId }; // ⚠️ idToken có thể null (hợp lệ)
 }
 
 export function removeToken() {

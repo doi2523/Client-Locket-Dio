@@ -1,7 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { API_URL } from "../API/apiRoutes";
-import * as utils from "."; // hoặc đường dẫn đúng tới utils
+import { saveToken } from "../storage";
 
 /**
  * Kiểm tra idToken và tự động refresh nếu gần hết hạn
@@ -49,7 +49,7 @@ export const checkAndRefreshIdToken = async (
       refreshToken: res?.data?.refresh_token || refreshToken,
     };
 
-    utils.saveToken(updatedTokens);
+    saveToken(updatedTokens);
     return updatedTokens.idToken;
   } catch (err) {
     console.error("❌ Lỗi khi kiểm tra hoặc refresh token:", err);

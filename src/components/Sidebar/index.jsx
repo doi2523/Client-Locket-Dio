@@ -10,7 +10,8 @@ import {
   LucideTimer,
   Smartphone,
   Briefcase,
-  BookMarked
+  BookMarked,
+  Rocket
 } from "lucide-react";
 import { showToast } from "../Toast";
 import * as ultils from "../../utils";
@@ -172,6 +173,19 @@ const Sidebar = () => {
                     onClick={() => setIsSidebarOpen(false)}
                   >
                     <User size={22} /> Hồ sơ
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/upgrade"
+                    className={`flex items-center px-3 py-3 rounded-lg transition ${
+                      location.pathname === "/upgrade"
+                        ? "bg-base-300"
+                        : "hover:bg-base-200"
+                    }`}
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    <Rocket size={22} /> Gói thành viên
                   </Link>
                 </li>
                 <li>

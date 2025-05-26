@@ -32,43 +32,40 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let isMounted = true;
     const refreshInterval = 50 * 60 * 1000; // 50 phút
-  
+
     const autoRefresh = async () => {
       const { idToken, refreshToken } = authTokens || {};
-  
-      // Nếu không có idToken hợp lệ, thử refresh
-      const isIdTokenValid = idToken && typeof idToken === "string" && idToken.trim() !== "";
-  
-      // Nếu không có refreshToken thì logout
-      if (!refreshToken) {
+
+      if (
+        !refreshToken ||
+        typeof refreshToken !== "string" ||
+        refreshToken.trim() === ""
+      ) {
+        console.warn("⚠️ Không có refreshToken hợp lệ, tiến hành logout.");
         if (isMounted) {
-          console.warn("⚠️ Không có refreshToken, tiến hành logout.");
           setUser(null);
           setAuthTokens(null);
           utils.removeUser();
           utils.removeToken();
-          // showToast("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.", "error");
         }
         return;
       }
-  
-      // Nếu token không hợp lệ hoặc đã hết hạn thì làm mới
-      if (!isIdTokenValid || utils.isIdTokenExpired(idToken)) {
+
+      // Nếu idToken rỗng hoặc hết hạn thì mới làm mới
+      const idTokenIsValid =
+        idToken &&
+        typeof idToken === "string" &&
+        idToken.trim() !== "" &&
+        !utils.isIdTokenExpired(idToken);
+
+      if (!idTokenIsValid) {
         try {
-          const res = await utils.refreshIdToken(refreshToken);
-          const updatedTokens = {
-            idToken: res?.data?.id_token,
-            refreshToken: res?.data?.refresh_token || refreshToken,
-          };
-  
-          console.log("🔄 Token được làm mới:", updatedTokens);
-  
-          if (isMounted) {
-            setAuthTokens(updatedTokens);
-            utils.saveToken(updatedTokens);
+          const newTokens = await utils.refreshIdToken(refreshToken);
+          if (isMounted && newTokens) {
+            setAuthTokens(newTokens); // ✅ cập nhật token mới vào state
           }
         } catch (err) {
-          console.error("❌ Refresh token thất bại:", err);
+          console.error("❌ Lỗi khi refresh token:", err);
           if (isMounted) {
             setUser(null);
             setAuthTokens(null);
@@ -79,13 +76,13 @@ export const AuthProvider = ({ children }) => {
         }
       }
     };
-  
-    autoRefresh(); // Gọi ngay khi khởi động
-    const interval = setInterval(autoRefresh, refreshInterval); // Gọi định kỳ
-  
+
+    autoRefresh(); // Chạy ngay khi mount
+    const intervalId = setInterval(autoRefresh, refreshInterval);
+
     return () => {
       isMounted = false;
-      clearInterval(interval);
+      clearInterval(intervalId);
     };
   }, [authTokens]);
 
@@ -110,7 +107,10 @@ export const AuthProvider = ({ children }) => {
 
       // Nếu chưa có hoặc parse lỗi, gọi API lấy danh sách bạn bè
       try {
-        const friendsList = await fetchAndStoreFriends(user.idToken, user.localId);
+        const friendsList = await fetchAndStoreFriends(
+          user.idToken,
+          user.localId
+        );
         setFriends(friendsList);
         localStorage.setItem("friendsList", JSON.stringify(friendsList));
       } catch (error) {
@@ -148,11 +148,14 @@ export const AuthProvider = ({ children }) => {
 
         try {
           const results = await Promise.all(
-            batch.map(friend =>
+            batch.map((friend) =>
               fetchUser(friend.uid, user.idToken)
-                .then(res => utils.normalizeFriendData(res.data))
-                .catch(err => {
-                  console.error(`❌ fetchUser(${friend.uid}) failed:`, err?.response?.data || err);
+                .then((res) => utils.normalizeFriendData(res.data))
+                .catch((err) => {
+                  console.error(
+                    `❌ fetchUser(${friend.uid}) failed:`,
+                    err?.response?.data || err
+                  );
                   return null;
                 })
             )
@@ -180,8 +183,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (!user?.localId || !authTokens?.idToken) return;
 
-    setLoading(true);
-    (async () => {
+    let isMounted = true;
+    const fetchPlan = async () => {
+      setLoading(true);
       try {
         let plan = await utils.fetchUserPlan(user.localId, authTokens.idToken);
         if (!plan) {
@@ -191,26 +195,45 @@ export const AuthProvider = ({ children }) => {
             // showInfo("Bạn đã được đăng ký gói Free tự động.");
           }
         }
-        setUserPlan(plan);
+
+        if (isMounted) setUserPlan(plan);
       } catch (err) {
         console.error("Lỗi khi lấy hoặc đăng ký gói user:", err);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
-    })();
-  }, [user, authTokens]);
+    };
+
+    fetchPlan();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.localId, authTokens?.idToken]);
 
   return useMemo(
     () => (
-      <AuthContext.Provider value={{ user, setUser, loading, friends, setFriends, friendDetails, setFriendDetails, userPlan, setUserPlan }}>
+      <AuthContext.Provider
+        value={{
+          user,
+          setUser,
+          loading,
+          friends,
+          setFriends,
+          friendDetails,
+          setFriendDetails,
+          userPlan,
+          setUserPlan,
+          authTokens,
+        }}
+      >
         {children}
       </AuthContext.Provider>
     ),
-    [user, loading, friends, friendDetails, userPlan]
+    [user, loading, friends, friendDetails, userPlan, authTokens]
   );
 };
 
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
-
