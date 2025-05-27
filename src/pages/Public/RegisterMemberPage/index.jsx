@@ -84,18 +84,18 @@ export default function RegisterMemberPage() {
 
   const handleSelectPlan = (planId) => {
     if (planId === "free") {
-        registerFreePlan(user, authTokens.idToken);
-        showInfo("Bạn đã đăng ký gói Free thành công!");
-        fetchUserPlan(user.localId, authTokens.idToken)
-          .then((data) => {
-            if (data) {
-              setUserPlan(data);
-            }
-          })
-          .catch((err) => {
-            console.error("Lỗi khi lấy gói Free:", err);
-          });
-        return;
+      registerFreePlan(user, authTokens.idToken);
+      showInfo("Bạn đã đăng ký gói Free thành công!");
+      fetchUserPlan(user.localId, authTokens.idToken)
+        .then((data) => {
+          if (data) {
+            setUserPlan(data);
+          }
+        })
+        .catch((err) => {
+          console.error("Lỗi khi lấy gói Free:", err);
+        });
+      return;
     }
     showInfo("Chức năng nâng cấp gói sẽ sớm có mặt!");
     // TODO: Gọi API nâng cấp
@@ -111,62 +111,65 @@ export default function RegisterMemberPage() {
       {/* 👉 Hiển thị gói hiện tại nếu có */}
       {userPlan && userPlan.plan_info && (
         <div className="max-w-2xl mx-auto bg-white border border-purple-200 p-6 rounded-3xl shadow-lg mb-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 transition hover:shadow-xl">
-  {/* Ảnh đại diện */}
-  <div className="flex-shrink-0">
-    <img
-      src={userPlan.profile_picture}
-      alt="Avatar"
-      className="w-24 h-24 rounded-full object-cover ring-4 ring-purple-300 shadow-md"
-    />
-  </div>
+          {/* Ảnh đại diện */}
+          <div className="flex-shrink-0">
+            <img
+              src={userPlan.profile_picture}
+              alt="Avatar"
+              className="w-24 h-24 rounded-full object-cover ring-4 ring-purple-300 shadow-md"
+            />
+          </div>
 
-  {/* Thông tin gói */}
-  <div className="flex-1 space-y-4 text-center sm:text-left">
-    {/* Header: Gói + Badge */}
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-      <h2 className="text-2xl font-bold text-purple-700">
-        ✨ Gói hiện tại
-      </h2>
-      <span className="bg-purple-100 text-purple-800 text-sm font-semibold px-3 py-1 rounded-full shadow-sm">
-        {userPlan.plan_info.name}
-      </span>
-    </div>
+          {/* Thông tin gói */}
+          <div className="flex-1 space-y-4 text-center sm:text-left">
+            {/* Header: Gói + Badge */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <h2 className="text-2xl font-bold text-purple-700">
+                ✨ Gói hiện tại
+              </h2>
+              <span className="bg-purple-100 text-purple-800 text-sm font-semibold px-3 py-1 rounded-full shadow-sm">
+                {userPlan.plan_info.name}
+              </span>
+            </div>
 
-    {/* Grid Thông tin */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
-      <div className="flex items-center gap-2">
-        <span className="text-xl">🙍‍♂️</span>
-        <span className="font-medium text-gray-600">Tên:</span>
-        <span className="text-gray-800">{userPlan.display_name}</span>
-      </div>
+            {/* Grid Thông tin */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🙍‍♂️</span>
+                <span className="font-medium text-gray-600">Tên:</span>
+                <span className="text-gray-800">{userPlan.display_name}</span>
+              </div>
 
-      <div className="flex items-center gap-2">
-        <span className="text-xl">💎</span>
-        <span className="font-medium text-gray-600">Gói:</span>
-        <span className="text-gray-800">{userPlan.plan_info.name}</span>
-      </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xl">💎</span>
+                <span className="font-medium text-gray-600">Gói:</span>
+                <span className="text-gray-800">{userPlan.plan_info.name}</span>
+              </div>
 
-      <div className="flex items-center gap-2">
-        <span className="text-xl">🟢</span>
-        <span className="font-medium text-gray-600">Bắt đầu:</span>
-        <span className="text-gray-800">{userPlan.start_date}</span>
-      </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🟢</span>
+                <span className="font-medium text-gray-600">Bắt đầu:</span>
+                <span className="text-gray-800">{userPlan.start_date}</span>
+              </div>
 
-      <div className="flex items-center gap-2">
-        <span className="text-xl">🔚</span>
-        <span className="font-medium text-gray-600">Kết thúc:</span>
-        <span className="text-gray-800">{userPlan.end_date || "∞"}</span>
-      </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🔚</span>
+                <span className="font-medium text-gray-600">Kết thúc:</span>
+                <span className="text-gray-800">
+                  {userPlan.end_date || "∞"}
+                </span>
+              </div>
 
-      <div className="sm:col-span-2 flex items-center gap-2">
-        <span className="text-xl">🗂️</span>
-        <span className="font-medium text-gray-600">Tối đa upload:</span>
-        <span className="text-gray-800">Không giới hạn ảnh/video</span>
-      </div>
-    </div>
-  </div>
-</div>
-
+              <div className="sm:col-span-2 flex items-center gap-2">
+                <span className="text-xl">🗂️</span>
+                <span className="font-medium text-gray-600">
+                  Tối đa upload:
+                </span>
+                <span className="text-gray-800">Không giới hạn ảnh/video</span>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* 👉 Danh sách gói để chọn */}

@@ -26,6 +26,10 @@ const MediaControls = () => {
     setRecentPosts,
     postOverlay,
     setPostOverlay,
+    audience,
+    setAudience,
+    selectedRecipients,
+    setSelectedRecipients,
   } = post;
   const { setCameraActive } = camera;
 
@@ -54,10 +58,12 @@ const MediaControls = () => {
     try {
       const { selectedFile, previewType, postOverlay } = uploadQueue[0];
   
-      const payload = await utils.createRequestPayloadV3(
+      const payload = await utils.createRequestPayloadV4(
         selectedFile,
         previewType,
-        postOverlay
+        postOverlay,
+        audience,
+        selectedRecipients
       );
   
       if (!payload) {

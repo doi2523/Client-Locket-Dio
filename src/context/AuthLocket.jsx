@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(utils.getUser()); //Thong tin User
   const [authTokens, setAuthTokens] = useState(() => utils.getToken()); //Thong tin Token
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [friends, setFriends] = useState(() => {
     const saved = localStorage.getItem("friendsList");
@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }) => {
     const refreshInterval = 50 * 60 * 1000; // 50 phút
 
     const autoRefresh = async () => {
+      setLoading(true);
       const { idToken, refreshToken } = authTokens || {};
 
       if (
@@ -47,7 +48,10 @@ export const AuthProvider = ({ children }) => {
           setAuthTokens(null);
           utils.removeUser();
           utils.removeToken();
+          utils.clearLocalData();
+          resetAuthContext();
         }
+        setLoading(false); // ✅ Tắt loading
         return;
       }
 
@@ -75,6 +79,7 @@ export const AuthProvider = ({ children }) => {
           }
         }
       }
+      setLoading(false); // ✅ Tắt loading
     };
 
     autoRefresh(); // Chạy ngay khi mount
@@ -89,7 +94,10 @@ export const AuthProvider = ({ children }) => {
   // Load friends
   useEffect(() => {
     const fetchFriends = async () => {
-      if (!user?.idToken || !user?.localId) return;
+      if (!user?.idToken || !user?.localId) {
+        setLoading(false); // <--- không có user
+        return;
+      }
 
       // Kiểm tra xem localStorage đã có friendsList chưa
       const savedFriends = localStorage.getItem("friendsList");
@@ -98,6 +106,7 @@ export const AuthProvider = ({ children }) => {
           const parsed = JSON.parse(savedFriends);
           if (Array.isArray(parsed) && parsed.length > 0) {
             setFriends(parsed);
+            setLoading(false);
             return; // Không gọi API vì đã có data
           }
         } catch {
@@ -111,35 +120,75 @@ export const AuthProvider = ({ children }) => {
           user.idToken,
           user.localId
         );
+        fetchPlan(user, user.idToken);
         setFriends(friendsList);
         localStorage.setItem("friendsList", JSON.stringify(friendsList));
       } catch (error) {
         console.error("❌ Lỗi khi fetch friends:", error);
+      } finally {
+        setLoading(false); // ✅ cuối cùng luôn tắt loading
       }
     };
 
     fetchFriends();
   }, [user]);
 
+  const fetchPlan = async (user, idToken) => {
+    try {
+      let plan = await utils.fetchUserPlan(user.localId, idToken);
+      if (!plan) {
+        const res = await utils.registerFreePlan(user, idToken);
+        if (res?.data) {
+          plan = res.data;
+        }
+      }
+      if (plan) {
+        setUserPlan(plan);
+        localStorage.setItem("userPlan", JSON.stringify(plan));
+      }
+    } catch (err) {
+      console.error("Lỗi khi fetch plan:", err);
+    }
+  };
   // Load friendDetails và lưu vào state + localStorage
   useEffect(() => {
     const loadFriendDetails = async () => {
-      if (!user?.idToken || friends.length === 0) return;
+      if (!user?.idToken || friends.length === 0) {
+        setFriendDetails([]); // <- Nếu user không hợp lệ hoặc không có bạn bè, reset lại
+        return;
+      }
 
-      // Kiểm tra localStorage có friendDetails chưa
       const savedDetails = localStorage.getItem("friendDetails");
+      let shouldFetch = true;
+
       if (savedDetails) {
         try {
           const parsedDetails = JSON.parse(savedDetails);
-          if (Array.isArray(parsedDetails) && parsedDetails.length > 0) {
+          const savedUids = parsedDetails.map((f) => f.uid).sort();
+          const currentUids = friends.map((f) => f.uid).sort();
+
+          // So sánh danh sách UID
+          const same =
+            savedUids.length === currentUids.length &&
+            savedUids.every((uid, idx) => uid === currentUids[idx]);
+
+          if (same) {
             setFriendDetails(parsedDetails);
-            return; // có rồi thì thôi, không gọi API
+            shouldFetch = false; // ✅ Khớp rồi, không cần fetch lại
+          } else {
+            // Nếu danh sách không khớp, reset để tránh dùng nhầm data
+            setFriendDetails([]);
           }
         } catch {
-          // lỗi parse thì vẫn gọi API tiếp
+          // Nếu lỗi parse thì vẫn fetch
         }
+      } else {
+        setFriendDetails([]); // 🧼 nếu không có localStorage, reset luôn
       }
 
+      if (!shouldFetch) return;
+
+      // Tiến hành fetch
       const batchSize = 20;
       const allResults = [];
 
@@ -178,38 +227,22 @@ export const AuthProvider = ({ children }) => {
 
     loadFriendDetails();
   }, [friends, user?.idToken]);
-
-  // Load hoặc đăng ký gói Free khi user và token có
   useEffect(() => {
-    if (!user?.localId || !authTokens?.idToken) return;
+    setFriendDetails([]); // 🧼 Xoá dữ liệu cũ khi user thay đổi
+  }, [user]);
 
-    let isMounted = true;
-    const fetchPlan = async () => {
-      setLoading(true);
-      try {
-        let plan = await utils.fetchUserPlan(user.localId, authTokens.idToken);
-        if (!plan) {
-          const res = await utils.registerFreePlan(user, authTokens.idToken);
-          if (res?.data) {
-            plan = res.data;
-            // showInfo("Bạn đã được đăng ký gói Free tự động.");
-          }
-        }
-
-        if (isMounted) setUserPlan(plan);
-      } catch (err) {
-        console.error("Lỗi khi lấy hoặc đăng ký gói user:", err);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    fetchPlan();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [user?.localId, authTokens?.idToken, user]);
+  const resetAuthContext = () => {
+    setUser(null);
+    setAuthTokens(null);
+    setFriends([]);
+    setFriendDetails([]);
+    setUserPlan(null);
+    utils.removeUser();
+    utils.removeToken();
+    localStorage.removeItem("friendsList");
+    localStorage.removeItem("friendDetails");
+    localStorage.removeItem("userPlan");
+  };
 
   return useMemo(
     () => (
@@ -225,6 +258,7 @@ export const AuthProvider = ({ children }) => {
           userPlan,
           setUserPlan,
           authTokens,
+          resetAuthContext,
         }}
       >
         {children}

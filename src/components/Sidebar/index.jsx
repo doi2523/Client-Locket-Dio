@@ -19,7 +19,7 @@ import { useApp } from "../../context/AppContext";
 import { AuthContext } from "../../context/AuthLocket";
 
 const Sidebar = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, resetAuthContext } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const { navigation } = useApp();
@@ -39,13 +39,11 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
-      // await locketService.logout();
-      setUser(null);
-      ultils.clearAuthData();
-      ultils.removeUser();
-      ultils.clearAuthStorage();
-
-      ultils.clearAllLocalData();
+      resetAuthContext(); // Reset context state
+      // ultils.clearAuthData();
+      // ultils.removeUser();
+      // ultils.clearAuthStorage();
+      ultils.clearLocalData();;
       
       showToast("success", "Đăng xuất thành công!");
       navigate("/login");

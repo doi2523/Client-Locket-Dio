@@ -25,11 +25,13 @@ export const usePost = () => {
   const [isTextColor, setTextColor] = useState(null);
   const [isSizeMedia, setSizeMedia] = useState(null);
 
-const [recentPosts, setRecentPosts] = useState(() => {
-  const saved = localStorage.getItem("uploadedMoments");
-  return saved ? JSON.parse(saved) : [];
-});
+  const [recentPosts, setRecentPosts] = useState(() => {
+    const saved = localStorage.getItem("uploadedMoments");
+    return saved ? JSON.parse(saved) : [];
+  });
 
+  const [audience, setAudience] = useState("all"); // "all" | "selected"
+  const [selectedRecipients, setSelectedRecipients] = useState([]); // array userId hoặc object bạn bè
 
   return {
     caption,
@@ -44,7 +46,13 @@ const [recentPosts, setRecentPosts] = useState(() => {
     setTextColor,
     isSizeMedia,
     setSizeMedia,
-    postOverlay, setPostOverlay,
-    recentPosts, setRecentPosts
+    postOverlay,
+    setPostOverlay,
+    recentPosts,
+    setRecentPosts,
+    audience,
+    setAudience,
+    selectedRecipients,
+    setSelectedRecipients,
   };
 };

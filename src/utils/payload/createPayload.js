@@ -108,3 +108,56 @@ export const createRequestPayloadV3 = async (
     throw error;
   }
 };
+
+//tạo payload tải file lên cloudinary xử lý và lấy thông tin media
+// và sắp xếp payload gửi lên Server
+export const createRequestPayloadV4 = async (
+  selectedFile,
+  previewType,
+  postOverlay,
+  audience,
+  selectedRecipients
+) => {
+  try {
+    //Lấy token bằng getToken(
+    const { idToken, localId, refreshToken } = getToken() || {};
+
+    const freshIdToken = await checkAndRefreshToken(idToken, refreshToken);
+
+    if (!idToken || !localId) {
+      showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+      return null;
+    }
+
+    const fileData = await uploadToCloudinary(selectedFile, previewType);
+    const mediaInfo = prepareMediaInfo(fileData);
+
+    const optionsData = {
+      caption: postOverlay.caption,
+      overlay_id: postOverlay.overlay_id,
+      type: postOverlay.type,
+      icon: postOverlay.icon,
+      text_color: postOverlay.text_color,
+      color_top: postOverlay.color_top,
+      color_bottom: postOverlay.color_bottom,
+    };
+
+    const payload = {
+      userData: { idToken, localId },
+      audience,
+      options: optionsData,
+      model: "Version-UploadmediaV3.1",
+      mediaInfo,
+    };
+
+    // Chỉ thêm recipients nếu audience là "selected"
+    if (audience === "selected") {
+      payload.recipients = selectedRecipients;
+    }
+
+    return payload;
+  } catch (error) {
+    console.error("Lỗi khi tạo payload:", error);
+    throw error;
+  }
+};

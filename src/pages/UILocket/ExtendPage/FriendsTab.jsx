@@ -1,12 +1,15 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useApp } from "../../../context/AppContext";
 import { AuthContext } from "../../../context/AuthLocket";
+import { Plus, Trash2, UserPlus, Users, X } from "lucide-react";
 
 const FriendsTab = () => {
   const { user, friendDetails, setFriendDetails } = useContext(AuthContext);
   const popupRef = useRef(null);
   const { navigation } = useApp();
   const { isFriendsTabOpen, setFriendsTabOpen } = navigation;
+  const [open, setOpen] = useState(false);
+  const [selectedTool, setSelectedTool] = useState(null); // tool đã chọn
 
   const [startY, setStartY] = useState(null);
   const [currentY, setCurrentY] = useState(0);
@@ -14,6 +17,12 @@ const FriendsTab = () => {
 
   // State tìm kiếm
   const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSelectTool = (tool) => {
+    setSelectedTool(tool);
+    setOpen(false);
+    console.log("Đã chọn công cụ:", tool); // Tuỳ bạn xử lý
+  };
 
   // Khi mở tab thì reset trạng thái kéo
   useEffect(() => {
@@ -86,6 +95,15 @@ const FriendsTab = () => {
     return fullName.includes(term) || username.includes(term);
   });
 
+  useEffect(() => {
+    if (selectedTool === "create") {
+      // mở modal tạo nhóm
+    } else if (selectedTool === "delete") {
+      // mở modal xác nhận xoá
+    }
+  }, [selectedTool]);
+  
+
   return (
     <div
       className={`fixed inset-0 z-90 flex justify-center items-end transition-all duration-500 ${
@@ -106,12 +124,11 @@ const FriendsTab = () => {
       <div
         ref={popupRef}
         className={`
-          w-full h-[86vh] bg-base-100 rounded-t-4xl shadow-lg flex flex-col justify-center items-center
+          w-full h-[90vh] bg-base-100 rounded-t-4xl shadow-lg flex flex-col justify-center items-center
           will-change-transform border-t
         `}
         style={translateStyle}
       >
-        {/* Drag Handle */}
         {/* Drag Handle */}
         <div
           className="w-full flex justify-between items-center pt-3 pb-2 active:cursor-grabbing touch-none px-4"
@@ -144,6 +161,42 @@ const FriendsTab = () => {
             </svg>
           </button>
         </div>
+
+    <div className="absolute bottom-8 right-8 flex items-end gap-3">
+      {/* Thanh công cụ trượt ra */}
+      <div
+        className={`flex items-center gap-2 bg-base-100 shadow-xl rounded-full px-3 py-2 transition-all duration-300 ${
+          open ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
+        }`}
+      >
+        <button
+          className="btn btn-sm btn-ghost flex items-center gap-1"
+          onClick={() => handleSelectTool("create")}
+        >
+          <UserPlus size={18} /> Tạo nhóm
+        </button>
+        <button
+          className="btn btn-sm btn-ghost flex items-center gap-1 text-error"
+          onClick={() => handleSelectTool("delete")}
+        >
+          <Trash2 size={18} /> Xoá nhóm
+        </button>
+        <button
+          className="btn btn-sm btn-square btn-neutral"
+          onClick={() => setOpen(false)}
+        >
+          <X size={18} />
+        </button>
+      </div>
+
+      {/* Nút Plus */}
+      <button
+        className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg hover:bg-primary/80 transition-colors"
+        onClick={() => setOpen(true)}
+      >
+        <Plus size={32} strokeWidth={3} />
+      </button>
+    </div>
 
         {/* Header */}
         <div className="flex justify-start flex-col items-center px-4 pb-2 text-primary w-full">

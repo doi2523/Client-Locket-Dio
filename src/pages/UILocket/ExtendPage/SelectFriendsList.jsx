@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { FaUserFriends } from "react-icons/fa";
 import { useApp } from "../../../context/AppContext";
 import { AuthContext } from "../../../context/AuthLocket";
@@ -6,47 +6,87 @@ import clsx from "clsx";
 
 const SelectFriendsList = () => {
   const { friendDetails } = useContext(AuthContext);
+  const { post } = useApp();
+  const {
+    audience,
+    setAudience,
+    selectedRecipients,
+    setSelectedRecipients,
+  } = post;
+
   const [selectedFriends, setSelectedFriends] = useState([]);
 
-  // Lưu vào localStorage hoặc context nếu cần
-  // useEffect(() => {
-  //   localStorage.setItem("selectedFriends", JSON.stringify(selectedFriends));
-  // }, [selectedFriends]);
+  // Nếu audience là "all", chọn tất cả bạn bè
+  useEffect(() => {
+    if (audience === "all") {
+      const allIds = friendDetails.map((f) => f.uid);
+      setSelectedFriends(allIds);
+    }
+  }, [audience, friendDetails]);
+
+  // Đồng bộ với context + log
+  useEffect(() => {
+    setSelectedRecipients(selectedFriends);
+    console.log("Selected Friends:", selectedFriends);
+  }, [selectedFriends]);
 
   const handleToggle = (uid) => {
-    // setSelectedFriends((prev) =>
-    //   prev.includes(uid) ? prev.filter((id) => id !== uid) : [...prev, uid]
-    // );
+    setAudience("selected");
+    setSelectedFriends((prev) =>
+      prev.includes(uid) ? prev.filter((id) => id !== uid) : [...prev, uid]
+    );
   };
 
   const handleSelectAll = () => {
-    // if (selectedFriends.length === friendDetails.length) {
-    //   setSelectedFriends([]);
-    // } else {
-    //   const allIds = friendDetails.map((f) => f.uid);
-    //   setSelectedFriends(allIds);
-    // }
+    const allIds = friendDetails.map((f) => f.uid);
+    if (selectedFriends.length === friendDetails.length) {
+      setAudience("selected");
+      setSelectedFriends([]);
+    } else {
+      setAudience("all");
+      setSelectedFriends(allIds);
+    }
   };
-  const handleClick = () => {
-    alert("Sắp ra mắt!\n\nChức năng 'Bạn bè' đang được phát triển.\nHãy ủng hộ để giúp duy trì và phát triển trang web nhé ❤️\n\nDio");
-    // setFirendsTabOpen(true);
-  };
+
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      // Lấy chiều rộng viewport
+      const vw = window.innerWidth;
+      // Lấy phần tử đầu tiên (index 0)
+      const firstChild = scrollRef.current.children[0];
+      if (firstChild) {
+        // Tính vị trí scroll để căn giữa phần tử đầu tiên:
+        // scrollLeft = vị trí phần tử đầu tiên - 1/2 chiều rộng viewport + 1/2 chiều rộng phần tử
+        const firstChildRect = firstChild.getBoundingClientRect();
+        const containerRect = scrollRef.current.getBoundingClientRect();
+        const offsetLeft = firstChild.offsetLeft;
+        const offsetCenter =
+          offsetLeft - vw / 2 + firstChildRect.width / 2;
+        scrollRef.current.scrollLeft = offsetCenter;
+      }
+    }
+  }, [friendDetails]);
   return (
-    <div className="flex flex-col items-start w-full px-4"
-    onClick={handleClick}>
-      <div className="flex gap-3 overflow-x-auto pb-2 w-full no-scrollbar">
+    <div className="relative w-full px-4">
+      <div
+        ref={scrollRef}
+        className="flex gap-3 overflow-x-auto pb-2 no-scrollbar scroll-smooth snap-x snap-mandatory px-[47vw]"
+      >
         {/* Mục "Tất cả" */}
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center snap-center shrink-0">
           <div
             onClick={handleSelectAll}
             className={clsx(
-              "flex flex-col items-center justify-center cursor-pointer transition-transform hover:scale-105 active:scale-95",
-              selectedFriends.length === friendDetails.length &&
-                "border-2 p-[3px] rounded-full"
+              "flex flex-col items-center justify-center cursor-pointer rounded-full border-2 transition-all duration-300 transform",
+              selectedFriends.length === friendDetails.length
+                ? "border-primary scale-100"
+                : "border-transparent scale-95"
             )}
           >
-            <div className="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center text-xl font-bold text-primary">
-            <FaUserFriends className="w-6 h-6 text-base-content"/>
+            <div className="w-11 h-11 rounded-full bg-base-300 flex items-center justify-center text-xl font-bold text-primary">
+              <FaUserFriends className="w-6 h-6 text-base-content" />
             </div>
           </div>
           <span className="text-xs mt-1 text-base-content font-semibold">
@@ -61,16 +101,18 @@ const SelectFriendsList = () => {
             <div
               key={friend.uid}
               onClick={() => handleToggle(friend.uid)}
-              className="flex flex-col items-center cursor-pointer transition-transform hover:scale-105 active:scale-95"
+              className="flex flex-col items-center cursor-pointer transition-opacity hover:opacity-80 active:opacity-60 snap-center shrink-0"
             >
-              <div className="w-10 h-10 aspect-square">
+              <div
+                className={clsx(
+                  "w-11 h-11 border-2 p-[1px] rounded-full transition-all duration-300 transform",
+                  isSelected ? "border-primary scale-100" : "border-transparent scale-95"
+                )}
+              >
                 <img
-                  src={friend.profilePic || "./default-avatar.png"}
+                  src={friend.profilePic || "./prvlocket.png"}
                   alt={friend.firstName}
-                  className={clsx(
-                    "w-full h-full rounded-full object-cover border-2 p-[1px]",
-                    isSelected ? "border-primary" : "border-transparent"
-                  )}
+                  className="w-full h-full rounded-full object-cover"
                 />
               </div>
 
@@ -82,6 +124,8 @@ const SelectFriendsList = () => {
         })}
       </div>
     </div>
+
+
   );
 };
 
