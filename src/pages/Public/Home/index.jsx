@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const words = [
   "Welcome to Locket Dio! 🚀",
-  "Xây dựng theo ý bạn! ✨",
+  "Tuỳ chỉnh theo sở thích! ✨",
   "Tính năng chất chơi! 🔥",
   "Khám phá & trải nghiệm! 🌍",
 ];

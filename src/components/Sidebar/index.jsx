@@ -11,7 +11,12 @@ import {
   Smartphone,
   Briefcase,
   BookMarked,
-  Rocket
+  Rocket,
+  Info,
+  Mail,
+  FileText,
+  ShieldCheck,
+  History,
 } from "lucide-react";
 import { showToast } from "../Toast";
 import * as ultils from "../../utils";
@@ -43,8 +48,8 @@ const Sidebar = () => {
       // ultils.clearAuthData();
       // ultils.removeUser();
       // ultils.clearAuthStorage();
-      ultils.clearLocalData();;
-      
+      ultils.clearLocalData();
+
       showToast("success", "Đăng xuất thành công!");
       navigate("/login");
     } catch (error) {
@@ -212,19 +217,115 @@ const Sidebar = () => {
                 </li>
               </>
             ) : (
-              <li className="mt-5">
-                <Link
-                  to="/login"
-                  className={`flex items-center w-full px-3 py-3 rounded-lg btn transition ${
-                    location.pathname === "/login"
-                      ? "bg-base-300"
-                      : "hover:bg-base-200"
-                  }`}
-                  onClick={() => setIsSidebarOpen(false)}
-                >
-                  <LogIn size={22} /> Đăng nhập
-                </Link>
-              </li>
+<>
+  <li>
+    <Link
+      to="/"
+      className={`flex items-center px-3 py-3 rounded-lg transition ${
+        location.pathname === "/" ? "bg-base-300" : "hover:bg-base-200"
+      }`}
+      onClick={() => setIsSidebarOpen(false)}
+    >
+      <Home size={22} /> Trang chủ
+    </Link>
+  </li>
+
+  <li>
+    <Link
+      to="/about"
+      className={`flex items-center px-3 py-3 rounded-lg transition ${
+        location.pathname === "/about" ? "bg-base-300" : "hover:bg-base-220"
+      }`}
+      onClick={() => setIsSidebarOpen(false)}
+    >
+      <Info size={22} /> Locket Pro
+    </Link>
+  </li>
+
+  <li>
+    <Link
+      to="/about-dio"
+      className={`flex items-center px-3 py-3 rounded-lg transition ${
+        location.pathname === "/about-dio" ? "bg-base-300" : "hover:bg-base-220"
+      }`}
+      onClick={() => setIsSidebarOpen(false)}
+    >
+      <Briefcase size={22} /> Giới thiệu Dio
+    </Link>
+  </li>
+
+  <li>
+    <Link
+      to="/contact"
+      className={`flex items-center px-3 py-3 rounded-lg transition ${
+        location.pathname === "/contact" ? "bg-base-300" : "hover:bg-base-220"
+      }`}
+      onClick={() => setIsSidebarOpen(false)}
+    >
+      <Mail size={22} /> Liên hệ
+    </Link>
+  </li>
+
+  <li>
+    <Link
+      to="/docs"
+      className={`flex items-center px-3 py-3 rounded-lg transition ${
+        location.pathname === "/docs" ? "bg-base-300" : "hover:bg-base-220"
+      }`}
+      onClick={() => setIsSidebarOpen(false)}
+    >
+      <FileText size={22} /> Tài liệu
+    </Link>
+  </li>
+
+  <li>
+    <Link
+      to="/privacy"
+      className={`flex items-center px-3 py-3 rounded-lg transition ${
+        location.pathname === "/privacy" ? "bg-base-300" : "hover:bg-base-220"
+      }`}
+      onClick={() => setIsSidebarOpen(false)}
+    >
+      <ShieldCheck size={22} /> Quyền riêng tư
+    </Link>
+  </li>
+
+  <li>
+    <Link
+      to="/timeline"
+      className={`flex items-center px-3 py-3 rounded-lg transition ${
+        location.pathname === "/timeline" ? "bg-base-300" : "hover:bg-base-220"
+      }`}
+      onClick={() => setIsSidebarOpen(false)}
+    >
+      <History size={22} /> Lịch sử
+    </Link>
+  </li>
+
+  <li>
+    <Link
+      to="/upgrade"
+      className={`flex items-center px-3 py-3 rounded-lg transition ${
+        location.pathname === "/upgrade" ? "bg-base-300" : "hover:bg-base-220"
+      }`}
+      onClick={() => setIsSidebarOpen(false)}
+    >
+      <Rocket size={22} /> Gói thành viên
+    </Link>
+  </li>
+
+  <li className="mt-5">
+    <Link
+      to="/login"
+      className={`flex items-center w-full px-3 py-3 rounded-lg btn transition ${
+        location.pathname === "/login" ? "bg-base-300" : "hover:bg-base-220"
+      }`}
+      onClick={() => setIsSidebarOpen(false)}
+    >
+      <LogIn size={22} /> Đăng nhập
+    </Link>
+  </li>
+</>
             )}
           </ul>
         </div>

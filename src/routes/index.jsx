@@ -2,10 +2,13 @@ import AboutMe from "../pages/Auth/AboutMe";
 import AuthHome from "../pages/Auth/Home";
 import PostMoments from "../pages/Auth/PostMoments";
 import Profile from "../pages/Auth/Profile";
+import AboutLocketDio from "../pages/Public/About";
+import Contact from "../pages/Public/Contact";
 import Docs from "../pages/Public/Docs";
 import DonateHistory from "../pages/Public/HistoryDonate";
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
+import PrivacyPolicy from "../pages/Public/PrivacyPolicy";
 import RegisterMemberPage from "../pages/Public/RegisterMemberPage";
 import Timeline from "../pages/Public/Timeline";
 import CameraCapture from "../pages/UILocket";
@@ -17,6 +20,12 @@ const publicRoutes = [
   { path: "/", component: Home, title: `${APP_NAME} | Trang Chủ` },
   { path: "/test", component: AuthHome, title: `${APP_NAME} | Test` },
   { path: "/login", component: Login, title: `${APP_NAME} | Đăng Nhập` },
+  { path: "/about", component: AboutLocketDio, title: `${APP_NAME} | Về Website Locket Dio` },
+  { path: "/about-dio", component: AboutMe, title: `${APP_NAME} | Về Dio` },
+  { path: "/timeline", component: Timeline, title: `${APP_NAME} | Dòng Thời Gian` },
+  { path: "/docs", component: Docs, title: `${APP_NAME} | Docs` },
+  { path: "/contact", component: Contact, title: `${APP_NAME} | Liên hệ` },
+  { path: "/privacy", component: PrivacyPolicy, title: `${APP_NAME} | Privacy Policy for LocketDio - PrivacyPolicies.com` },
   { path: "/testv1", component: CameraCapture, title: `${APP_NAME} | Test` },
   { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
   // { path: "/testv2", component: Docs, title: `${APP_NAME} | Đăng Moment Mới` },
