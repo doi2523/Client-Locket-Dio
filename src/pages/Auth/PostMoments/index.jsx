@@ -84,14 +84,17 @@ const PostMoments = () => {
         "info",
         `Đang chuẩn bị ${preview.type === "video" ? "video" : "ảnh"} !`
       );
-
-      const fileData = await utils.uploadToCloudinary(
+      const payload = await utils.createRequestPayloadV4(
         selectedFile,
-        preview.type
+        preview.type,
+        postOverlay
+        // audience,
+        // selectedRecipients
       );
 
-      const mediaInfo = utils.prepareMediaInfo(fileData);
-      const payload = utils.createRequestPayloadV2(mediaInfo, postOverlay);
+      if (!payload) {
+        throw new Error("Không tạo được payload. Hủy tiến trình tải lên.");
+      }
       // console.log("Payload:", payload);
 
       showToast("info", `Đang tạo bài viết !`);
@@ -117,7 +120,7 @@ const PostMoments = () => {
 
       showToast(
         "success",
-        `${fileData.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
+        `${preview.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
       );
 
       setPreview(null);
