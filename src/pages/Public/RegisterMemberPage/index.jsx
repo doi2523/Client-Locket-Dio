@@ -151,7 +151,7 @@ export default function RegisterMemberPage() {
             {/* Ảnh đại diện */}
             <div className="flex-shrink-0">
               <img
-                src={userPlan.profile_picture}
+                src={userPlan.profile_picture || "./prvlocket.png"}
                 alt="Avatar"
                 className="w-24 h-24 rounded-full object-cover ring-4 ring-purple-300 shadow-md"
               />

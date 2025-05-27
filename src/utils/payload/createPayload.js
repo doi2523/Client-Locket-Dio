@@ -35,36 +35,49 @@ export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
   };
 };
 
-export const createRequestPayloadV2 = (mediaInfo, postOverlay) => {
-  const { idToken, localId } = getToken() || {};
+//Payload cho phiên bản mới hơn, sử dụng checkAndRefreshIdToken
+//Payload của PostMoments
+export const createRequestPayloadV2 = async (mediaInfo, postOverlay) => {
+  try {
+    // Lấy token
+    const { idToken, localId, refreshToken } = getToken() || {};
 
-  if (!idToken || !localId) {
-    showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+    if (!idToken || !localId) {
+      showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+      return null;
+    }
+
+    // Kiểm tra và làm mới token nếu cần
+    const freshIdToken = await checkAndRefreshIdToken(idToken, refreshToken);
+
+    const tokenData = {
+      idToken: freshIdToken || idToken,
+      localId,
+    };
+
+    const optionsData = {
+      caption: postOverlay.caption,
+      overlay_id: postOverlay.overlay_id,
+      type: postOverlay.type,
+      icon: postOverlay.icon,
+      text_color: postOverlay.text_color,
+      color_top: postOverlay.color_top,
+      color_bottom: postOverlay.color_bottom,
+    };
+
+    return {
+      userData: tokenData,
+      options: optionsData,
+      model: "uploadmediaV2",
+      mediaInfo,
+    };
+  } catch (error) {
+    console.error("Lỗi tạo payload:", error);
+    showError("Đã xảy ra lỗi khi tạo dữ liệu gửi đi.");
     return null;
   }
-
-  const tokenData = {
-    idToken,
-    localId,
-  };
-
-  const optionsData = {
-    caption: postOverlay.caption,
-    overlay_id: postOverlay.overlay_id,
-    type: postOverlay.type,
-    icon: postOverlay.icon,
-    text_color: postOverlay.text_color,
-    color_top: postOverlay.color_top,
-    color_bottom: postOverlay.color_bottom,
-  };
-
-  return {
-    userData: tokenData,
-    options: optionsData,
-    model: "uploadmediaV2",
-    mediaInfo,
-  };
 };
+
 
 // utils.js
 export const createRequestPayloadV3 = async (
@@ -112,6 +125,7 @@ export const createRequestPayloadV3 = async (
 
 //tạo payload tải file lên cloudinary xử lý và lấy thông tin media
 // Sắp xếp payload gửi lên Server
+//Payload của LocketUI
 export const createRequestPayloadV4 = async (
   selectedFile,
   previewType,
