@@ -1,11 +1,12 @@
 import { Palette, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useApp } from "../../../context/AppContext";
-import ThemesCustomes from "../../../components/UI/CaptionCustomes/ThemesCustomes";
-import { AuthContext } from "../../../context/AuthLocket";
-import CaptionIconSelector from "../../../components/UI/CaptionCustomes/CaptionIconSelector";
-import GeneralThemes from "../../../components/UI/CaptionCustomes/GeneralThemes";
+import { AuthContext } from "../../../../context/AuthLocket";
+import { useApp } from "../../../../context/AppContext";
+import CaptionIconSelector from "../CaptionItems/CaptionIconSelector";
+import GeneralThemes from "../CaptionItems/GeneralThemes";
+import ThemesCustomes from "../CaptionItems/ThemesCustomes";
+import DevCustomes from "../CaptionItems/DevCustomes";
 
 const ScreenCustomeStudio = () => {
   const popupRef = useRef(null);
@@ -245,7 +246,6 @@ const ScreenCustomeStudio = () => {
             captionThemes={captionThemes}
             onSelect={handleCustomeSelectTest}
           />
-
           <div className="">
             <h2 className="text-md font-semibold text-primary mb-2">
               🎨 Caption ? - Sắp ra mắt
@@ -253,7 +253,7 @@ const ScreenCustomeStudio = () => {
             <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start text-base-content">
               <p>Tung tung tung tung sahur 🎉</p>
               <p>
-                Phiên bản sắp tới <strong>V3.0.0</strong>
+                Phiên bản sắp tới <strong>V2.0.7</strong>
               </p>
               <p>
                 Theo dõi kênh{" "}
@@ -264,6 +264,17 @@ const ScreenCustomeStudio = () => {
                   rel="noopener noreferrer"
                 >
                   Telegram
+                </a>
+              </p>
+              <p>
+                Tham gia nhóm Discord{" "}
+                <a
+                  className="text-primary font-semibold underline hover:text-primary-focus"
+                  href="https://discord.gg/47buy9nMGc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Discord
                 </a>
               </p>
               <p>

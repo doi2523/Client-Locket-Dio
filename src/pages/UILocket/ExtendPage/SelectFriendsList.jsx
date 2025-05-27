@@ -7,12 +7,8 @@ import clsx from "clsx";
 const SelectFriendsList = () => {
   const { friendDetails } = useContext(AuthContext);
   const { post } = useApp();
-  const {
-    audience,
-    setAudience,
-    selectedRecipients,
-    setSelectedRecipients,
-  } = post;
+  const { audience, setAudience, selectedRecipients, setSelectedRecipients } =
+    post;
 
   const [selectedFriends, setSelectedFriends] = useState([]);
 
@@ -62,8 +58,7 @@ const SelectFriendsList = () => {
         const firstChildRect = firstChild.getBoundingClientRect();
         const containerRect = scrollRef.current.getBoundingClientRect();
         const offsetLeft = firstChild.offsetLeft;
-        const offsetCenter =
-          offsetLeft - vw / 2 + firstChildRect.width / 2;
+        const offsetCenter = offsetLeft - vw / 2 + firstChildRect.width / 2;
         scrollRef.current.scrollLeft = offsetCenter;
       }
     }
@@ -106,7 +101,9 @@ const SelectFriendsList = () => {
               <div
                 className={clsx(
                   "w-11 h-11 border-2 p-[1px] rounded-full transition-all duration-300 transform",
-                  isSelected ? "border-primary scale-100" : "border-transparent scale-95"
+                  isSelected
+                    ? "border-primary scale-100"
+                    : "border-transparent scale-95"
                 )}
               >
                 <img
@@ -124,8 +121,6 @@ const SelectFriendsList = () => {
         })}
       </div>
     </div>
-
-
   );
 };
 

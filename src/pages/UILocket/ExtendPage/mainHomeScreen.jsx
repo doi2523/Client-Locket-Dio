@@ -1,10 +1,11 @@
 import React from "react";
-import Navbar from "./Navbar";
 import MediaPreview from "./MediaDisplay";
 import { useApp } from "../../../context/AppContext";
 import ActionControls from "../ActionControls";
-import HistoryArrow from "./HistoryButton";
+import HistoryArrow from "./Button/HistoryButton";
 import SelectFiendsList from "./SelectFriendsList";
+import HeaderAfterCapture from "./Header/HeaderAfterCapture";
+import HeaderBeforeCapture from "./Header/HeaderBeforeCapture";
 
 const MainHomeScreen = () => {
   const { navigation, camera, useloading, post } = useApp();
@@ -35,14 +36,14 @@ const MainHomeScreen = () => {
             : ""
         }`}
       >
-        <Navbar />
+        {selectedFile ? (
+          <HeaderAfterCapture selectedFile={selectedFile} />
+        ) : (
+          <HeaderBeforeCapture />
+        )}
         <MediaPreview />
         <ActionControls />
-        {selectedFile ? (
-          <SelectFiendsList/>
-        ) : (
-          <HistoryArrow />
-        )}{" "}
+        {selectedFile ? <SelectFiendsList /> : <HistoryArrow />}{" "}
         <canvas ref={canvasRef} className="hidden" />
       </div>
     </div>

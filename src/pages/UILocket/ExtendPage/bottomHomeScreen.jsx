@@ -3,7 +3,7 @@ import { AuthContext } from "../../../context/AuthLocket";
 import { MessageCircle, Trash2, LayoutGrid } from "lucide-react";
 import { useApp } from "../../../context/AppContext";
 import { showSuccess } from "../../../components/Toast";
-import BadgePlan from "./badge/BadgePlan";
+import BadgePlan from "./Badge/BadgePlan";
 
 const BottomHomeScreen = () => {
   const { user } = useContext(AuthContext);
@@ -57,8 +57,8 @@ const BottomHomeScreen = () => {
   //   handleCloseMedia();
   // };
 
-    const handleDeleteImage = (id) => {
-      alert("Đang phát triển..")
+  const handleDeleteImage = (id) => {
+    alert("Đang phát triển..");
   };
 
   return (
@@ -72,7 +72,7 @@ const BottomHomeScreen = () => {
       {/* Header */}
       <div className="flex flex-col shadow-lg px-4 py-2 text-base-content relative overflow-hidden">
         <div className="flex items-center justify-between">
-          <BadgePlan/>
+          <BadgePlan />
           <div className="flex items-center gap-3">
             <button className="rounded-full p-2 bg-base-200 relative">
               <MessageCircle size={30} />

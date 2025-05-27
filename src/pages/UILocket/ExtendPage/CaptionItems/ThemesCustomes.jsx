@@ -1,5 +1,5 @@
 import React from "react";
-import BouncyLoader from "../Loading/Bouncy";
+import BouncyLoader from "../../../../components/UI/Loading/Bouncy";
 
 const ThemesCustomes = ({ title = "Chọn preset", presets = [], onSelect }) => {
   const isLoading = !presets || presets.length === 0;

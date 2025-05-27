@@ -5,7 +5,7 @@ import ThemeSelector from "../../../components/Theme/ThemeSelector";
 import MailForm from "../../../components/UI/SupportForms/MailForm";
 import { useApp } from "../../../context/AppContext";
 import FeatureList from "../../../components/UI/FeatureList";
-import BadgePlan from "./badge/BadgePlan";
+import BadgePlan from "./Badge/BadgePlan";
 
 const RightHomeScreen = () => {
   const { user, setUser } = useContext(AuthContext);
@@ -31,7 +31,7 @@ const RightHomeScreen = () => {
         >
           <ChevronLeft size={30} />
         </button>
-        <BadgePlan/>
+        <BadgePlan />
       </div>
 
       {/* Nội dung */}

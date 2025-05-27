@@ -1,28 +1,43 @@
+import { useContext, useState } from "react";
+import { useApp } from "../../../../context/AppContext";
+import { AuthContext } from "../../../../context/AuthLocket";
 import { ChevronRight, Menu } from "lucide-react";
-import { useApp } from "../../../context/AppContext";
-import Sidebar from "../../../components/Sidebar";
-import { useContext } from "react";
-import { AuthContext } from "../../../context/AuthLocket";
 
-const Navbar = () => {
+const HeaderBeforeCapture = () => {
   const { navigation } = useApp();
   const { user, friendDetails } = useContext(AuthContext);
-  const { setIsProfileOpen, setIsHomeOpen, setIsSidebarOpen, setFriendsTabOpen } = navigation;
+  const {
+    setIsProfileOpen,
+    setIsHomeOpen,
+    setIsSidebarOpen,
+    setFriendsTabOpen,
+  } = navigation;
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   return (
     <div className="navbar top-0 left-0 w-full px-4 py-2 flex items-center justify-between bg-base-100 z-50 relative">
       {/* Avatar bên trái */}
       <button
-        onClick={() => setIsProfileOpen(true)}
-        className="relative flex items-center justify-center w-11 h-11 cursor-pointer"
-      >
-        <div className="bg-primary/50 backdrop-blur-3xl opacity-60 w-11 h-11 rounded-full absolute"></div>
-        <img
-          src={user?.profilePicture || "/prvlocket.png"}
-          alt=""
-          className="rounded-full h-10 w-10 relative backdrop-blur-3xl"
-        />
-      </button>
+      onClick={() => setIsProfileOpen(true)}
+      className="relative flex items-center justify-center w-11 h-11 cursor-pointer"
+    >
+      {/* Nền mờ */}
+      <div className="bg-primary/50 backdrop-blur-3xl opacity-60 w-11 h-11 rounded-full absolute" />
+
+      {/* Hiển thị vòng loading khi ảnh chưa load */}
+      {!isImageLoaded && (
+        <div className="absolute w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin" />
+      )}
+
+      <img
+        src={user?.profilePicture || "/prvlocket.png"}
+        alt="avatar"
+        onLoad={() => setIsImageLoaded(true)}
+        className={`rounded-full h-10 w-10 relative backdrop-blur-3xl transition-opacity duration-300 ${
+          isImageLoaded ? "opacity-100" : "opacity-0"
+        }`}
+      />
+    </button>
 
       <button
         className="absolute flex justify-center items-center flex-row gap-1 left-1/2 transform -translate-x-1/2 text-lg font-semibold text-base-content bg-base-300 hover:bg-base-300 px-3 py-1.5 rounded-3xl"
@@ -61,10 +76,8 @@ const Navbar = () => {
           <Menu size={28} strokeWidth={2} />
         </button>
       </div>
-
-      <Sidebar />
     </div>
   );
 };
 
-export default Navbar;
+export default HeaderBeforeCapture;

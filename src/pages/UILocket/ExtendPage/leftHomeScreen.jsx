@@ -7,7 +7,7 @@ import axios from "axios";
 import LoadingRing from "../../../components/UI/Loading/ring";
 import PostCard from "../../../components/UI/PostCard";
 import { API_URL } from "../../../utils";
-import BadgePlan from "./badge/BadgePlan";
+import BadgePlan from "./Badge/BadgePlan";
 
 const LeftHomeScreen = () => {
   const { user } = useContext(AuthContext);
@@ -59,26 +59,37 @@ const LeftHomeScreen = () => {
           {/* <div className="font-lovehouse text-2xl font-semibold px-3 pt-1 border-base-content border rounded-xl">
             Locket Dio
           </div> */}
-          <BadgePlan/>
+          <BadgePlan />
           <div className="flex items-center gap-3">
-            <button><Settings size={30} /></button>
-            <button onClick={() => setIsProfileOpen(false)} className="rounded-lg hover:bg-base-200 transition cursor-pointer">
+            <button>
+              <Settings size={30} />
+            </button>
+            <button
+              onClick={() => setIsProfileOpen(false)}
+              className="rounded-lg hover:bg-base-200 transition cursor-pointer"
+            >
               <ChevronRight size={40} />
             </button>
           </div>
         </div>
 
-        <div className={`relative transition-all z-30 duration-500 ease-in-out ${isScrolled ? "h-0 opacity-0" : "h-19 mt-2"}`}>
+        <div
+          className={`relative transition-all z-30 duration-500 ease-in-out ${
+            isScrolled ? "h-0 opacity-0" : "h-19 mt-2"
+          }`}
+        >
           <div className="flex flex-row justify-between items-center text-base-content w-full">
             <div className="flex flex-col text-center items-start space-y-1">
-              <p className="text-2xl font-semibold">{user?.displayName || "Name"}</p>
+              <p className="text-2xl font-semibold">
+                {user?.displayName || "Name"}
+              </p>
               <a
                 href={`https://locket.cam/${user?.username}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="link underline font-semibold flex items-center justify-between"
               >
-                @{user?.username} <Link className="ml-2" size={18}/>
+                @{user?.username} <Link className="ml-2" size={18} />
               </a>
             </div>
             <div className="avatar w-18 h-18 disable-select">
@@ -91,7 +102,9 @@ const LeftHomeScreen = () => {
                 <img
                   src={user?.profilePicture || "/prvlocket.png"}
                   alt="Profile"
-                  className={`w-19 h-19 transition-opacity duration-300 rounded-full ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+                  className={`w-19 h-19 transition-opacity duration-300 rounded-full ${
+                    imageLoaded ? "opacity-100" : "opacity-0"
+                  }`}
                   onLoad={() => setImageLoaded(true)}
                 />
               </div>
@@ -101,7 +114,10 @@ const LeftHomeScreen = () => {
       </div>
 
       {/* Posts */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto px-4 py-6 space-y-6"
+      >
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}

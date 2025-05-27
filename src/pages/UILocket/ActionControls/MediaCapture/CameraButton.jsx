@@ -168,7 +168,7 @@ const CameraButton = () => {
 
       canvas.toBlob((blob) => {
         if (blob) {
-          const file = new File([blob], "photo.png", { type: "image/png" });
+          const file = new File([blob], "photo.jpg", { type: "image/jpg" });
           const imgUrl = URL.createObjectURL(file);
           setPreview({ type: "image", data: imgUrl });
 
@@ -179,7 +179,7 @@ const CameraButton = () => {
           setIsCaptionLoading(true);
           setCameraActive(false);
         }
-      }, "image/png");
+      }, "image/jpg");
     } else {
       // Kết thúc quay
       if (mediaRecorderRef.current?.state === "recording") {

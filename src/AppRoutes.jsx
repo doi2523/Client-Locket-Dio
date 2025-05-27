@@ -1,7 +1,6 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { publicRoutes, authRoutes } from "./routes";
-import DefaultLayout from "./layouts/MainLayout";
 import { AuthContext } from "./context/AuthLocket";
 import Loading from "./components/Loading";
 
