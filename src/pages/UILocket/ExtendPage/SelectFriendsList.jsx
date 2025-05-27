@@ -69,7 +69,7 @@ const SelectFriendsList = () => {
     }
   }, [friendDetails]);
   return (
-    <div className="relative w-full px-4">
+    <div className="relative w-full">
       <div
         ref={scrollRef}
         className="flex gap-3 overflow-x-auto pb-2 no-scrollbar scroll-smooth snap-x snap-mandatory px-[47vw]"

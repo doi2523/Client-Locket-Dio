@@ -45,8 +45,9 @@ export const checkAndRefreshIdToken = async (
     });
 
     const updatedTokens = {
-      idToken: res?.data?.id_token,
+      idToken: res?.data?.data?.id_token,
       refreshToken: res?.data?.refresh_token || refreshToken,
+      localId: res?.data?.data?.user_id,
     };
 
     saveToken(updatedTokens);

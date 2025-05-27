@@ -1,4 +1,5 @@
 import { showError } from "../../components/Toast";
+import { checkAndRefreshIdToken } from "../auth";
 import {
   prepareMediaInfo,
   uploadToCloudinary,
@@ -110,7 +111,7 @@ export const createRequestPayloadV3 = async (
 };
 
 //tạo payload tải file lên cloudinary xử lý và lấy thông tin media
-// và sắp xếp payload gửi lên Server
+// Sắp xếp payload gửi lên Server
 export const createRequestPayloadV4 = async (
   selectedFile,
   previewType,
@@ -119,19 +120,21 @@ export const createRequestPayloadV4 = async (
   selectedRecipients
 ) => {
   try {
-    //Lấy token bằng getToken(
+    // Lấy token
     const { idToken, localId, refreshToken } = getToken() || {};
-
-    const freshIdToken = await checkAndRefreshToken(idToken, refreshToken);
 
     if (!idToken || !localId) {
       showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
       return null;
     }
+    // Kiểm tra và làm mới token nếu cần
+    const freshIdToken = await checkAndRefreshIdToken(idToken, refreshToken);
 
+    // Upload file & chuẩn bị thông tin media
     const fileData = await uploadToCloudinary(selectedFile, previewType);
     const mediaInfo = prepareMediaInfo(fileData);
 
+    // Chuẩn bị dữ liệu tùy chọn (caption, overlay, v.v.)
     const optionsData = {
       caption: postOverlay.caption,
       overlay_id: postOverlay.overlay_id,
@@ -140,20 +143,17 @@ export const createRequestPayloadV4 = async (
       text_color: postOverlay.text_color,
       color_top: postOverlay.color_top,
       color_bottom: postOverlay.color_bottom,
+      audience, // Gắn audience vào options luôn
+      recipients: audience === "selected" ? selectedRecipients : [],
     };
 
+    // Tạo payload cuối cùng
     const payload = {
-      userData: { idToken, localId },
-      audience,
+      userData: { idToken: freshIdToken, localId },
       options: optionsData,
       model: "Version-UploadmediaV3.1",
       mediaInfo,
     };
-
-    // Chỉ thêm recipients nếu audience là "selected"
-    if (audience === "selected") {
-      payload.recipients = selectedRecipients;
-    }
 
     return payload;
   } catch (error) {
@@ -161,3 +161,4 @@ export const createRequestPayloadV4 = async (
     throw error;
   }
 };
+
