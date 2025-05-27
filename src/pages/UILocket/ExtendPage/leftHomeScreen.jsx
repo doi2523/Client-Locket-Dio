@@ -7,7 +7,7 @@ import axios from "axios";
 import LoadingRing from "../../../components/UI/Loading/ring";
 import PostCard from "../../../components/UI/PostCard";
 import { API_URL } from "../../../utils";
-import BadgePlan from "./Badge/BadgePlan";
+import BadgePlan from "./Badge";
 
 const LeftHomeScreen = () => {
   const { user } = useContext(AuthContext);

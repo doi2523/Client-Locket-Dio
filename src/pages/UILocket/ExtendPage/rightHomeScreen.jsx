@@ -5,7 +5,7 @@ import ThemeSelector from "../../../components/Theme/ThemeSelector";
 import MailForm from "../../../components/UI/SupportForms/MailForm";
 import { useApp } from "../../../context/AppContext";
 import FeatureList from "../../../components/UI/FeatureList";
-import BadgePlan from "./Badge/BadgePlan";
+import BadgePlan from "./Badge";
 
 const RightHomeScreen = () => {
   const { user, setUser } = useContext(AuthContext);

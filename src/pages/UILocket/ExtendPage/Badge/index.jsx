@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "../../../../context/AuthLocket";
+// import { AuthContext } from "../../../../context/AuthLocket";
 
 const BadgePlan = () => {
   const { userPlan } = useContext(AuthContext);

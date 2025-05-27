@@ -3,7 +3,7 @@ import { AuthContext } from "../../../context/AuthLocket";
 import { MessageCircle, Trash2, LayoutGrid } from "lucide-react";
 import { useApp } from "../../../context/AppContext";
 import { showSuccess } from "../../../components/Toast";
-import BadgePlan from "./Badge/BadgePlan";
+import BadgePlan from "./Badge";
 
 const BottomHomeScreen = () => {
   const { user } = useContext(AuthContext);
