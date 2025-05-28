@@ -1,9 +1,9 @@
 {
-  "name": "mydioweb",
+  "name": "locketdio",
   "private": true,
   "version": "0.0.0",
-  "license": "MIT",
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "start": "npm run dev",
     "dev": "vite",
