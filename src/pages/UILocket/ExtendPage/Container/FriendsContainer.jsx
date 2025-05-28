@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useApp } from "../../../../context/AppContext";
 import { AuthContext } from "../../../../context/AuthLocket";
-import { Plus, Trash2, UserPlus, Users, X } from "lucide-react";
+import { Plus, RefreshCcw, Trash2, UserPlus, Users, X } from "lucide-react";
 
 const FriendsContainer = () => {
   const { user, friendDetails, setFriendDetails } = useContext(AuthContext);
@@ -226,6 +226,14 @@ const FriendsContainer = () => {
               <circle cx="11" cy="11" r="7" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
+          </div>
+          <div
+            className="flex items-center justify-start w-full mt-2 text-sm text-base-content gap-2 cursor-pointer hover:opacity-80"
+            onClick={() => alert("Tính năng đang được phát triển 🚧")}
+          >
+            <RefreshCcw className="w-4 h-4" />
+            <span>Làm mới</span>
+            <span className="text-gray-500 text-xs">(đang phát triển)</span>
           </div>
         </div>
 

@@ -4,6 +4,7 @@ import { fetchUserPlan, registerFreePlan } from "../../../utils";
 import { showInfo } from "../../../components/Toast";
 import { useApp } from "../../../context/AppContext";
 import { ChevronDown, Info } from "lucide-react";
+import LoadingRing from "../../../components/UI/Loading/ring";
 // plans.js
 const plans = [
   {
@@ -164,43 +165,45 @@ export default function RegisterMemberPage() {
         Đăng ký thành viên Locket Dio
       </h1>
       <div className="text-sm max-w-md mx-auto">
-      {/* Nút toggle */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="flex items-center justify-center gap-1 mx-auto text-blue-600 hover:underline select-none"
-      >
-        <span className="font-medium flex items-center flex-row">
-         <Info className="w-4 mr-1"/> {isExpanded ? "Thu gọn" : "Giới thiệu về gói thành viên"}
-        </span>
-        <ChevronDown
-          className={`w-4 h-4 transition-transform duration-500 ${
-            isExpanded ? "rotate-180" : ""
-          }`}
-        />
-      </button>
+        {/* Nút toggle */}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex items-center justify-center gap-1 mx-auto text-blue-600 hover:underline select-none"
+        >
+          <span className="font-medium flex items-center flex-row">
+            <Info className="w-4 mr-1" />{" "}
+            {isExpanded ? "Thu gọn" : "Giới thiệu về gói thành viên"}
+          </span>
+          <ChevronDown
+            className={`w-4 h-4 transition-transform duration-500 ${
+              isExpanded ? "rotate-180" : ""
+            }`}
+          />
+        </button>
 
-      {/* Nội dung trượt */}
-      <div
-        className={`overflow-hidden transition-all duration-500 mb-4 z-10 relative ${
-          isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-        }`}
-      >
-        <div className="bg-base-100 border-2 border-dashed rounded-lg p-4 text-justify shadow mt-3">
-          <p>
-            Gói thành viên <strong>Locket Dio</strong> đem đến trải nghiệm đầy đủ:
-            đăng ảnh, video, tùy chỉnh theme, cùng nhiều tiện ích độc quyền.
-          </p>
-          <p className="mt-2">
-            Giá gói được xây dựng tương xứng với tính năng. 100% doanh thu
-            được tái đầu tư cho hạ tầng máy chủ, bảo trì và phát triển tính
-            năng mới nhằm phục vụ cộng đồng tốt hơn.
-          </p>
-          <p className="mt-2 italic text-gray-500">
-            Cảm ơn bạn đã đồng hành và ủng hộ Locket Dio! 💖
-          </p>
+        {/* Nội dung trượt */}
+        <div
+          className={`overflow-hidden transition-all duration-500 mb-4 z-10 relative ${
+            isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="bg-base-100 border-2 border-dashed rounded-lg p-4 text-justify shadow mt-3">
+            <p>
+              Gói thành viên <strong>Locket Dio</strong> đem đến trải nghiệm đầy
+              đủ: đăng ảnh, video, tùy chỉnh theme, cùng nhiều tiện ích độc
+              quyền.
+            </p>
+            <p className="mt-2">
+              Giá gói được xây dựng tương xứng với tính năng. 100% doanh thu
+              được tái đầu tư cho hạ tầng máy chủ, bảo trì và phát triển tính
+              năng mới nhằm phục vụ cộng đồng tốt hơn.
+            </p>
+            <p className="mt-2 italic text-gray-500">
+              Cảm ơn bạn đã đồng hành và ủng hộ Locket Dio! 💖
+            </p>
+          </div>
         </div>
       </div>
-    </div>
       {/* 👉 Hiển thị gói hiện tại nếu có */}
       {userPlan && userPlan.plan_info ? (
         <>
@@ -268,17 +271,24 @@ export default function RegisterMemberPage() {
               </div>
             </div>
           </div>
-          <div className="text-center">
+          <div className="text-center mt-4">
             <button
               onClick={handleRefreshPlan}
-              className={`px-4 py-2 rounded-full text-white transition ${
+              className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full text-white font-medium transition-all ${
                 loading
                   ? "bg-gray-400 cursor-wait"
                   : "bg-blue-500 hover:bg-blue-600"
               }`}
               disabled={loading}
             >
-              {loading ? "Đang cập nhật..." : "🔄 Cập nhật lại gói"}
+              {loading ? (
+                <>
+                  <LoadingRing size={20} stroke={2} />
+                  <span>Đang cập nhật...</span>
+                </>
+              ) : (
+                "🔄 Cập nhật lại gói"
+              )}
             </button>
           </div>
         </>

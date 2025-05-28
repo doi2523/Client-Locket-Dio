@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../../context/AuthLocket";
 import { ChevronRight, Link, Settings } from "lucide-react";
 import { useApp } from "../../../context/AppContext";
-import AddPostButton from "../../../components/UI/AddPostButton";
+import AddPostButton from "./Button/AddPostButton";
 import axios from "axios";
 import LoadingRing from "../../../components/UI/Loading/ring";
 import PostCard from "../../../components/UI/PostCard";

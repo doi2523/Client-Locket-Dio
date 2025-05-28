@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { FaUserFriends } from "react-icons/fa";
-import { useApp } from "../../../context/AppContext";
-import { AuthContext } from "../../../context/AuthLocket";
+import { useApp } from "../../../../context/AppContext";
+import { AuthContext } from "../../../../context/AuthLocket";
 import clsx from "clsx";
 
 const SelectFriendsList = () => {
-  const { friendDetails } = useContext(AuthContext);
+  const { userPlan, friendDetails } = useContext(AuthContext);
   const { post } = useApp();
   const { audience, setAudience, selectedRecipients, setSelectedRecipients } =
     post;
@@ -27,6 +27,12 @@ const SelectFriendsList = () => {
   }, [selectedFriends]);
 
   const handleToggle = (uid) => {
+    if (!userPlan?.plan_info?.features?.select_friends) {
+      alert(
+        "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói thành viên để mở khóa."
+      );
+      return;
+    }
     setAudience("selected");
     setSelectedFriends((prev) =>
       prev.includes(uid) ? prev.filter((id) => id !== uid) : [...prev, uid]
@@ -34,6 +40,12 @@ const SelectFriendsList = () => {
   };
 
   const handleSelectAll = () => {
+    if (!userPlan?.plan_info?.features?.select_friends) {
+      alert(
+        "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói thành viên để mở khóa."
+      );
+      return;
+    }
     const allIds = friendDetails.map((f) => f.uid);
     if (selectedFriends.length === friendDetails.length) {
       setAudience("selected");
@@ -43,7 +55,6 @@ const SelectFriendsList = () => {
       setSelectedFriends(allIds);
     }
   };
-
   const scrollRef = useRef(null);
 
   useEffect(() => {

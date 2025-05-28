@@ -3,7 +3,7 @@ import MediaPreview from "./MediaDisplay";
 import { useApp } from "../../../context/AppContext";
 import ActionControls from "../ActionControls";
 import HistoryArrow from "./Button/HistoryButton";
-import SelectFiendsList from "./SelectFriendsList";
+import SelectFiendsList from "./Container/SelectFriendsList";
 import HeaderAfterCapture from "./Header/HeaderAfterCapture";
 import HeaderBeforeCapture from "./Header/HeaderBeforeCapture";
 
