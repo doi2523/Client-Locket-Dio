@@ -19,6 +19,6 @@ export const useNavigation = () => {
     isFilterOpen,
     setIsFilterOpen,
     isBottomOpen, setIsBottomOpen,
-    isFriendsTabOpen, setFriendsTabOpen
+    isFriendsTabOpen, setFriendsTabOpen,
   };
 };

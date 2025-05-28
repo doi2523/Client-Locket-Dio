@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../context/AuthLocket";
 import { fetchUserPlan, registerFreePlan } from "../../../utils";
 import { showInfo } from "../../../components/Toast";
+import { useApp } from "../../../context/AppContext";
+import { ChevronDown, Info } from "lucide-react";
 // plans.js
 const plans = [
   {
@@ -74,38 +76,56 @@ const formatPrice = (price) =>
   price === 0 ? "Miễn phí" : `${price.toLocaleString()}đ`;
 
 export default function RegisterMemberPage() {
+  const { modal } = useApp();
+  const {
+    isModalRegMemberOpen,
+    setIsModalRegMemberOpen,
+    modalData,
+    setModalData,
+  } = modal;
+  const [isExpanded, setIsExpanded] = useState(false);
   // Thêm dòng sau trong component
   const [loading, setLoading] = useState(false);
   const { user, userPlan, setUserPlan, authTokens } = useContext(AuthContext);
 
-  useEffect(() => {
-    //   if (authTokens.localId && authTokens.idToken) {
-    //     fetchUserPlan(authTokens.localId, authTokens.idToken).then((data) => {
-    //       if (data) {
-    //         setUserPlan(data);
-    //       }
-    //     });
-    //   }
-  }, []);
+  // useEffect(() => {
+  //   if (authTokens.localId && authTokens.idToken) {
+  //     fetchUserPlan(authTokens.localId, authTokens.idToken).then((data) => {
+  //       if (data) {
+  //         setUserPlan(data);
+  //       }
+  //     });
+  //   }
+  // }, []);
 
-  const handleSelectPlan = (planId) => {
+  const handleSelectPlan = async (planId) => {
     if (planId === "free") {
-      registerFreePlan(user, authTokens.idToken);
-      showInfo("Bạn đã đăng ký gói Free thành công!");
-      fetchUserPlan(user.localId, authTokens.idToken)
-        .then((data) => {
-          if (data) {
-            setUserPlan(data);
-          }
-        })
-        .catch((err) => {
-          console.error("Lỗi khi lấy gói Free:", err);
-        });
+      const confirmed = window.confirm(
+        "Bạn có chắc muốn đăng ký gói Free?\nCác gói đã đăng ký trước đó sẽ bị hủy nếu có."
+      );
+      if (!confirmed) return;
+
+      try {
+        setLoading(true);
+        await registerFreePlan(user, authTokens.idToken);
+        showInfo("Bạn đã đăng ký gói Free thành công!");
+        const data = await fetchUserPlan(user.localId, authTokens.idToken);
+        if (data) setUserPlan(data);
+      } catch (err) {
+        console.error("❌ Lỗi đăng ký gói Free:", err);
+        showInfo("Đăng ký thất bại. Vui lòng thử lại!");
+      } finally {
+        setLoading(false);
+      }
+
       return;
     }
-    showInfo("Chức năng nâng cấp gói sẽ sớm có mặt!");
-    // TODO: Gọi API nâng cấp
+
+    const plan = plans.find((p) => p.id === planId);
+    setModalData(plan);
+    setIsModalRegMemberOpen(true);
   };
+
   const [lastRefreshTime, setLastRefreshTime] = useState(0);
 
   const handleRefreshPlan = async () => {
@@ -140,14 +160,51 @@ export default function RegisterMemberPage() {
   return (
     <div className="min-h-screen bg-pink-50 py-6 px-4">
       <div className="h-16"></div>
-      <h1 className="text-3xl font-bold text-center text-base-content mb-6">
+      <h1 className="text-3xl font-bold text-center text-base-content">
         Đăng ký thành viên Locket Dio
       </h1>
+      <div className="text-sm max-w-md mx-auto">
+      {/* Nút toggle */}
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center justify-center gap-1 mx-auto text-blue-600 hover:underline select-none"
+      >
+        <span className="font-medium flex items-center flex-row">
+         <Info className="w-4 mr-1"/> {isExpanded ? "Thu gọn" : "Giới thiệu về gói thành viên"}
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 transition-transform duration-500 ${
+            isExpanded ? "rotate-180" : ""
+          }`}
+        />
+      </button>
 
+      {/* Nội dung trượt */}
+      <div
+        className={`overflow-hidden transition-all duration-500 mb-4 z-10 relative ${
+          isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="bg-base-100 border-2 border-dashed rounded-lg p-4 text-justify shadow mt-3">
+          <p>
+            Gói thành viên <strong>Locket Dio</strong> đem đến trải nghiệm đầy đủ:
+            đăng ảnh, video, tùy chỉnh theme, cùng nhiều tiện ích độc quyền.
+          </p>
+          <p className="mt-2">
+            Giá gói được xây dựng tương xứng với tính năng. 100% doanh thu
+            được tái đầu tư cho hạ tầng máy chủ, bảo trì và phát triển tính
+            năng mới nhằm phục vụ cộng đồng tốt hơn.
+          </p>
+          <p className="mt-2 italic text-gray-500">
+            Cảm ơn bạn đã đồng hành và ủng hộ Locket Dio! 💖
+          </p>
+        </div>
+      </div>
+    </div>
       {/* 👉 Hiển thị gói hiện tại nếu có */}
-      {userPlan && userPlan.plan_info && (
+      {userPlan && userPlan.plan_info ? (
         <>
-          <div className="max-w-2xl mx-auto bg-white border border-purple-200 p-6 rounded-3xl shadow-lg mb-4 flex flex-col sm:flex-row items-center sm:items-start gap-6 transition hover:shadow-xl">
+          <div className=" max-w-2xl mx-auto bg-white border border-purple-200 p-6 rounded-3xl shadow-lg mb-4 flex flex-col sm:flex-row items-center sm:items-start gap-6 transition hover:shadow-xl">
             {/* Ảnh đại diện */}
             <div className="flex-shrink-0">
               <img
@@ -223,6 +280,16 @@ export default function RegisterMemberPage() {
             >
               {loading ? "Đang cập nhật..." : "🔄 Cập nhật lại gói"}
             </button>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* ❌ Không có gói: Thông báo */}
+          <div className="max-w-2xl mx-auto text-center bg-yellow-50 border border-yellow-300 text-yellow-700 p-6 rounded-xl shadow-sm mb-4">
+            <p className="text-lg font-medium">Bạn chưa đăng ký gói nào.</p>
+            <p className="text-sm text-yellow-600 mt-1">
+              Hãy chọn một gói bên dưới để bắt đầu trải nghiệm!
+            </p>
           </div>
         </>
       )}

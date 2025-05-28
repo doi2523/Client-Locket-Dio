@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
 import Footer from "../components/Footer";
+import PlanDetailModal from "../components/UI/Modal/PlanDetailModal";
 
 const DefaultLayout = ({ children }) => {
   const location = useLocation();
@@ -28,6 +29,7 @@ const DefaultLayout = ({ children }) => {
       <main className="overflow-hidden bg-base-200 text-base-content relative">
         <div className="relative z-10">{children}</div>
       </main>
+      <PlanDetailModal />
       <Footer />
     </div>
   );

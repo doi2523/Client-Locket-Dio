@@ -5,6 +5,7 @@ import { useCamera } from "../storages/useCamera";
 import { useLoading } from "../storages/useLoading";
 import { usePost } from "../storages/usePost";
 import { useThemes } from "../storages/useThemes";
+import { ModalState } from "../storages/ModalState";
 
 const AppContext = createContext();
 
@@ -15,6 +16,7 @@ export const AppProvider = ({ children }) => {
   const useloading = useLoading();
   const post = usePost();
   const captiontheme = useThemes();
+  const modal = ModalState();
 
   return (
     <AppContext.Provider
@@ -23,7 +25,8 @@ export const AppProvider = ({ children }) => {
         camera,
         useloading,
         post,
-        captiontheme
+        captiontheme,
+        modal
       }}
     >
       {children}
