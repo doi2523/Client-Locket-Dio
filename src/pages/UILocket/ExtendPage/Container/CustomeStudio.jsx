@@ -177,6 +177,17 @@ const ScreenCustomeStudio = () => {
       minute: "2-digit",
     }),
   };
+  const normalizedPresets = savedPosts.map((item) => ({
+    id: item.id,
+    caption: item.options.caption || "",
+    color_top: item.options.color_top || "",
+    color_bottom: item.options.color_bottom || "",
+    color_text: item.options.color_text || "",
+    icon: item.options.icon || "",
+    type: item.options.type || "background",
+    // Nếu bạn có thêm type, preset_id có thể thêm tương tự
+  }));
+
   return (
     <div
       className={`fixed inset-0 z-90 flex justify-center items-end transition-transform duration-500 ${
@@ -217,7 +228,7 @@ const ScreenCustomeStudio = () => {
         <div className="flex-1 overflow-y-auto px-4">
           <ThemesCustomes
             title="🎨 Your Saved Theme"
-            presets={savedPosts}
+            presets={normalizedPresets}
             onSelect={handleCustomeSelect}
           />
           <ThemesCustomes

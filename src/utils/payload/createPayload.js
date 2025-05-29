@@ -1,19 +1,18 @@
 import { showError } from "../../components/Toast";
-import { checkAndRefreshIdToken } from "../auth";
+import { getCurrentUserTokenAndUid } from "../auth";
 import {
   prepareMediaInfo,
   uploadToCloudinary,
 } from "../cloudinary/uploadFileAndGetInfo";
-import { checkAndRefreshToken, getToken } from "../storage"; // Import hàm getToken từ utils
 
 export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
   // Lấy token bằng getToken()
-  const { idToken, localId } = getToken() || {};
+  // const { idToken, localId } = getToken() || {};
 
-  if (!idToken || !localId) {
-    showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
-    return null;
-  }
+  // if (!idToken || !localId) {
+  //   showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+  //   return null;
+  // }
 
   const tokenData = {
     idToken,
@@ -39,19 +38,18 @@ export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
 //Payload của PostMoments
 export const createRequestPayloadV2 = async (mediaInfo, postOverlay) => {
   try {
-    // Lấy token
-    const { idToken, localId, refreshToken } = getToken() || {};
+    // Đợi lấy token & uid
+    const auth = await utils.getCurrentUserTokenAndUid();
 
-    if (!idToken || !localId) {
-      showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
-      return null;
+    if (!auth) {
+      console.error("Không lấy được token và uid hiện tại.");
+      return [];
     }
 
-    // Kiểm tra và làm mới token nếu cần
-    const freshIdToken = await checkAndRefreshIdToken(idToken, refreshToken);
+    const { idToken, localId, refreshToken } = auth;
 
     const tokenData = {
-      idToken: freshIdToken || idToken,
+      idToken: idToken,
       localId,
     };
 
@@ -78,7 +76,6 @@ export const createRequestPayloadV2 = async (mediaInfo, postOverlay) => {
   }
 };
 
-
 // utils.js
 export const createRequestPayloadV3 = async (
   selectedFile,
@@ -86,17 +83,15 @@ export const createRequestPayloadV3 = async (
   postOverlay
 ) => {
   try {
-    const { idToken, localId, refreshToken } = getToken() || {};
+    // Đợi lấy token & uid
+    const auth = await getCurrentUserTokenAndUid();
 
-    const freshIdToken = await checkAndRefreshToken(
-      idToken,
-      refreshToken
-    );
-
-    if (!idToken || !localId) {
-      showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
-      return null;
+    if (!auth) {
+      console.error("Không lấy được token và uid hiện tại.");
+      return [];
     }
+
+    const { idToken, localId, refreshToken } = auth;
 
     const fileData = await uploadToCloudinary(selectedFile, previewType);
     const mediaInfo = prepareMediaInfo(fileData);
@@ -134,15 +129,15 @@ export const createRequestPayloadV4 = async (
   selectedRecipients
 ) => {
   try {
-    // Lấy token
-    const { idToken, localId, refreshToken } = getToken() || {};
+    // Đợi lấy token & uid
+    const auth = await getCurrentUserTokenAndUid();
 
-    if (!idToken || !localId) {
-      showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
-      return null;
+    if (!auth) {
+      console.error("Không lấy được token và uid hiện tại.");
+      return [];
     }
-    // Kiểm tra và làm mới token nếu cần
-    const freshIdToken = await checkAndRefreshIdToken(idToken, refreshToken);
+
+    const { idToken, localId, refreshToken } = auth;
 
     // Upload file & chuẩn bị thông tin media
     const fileData = await uploadToCloudinary(selectedFile, previewType);
@@ -163,7 +158,7 @@ export const createRequestPayloadV4 = async (
 
     // Tạo payload cuối cùng
     const payload = {
-      userData: { idToken: freshIdToken, localId },
+      userData: { idToken: idToken, localId },
       options: optionsData,
       model: "Version-UploadmediaV3.1",
       mediaInfo,
@@ -175,4 +170,3 @@ export const createRequestPayloadV4 = async (
     throw error;
   }
 };
-

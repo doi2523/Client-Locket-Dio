@@ -4,6 +4,7 @@ import { AuthContext } from "../../../../context/AuthLocket";
 import axios from "axios";
 import { showError, showSuccess } from "../../../../components/Toast";
 import { API_URL } from "../../../../utils";
+import LoadingRing from "../../../../components/UI/Loading/ring";
 
 const AddPostButton = () => {
   const { user, userPlan } = useContext(AuthContext);
@@ -14,25 +15,35 @@ const AddPostButton = () => {
   const [colorText, setColorText] = useState("#FFFFFF");
   const [content, setContent] = useState("");
   const [type, setType] = useState("background");
+  const [isLoading, setIsLoading] = useState(false); // thêm state loading
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (isLoading) return; // tránh gửi nhiều lần
+
+    setIsLoading(true); // bật loading khi bắt đầu gửi
+
     const postData = {
       uid: user.uid,
-      caption,
-      color_top: colorTop,
-      color_bot: colorBot,
-      color_text: colorText,
       content,
-      type,
-      profile_picture: user.profilePicture,
-      display_name: user.displayName,
-      username: user.username,
+      options: {
+        caption,
+        color_top: colorTop,
+        color_bottom: colorBot,
+        color_text: colorText,
+        type: type,
+      },
+      user_info: {
+        username: user.username,
+        displayName: user.displayName,
+        profilePicture: user.profilePicture,
+        plan: userPlan?.plan_info?.name || "Free",
+      },
     };
 
     axios
-      .post(API_URL.POST_USER_THEMES_POSTS_URL, postData)
+      .post(API_URL.CAPTION_POSTS_URL, postData)
       .then((response) => {
         showSuccess("Bài viết đã được thêm thành công! 🎉");
 
@@ -48,6 +59,9 @@ const AddPostButton = () => {
       .catch((error) => {
         console.error("Error sending data:", error);
         showError("Có lỗi xảy ra khi gửi bài viết. Vui lòng thử lại!");
+      })
+      .finally(() => {
+        setIsLoading(false); // tắt loading khi xong
       });
   };
 
@@ -89,6 +103,7 @@ const AddPostButton = () => {
               className="flex items-center justify-center rounded-md w-11 h-11 bg-base-300"
               type="button"
               onClick={() => setShowForm(false)}
+              disabled={isLoading} // disable khi loading
             >
               <X size={30} />
             </button>
@@ -108,6 +123,7 @@ const AddPostButton = () => {
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md"
                   value={caption}
                   onChange={(e) => setCaption(e.target.value)}
+                  disabled={isLoading} // disable khi loading
                 />
               </div>
 
@@ -121,11 +137,9 @@ const AddPostButton = () => {
                   className="mt-1 p-2 w-full border border-gray-300 rounded-md"
                   value={type}
                   onChange={(e) => setType(e.target.value)}
+                  disabled={isLoading} // disable khi loading
                 >
                   <option value="background">Mặc định</option>
-                  {/* <option value="theme">Chủ đề</option>
-                    <option value="special">Đặc biệt</option>
-                    <option value="event">Sự kiện</option> */}
                 </select>
               </div>
 
@@ -137,6 +151,7 @@ const AddPostButton = () => {
                     className="mt-1 w-10 h-10 border rounded-sm"
                     value={colorTop}
                     onChange={(e) => setColorTop(e.target.value)}
+                    disabled={isLoading} // disable khi loading
                   />
                 </div>
                 <div className="flex flex-col items-center">
@@ -146,6 +161,7 @@ const AddPostButton = () => {
                     className="mt-1 w-10 h-10 border rounded-sm"
                     value={colorBot}
                     onChange={(e) => setColorBot(e.target.value)}
+                    disabled={isLoading} // disable khi loading
                   />
                 </div>
                 <div className="flex flex-col items-center">
@@ -155,6 +171,7 @@ const AddPostButton = () => {
                     className="mt-1 w-10 h-10 border rounded-sm"
                     value={colorText}
                     onChange={(e) => setColorText(e.target.value)}
+                    disabled={isLoading} // disable khi loading
                   />
                 </div>
               </div>
@@ -173,7 +190,7 @@ const AddPostButton = () => {
               </div>
             </div>
 
-            <div className="mb-4">
+            <div className="mb-4 relative">
               <label htmlFor="content" className="block text-sm font-medium">
                 Nội dung
               </label>
@@ -185,6 +202,7 @@ const AddPostButton = () => {
                 className="mt-1 p-2 w-full border border-gray-300 rounded-md"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
+                disabled={isLoading} // disable khi loading
               />
               <p className="absolute">Chỉ bấm gửi một lần tránh spam</p>
             </div>
@@ -192,9 +210,19 @@ const AddPostButton = () => {
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="bg-blue-500 text-white p-2 rounded-md"
+                className={`p-2 rounded-md text-white ${
+                  isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500"
+                }`}
+                disabled={isLoading}
               >
-                Thêm Caption
+                {isLoading ? (
+                  <>
+                    <LoadingRing size={18} stroke={2} color="white" /> Đang tải
+                    lên
+                  </>
+                ) : (
+                  "Thêm Caption"
+                )}
               </button>
             </div>
           </form>

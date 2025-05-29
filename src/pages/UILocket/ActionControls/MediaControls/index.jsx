@@ -1,15 +1,15 @@
 import { X, Send, Sparkles } from "lucide-react";
 import * as utils from "../../../../utils/index.js";
-import * as lockerService from "../../../../services/locketService.js";
 import LoadingRing from "../../../../components/UI/Loading/ring.jsx";
 import { useApp } from "../../../../context/AppContext.jsx";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import {
   showError,
   showInfo,
   showSuccess,
 } from "../../../../components/Toast/index.jsx";
 import { defaultPostOverlay } from "../../../../storages/usePost.js";
+import { PostMoments } from "../../../../services/index.js";
 
 const MediaControls = () => {
   const { navigation, post, useloading, camera } = useApp();
@@ -74,7 +74,7 @@ const MediaControls = () => {
       savedPayloads.push(payload);
       // localStorage.setItem("uploadPayloads", JSON.stringify(savedPayloads));
   
-      const response = await lockerService.uploadMediaV2(payload);
+      const response = await PostMoments(payload);
   
       const savedResponses = JSON.parse(localStorage.getItem("uploadedMoments") || "[]");
       const normalizedNewData = utils.normalizeMoments([response?.data]);

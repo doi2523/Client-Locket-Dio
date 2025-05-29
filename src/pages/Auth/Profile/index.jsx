@@ -18,7 +18,7 @@ export default function Profile() {
   //     do {
   //       // console.log("🔁 Gọi API với pageToken:", nextPageToken);
   
-  //       const res = await axios.post(`http://localhost:5004/locket/get-friends`, {
+  //       const res = await axios.post(`http://localhost:5004/locket/get-incoming_friends`, {
   //         idToken,
   //         localId,
   //         pageToken: nextPageToken, // Gửi pageToken nếu có
@@ -44,24 +44,24 @@ export default function Profile() {
   //   }
   // };
   
-  // useEffect(() => {
-  //   const fetchFriends = async () => {
-  //     try {
-  //       const data = await getListIdFriend(user.idToken, user.localId);
-  //       console.log("✅ Danh sách bạn bè:", data);
-  //       setUserinfo(prev => ({ ...prev, friends: data }));
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const data = await getListIdFriend(user.idToken, user.localId);
+        console.log("✅ Danh sách bạn bè:", data);
+        setUserinfo(prev => ({ ...prev, friends: data }));
   
-  //       // Lưu vào sessionStorage
-  //       sessionStorage.setItem('friendsList', JSON.stringify(data));
-  //     } catch (err) {
-  //       console.error("❌ Lỗi lấy danh sách bạn bè:", err);
-  //     }
-  //   };
+        // Lưu vào sessionStorage
+        sessionStorage.setItem('friendsList', JSON.stringify(data));
+      } catch (err) {
+        console.error("❌ Lỗi lấy danh sách bạn bè:", err);
+      }
+    };
   
-  //   if (user?.idToken && user?.localId) {
-  //     fetchFriends();
-  //   }
-  // }, [user]);
+    if (user?.idToken && user?.localId) {
+      fetchFriends();
+    }
+  }, [user]);
   
   // Convert timestamp thành ngày giờ đọc được
   const formatDate = (timestamp) => {

@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../context/AuthLocket";
-import { fetchUserPlan, registerFreePlan } from "../../../utils";
 import { showInfo } from "../../../components/Toast";
 import { useApp } from "../../../context/AppContext";
 import { ChevronDown, Info } from "lucide-react";
 import LoadingRing from "../../../components/UI/Loading/ring";
+import { fetchUserPlan } from "../../../services";
 // plans.js
 const plans = [
   {
@@ -110,7 +110,7 @@ export default function RegisterMemberPage() {
         setLoading(true);
         await registerFreePlan(user, authTokens.idToken);
         showInfo("Bạn đã đăng ký gói Free thành công!");
-        const data = await fetchUserPlan(user.localId, authTokens.idToken);
+        const data = await fetchUserPlan();
         if (data) setUserPlan(data);
       } catch (err) {
         console.error("❌ Lỗi đăng ký gói Free:", err);
@@ -145,7 +145,7 @@ export default function RegisterMemberPage() {
     setLastRefreshTime(now); // Cập nhật thời điểm bấm nút
 
     try {
-      const data = await fetchUserPlan(user.localId, authTokens.idToken);
+      const data = await fetchUserPlan();
       if (data) {
         setUserPlan(data);
         showInfo("Đã cập nhật gói thành công!");

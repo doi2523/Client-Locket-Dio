@@ -17,6 +17,7 @@ import {
   FileText,
   ShieldCheck,
   History,
+  Wrench,
 } from "lucide-react";
 import { showToast } from "../Toast";
 import * as ultils from "../../utils";
@@ -162,7 +163,7 @@ const Sidebar = () => {
                     }`}
                     onClick={() => setIsSidebarOpen(false)}
                   >
-                    <Smartphone size={22} /> Locket UI
+                    <Smartphone size={22} /> Locket UI <div className="badge badge-sm badge-secondary">Hot</div>
                   </Link>
                 </li>
                 <li>
@@ -189,6 +190,19 @@ const Sidebar = () => {
                     onClick={() => setIsSidebarOpen(false)}
                   >
                     <Rocket size={22} /> Gói thành viên
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/locketdio-tools"
+                    className={`flex items-center px-3 py-3 rounded-lg transition ${
+                      location.pathname === "/locketdio-tools"
+                        ? "bg-base-300"
+                        : "hover:bg-base-200"
+                    }`}
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    <Wrench size={22} /> Công cụ Locket <div className="badge badge-sm badge-secondary">Hot</div>
                   </Link>
                 </li>
                 <li>

@@ -5,9 +5,11 @@ import { useApp } from "../../../context/AppContext";
 import AddPostButton from "./Button/AddPostButton";
 import axios from "axios";
 import LoadingRing from "../../../components/UI/Loading/ring";
-import PostCard from "../../../components/UI/PostCard";
+import PostCard from "./Container/PostCaptionItems";
 import { API_URL } from "../../../utils";
 import BadgePlan from "./Badge";
+
+const POSTS_PER_PAGE = 10;
 
 const LeftHomeScreen = () => {
   const { user } = useContext(AuthContext);
@@ -18,6 +20,9 @@ const LeftHomeScreen = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const scrollRef = useRef(null);
   const [posts, setPosts] = useState([]);
+
+  // Thêm state cho phân trang
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const div = scrollRef.current;
@@ -31,7 +36,7 @@ const LeftHomeScreen = () => {
   useEffect(() => {
     const getPosts = async () => {
       try {
-        const response = await axios.get(API_URL.USER_THEMES_POSTS_URL);
+        const response = await axios.get(API_URL.CAPTION_POSTS_URL);
         setPosts(response.data);
       } catch (error) {
         console.error("Error fetching posts:", error);
@@ -45,6 +50,22 @@ const LeftHomeScreen = () => {
     return () => document.body.classList.remove("overflow-hidden");
   }, [isProfileOpen]);
 
+  // Tính toán posts hiển thị theo trang
+  const indexOfLastPost = currentPage * POSTS_PER_PAGE;
+  const indexOfFirstPost = indexOfLastPost - POSTS_PER_PAGE;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+
+  // Tổng số trang
+  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+
+  // Hàm chuyển trang
+  const goToPage = (pageNumber) => {
+    if (pageNumber < 1 || pageNumber > totalPages) return;
+    setCurrentPage(pageNumber);
+    // Scroll lên đầu danh sách khi đổi trang (tuỳ chọn)
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  };
+
   return (
     <div
       className={`fixed inset-0 flex flex-col transition-transform duration-500 z-50 bg-base-100 ${
@@ -56,9 +77,6 @@ const LeftHomeScreen = () => {
       {/* Header */}
       <div className="flex flex-col shadow-lg px-4 py-2 text-base-content relative overflow-hidden">
         <div className="flex items-center justify-between">
-          {/* <div className="font-lovehouse text-2xl font-semibold px-3 pt-1 border-base-content border rounded-xl">
-            Locket Dio
-          </div> */}
           <BadgePlan />
           <div className="flex items-center gap-3">
             <button>
@@ -118,9 +136,45 @@ const LeftHomeScreen = () => {
         ref={scrollRef}
         className="flex-1 overflow-y-auto px-4 py-6 space-y-6"
       >
-        {posts.map((post) => (
+        {currentPosts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
+
+        {/* Phân trang đơn giản */}
+        <div className="flex justify-center items-center space-x-3 mt-4">
+          <button
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded border bg-gray-200 disabled:opacity-50"
+          >
+            Prev
+          </button>
+
+          {[...Array(totalPages)].map((_, i) => {
+            const page = i + 1;
+            return (
+              <button
+                key={page}
+                onClick={() => goToPage(page)}
+                className={`px-3 py-1 rounded border ${
+                  currentPage === page
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
+              >
+                {page}
+              </button>
+            );
+          })}
+
+          <button
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded border bg-gray-200 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

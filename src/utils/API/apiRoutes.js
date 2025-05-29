@@ -6,6 +6,7 @@
 
 const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
 const BASE_DB_API_URL = import.meta.env.VITE_BASE_API_URL_DB;
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 // const BASE_API_URL = "https://apilocket-diov2-production.up.railway.app";
 
 const LOCKET_URL = "/locket";
@@ -23,6 +24,8 @@ export const API_URL = {
   GET_LIST_FRIENDS_URL: `${BASE_API_URL}${LOCKET_URL}/get-allfriends`,
   UPLOAD_MEDIA_URL: `${BASE_API_URL}${LOCKET_URL}/post`,
   GET_USER: `https://api.locketcamera.com/fetchUserV2`,
+  GET_INCOMING_URL: `${BASE_API_URL}${LOCKET_URL}/get-incoming_friends`,
+  DELETE_FRIEND_REQUEST_URL: `${BASE_API_URL}${LOCKET_URL}/delete-incoming_friends`,
 
   //API lấy dữ liệu từ máy chủ
   GET_LASTEST_URL: `${BASE_API_URL}${LOCKET_PRO}/getmoment`,
@@ -32,12 +35,13 @@ export const API_URL = {
   NOTIFI_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/notification`,
   USER_THEMES_POSTS_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/user-themes/posts`,
   POST_USER_THEMES_POSTS_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/user-themes/posts`,
+  CAPTION_POSTS_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/user-themes/caption-posts`,
   SUBCRIBE: `${BASE_DB_API_URL}${LOCKET_PRO}/subscribe`,
   REGISTER_USER_PLANS: `${BASE_DB_API_URL}${LOCKET_PRO}/user-plans/register-free`,
   //Get plan user
   GET_USER_PLANS: `${BASE_DB_API_URL}${LOCKET_PRO}/user-plans`,
 
   //API dữ liệu Cloudinary
-  UPLOAD_IMAGE_TO_CLOUD: `https://api.cloudinary.com/v1_1/dintnwvzl/image/upload`,
-  UPLOAD_VIDEO_TO_CLOUD: `https://api.cloudinary.com/v1_1/dintnwvzl/video/upload`,
+  UPLOAD_IMAGE_TO_CLOUD: `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+  UPLOAD_VIDEO_TO_CLOUD: `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,
 };

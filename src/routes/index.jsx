@@ -1,5 +1,6 @@
 import AboutMe from "../pages/Auth/AboutMe";
 import AuthHome from "../pages/Auth/Home";
+import ToolsLocket from "../pages/Auth/LocketDioTools";
 import PostMoments from "../pages/Auth/PostMoments";
 import Profile from "../pages/Auth/Profile";
 import AboutLocketDio from "../pages/Public/About";
@@ -28,6 +29,7 @@ const publicRoutes = [
   { path: "/privacy", component: PrivacyPolicy, title: `${APP_NAME} | Privacy Policy for LocketDio - PrivacyPolicies.com` },
   { path: "/testv1", component: CameraCapture, title: `${APP_NAME} | Test` },
   { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
+  { path: "/locketdio-tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },
   // { path: "/testv2", component: Docs, title: `${APP_NAME} | Đăng Moment Mới` },
 ];
 
@@ -43,7 +45,8 @@ const authRoutes = [
   { path: "/donatehistory", component: DonateHistory, title: `${APP_NAME} | DonateHistory` },
   { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
 
-  { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Trang Chủ` },
+  { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Locket` },
+  { path: "/locketdio-tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },
 ];
 
 // 📌 Các route dành cho locket

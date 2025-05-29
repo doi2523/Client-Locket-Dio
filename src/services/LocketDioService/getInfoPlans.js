@@ -1,10 +1,18 @@
-// utils.js
+import * as utils from "../../utils";
 
-import { API_URL } from "../API/apiRoutes";
+export const fetchUserPlan = async () => {
+  // Đợi lấy token & uid
+  const auth = await utils.getCurrentUserTokenAndUid();
 
-export const fetchUserPlan = async (uid, idToken) => {
+  if (!auth) {
+    console.error("Không lấy được token và uid hiện tại.");
+    return [];
+  }
+
+  const { idToken, localId, refreshToken } = auth;
+
   try {
-    const res = await fetch(`${API_URL.GET_USER_PLANS}/${uid}`, {
+    const res = await fetch(`${utils.API_URL.GET_USER_PLANS}/${localId}`, {
       headers: { Authorization: `Bearer ${idToken}` },
     });
     if (!res.ok) throw new Error("Không lấy được user plan");
@@ -28,7 +36,7 @@ export const fetchUserPlan = async (uid, idToken) => {
 
 export const registerFreePlan = async (user, idToken) => {
   try {
-    const res = await fetch(API_URL.REGISTER_USER_PLANS, {
+    const res = await fetch(utils.API_URL.REGISTER_USER_PLANS, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

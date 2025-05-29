@@ -1,8 +1,13 @@
 import React, { createContext, useEffect, useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import * as utils from "../utils";
-import { showInfo, showToast } from "../components/Toast";
-import { fetchAndStoreFriends, fetchUser } from "../services";
+import { showInfo } from "../components/Toast";
+import {
+  getListIdFriends,
+  fetchUser,
+  fetchUserPlan,
+  registerFreePlan,
+} from "../services";
 
 export const AuthContext = createContext();
 
@@ -116,10 +121,7 @@ export const AuthProvider = ({ children }) => {
 
       // Nếu chưa có hoặc parse lỗi, gọi API lấy danh sách bạn bè
       try {
-        const friendsList = await fetchAndStoreFriends(
-          user.idToken,
-          user.localId
-        );
+        const friendsList = await getListIdFriends();
         fetchPlan(user, user.idToken);
         setFriends(friendsList);
         localStorage.setItem("friendsList", JSON.stringify(friendsList));
@@ -135,9 +137,9 @@ export const AuthProvider = ({ children }) => {
 
   const fetchPlan = async (user, idToken) => {
     try {
-      let plan = await utils.fetchUserPlan(user.localId, idToken);
+      const plan = await fetchUserPlan();
       if (!plan) {
-        const res = await utils.registerFreePlan(user, idToken);
+        const res = await registerFreePlan(user, idToken);
         if (res?.data) {
           plan = res.data;
         }
