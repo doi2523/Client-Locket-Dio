@@ -4,7 +4,7 @@ import ThemeSelector from "../../../components/Theme/ThemeSelector";
 import MockupiPhone from "../../../components/UI/MockupiPhone";
 
 const AuthHome = () => {
-  const [iframeUrl] = useState("https://locket-dio.web.app");
+  const [iframeUrl] = useState("https://locket-dio.space");
 
   return (
     <div className="flex flex-col items-center justify-center py-6 bg-base-200 px-6">

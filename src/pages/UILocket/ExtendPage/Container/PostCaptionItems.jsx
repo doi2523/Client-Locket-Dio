@@ -104,7 +104,8 @@ const PostCard = ({ post }) => {
         >
           <span className="text-base">
             {(post?.options?.icon || "") + " "}
-            {post?.options?.caption || post?.options?.caption || "Caption"}
+            {/* {post?.options?.caption || post?.options?.caption || "Caption"} */}
+            {"Caption"}
           </span>
         </button>
       </div>

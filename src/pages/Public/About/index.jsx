@@ -29,7 +29,7 @@ export default function AboutLocketDio() {
             Khám phá và bắt đầu chia sẻ những khoảnh khắc đáng nhớ của bạn.
           </p>
           <a
-            href="https://locket-dio.web.app"
+            href="https://locket-dio.space/login"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded-full shadow-md transition duration-300"

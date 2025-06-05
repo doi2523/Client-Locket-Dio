@@ -2,11 +2,11 @@ import axios from "axios";
 import * as utils from "../utils";
 
 //Login
-export const login = async (email, password) => {
+export const login = async (email, password, captchaToken) => {
   try {
     const res = await axios.post(
-      utils.API_URL.LOGIN_URL_V2,
-      { email, password },
+      utils.API_URL.LOGIN_URL_V3,
+      { email, password, captchaToken },
       { withCredentials: true } // Nhận cookie từ server
     );
 

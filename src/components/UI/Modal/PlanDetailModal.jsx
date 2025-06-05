@@ -1,7 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useApp } from "../../../context/AppContext";
+import { Copy } from "lucide-react";
+import { AuthContext } from "../../../context/AuthLocket";
 
 export default function ModalRegisterMember() {
+  const { user, userPlan } = useContext(AuthContext);
   const {
     modal: {
       isModalRegMemberOpen,
@@ -34,6 +37,12 @@ export default function ModalRegisterMember() {
     ? "scale-100 opacity-100"
     : "scale-0 opacity-0 pointer-events-none";
 
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Đã sao chép: " + text);
+    });
+  };
+
   return (
     // Overlay: sử dụng daisyUI modal-wrapper
     <div
@@ -43,7 +52,7 @@ export default function ModalRegisterMember() {
       onClick={closeModal}
     >
       <div
-        className={`modal-box outline-2 outline-dashed outline-base-content bg-base-200 text-base-content px-5 py-4 rounded-xl shadow-lg transform transition-transform duration-300 ${modalScaleClass}`}
+        className={`modal-box h-[70vh] outline-2 outline-dashed outline-base-content bg-base-200 text-base-content px-5 py-4 rounded-xl shadow-lg transform transition-transform duration-300 ${modalScaleClass}`}
         onClick={(e) => e.stopPropagation()}
         style={{ maxWidth: "420px", width: "90%" }}
       >
@@ -73,7 +82,6 @@ export default function ModalRegisterMember() {
                 </div>
               </div>
             </div>
-
             {/* Thông tin chi tiết */}
             <div className="gap-x-4 gap-y-2">
               <div className="flex flex-row gap-2">
@@ -93,7 +101,6 @@ export default function ModalRegisterMember() {
                 </p>
               </div>
             </div>
-
             {/* Tính năng */}
             <div>
               <p className="font-semibold mb-1">Các tính năng:</p>
@@ -114,6 +121,91 @@ export default function ModalRegisterMember() {
                   : "Không có thông tin"}
               </ul>
             </div>
+            {/* Thông tin chuyển khoản */}
+            <div className="space-y-4">
+  {/* QR + Thông tin */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start p-4 border rounded-xl shadow-sm bg-base-300">
+    {/* Ảnh QR nhỏ hơn */}
+    <div className="flex justify-center">
+      <img
+        src="https://firebasestorage.googleapis.com/v0/b/locket-dio.firebasestorage.app/o/QR%2FIMG_7683.jpeg?alt=media&token=85692e42-035c-4b09-85af-bf4ad75b09c4"
+        alt="QR chuyển khoản"
+        className="rounded-xl shadow-md w-40 h-auto"
+        onLoad={() => console.log("Ảnh QR đã tải xong")}
+      />
+    </div>
+
+    {/* Thông tin */}
+    <div className="space-y-3 text-sm md:text-base">
+      <div className="flex items-center justify-between">
+        <p>
+          <strong>CTK:</strong>{" "}
+          <span className="font-semibold text-base-content">DAO VAN DOI</span>
+        </p>
+      </div>
+      <div className="flex items-center justify-between">
+        <p>
+          <strong>Ngân hàng:</strong>{" "}
+          <span className="font-semibold text-base-content">Vietcombank</span>
+        </p>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <p>
+          <strong>STK:</strong>{" "}
+          <span className="font-semibold text-blue-600 underline">1051852055</span>
+        </p>
+        <button onClick={() => handleCopy("1051852055")}>
+          <Copy className="w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <p>
+          <strong>Số tiền:</strong>{" "}
+          <span className="font-semibold text-green-600 underline">
+            {modalData.price.toLocaleString()}đ
+          </span>
+        </p>
+        <button onClick={() => handleCopy(`${modalData.price}`)}>
+          <Copy className="w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="flex items-start justify-between gap-2">
+        <p className="whitespace-nowrap">
+          <strong>Nội dung CK:</strong> <br />
+          <span className="font-semibold text-red-600 underline">{userPlan?.customer_code}</span>
+        </p>
+        <button
+          onClick={() =>
+            handleCopy(`${userPlan?.customer_code}`)
+          }
+        >
+          <Copy className="w-5 h-5" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {/* Ghi chú */}
+  <div className="p-4 border rounded-xl shadow-sm bg-white text-[13px] text-gray-600">
+    <p>
+      Vui lòng <strong>ghi đúng nội dung chuyển khoản</strong>. Hệ thống sẽ
+      tự động nâng cấp <strong>PREMIUM</strong> trong vòng <strong>5–10 phút</strong>.
+      Nếu quá thời gian vẫn chưa được xử lý, vui lòng liên hệ Zalo CSKH:
+      <a
+        className="text-blue-600 underline ml-1"
+        href="https://zalo.me/xxxxxxxx"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Ấn vào đây
+      </a>.
+    </p>
+  </div>
+</div>
+
           </div>
         ) : (
           <p className="text-center text-gray-500">
@@ -125,14 +217,14 @@ export default function ModalRegisterMember() {
           <button className="btn btn-outline btn-sm px-5" onClick={closeModal}>
             Đóng
           </button>
-          <button
+          {/* <button
             className="btn btn-primary btn-sm px-5"
             onClick={() => {
               alert("Vui lòng liên hệ quản trị viên để nâng cấp gói đăng ký.");
             }}
           >
             Tiếp tục
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

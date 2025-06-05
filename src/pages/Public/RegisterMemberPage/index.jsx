@@ -4,7 +4,7 @@ import { showInfo } from "../../../components/Toast";
 import { useApp } from "../../../context/AppContext";
 import { ChevronDown, Info } from "lucide-react";
 import LoadingRing from "../../../components/UI/Loading/ring";
-import { fetchUserPlan } from "../../../services";
+import { fetchUserPlan, registerFreePlan } from "../../../services";
 // plans.js
 const plans = [
   {
@@ -24,8 +24,8 @@ const plans = [
   {
     id: "pro",
     name: "Pro",
-    price: 19000,
-    duration_days: 30,
+    price: 29000,
+    duration_days: 60,
     max_uploads: 20,
     storage_limit: 500, // MB
     perks: {
@@ -41,7 +41,7 @@ const plans = [
     id: "premium",
     name: "Premium",
     price: 49000,
-    duration_days: 30,
+    duration_days: 90,
     max_uploads: 50,
     storage_limit: 2000, // MB
     perks: {
@@ -108,10 +108,10 @@ export default function RegisterMemberPage() {
 
       try {
         setLoading(true);
-        await registerFreePlan(user, authTokens.idToken);
-        showInfo("Bạn đã đăng ký gói Free thành công!");
+        await registerFreePlan(user, authTokens?.idToken);
         const data = await fetchUserPlan();
         if (data) setUserPlan(data);
+        showInfo("Bạn đã đăng ký gói Free thành công!");
       } catch (err) {
         console.error("❌ Lỗi đăng ký gói Free:", err);
         showInfo("Đăng ký thất bại. Vui lòng thử lại!");

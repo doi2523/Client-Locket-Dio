@@ -23,7 +23,7 @@ const SelectFriendsList = () => {
   // Đồng bộ với context + log
   useEffect(() => {
     setSelectedRecipients(selectedFriends);
-    console.log("Selected Friends:", selectedFriends);
+    // console.log("Selected Friends:", selectedFriends);
   }, [selectedFriends]);
 
   const handleToggle = (uid) => {

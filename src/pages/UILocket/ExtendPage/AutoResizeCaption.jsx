@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useApp } from "../../../context/AppContext";
+import { PiClockFill } from "react-icons/pi";
+import { StarRating } from "../../../components/UI/StarRating/StarRating";
 
 const AutoResizeCaption = () => {
   const textareaRef = useRef(null);
@@ -127,6 +129,48 @@ const AutoResizeCaption = () => {
               whiteSpace: shouldWrap ? "pre-wrap" : "nowrap",
             }}
           />
+        </div>
+      ) : postOverlay.type === "time" ? (
+        <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
+          <PiClockFill className="w-6 h-6 rotate-270" />
+          <span>{postOverlay.caption || formattedTime}</span>
+          {/* <input value={postOverlay.caption || formattedTime} type="text" name="" id="" width={20}/> */}
+        </div>
+      ) : postOverlay.type === "review" ? (
+        <div
+          className="absolute bottom-2 left-1/2 transform -translate-x-1/2
+             bg-white/50 backdrop-blur-2xl rounded-4xl
+             px-6 pt-2 flex flex-col items-center font-semibold
+             max-w-[90vw] w-max"
+        >
+          {/* Hàng trên: 5 sao */}
+          <div className="flex gap-2 mb-1">
+            <StarRating rating={postOverlay.icon || 0} />
+          </div>
+
+          {/* Hàng dưới: text với dấu ngoặc kép ở 2 góc trên */}
+          <div className="relative text-center text-sm leading-tight max-w-full px-4">
+            {/* Dấu " trái */}
+            <span
+              className="absolute -top-2 left-0 text-xl select-none"
+              aria-hidden="true"
+            >
+              &ldquo;
+            </span>
+
+            {/* Dấu " phải */}
+            <span
+              className="absolute -top-2 right-0 text-xl select-none"
+              aria-hidden="true"
+            >
+              &rdquo;
+            </span>
+
+            {/* Text chính */}
+            <span className="inline-block text-lg font-semibold text-white max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+              {postOverlay.caption}
+            </span>
+          </div>
         </div>
       ) : (
         <textarea

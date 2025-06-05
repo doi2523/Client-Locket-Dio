@@ -14,7 +14,7 @@ import RegisterMemberPage from "../pages/Public/RegisterMemberPage";
 import Timeline from "../pages/Public/Timeline";
 import CameraCapture from "../pages/UILocket";
 
-const APP_NAME = "Locket Pro - Đăng ảnh & Video lên Locket";
+const APP_NAME = "Locket Dio - Đăng ảnh & Video lên Locket";
 
 // 📌 Các route dành cho người chưa đăng nhập
 const publicRoutes = [

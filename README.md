@@ -4,7 +4,7 @@
 
 Với giao diện hiện đại, hiệu năng tối ưu và các tính năng tiện dụng, Locket Pro giúp bạn chia sẻ khoảnh khắc với người thân ngay trên màn hình chính của họ.
 
-> 🔗 Truy cập WebApp: [https://locket-dio.web.app](https://locket-dio.web.app)  
+> 🔗 Truy cập WebApp: [https://locket-dio.space](https://locket-dio.space)  
 > 💻 Repo Frontend: [https://github.com/doi2523/Client-Locket-Dio](https://github.com/doi2523/Client-Locket-Dio)
 
 ---
@@ -61,5 +61,5 @@ Nếu bạn có ý tưởng hay phát hiện lỗi, đừng ngần ngại tạo 
 
 ---
 
-© 2025 [Locket Pro](https://locket-dio.web.app) by Dio. All rights reserved.  
+© 2025 [Locket Dio](https://locket-dio.space) by Dio. All rights reserved.  
 

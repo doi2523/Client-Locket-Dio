@@ -17,6 +17,7 @@ export const API_URL = {
   CHECK_SERVER: `${BASE_API_URL}/`,
   LOGIN_URL: `${BASE_API_URL}${LOCKET_URL}/login`,
   LOGIN_URL_V2: `${BASE_API_URL}${LOCKET_URL}/loginV2`,
+  LOGIN_URL_V3: `${BASE_API_URL}${LOCKET_URL}/loginV2`,
   LOGOUT_URL: `${BASE_API_URL}${LOCKET_URL}/logout`,
   CHECK_AUTH_URL: `${BASE_API_URL}${LOCKET_URL}/checkauth`,
   GET_INFO_URL: `${BASE_API_URL}${LOCKET_URL}/getinfo`,
@@ -26,6 +27,7 @@ export const API_URL = {
   GET_USER: `https://api.locketcamera.com/fetchUserV2`,
   GET_INCOMING_URL: `${BASE_API_URL}${LOCKET_URL}/get-incoming_friends`,
   DELETE_FRIEND_REQUEST_URL: `${BASE_API_URL}${LOCKET_URL}/delete-incoming_friends`,
+  DELETE_FRIEND_URL: `${BASE_API_URL}${LOCKET_URL}/delete_friends`,
 
   //API lấy dữ liệu từ máy chủ
   GET_LASTEST_URL: `${BASE_API_URL}${LOCKET_PRO}/getmoment`,
