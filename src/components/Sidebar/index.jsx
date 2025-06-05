@@ -150,7 +150,7 @@ const Sidebar = () => {
                     }`}
                     onClick={() => setIsSidebarOpen(false)}
                   >
-                    <Upload size={22} /> Đăng ảnh, video
+                    <Upload size={22} /> Đăng ảnh, video <div className="badge badge-sm badge-secondary">Hot</div>
                   </Link>
                 </li>
                 <li>
@@ -189,7 +189,7 @@ const Sidebar = () => {
                     }`}
                     onClick={() => setIsSidebarOpen(false)}
                   >
-                    <Rocket size={22} /> Gói thành viên
+                    <Rocket size={22} /> Gói thành viên <div className="badge badge-sm badge-secondary">New</div>
                   </Link>
                 </li>
                 <li>
@@ -202,7 +202,7 @@ const Sidebar = () => {
                     }`}
                     onClick={() => setIsSidebarOpen(false)}
                   >
-                    <Wrench size={22} /> Công cụ Locket <div className="badge badge-sm badge-secondary">Hot</div>
+                    <Wrench size={22} /> Công cụ Locket
                   </Link>
                 </li>
                 <li>

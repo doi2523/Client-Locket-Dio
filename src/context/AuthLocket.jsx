@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import * as utils from "../utils";
 import { showInfo } from "../components/Toast";
 import {
-  getListIdFriends,
   fetchUser,
   fetchUserPlan,
+  getListIdFriends,
   registerFreePlan,
 } from "../services";
 
@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }) => {
 
       // Nếu chưa có hoặc parse lỗi, gọi API lấy danh sách bạn bè
       try {
-        const friendsList = await getListIdFriends();
+        const friendsList = await getListIdFriends(user.idToken, user.idToken);
         fetchPlan(user, user.idToken);
         setFriends(friendsList);
         localStorage.setItem("friendsList", JSON.stringify(friendsList));
@@ -137,7 +137,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchPlan = async (user, idToken) => {
     try {
-      const plan = await fetchUserPlan();
+      let plan = await fetchUserPlan();
       if (!plan) {
         const res = await registerFreePlan(user, idToken);
         if (res?.data) {
@@ -152,6 +152,15 @@ export const AuthProvider = ({ children }) => {
       console.error("Lỗi khi fetch plan:", err);
     }
   };
+  //   useEffect(() => {
+  //   if (authTokens?.localId && authTokens?.idToken) {
+  //     fetchUserPlan(authTokens?.localId, authTokens?.idToken).then((data) => {
+  //       if (data) {
+  //         setUserPlan(data);
+  //       }
+  //     });
+  //   }
+  // }, [authTokens]);
   // Load friendDetails và lưu vào state + localStorage
   useEffect(() => {
     const loadFriendDetails = async () => {

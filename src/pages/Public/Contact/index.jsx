@@ -43,7 +43,7 @@ export default function Contact() {
           </a>
 
           <a
-            href="https://locket-dio.web.app"
+            href="https://locket-dio.space"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg shadow transition font-medium"

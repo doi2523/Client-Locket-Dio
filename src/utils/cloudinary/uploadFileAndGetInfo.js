@@ -44,7 +44,7 @@ export const uploadToCloudinary = async (rawFile, fileType) => {
             size: data.bytes,
             format: data.format,
             duration: data.duration,
-            thumbnail: `https://res.cloudinary.com/dkngxtxli/video/upload/w_500,h_500,c_fill,q_auto,f_auto/v${data.version}/${data.public_id}.jpeg`,
+            thumbnail: `https://res.cloudinary.com/dpdbyftlz/video/upload/w_500,h_500,c_fill,q_auto,f_auto/v${data.version}/${data.public_id}.jpeg`,
           };
 
     return fileData;

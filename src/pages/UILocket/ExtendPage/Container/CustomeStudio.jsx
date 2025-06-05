@@ -1,5 +1,5 @@
 import { Palette, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../../../context/AuthLocket";
 import { useApp } from "../../../../context/AppContext";
@@ -7,8 +7,10 @@ import CaptionIconSelector from "../CaptionItems/CaptionIconSelector";
 import GeneralThemes from "../CaptionItems/GeneralThemes";
 import ThemesCustomes from "../CaptionItems/ThemesCustomes";
 import DevCustomes from "../CaptionItems/DevCustomes";
+import ImageCaptionSelector from "../CaptionItems/ImageCaption";
 
 const ScreenCustomeStudio = () => {
+  const navigate = useNavigate();
   const popupRef = useRef(null);
   const { user, setUser, userPlan } = useContext(AuthContext);
   const { navigation, post, captiontheme } = useApp();
@@ -62,11 +64,15 @@ const ScreenCustomeStudio = () => {
     // Kiểm tra quyền hạn theo userPlan, ví dụ như userPlan.plan_info.features.custom_theme
     // Kiểm tra quyền với type tương ứng
     if (!userPlan?.plan_info?.features?.[type]) {
-      alert(
-        "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói để mở khóa."
+      const shouldUpgrade = confirm(
+        "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói để mở khóa.\n\nTruy cập trang nâng cấp ngay?"
       );
+      if (shouldUpgrade) {
+        navigate("/upgrade");
+      }
       return;
     }
+
     // Cập nhật postOverlay
     setPostOverlay({
       overlay_id: preset_id || "standard",
@@ -101,11 +107,15 @@ const ScreenCustomeStudio = () => {
     if (!preset) return;
     // Kiểm tra quyền với type tương ứng
     if (!userPlan?.plan_info?.features?.[preset.type]) {
-      alert(
-        "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói để mở khóa."
+      const shouldUpgrade = confirm(
+        "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói để mở khóa.\n\nTruy cập trang nâng cấp ngay?"
       );
+      if (shouldUpgrade) {
+        navigate("/upgrade");
+      }
       return;
     }
+
     // Log để kiểm tra dữ liệu dưới dạng bảng
     console.table([
       {
@@ -187,6 +197,14 @@ const ScreenCustomeStudio = () => {
     type: item.options.type || "background",
     // Nếu bạn có thêm type, preset_id có thể thêm tương tự
   }));
+  const handleCustomeSelectTestV2 = () => {
+    const shouldUpgrade = confirm(
+      "🚧 Tính năng đang được phát triển.\n\nVui lòng mua gói Premium để trải nghiệm sớm.\n\nBạn có muốn truy cập trang nâng cấp ngay không?"
+    );
+    if (shouldUpgrade) {
+      navigate("/upgrade");
+    }
+  };
 
   return (
     <div
@@ -205,7 +223,7 @@ const ScreenCustomeStudio = () => {
       {/* Popup */}
       <div
         ref={popupRef}
-        className={`w-full h-1/2 bg-base-100 rounded-t-4xl shadow-lg transition-transform duration-500 flex flex-col ${
+        className={`w-full h-2/3 bg-base-100 rounded-t-4xl shadow-lg transition-transform duration-500 flex flex-col ${
           isFilterOpen ? "translate-y-0" : "translate-y-full"
         }`}
       >
@@ -252,8 +270,9 @@ const ScreenCustomeStudio = () => {
             captionThemes={captionThemes}
             onSelect={handleCustomeSelectTest}
           />
+          <ImageCaptionSelector title="🎨 Caption Ảnh - Truy cập sớm" />
           <GeneralThemes
-            title="🎨 General"
+            title="🎨 General - Thử nghiệm"
             captionThemes={captionThemes}
             onSelect={handleCustomeSelectTest}
           />

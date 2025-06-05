@@ -2,12 +2,17 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { useApp } from "../../../../context/AppContext";
 import { AuthContext } from "../../../../context/AuthLocket";
 import { Plus, RefreshCcw, Trash2, UserPlus, Users, X } from "lucide-react";
+import { FaUserFriends } from "react-icons/fa";
+import { refreshFriends, removeFriend } from "../../../../services";
+import LoadingRing from "../../../../components/UI/Loading/ring";
 
 const FriendsContainer = () => {
   const { user, friendDetails, setFriendDetails } = useContext(AuthContext);
   const popupRef = useRef(null);
   const { navigation } = useApp();
   const { isFriendsTabOpen, setFriendsTabOpen } = navigation;
+  const [showAllFriends, setShowAllFriends] = useState(false);
+
   const [open, setOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null); // tool đã chọn
 
@@ -17,6 +22,15 @@ const FriendsContainer = () => {
 
   // State tìm kiếm
   const [searchTerm, setSearchTerm] = useState("");
+
+  const [lastUpdated, setLastUpdated] = useState(null);
+
+  useEffect(() => {
+    const updated = localStorage.getItem("friendsUpdatedAt");
+    if (updated) {
+      setLastUpdated(updated);
+    }
+  }, []);
 
   const handleSelectTool = (tool) => {
     setSelectedTool(tool);
@@ -71,6 +85,7 @@ const FriendsContainer = () => {
 
     if (currentY > halfway) {
       setFriendsTabOpen(false); // Đóng nếu kéo quá nửa popup
+      setShowAllFriends(false);
     } else {
       setCurrentY(0); // Kéo chưa đủ → trở lại vị trí cũ
     }
@@ -94,6 +109,9 @@ const FriendsContainer = () => {
 
     return fullName.includes(term) || username.includes(term);
   });
+  const visibleFriends = showAllFriends
+    ? filteredFriends
+    : filteredFriends.slice(0, 3);
 
   useEffect(() => {
     if (selectedTool === "create") {
@@ -102,6 +120,53 @@ const FriendsContainer = () => {
       // mở modal xác nhận xoá
     }
   }, [selectedTool]);
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefreshFriends = async () => {
+    try {
+      setIsRefreshing(true); // Bắt đầu loading
+      console.log("🔄 Đang làm mới danh sách bạn bè...");
+
+      const result = await refreshFriends();
+
+      if (result) {
+        alert("✅ Đã làm mới danh sách bạn bè!");
+        setFriendDetails(result?.friendDetails);
+        setLastUpdated(result?.updatedAt);
+      } else {
+        alert("⚠️ Không thể làm mới danh sách bạn bè.");
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi làm mới bạn bè:", error);
+      alert("❌ Có lỗi xảy ra khi làm mới danh sách.");
+    } finally {
+      setIsRefreshing(false); // Kết thúc loading
+    }
+  };
+  const handleDeleteFriend = async (uid) => {
+    const confirmed = window.confirm("❓Bạn có chắc muốn xoá người bạn này?");
+    if (!confirmed) return;
+
+    try {
+      console.log("🗑️ Đang xóa bạn với uid:", uid);
+
+      const result = await removeFriend(uid); // Gửi request xóa bạn từ server
+
+      if (result?.success) {
+        // ✅ Cập nhật lại state & localStorage
+        const updatedFriends = friendDetails.filter((f) => f.uid !== uid);
+        setFriendDetails(updatedFriends);
+        localStorage.setItem("friendDetails", JSON.stringify(updatedFriends));
+        alert("✅ Đã xoá bạn thành công.");
+      } else {
+        alert("⚠️ Không thể xoá bạn (có thể đã bị xoá từ trước).");
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi xoá bạn:", error);
+      alert("❌ Có lỗi xảy ra khi xoá bạn.");
+    }
+  };
 
   return (
     <div
@@ -116,15 +181,19 @@ const FriendsContainer = () => {
         className={`fixed inset-0 bg-base-100/10 backdrop-blur-[2px] bg-opacity-50 transition-opacity duration-500 ${
           isFriendsTabOpen ? "opacity-100" : "opacity-0"
         }`}
-        onClick={() => setFriendsTabOpen(false)}
+        onClick={() => {
+          setFriendsTabOpen(false);
+          setShowAllFriends(false);
+        }}
+        
       />
 
       {/* Popup */}
       <div
         ref={popupRef}
         className={`
-          w-full h-[90vh] bg-base-100 rounded-t-4xl shadow-lg flex flex-col justify-center items-center
-          will-change-transform border-t
+          w-full h-[85vh] bg-base-100 rounded-t-4xl shadow-lg flex flex-col justify-center items-center
+          will-change-transform ouline-2 outline-base-content outline-dashed
         `}
         style={translateStyle}
       >
@@ -227,44 +296,100 @@ const FriendsContainer = () => {
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </div>
-          <div
-            className="flex items-center justify-start w-full mt-2 text-sm text-base-content gap-2 cursor-pointer hover:opacity-80"
-            onClick={() => alert("Tính năng đang được phát triển 🚧")}
-          >
-            <RefreshCcw className="w-4 h-4" />
-            <span>Làm mới</span>
-            <span className="text-gray-500 text-xs">(đang phát triển)</span>
+          <div className="flex flex-col items-start justify-start w-full mt-2">
+            <div
+              className={`btn flex whitespace-nowrap flex-row items-center btn-base-200 text-sm text-base-content gap-2 cursor-pointer hover:opacity-80 ${
+                isRefreshing ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() => {
+                if (!isRefreshing) handleRefreshFriends();
+              }}
+            >
+              {isRefreshing ? (
+                <>
+                  <LoadingRing size={20} stroke={2} />
+                  <span>Đang làm mới...</span>
+                </>
+              ) : (
+                <>
+                  <RefreshCcw className="w-4 h-4" />
+                  <span>Làm mới</span>
+                </>
+              )}
+            </div>
+
+            {/* Thời gian cập nhật */}
+            {lastUpdated && (
+              <div className="text-xs text-gray-500 mt-1">
+                Cập nhật lần cuối:{" "}
+                {new Date(lastUpdated).toLocaleString("vi-VN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Nội dung bạn bè */}
-        <div className="flex-1 overflow-y-auto px-4 space-y-4 w-full">
+        <div className="flex-1 overflow-y-auto px-4 w-full">
           {filteredFriends.length === 0 && (
             <p className="text-center text-gray-400 mt-10">
               Không có bạn bè để hiển thị
             </p>
           )}
-
-          {filteredFriends.map((friend) => (
-            <div
-              key={friend.uid}
-              className="flex items-center gap-3 p-2 rounded-md cursor-pointer"
-            >
-              <img
-                src={friend.profilePic || "./default-avatar.png"}
-                alt={`${friend.firstName} ${friend.lastName}`}
-                className="w-16 h-16 rounded-full border-[3.5px] p-0.5 border-amber-400 object-cover"
-              />
-              <div>
-                <h2 className="font-medium">
-                  {friend.firstName} {friend.lastName}
-                </h2>
-                <p className="text-sm text-gray-500">
-                  {friend.username || "Không có username"}
-                </p>
+          <div>
+            <h1 className="flex flex-row items-center gap-1 font-semibold text-xl">
+              <FaUserFriends size={25}/> Bạn bè của bạn
+            </h1>
+            {visibleFriends.map((friend) => (
+              <div
+                key={friend.uid}
+                className="flex items-center gap-3 p-2 rounded-md cursor-pointer justify-between"
+              >
+                <div className="flex items-center gap-3">
+                  <img
+                    src={friend.profilePic || "./default-avatar.png"}
+                    alt={`${friend.firstName} ${friend.lastName}`}
+                    className="w-16 h-16 rounded-full border-[3.5px] p-0.5 border-amber-400 object-cover"
+                  />
+                  <div>
+                    <h2 className="font-medium">
+                      {friend.firstName} {friend.lastName}
+                    </h2>
+                    <p className="text-sm text-gray-500 underline">
+                      @{friend.username || "Không có username"}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-100 transition shrink-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteFriend(friend.uid);
+                  }}
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-            </div>
-          ))}
+            ))}
+            {filteredFriends.length > 3 && (
+              <div className="flex items-center gap-4 mt-4">
+  <hr className="flex-grow border-t border-base-content" />
+  <button
+    onClick={() => setShowAllFriends(!showAllFriends)}
+    className="bg-base-200 hover:bg-base-300 text-base-content font-semibold px-4 py-2 transition-colors rounded-3xl"
+  >
+    {showAllFriends ? "Thu gọn" : "Xem thêm"}
+  </button>
+  <hr className="flex-grow border-t border-base-content" />
+</div>
+
+            )}
+          </div>
         </div>
       </div>
     </div>

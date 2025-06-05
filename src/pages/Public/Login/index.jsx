@@ -7,9 +7,11 @@ import LoadingRing from "../../../components/UI/Loading/ring";
 import StatusServer from "../../../components/UI/StatusServer";
 import { useApp } from "../../../context/AppContext";
 import FloatingNotification from "../../../components/UI/FloatingNotification";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Login = () => {
   const { setUser } = useContext(AuthContext);
+  const [captchaToken, setCaptchaToken] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(() => {
@@ -29,7 +31,8 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
+    if (!captchaToken) return alert("Vui lòng xác nhận bạn không phải robot");
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       showToast("error", "Email không hợp lệ!");
@@ -38,7 +41,7 @@ const Login = () => {
 
     setIsLoginLoading(true);
     try {
-      const res = await locketService.login(email, password);
+      const res = await locketService.login(email, password, captchaToken);
       if (!res) throw new Error("Lỗi: Server không trả về dữ liệu!");
 
       const { idToken, refreshToken, localId } = res.data;
@@ -146,6 +149,14 @@ const Login = () => {
                 "Đăng Nhập"
               )}
             </button>
+            <ReCAPTCHA
+              sitekey="6Le2zk8rAAAAALDcDw7FWRJuj3nFo9y7ykyHx3oE"
+              onChange={(token) => setCaptchaToken(token)}
+              onExpired={() => {
+                setCaptchaToken(null);
+                showToast("info", "reCAPTCHA đã hết hạn. Vui lòng xác minh lại.");
+              }}
+            />
             <span className="text-xs">Vui lòng chờ Server02 khởi động.</span>
             <StatusServer />
             {/* <PushNotificationButton/> */}

@@ -1,8 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { VideoIcon, Wrench, Settings2, Users } from "lucide-react";
-import { getListRequestFriend } from "../../../services";
+import {
+  fetchUserPlan,
+  getListRequestFriend,
+  rejectMultipleFriendRequests,
+} from "../../../services";
 import { AuthContext } from "../../../context/AuthLocket";
-import { showInfo, showSuccess } from "../../../components/Toast";
+import { showError, showInfo, showSuccess } from "../../../components/Toast";
 import { API_URL } from "../../../utils";
 import LoadingRing from "../../../components/UI/Loading/ring";
 
@@ -10,12 +14,19 @@ const SESSION_KEY = "invites_session";
 
 // Component riêng xử lý logic lời mời
 function DeleteFriendsTool() {
-  const { user, userPlan } = useContext(AuthContext);
+  const { user, userPlan, setUserPlan, authTokens } = useContext(AuthContext);
   const [invites, setInvites] = useState([]);
   const [nextPageToken, setNextPageToken] = useState(null);
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
+  useEffect(() => {
+    fetchUserPlan().then((data) => {
+      if (data) {
+        setUserPlan(data);
+      }
+    });
+  }, []);
   // Load từ sessionStorage khi component mount
   useEffect(() => {
     const cached = sessionStorage.getItem(SESSION_KEY);
@@ -43,23 +54,30 @@ function DeleteFriendsTool() {
       showInfo("⚠️ Bạn chưa đăng nhập hợp lệ.");
       return;
     }
-    // Kiểm tra quyền với plan_id tương ứng
-    const allowedPlans = ["pro", "premium", "pro_plus"];
 
-    if (!userPlan?.plan_id || !allowedPlans.includes(userPlan.plan_id)) {
-      alert(
-        "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp lên gói Pro để mở khóa."
-      );
+    // Kiểm tra quyền với plan_id tương ứng
+    // const allowedPlans = ["pro", "premium", "pro_plus"];
+    // if (!userPlan?.plan_id || !allowedPlans.includes(userPlan.plan_id)) {
+    //   alert(
+    //     "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp lên gói Pro để mở khóa."
+    //   );
+    //   return;
+    // }
+
+    setLoading(true);
+    const res = await getListRequestFriend();
+
+    if (res.errorMessage) {
+      showError(res.errorMessage);
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
-    const res = await getListRequestFriend(user.idToken, user.localId);
     setInvites(res.friends || []);
     setNextPageToken(res.nextPageToken);
     setLoading(false);
 
-    showSuccess(`✅ Đã tải ${res.friends.length} lời mời!`);
+    showSuccess(`Đã tải ${res.friends.length} lời mời!`);
   };
 
   const handleLoadMore = async () => {
@@ -77,8 +95,6 @@ function DeleteFriendsTool() {
   };
 
   const handleDeleteBatch = async () => {
-    if (!user?.idToken) return;
-
     const batch = invites.slice(0, 50);
     if (batch.length === 0) {
       showInfo("📭 Không còn lời mời để xoá.");
@@ -88,32 +104,16 @@ function DeleteFriendsTool() {
     setDeleting(true);
 
     try {
-      // Gửi 1 request POST gồm token và mảng uid
-      const response = await fetch(API_URL.DELETE_FRIEND_REQUEST_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          idToken: user.idToken,
-          uids: batch.map((invite) => invite.uid),
-        }),
-      });
+      const uidList = batch.map((invite) => invite.uid);
+      const data = await rejectMultipleFriendRequests(uidList);
 
-      if (!response.ok) {
-        throw new Error("Lỗi server khi xoá lời mời");
-      }
-
-      const data = await response.json();
-
-      // Giả sử data.successCount trả về số lời mời đã xoá thành công
-      const successCount = data.successCount ?? batch.length;
+      const successCount = data?.successCount ?? batch.length;
 
       showSuccess(`🧹 Đã xoá ${successCount}/${batch.length} lời mời.`);
 
-      // Cập nhật state loại bỏ batch đã xoá
+      // Cập nhật lại danh sách invites
       setInvites((prev) =>
-        prev.filter((invite) => !batch.find((b) => b.uid === invite.uid))
+        prev.filter((invite) => !uidList.includes(invite.uid))
       );
     } catch (error) {
       showError("❌ Xoá lời mời thất bại: " + error.message);
@@ -136,15 +136,14 @@ function DeleteFriendsTool() {
       </div>
 
       <div className="mt-6 flex flex-col gap-4">
-
-<button
-  onClick={handleFetchInvites}
-  className="btn btn-primary w-full"
-  disabled={loading}
->
-{loading && <LoadingRing size={20} stroke={2} color="white"/>}{loading ? "Đang tải..." : "📥 Lấy danh sách lời mời"}
-</button>
-
+        <button
+          onClick={handleFetchInvites}
+          className="btn btn-primary w-full"
+          disabled={loading}
+        >
+          {loading && <LoadingRing size={20} stroke={2} color="white" />}
+          {loading ? "Đang tải..." : "📥 Lấy danh sách lời mời"}
+        </button>
 
         {invites.length > 0 && (
           <>

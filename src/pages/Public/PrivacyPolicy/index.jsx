@@ -112,11 +112,11 @@ const PrivacyPolicy = () => {
           <p>
             <strong>Website</strong> refers to Locket Dio, accessible from{" "}
             <a
-              href="https://locket-dio.web.app"
+              href="https://locket-dio.space"
               rel="external nofollow noopener"
               target="_blank"
             >
-              https://locket-dio.web.app
+              https://locket-dio.space
             </a>
           </p>
         </li>
@@ -536,11 +536,11 @@ const PrivacyPolicy = () => {
           <p>
             By visiting this page on our website:{" "}
             <a
-              href="https://locket-dio.web.app/contact"
+              href="https://locket-dio.space/contact"
               rel="external nofollow noopener"
               target="_blank"
             >
-              https://locket-dio.web.app/contact
+              https://locket-dio.space/contact
             </a>
           </p>
         </li>

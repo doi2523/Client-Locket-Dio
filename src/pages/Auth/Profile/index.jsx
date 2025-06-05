@@ -4,6 +4,7 @@ import LoadingRing from "../../../components/UI/Loading/ring";
 import * as locketService from "../../../services/locketService";
 import * as utils from "../../../utils";
 import axios from "axios";
+import { getListIdFriends } from "../../../services";
 
 export default function Profile() {
   const { user, setUser } = useContext(AuthContext);
@@ -44,24 +45,24 @@ export default function Profile() {
   //   }
   // };
   
-  useEffect(() => {
-    const fetchFriends = async () => {
-      try {
-        const data = await getListIdFriend(user.idToken, user.localId);
-        console.log("✅ Danh sách bạn bè:", data);
-        setUserinfo(prev => ({ ...prev, friends: data }));
+  // useEffect(() => {
+  //   const fetchFriends = async () => {
+  //     try {
+  //       const data = await getListIdFriends(user.idToken, user.localId);
+  //       console.log("✅ Danh sách bạn bè:", data);
+  //       setUserinfo(prev => ({ ...prev, friends: data }));
   
-        // Lưu vào sessionStorage
-        sessionStorage.setItem('friendsList', JSON.stringify(data));
-      } catch (err) {
-        console.error("❌ Lỗi lấy danh sách bạn bè:", err);
-      }
-    };
+  //       // Lưu vào sessionStorage
+  //       sessionStorage.setItem('friendsList', JSON.stringify(data));
+  //     } catch (err) {
+  //       console.error("❌ Lỗi lấy danh sách bạn bè:", err);
+  //     }
+  //   };
   
-    if (user?.idToken && user?.localId) {
-      fetchFriends();
-    }
-  }, [user]);
+  //   if (user?.idToken && user?.localId) {
+  //     fetchFriends();
+  //   }
+  // }, [user]);
   
   // Convert timestamp thành ngày giờ đọc được
   const formatDate = (timestamp) => {

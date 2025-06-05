@@ -58,7 +58,10 @@ const AddPostButton = () => {
       })
       .catch((error) => {
         console.error("Error sending data:", error);
-        showError("Có lỗi xảy ra khi gửi bài viết. Vui lòng thử lại!");
+        const serverMsg =
+          error.response?.data?.error ||
+          "Có lỗi xảy ra khi gửi bài viết. Vui lòng thử lại!";
+        showError(serverMsg);
       })
       .finally(() => {
         setIsLoading(false); // tắt loading khi xong
