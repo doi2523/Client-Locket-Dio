@@ -14,7 +14,7 @@ const POSTS_PER_PAGE = 10;
 const LeftHomeScreen = () => {
   const { user } = useContext(AuthContext);
   const { navigation, useloading } = useApp();
-  const { isProfileOpen, setIsProfileOpen } = navigation;
+  const { isProfileOpen, setIsProfileOpen, isSettingTabOpen, setSettingTabOpen } = navigation;
   const { imageLoaded, setImageLoaded } = useloading;
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -79,7 +79,9 @@ const LeftHomeScreen = () => {
         <div className="flex items-center justify-between">
           <BadgePlan />
           <div className="flex items-center gap-3">
-            <button>
+            <button 
+            onClick={() => setSettingTabOpen(true)}
+            >
               <Settings size={30} />
             </button>
             <button

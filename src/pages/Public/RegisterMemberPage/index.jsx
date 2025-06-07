@@ -100,6 +100,10 @@ export default function RegisterMemberPage() {
   // }, []);
 
   const handleSelectPlan = async (planId) => {
+    if (!user || !authTokens?.idToken) {
+      showInfo("Vui lòng đăng nhập trước khi đăng ký gói.");
+      return;
+    }
     if (planId === "free") {
       const confirmed = window.confirm(
         "Bạn có chắc muốn đăng ký gói Free?\nCác gói đã đăng ký trước đó sẽ bị hủy nếu có."
@@ -161,7 +165,7 @@ export default function RegisterMemberPage() {
   return (
     <div className="min-h-screen bg-pink-50 py-6 px-4">
       <div className="h-16"></div>
-      <h1 className="text-3xl font-bold text-center text-base-content">
+      <h1 className="text-3xl font-bold text-center text-primary">
         Đăng ký thành viên Locket Dio
       </h1>
       <div className="text-sm max-w-md mx-auto">
@@ -316,7 +320,7 @@ export default function RegisterMemberPage() {
             <h2 className="text-xl font-semibold text-purple-600">
               {plan.name}
             </h2>
-            <p className="text-lg font-bold my-2">{formatPrice(plan.price)}</p>
+            <p className="text-lg text-primary font-bold my-2">{formatPrice(plan.price)}</p>
             <p className="text-sm text-gray-500 mb-3">
               {plan.duration_days > 0
                 ? `Hiệu lực: ${plan.duration_days} ngày`

@@ -154,6 +154,7 @@ export const createRequestPayloadV4 = async (
       color_bottom: postOverlay.color_bottom,
       audience, // Gắn audience vào options luôn
       recipients: audience === "selected" ? selectedRecipients : [],
+      music: postOverlay?.music || "",
     };
 
     // Tạo payload cuối cùng

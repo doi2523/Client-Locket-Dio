@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { PiClockFill } from "react-icons/pi";
+import { FaBatteryFull } from "react-icons/fa";
 import { useApp } from "../../../../context/AppContext";
 import { Star } from "lucide-react";
 import { StarProgress } from "../../../../components/UI/StarRating/StarProgress";
+import axios from "axios";
+import { showError, showSuccess } from "../../../../components/Toast";
+import { API_URL } from "../../../../utils";
+import LocationInfoGenerator from "../../../../helpers/getInfoLocation";
 
 export default function GeneralThemes({ title }) {
   const { navigation, post, captiontheme } = useApp();
@@ -19,7 +24,7 @@ export default function GeneralThemes({ title }) {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewText, setReviewText] = useState("");
   const [reviewRating, setReviewRating] = useState(0); // mặc định 5 sao
-  // const [reviewText, setReviewText] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -67,17 +72,32 @@ export default function GeneralThemes({ title }) {
     setIsFilterOpen(false);
   };
 
-  const handleSpotifySubmit = (e) => {
+  const handleSpotifySubmit = async (e) => {
     e.preventDefault();
-    handleCustomeSelect({
-      preset_id: "spotify",
-      icon: "",
-      caption: spotifyLink,
-      type: "spotify",
-    });
-
-    setShowSpotifyForm(false);
-    setSpotifyLink("");
+    setLoading(true); // Bật loading trước khi gọi API
+    try {
+      const res = await axios.post(API_URL.SPOTIFY_URL, {
+        spotifyUrl: spotifyLink,
+      });
+      setPostOverlay({
+        overlay_id: "music",
+        color_top: "",
+        color_bottom: "",
+        text_color: "",
+        icon: "",
+        caption: `${res.data.data.title} - ${res.data.data.artist}`,
+        type: "music",
+        music: res.data.data, // <- Lưu object ở key khác
+      });
+      showSuccess(res?.data?.message);
+      setShowSpotifyForm(false);
+      setSpotifyLink("");
+      setIsFilterOpen(false);
+    } catch (err) {
+      showError("Không thể lấy thông tin bài hát");
+    } finally {
+      setLoading(false); // Tắt loading sau khi xong
+    }
   };
 
   const handleReviewSubmit = (e) => {
@@ -92,7 +112,12 @@ export default function GeneralThemes({ title }) {
     setShowReviewForm(false);
     setReviewText("");
   };
+  const [error, setError] = React.useState("");
 
+  const isValidSpotifyTrackUrl = (url) => {
+    const regex = /^https:\/\/open\.spotify\.com\/track\/[a-zA-Z0-9]+(\?.*)?$/;
+    return regex.test(url.trim());
+  };
   const handleClick = (id) => {
     switch (id) {
       case "music":
@@ -113,6 +138,9 @@ export default function GeneralThemes({ title }) {
         break;
       case "weather":
         alert("Thời tiết sẽ sớm được tích hợp");
+        break;
+      case "battery":
+        alert("Mức pin hiện tại sớm ra mắt");
         break;
       default:
         break;
@@ -141,7 +169,7 @@ export default function GeneralThemes({ title }) {
       id: "location",
       icon: (
         <img
-          src="./images/location_icon_Normal@3x.png"
+          src="https://img.icons8.com/?size=100&id=NEiCAz3KRY7l&format=png&color=000000"
           className="w-6 h-6 mr-1"
         />
       ),
@@ -157,32 +185,48 @@ export default function GeneralThemes({ title }) {
       ),
       label: "Thời tiết",
     },
+    {
+      id: "battery",
+      icon: (
+        <img
+          src="https://img.icons8.com/?size=100&id=WDlpopZDVw4P&format=png&color=000000"
+          className="w-6 h-6 mr-1"
+        />
+      ),
+      label: "Pin hiện tại",
+    },
   ];
 
   return (
     <div>
       {title && (
-        <h2 className="text-md font-semibold text-primary mb-2">{title}</h2>
+        <>
+          <div className="flex flex-row gap-3 items-center mb-2">
+            <h2 className="text-md font-semibold text-primary">{title}</h2>
+            <div className="badge badge-sm badge-secondary">New</div>
+          </div>
+        </>
       )}
       <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
         {buttons.map(({ id, icon, label }) => (
           <button
             key={id}
             onClick={() => handleClick(id)}
-            className="flex flex-col whitespace-nowrap bg-black/60 backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
+            className="flex flex-col whitespace-nowrap bg-base-200 dark:bg-white/30 backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
           >
-            <span className="text-base flex flex-row items-center text-white">
+            <span className="text-base flex flex-row items-center">
               {icon}
               {label}
             </span>
           </button>
         ))}
       </div>
+      {/* <LocationInfoGenerator/ */}
 
       {/* Popup Spotify */}
       <div
         className={`
-    fixed inset-0 bg-b-100/30 backdrop-blur-sm outline-t-2 outline-dashed rounded-tr-4xl rounded-tl-4xl
+    fixed inset-0 bg-b-100/30 backdrop-blur-sm border-t-2 border-dashed rounded-tr-4xl rounded-tl-4xl
     flex justify-center items-center z-50 transition-all duration-500
     ${
       showSpotifyForm
@@ -204,16 +248,30 @@ export default function GeneralThemes({ title }) {
           `}
           onClick={(e) => e.stopPropagation()}
         >
-          <label className="text-base-content font-semibold mb-2 block">
+          <label className="text-base-content font-semibold block">
             Nhập link Spotify:
           </label>
+          <p className="text-xs">Caption nhạc chỉ hiển thị trên IOS</p>
+          <p className="text-xs mb-2">Android vẫn đăng và hiển thị nhưng chỉ IOS thấy</p>
+
           <input
             type="text"
             value={spotifyLink}
-            onChange={(e) => setSpotifyLink(e.target.value)}
+            onChange={(e) => {
+              const trimmed = e.target.value.trimStart(); // chỉ trim start khi nhập
+              setSpotifyLink(trimmed);
+              // Kiểm tra link và cập nhật lỗi nếu sai
+              if (trimmed === "" || isValidSpotifyTrackUrl(trimmed)) {
+                setError("");
+              } else {
+                setError("Link Spotify track không hợp lệ");
+              }
+            }}
             placeholder="https://open.spotify.com/track/..."
-            className="input p-2 rounded-md text-black outline-none w-full mb-4"
+            className="input p-2 rounded-md text-base-content outline-none w-full mb-4"
+            required
           />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
           <div className="flex justify-end gap-2">
             <button
               type="button"
@@ -224,9 +282,14 @@ export default function GeneralThemes({ title }) {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded bg-primary text-white font-semibold"
+              className={`px-4 py-2 rounded font-semibold text-white ${
+                loading || error !== ""
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-primary hover:bg-primary-dark"
+              }`}
+              disabled={loading || error !== ""}
             >
-              Gửi
+              {loading ? "Đang tải..." : "Gửi"}
             </button>
           </div>
         </form>
@@ -235,7 +298,7 @@ export default function GeneralThemes({ title }) {
       {/* Popup Review */}
       <div
         className={`
-          fixed inset-0 bg-b-100/30 backdrop-blur-sm outline-t-2 outline-dashed rounded-tr-4xl rounded-tl-4xl
+          fixed inset-0 bg-b-100/30 backdrop-blur-sm border-t-2 border-dashed rounded-tr-4xl rounded-tl-4xl
           flex justify-center items-center z-50 transition-all duration-500
           ${
             showReviewForm
@@ -307,7 +370,7 @@ export default function GeneralThemes({ title }) {
               }
             }}
             placeholder="Nhập vào đây giới hạn 24 ký tự..."
-            className="input p-2 rounded-md text-black outline-none w-full mb-4"
+            className="input p-2 rounded-md text-base-content outline-none w-full mb-4"
           />
 
           {/* Button */}

@@ -8,7 +8,12 @@ export default function CaptionIconSelector({
   return (
     <div>
       {title && (
-        <h2 className="text-md font-semibold text-primary mb-2">{title}</h2>
+        <>
+          <div className="flex flex-row gap-3 items-center mb-2">
+            <h2 className="text-md font-semibold text-primary">{title}</h2>
+            <div className="badge badge-sm badge-secondary">Hot</div>
+          </div>
+        </>
       )}
       <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
         {captionThemes.image_icon.map((preset) => (

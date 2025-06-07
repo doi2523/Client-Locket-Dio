@@ -175,7 +175,12 @@ export default function ImageCaptionSelector({ title }) {
   return (
     <div className="relative">
       {title && (
-        <h2 className="text-md font-semibold text-primary mb-2">{title}</h2>
+        <>
+          <div className="flex flex-row gap-3 items-center mb-2">
+            <h2 className="text-md font-semibold text-primary">{title}</h2>
+            <div className="badge badge-sm badge-secondary">New</div>
+          </div>
+        </>
       )}
 
       <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start max-w-full">
@@ -226,7 +231,7 @@ export default function ImageCaptionSelector({ title }) {
         <button
           onClick={() => {
             // Kiểm tra quyền với type tương ứng
-            if (!userPlan?.plan_info?.features?.[type]) {
+            if (!userPlan?.plan_info?.features?.image_icon) {
               const shouldUpgrade = confirm(
                 "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói để mở khóa.\n\nTruy cập trang nâng cấp ngay?"
               );

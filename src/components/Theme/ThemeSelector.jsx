@@ -62,7 +62,7 @@ const ThemeSelector = () => {
       {/* Custom Theme */}
       <div className="w-full max-w-6xl">
         <h1 className="font-lovehouse text-center text-3xl font-semibold">
-          Custom Theme
+          Setting Theme Locket Dio
         </h1>
 
         <fieldset className="p-4 border rounded-lg shadow-lg w-full">

@@ -34,7 +34,7 @@ const PostCard = ({ post }) => {
       <div className="flex items-center justify-between p-3 ">
         <div className="flex items-center gap-3">
           <img
-            src={post?.user_info?.profilePicture}
+            src={post?.user_info?.profilePicture || "./images/prvlocket.png"}
             alt="Avatar"
             className="w-10 h-10 rounded-full object-cover"
           />

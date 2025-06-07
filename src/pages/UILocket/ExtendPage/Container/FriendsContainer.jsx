@@ -10,7 +10,7 @@ const FriendsContainer = () => {
   const { user, friendDetails, setFriendDetails } = useContext(AuthContext);
   const popupRef = useRef(null);
   const { navigation } = useApp();
-  const { isFriendsTabOpen, setFriendsTabOpen } = navigation;
+  const { isFriendsTabOpen, setFriendsTabOpen, isFullview } = navigation;
   const [showAllFriends, setShowAllFriends] = useState(false);
 
   const [open, setOpen] = useState(false);
@@ -192,7 +192,7 @@ const FriendsContainer = () => {
       <div
         ref={popupRef}
         className={`
-          w-full h-[85vh] bg-base-100 rounded-t-4xl shadow-lg flex flex-col justify-center items-center
+          w-full ${isFullview ? "h-[95vh]": "h-[85vh]"} h-[85vh] bg-base-100 rounded-t-4xl shadow-lg flex flex-col justify-center items-center
           will-change-transform ouline-2 outline-base-content outline-dashed
         `}
         style={translateStyle}
