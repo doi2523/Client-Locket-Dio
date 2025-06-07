@@ -232,8 +232,33 @@ const ScreenCustomeStudio = () => {
           <div className="flex items-center space-x-2 text-primary">
             <Palette size={22} />
             <div className="text-2xl font-lovehouse mt-1.5 font-semibold">
-              Customize studio
+              Customize studio{" "}
             </div>
+            {userPlan?.plan_info?.id === "premium" && (
+              <span
+                className="px-2 py-0.5 text-xs rounded-full font-semibold shadow-md text-white ml-2"
+                style={{
+                  backgroundImage: "linear-gradient(45deg, #000000, #4B0082)",
+                }}
+              >
+                Premium
+              </span>
+            )}
+            {userPlan?.plan_info?.id === "pro" && (
+              <span
+                className="px-2 py-0.5 text-xs rounded-full font-semibold shadow-md text-white ml-2"
+                style={{
+                  backgroundImage: "linear-gradient(45deg, #2563EB, #4F46E5)",
+                }}
+              >
+                Pro
+              </span>
+            )}
+            {userPlan?.plan_info?.id === "free" && (
+              <span className="px-2 py-0.5 text-xs rounded-full font-semibold shadow-md bg-gray-400 text-white ml-2">
+                Free
+              </span>
+            )}
           </div>
           <button
             onClick={() => setIsFilterOpen(false)}
@@ -244,6 +269,11 @@ const ScreenCustomeStudio = () => {
         </div>
         {/* Nội dung - Cuộn được */}
         <div className="flex-1 overflow-y-auto px-4">
+          <GeneralThemes
+            title="🎨 General - Thử nghiệm"
+            captionThemes={captionThemes}
+            onSelect={handleCustomeSelectTest}
+          />
           <ThemesCustomes
             title="🎨 Your Saved Theme"
             presets={normalizedPresets}
@@ -271,11 +301,6 @@ const ScreenCustomeStudio = () => {
             onSelect={handleCustomeSelectTest}
           />
           <ImageCaptionSelector title="🎨 Caption Ảnh - Truy cập sớm" />
-          <GeneralThemes
-            title="🎨 General - Thử nghiệm"
-            captionThemes={captionThemes}
-            onSelect={handleCustomeSelectTest}
-          />
           <div className="">
             <h2 className="text-md font-semibold text-primary mb-2">
               🎨 Caption ? - Sắp ra mắt

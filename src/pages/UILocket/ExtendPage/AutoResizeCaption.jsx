@@ -130,6 +130,38 @@ const AutoResizeCaption = () => {
             }}
           />
         </div>
+      ) : postOverlay.type === "music" ? (
+        <div className="flex w-auto items-center gap-2 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold bg-white/50 backdrop-blur-2xl max-w-[85%] overflow-hidden">
+          <img
+            src={postOverlay.music.image}
+            alt="Icon"
+            className="w-6 h-6 object-cover rounded-sm shrink-0 no-select no-save"
+          />
+
+          <div className="relative overflow-hidden whitespace-nowrap flex-1">
+            <div className="inline-block animate-marquee"
+              style={{
+                animationDuration:
+                  postOverlay.caption.length < 30
+                    ? "9s"
+                    : postOverlay.caption.length < 60
+                    ? "15s"
+                    : "17s",
+              }}>
+              <span className="mr-4">{postOverlay.caption}</span>
+              <span className="mr-4 absolute">{postOverlay.caption}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0 no-select no-save">
+            <div className="border-l border-white h-5"></div>
+            <img
+              src="./images/spotify_vector_icon_Normal@3x.png"
+              alt="Spotify Icon"
+              className="w-6 h-6 object-contain"
+            />
+          </div>
+        </div>
       ) : postOverlay.type === "time" ? (
         <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
           <PiClockFill className="w-6 h-6 rotate-270" />
@@ -183,7 +215,7 @@ const AutoResizeCaption = () => {
           onChange={handleChange}
           placeholder={placeholder}
           rows={1}
-          className="absolute z-10 text-white px-4 font-semibold bottom-2 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl py-2 text-md outline-none max-w-[90%] resize-none overflow-hidden transition-all"
+          className="absolute z-10 text-white px-4 font-semibold duration-300 opacity-100 bottom-2 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl py-2 text-md outline-none max-w-[90%] resize-none overflow-hidden transition-all"
           style={{
             width: `${width}px`,
             color: postOverlay.text_color,

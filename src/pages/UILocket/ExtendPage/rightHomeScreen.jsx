@@ -38,7 +38,7 @@ const RightHomeScreen = () => {
       <div className="flex flex-col flex-1 px-4 py-6 overflow-y-scroll space-y-5 justify-start items-center">
         <FeatureList />
         <MailForm />
-        <ThemeSelector />
+        {/* <ThemeSelector /> */}
       </div>
     </div>
   );

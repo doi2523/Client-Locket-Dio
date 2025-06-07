@@ -11,6 +11,7 @@ import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
 import PrivacyPolicy from "../pages/Public/PrivacyPolicy";
 import RegisterMemberPage from "../pages/Public/RegisterMemberPage";
+import Settings from "../pages/Public/Settings";
 import Timeline from "../pages/Public/Timeline";
 import CameraCapture from "../pages/UILocket";
 
@@ -30,6 +31,7 @@ const publicRoutes = [
   { path: "/testv1", component: CameraCapture, title: `${APP_NAME} | Test` },
   { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
   { path: "/locketdio-tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },
+  { path: "/settings", component: Settings, title: `${APP_NAME} | Cài đặt` },
   // { path: "/testv2", component: Docs, title: `${APP_NAME} | Đăng Moment Mới` },
 ];
 
@@ -44,6 +46,7 @@ const authRoutes = [
   { path: "/docs", component: Docs, title: `${APP_NAME} | Docs` },
   { path: "/donatehistory", component: DonateHistory, title: `${APP_NAME} | DonateHistory` },
   { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
+  { path: "/settings", component: Settings, title: `${APP_NAME} | Cài đặt` },
 
   { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Locket` },
   { path: "/locketdio-tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },

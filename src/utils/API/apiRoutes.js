@@ -28,6 +28,7 @@ export const API_URL = {
   GET_INCOMING_URL: `${BASE_API_URL}${LOCKET_URL}/get-incoming_friends`,
   DELETE_FRIEND_REQUEST_URL: `${BASE_API_URL}${LOCKET_URL}/delete-incoming_friends`,
   DELETE_FRIEND_URL: `${BASE_API_URL}${LOCKET_URL}/delete_friends`,
+  SPOTIFY_URL: `${BASE_API_URL}${LOCKET_URL}/spotify`,
 
   //API lấy dữ liệu từ máy chủ
   GET_LASTEST_URL: `${BASE_API_URL}${LOCKET_PRO}/getmoment`,

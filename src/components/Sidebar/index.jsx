@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   History,
   Wrench,
+  Settings2,
 } from "lucide-react";
 import { showToast } from "../Toast";
 import * as ultils from "../../utils";
@@ -218,6 +219,19 @@ const Sidebar = () => {
                     <BookMarked size={22} /> Docs
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    to="/settings"
+                    className={`flex items-center px-3 py-3 rounded-lg transition ${
+                      location.pathname === "/settings"
+                        ? "bg-base-300"
+                        : "hover:bg-base-200"
+                    }`}
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    <Settings2 size={22} /> Cài đặt <div className="badge badge-sm badge-secondary">New</div>
+                  </Link>
+                </li>
                 <li className="mt-5">
                   <button
                     className="flex items-center w-full px-3 py-3 rounded-lg btn transition"
@@ -256,7 +270,7 @@ const Sidebar = () => {
                     }`}
                     onClick={() => setIsSidebarOpen(false)}
                   >
-                    <Info size={22} /> Locket Pro
+                    <Info size={22} /> Locket Dio
                   </Link>
                 </li>
 
@@ -284,7 +298,7 @@ const Sidebar = () => {
                     }`}
                     onClick={() => setIsSidebarOpen(false)}
                   >
-                    <Mail size={22} /> Liên hệ
+                    <Mail size={22} /> Liên hệ <div className="badge badge-sm badge-secondary">Support</div>
                   </Link>
                 </li>
 
@@ -340,7 +354,7 @@ const Sidebar = () => {
                     }`}
                     onClick={() => setIsSidebarOpen(false)}
                   >
-                    <Rocket size={22} /> Gói thành viên
+                    <Rocket size={22} /> Gói thành viên <div className="badge badge-sm badge-secondary">New</div>
                   </Link>
                 </li>
 
