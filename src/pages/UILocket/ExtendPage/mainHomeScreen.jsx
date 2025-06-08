@@ -30,7 +30,7 @@ const MainHomeScreen = () => {
   {selectedFile ? (
     <HeaderAfterCapture selectedFile={selectedFile} />
   ) : (
-    <HeaderBeforeCapture />
+    <HeaderBeforeCapture selectedFile={selectedFile}/>
   )}
 
   <div className="flex flex-1 flex-col justify-around py-5 items-center w-full">
@@ -57,7 +57,7 @@ const MainHomeScreen = () => {
       {selectedFile ? (
         <HeaderAfterCapture selectedFile={selectedFile} />
       ) : (
-        <HeaderBeforeCapture />
+        <HeaderBeforeCapture selectedFile={selectedFile}/>
       )}
       <MediaPreview />
       <ActionControls />

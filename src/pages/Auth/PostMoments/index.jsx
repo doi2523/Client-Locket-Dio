@@ -84,7 +84,7 @@ const PostMoments = () => {
         "info",
         `Đang chuẩn bị ${preview.type === "video" ? "video" : "ảnh"} !`
       );
-      const payload = await utils.createRequestPayloadV4(
+      const payload = await utils.createRequestPayloadV5(
         selectedFile,
         preview.type,
         postOverlay

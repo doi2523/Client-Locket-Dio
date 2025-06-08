@@ -255,7 +255,7 @@ const ScreenCustomeStudio = () => {
               </span>
             )}
             {userPlan?.plan_info?.id === "free" && (
-              <span className="px-2 py-0.5 text-xs rounded-full font-semibold shadow-md bg-gray-400 text-white ml-2">
+              <span className="px-2 py-0.5 text-xs rounded-full font-semibold shadow-md bg-gray-400 text-black ml-2">
                 Free
               </span>
             )}

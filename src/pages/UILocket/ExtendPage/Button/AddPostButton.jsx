@@ -13,7 +13,6 @@ const AddPostButton = () => {
   const [colorTop, setColorTop] = useState("#FF9500");
   const [colorBot, setColorBot] = useState("#FF2D95");
   const [colorText, setColorText] = useState("#FFFFFF");
-  const [content, setContent] = useState("");
   const [type, setType] = useState("background");
   const [isLoading, setIsLoading] = useState(false); // thêm state loading
 
@@ -26,7 +25,6 @@ const AddPostButton = () => {
 
     const postData = {
       uid: user.uid,
-      content,
       options: {
         caption,
         color_top: colorTop,
@@ -52,7 +50,6 @@ const AddPostButton = () => {
         setColorTop("#FF9500");
         setColorBot("#FF2D95");
         setColorText("#FFFFFF");
-        setContent("");
         setType("background");
         setShowForm(false);
       })
@@ -101,7 +98,7 @@ const AddPostButton = () => {
           }`}
         >
           <div className="flex justify-between mb-4">
-            <h2 className="text-xl font-semibold">Thêm bài viết</h2>
+            <h2 className="text-xl font-semibold">Chia sẻ caption theme</h2>
             <button
               className="flex items-center justify-center rounded-md w-11 h-11 bg-base-300"
               type="button"
@@ -194,19 +191,6 @@ const AddPostButton = () => {
             </div>
 
             <div className="mb-4 relative">
-              <label htmlFor="content" className="block text-sm font-medium">
-                Nội dung
-              </label>
-              <textarea
-                id="content"
-                name="content"
-                rows="4"
-                placeholder="Thêm lời nhắn..."
-                className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                disabled={isLoading} // disable khi loading
-              />
               <p className="absolute">Chỉ bấm gửi một lần tránh spam</p>
             </div>
 

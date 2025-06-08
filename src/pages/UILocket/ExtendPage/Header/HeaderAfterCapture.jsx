@@ -12,13 +12,12 @@ const HeaderAfterCapture = ({ selectedFile }) => {
 
     const url = URL.createObjectURL(selectedFile);
 
-    const extension = selectedFile.type.split("/")[1] || "png"; // ví dụ: image/png → png
+    const extension = selectedFile.type.split("/")[1] || "png";
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const defaultName = `locket-${timestamp}.${extension}`;
 
     const link = document.createElement("a");
     link.href = url;
-    // link.download = selectedFile.name || defaultName;
     link.download = defaultName;
     document.body.appendChild(link);
     link.click();
@@ -28,7 +27,11 @@ const HeaderAfterCapture = ({ selectedFile }) => {
   };
 
   return (
-    <div className="navbar top-0 left-0 w-full px-4 py-2 flex items-center justify-between bg-base-100 z-50 relative">
+    <div 
+      className={`navbar top-0 left-0 w-full px-4 py-2 flex items-center justify-between bg-base-100 z-50 relative transition-opacity duration-500 ${
+        selectedFile ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}
+    >
       <div className="w-11 h-11" />
 
       <div className="absolute flex justify-center items-center flex-row gap-1 left-1/2 transform -translate-x-1/2 text-lg font-semibold text-base-content">

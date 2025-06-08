@@ -40,7 +40,8 @@ const PostCard = ({ post }) => {
           />
           <div>
             <div className="text-sm font-semibold text-gray-800 flex items-center gap-1">
-              {post?.user_info?.displayName || "Anonymous"}{" • "}
+              {post?.user_info?.displayName || "Anonymous"}
+              {" • "}
               <div className="flex items-center space-x-1">
                 {/* Badge Admin */}
                 {post?.user_info?.username === "diodio" && (
@@ -57,14 +58,18 @@ const PostCard = ({ post }) => {
 
                 {post?.user_info?.plan ? (
                   <span
-                    className="px-2 py-0.5 text-xs rounded-full font-semibold shadow-md text-white"
+                    className={`px-2 py-0.5 text-xs rounded-full font-semibold shadow-md ${
+                      post.user_info.plan.toLowerCase() === "free"
+                        ? "text-gray-800"
+                        : "text-white"
+                    }`}
                     style={{
                       backgroundImage:
                         post.user_info.plan.toLowerCase() === "premium"
                           ? "linear-gradient(45deg, #000000, #4B0082)" // đen → tím đậm
                           : post.user_info.plan.toLowerCase() === "pro"
                           ? "linear-gradient(45deg, #2563EB, #4F46E5)" // xanh → tím
-                          : "",
+                          : "linear-gradient(45deg, #D1D5DB , #E5E7EB)", // free
                     }}
                   >
                     {post.user_info.plan.charAt(0).toUpperCase() +
@@ -104,14 +109,11 @@ const PostCard = ({ post }) => {
         >
           <span className="text-base">
             {(post?.options?.icon || "") + " "}
-            {/* {post?.options?.caption || post?.options?.caption || "Caption"} */}
-            {"Caption"}
+            {post?.options?.caption || post?.options?.caption || "Caption"}
+            {/* {"Caption"} */}
           </span>
         </button>
       </div>
-
-      {/* Content */}
-      <div className="px-4 py-3 text-sm text-gray-800">{post.content}</div>
 
       <div className="px-4 pb-4 flex w-full justify-between items-center">
         <div className="flex gap-4 text-gray-600">

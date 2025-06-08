@@ -4,6 +4,7 @@ import {
   prepareMediaInfo,
   uploadToCloudinary,
 } from "../cloudinary/uploadFileAndGetInfo";
+import { uploadFileAndGetInfo } from "../firebase/uploadfiletofirebase";
 
 export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
   // Lấy token bằng getToken()
@@ -142,6 +143,67 @@ export const createRequestPayloadV4 = async (
     // Upload file & chuẩn bị thông tin media
     const fileData = await uploadToCloudinary(selectedFile, previewType);
     const mediaInfo = prepareMediaInfo(fileData);
+
+    // Chuẩn bị dữ liệu tùy chọn (caption, overlay, v.v.)
+    const optionsData = {
+      caption: postOverlay.caption,
+      overlay_id: postOverlay.overlay_id,
+      type: postOverlay.type,
+      icon: postOverlay.icon,
+      text_color: postOverlay.text_color,
+      color_top: postOverlay.color_top,
+      color_bottom: postOverlay.color_bottom,
+      audience, // Gắn audience vào options luôn
+      recipients: audience === "selected" ? selectedRecipients : [],
+      music: postOverlay?.music || "",
+    };
+
+    // Tạo payload cuối cùng
+    const payload = {
+      userData: { idToken: idToken, localId },
+      options: optionsData,
+      model: "Version-UploadmediaV3.1",
+      mediaInfo,
+    };
+
+    return payload;
+  } catch (error) {
+    console.error("Lỗi khi tạo payload:", error);
+    throw error;
+  }
+};
+
+export const createRequestPayloadV5 = async (
+  selectedFile,
+  previewType,
+  postOverlay,
+  audience,
+  selectedRecipients
+) => {
+  try {
+    // Đợi lấy token & uid
+    const auth = await getCurrentUserTokenAndUid();
+
+    if (!auth) {
+      console.error("Không lấy được token và uid hiện tại.");
+      return [];
+    }
+
+    const { idToken, localId } = auth;
+
+    // Upload file & chuẩn bị thông tin media
+    const fileInfo = await uploadFileAndGetInfo(selectedFile, previewType);
+    // console.log(fileInfo);
+
+    const mediaInfo = {
+      url: fileInfo.downloadURL,
+      path: fileInfo.metadata.fullPath, // đường dẫn đầy đủ trong Storage
+      name: fileInfo.metadata.name, // tên file
+      size: fileInfo.metadata.size, // kích thước file (bytes)
+      contentType: fileInfo.metadata.contentType, // loại file (image/jpg,...)
+      timeCreated: fileInfo.metadata.timeCreated, // thời gian tạo
+      type: previewType,
+    };
 
     // Chuẩn bị dữ liệu tùy chọn (caption, overlay, v.v.)
     const optionsData = {

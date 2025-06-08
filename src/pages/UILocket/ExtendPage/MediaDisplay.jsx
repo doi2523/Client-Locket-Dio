@@ -4,6 +4,7 @@ import Hourglass from "../../../components/UI/Loading/hourglass";
 import { useApp } from "../../../context/AppContext";
 import MediaSizeInfo from "../../../components/UI/MediaSizeInfo";
 import BorderProgress from "../../../components/UI/SquareProgress";
+import { showInfo } from "../../../components/Toast";
 
 const MediaPreview = ({ loading, countdown, capturedMedia }) => {
   const { post, useloading, camera } = useApp();
@@ -117,6 +118,20 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
             <AutoResizeCaption />
           </div>
         )}
+        <div className="absolute inset-0 top-7 px-7 z-50 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
+          <button
+            onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
+            className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
+          >
+            SD
+          </button>
+          <button
+            onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
+            className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
+          >
+            1x
+          </button>
+        </div>
 
         {/* Viền loading */}
         <div className="absolute inset-0 z-50 pointer-events-none">

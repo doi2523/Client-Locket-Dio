@@ -23,6 +23,7 @@ export const API_URL = {
   GET_INFO_URL: `${BASE_API_URL}${LOCKET_URL}/getinfo`,
   REFESH_TOKEN_URL: `${BASE_API_URL}${LOCKET_URL}/refresh-token`,
   GET_LIST_FRIENDS_URL: `${BASE_API_URL}${LOCKET_URL}/get-allfriends`,
+  UPLOAD_MEDIA_URL_V2: `${BASE_API_URL}${LOCKET_URL}/postMomentV2`,
   UPLOAD_MEDIA_URL: `${BASE_API_URL}${LOCKET_URL}/post`,
   GET_USER: `https://api.locketcamera.com/fetchUserV2`,
   GET_INCOMING_URL: `${BASE_API_URL}${LOCKET_URL}/get-incoming_friends`,

@@ -105,13 +105,13 @@ export const PostMoments = async (payload) => {
 
     // Đặt timeout tùy theo loại tệp (ảnh hoặc video)
     const timeoutDuration =
-      fileType === "image" ? 5000 : fileType === "video" ? 10000 : 5000;
+      fileType === "image" ? 10000 : fileType === "video" ? 15000 : 5000;
     const timeoutId = setTimeout(() => {
       console.log("⏳ Uploading is taking longer than expected...");
     }, timeoutDuration);
 
     // Gửi request với payload và header Content-Type: application/json
-    const response = await axios.post(utils.API_URL.UPLOAD_MEDIA_URL, payload, {
+    const response = await axios.post(utils.API_URL.UPLOAD_MEDIA_URL_V2, payload, {
       headers: {
         "Content-Type": "application/json", // Sử dụng JSON thay vì FormData
       },

@@ -3,7 +3,7 @@ import { useApp } from "../../../../context/AppContext";
 import { AuthContext } from "../../../../context/AuthLocket";
 import { ChevronRight, Menu } from "lucide-react";
 
-const HeaderBeforeCapture = () => {
+const HeaderBeforeCapture = ({ selectedFile }) => {
   const { navigation } = useApp();
   const { user, friendDetails } = useContext(AuthContext);
   const {
@@ -15,7 +15,11 @@ const HeaderBeforeCapture = () => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   return (
-    <div className="navbar top-0 left-0 w-full px-4 py-2 flex items-center justify-between bg-base-100 z-50 relative">
+    <div 
+      className={`navbar top-0 left-0 w-full px-4 py-2 flex items-center justify-between bg-base-100 z-50 relative transition-opacity duration-500 ${
+        !selectedFile ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}
+    >
       {/* Avatar bên trái */}
       <button
       onClick={() => setIsProfileOpen(true)}
