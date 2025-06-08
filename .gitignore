@@ -28,3 +28,5 @@ firebase.json
 
 .env.development
 .env.production
+
+src/config/firebase.js
