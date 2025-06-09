@@ -42,8 +42,8 @@ export const usePost = () => {
     const isHD = userPlan?.plan_info?.features?.upload_hd === true;
     //Chia theo plan ( Plan / Free)
     //Sửa thì sửa ở đây nhé.
-    setMaxImageSizeMB(isHD ? 8 : 2);
-    setMaxVideoSizeMB(isHD ? 14 : 10);
+    setMaxImageSizeMB(isHD ? 9 : 3);
+    setMaxVideoSizeMB(isHD ? 15 : 10);
   }, [userPlan]);
 
   return {

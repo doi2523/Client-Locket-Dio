@@ -20,11 +20,11 @@ const CameraCapture = () => {
   return (
     <>
       <MainHomeScreen />
-      <BottomHomeScreen />
 
       <Suspense fallback={<Loading/>}>
         <LeftHomeScreen />
         <RightHomeScreen />
+        <BottomHomeScreen />
       </Suspense>
 
       <Suspense fallback={<Loading/>}>

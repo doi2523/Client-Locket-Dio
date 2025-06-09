@@ -89,7 +89,6 @@ const MediaPreview = ({ capturedMedia }) => {
   `}
           />
         )}
-
         {/* Preview media */}
         {preview?.type === "video" && (
           <video
@@ -142,6 +141,9 @@ const MediaPreview = ({ capturedMedia }) => {
           </button>
         </div>
 
+        {/* <div className="absolute h-full w-full top-0 left-0 z-50 pointer-events-none">
+        <img src="./images/Leaves-Large_Normal.png" alt="" className="h-full w-full"/>
+        </div> */}
         {/* Viền loading */}
         <div className="absolute inset-0 z-50 pointer-events-none">
           <BorderProgress />
