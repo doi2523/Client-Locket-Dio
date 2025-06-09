@@ -69,6 +69,8 @@ const PostCard = ({ post }) => {
                           ? "linear-gradient(45deg, #000000, #4B0082)" // đen → tím đậm
                           : post.user_info.plan.toLowerCase() === "pro"
                           ? "linear-gradient(45deg, #2563EB, #4F46E5)" // xanh → tím
+                          : post.user_info.plan.toLowerCase() === "pro plus"
+                          ? "linear-gradient(45deg, #10B981, #059669)"
                           : "linear-gradient(45deg, #D1D5DB , #E5E7EB)", // free
                     }}
                   >

@@ -77,7 +77,7 @@ const CameraButton = () => {
         setCameraActive(false);
 
         const blob = new Blob(chunks, { type: "video/webm" });
-        const file = new File([blob], "video.mp4", { type: "video/mp4" });
+        const file = new File([blob], "locket_dio.mp4", { type: "video/mp4" });
         const videoUrl = URL.createObjectURL(file);
 
         const fileSizeInMB = file.size / (1024 * 1024);
@@ -132,7 +132,7 @@ const CameraButton = () => {
     clearInterval(intervalRef.current);
     setHoldTime(heldTime);
 
-    if (heldTime < 300) {
+    if (heldTime < 600) {
       // Chụp ảnh
       // console.log("📸 Chụp ảnh");
 
@@ -168,7 +168,7 @@ const CameraButton = () => {
 
       canvas.toBlob((blob) => {
         if (blob) {
-          const file = new File([blob], "photo.jpg", { type: "image/jpg" });
+          const file = new File([blob], "locket_dio.jpg", { type: "image/jpg" });
           const imgUrl = URL.createObjectURL(file);
           setPreview({ type: "image", data: imgUrl });
 

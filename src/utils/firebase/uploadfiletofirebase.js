@@ -1,11 +1,19 @@
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../config/firebase";
 
-export const uploadFileAndGetInfo = async (file, previewType = "other", folder = "LocketCloud") => {
+export const uploadFileAndGetInfo = async (
+  file,
+  previewType = "other",
+  localId
+) => {
   if (!file) throw new Error("No file provided");
 
   const safeType = previewType.toLowerCase(); // image / video / other
-  const filePath = `${folder}/${safeType}/${Date.now()}_${file.name}`;
+  const timestamp = Date.now();
+  const extension = file.name.split(".").pop(); // lấy đuôi file, ví dụ jpg, mp4
+
+  const fileName = `locketdio_${timestamp}_${localId}.${extension}`;
+  const filePath = `LocketCloud/${safeType}/${fileName}`;
   const fileRef = ref(storage, filePath);
 
   // Upload file
@@ -17,6 +25,6 @@ export const uploadFileAndGetInfo = async (file, previewType = "other", folder =
   // Trả về downloadURL và metadata
   return {
     downloadURL,
-    metadata: uploadResult.metadata,  // Có name, bucket, generation, size, ...
+    metadata: uploadResult.metadata,
   };
 };

@@ -5,11 +5,15 @@ import { useApp } from "../../../context/AppContext";
 
 const MediaSizeInfo = () => {
   const { post } = useApp();
-  const { preview, isSizeMedia } = post;
+  const { preview, isSizeMedia, maxImageSizeMB, maxVideoSizeMB } = post;
 
   const isImage = preview?.type === "image";
   const isVideo = preview?.type === "video";
-  const isTooBig = isImage ? isSizeMedia > 6 : isVideo ? isSizeMedia > 10 : false;
+  const isTooBig = isImage
+    ? isSizeMedia > maxImageSizeMB
+    : isVideo
+    ? isSizeMedia > maxVideoSizeMB
+    : false;
   const colorClass = isTooBig ? "text-red-500" : "text-green-500";
 
   return (

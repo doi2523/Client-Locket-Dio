@@ -1,12 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import AutoResizeCaption from "./AutoResizeCaption";
 import Hourglass from "../../../components/UI/Loading/hourglass";
 import { useApp } from "../../../context/AppContext";
 import MediaSizeInfo from "../../../components/UI/MediaSizeInfo";
 import BorderProgress from "../../../components/UI/SquareProgress";
 import { showInfo } from "../../../components/Toast";
+import { AuthContext } from "../../../context/AuthLocket";
 
-const MediaPreview = ({ loading, countdown, capturedMedia }) => {
+const MediaPreview = ({ capturedMedia }) => {
+  const { userPlan } = useContext(AuthContext);
   const { post, useloading, camera } = useApp();
   const { selectedFile, preview, isSizeMedia } = post;
   const { streamRef, videoRef, cameraActive, setCameraActive, cameraMode } =
@@ -120,11 +122,18 @@ const MediaPreview = ({ loading, countdown, capturedMedia }) => {
         )}
         <div className="absolute inset-0 top-7 px-7 z-50 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
           <button
-            onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
+            onClick={() => {
+              if (userPlan?.plan_info?.features?.upload_hd) {
+                showInfo("Bạn đang sử dụng đặc quyền gói thành viên");
+              } else {
+                showInfo("Bạn không có quyền bật HD. Truy cập trang thành viên để nâng cấp!");
+              }
+            }}
             className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
           >
-            SD
+            {userPlan?.plan_info?.features?.upload_hd ? "HD" : "SD"}
           </button>
+
           <button
             onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
             className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"

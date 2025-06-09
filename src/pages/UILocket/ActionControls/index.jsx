@@ -14,16 +14,20 @@ const ActionControls = () => {
     <div className="flex gap-4 w-full h-25 max-w-md justify-evenly items-center relative overflow-hidden">
       {/* //Quản lý các phương tiện đã tải lên gửi, xoá , thêm hiệu ứng */}
       <div
-        className={`absolute inset-0 transition-opacity duration-200 ease-in-out ${
-          showControls ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+        className={`absolute inset-0 transition-opacity duration-400 ${
+          showControls
+            ? "opacity-100 scale-100"
+            : "opacity-0 scale-95 pointer-events-none"
         }`}
       >
         <MediaControls />
       </div>
       {/* Chụp ảnh và quay video */}
       <div
-        className={`absolute inset-0 transition-opacity duration-200 ease-in-out ${
-          !showControls ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+        className={`absolute inset-0 transition-opacity duration-400 ${
+          !showControls
+            ? "opacity-100 scale-100"
+            : "opacity-0 scale-95 pointer-events-none"
         }`}
       >
         <MediaCapture />

@@ -30,6 +30,8 @@ const MediaControls = () => {
     setAudience,
     selectedRecipients,
     setSelectedRecipients,
+    maxImageSizeMB,
+    maxVideoSizeMB,
   } = post;
   const { setCameraActive } = camera;
 
@@ -119,14 +121,10 @@ const MediaControls = () => {
     const { type: previewType } = preview || {};
     const isImage = previewType === "image";
     const isVideo = previewType === "video";
-    const maxFileSize = isImage ? 6 : 10;
+    const maxFileSize = isImage ? maxImageSizeMB : maxVideoSizeMB;
 
     if (isSizeMedia > maxFileSize) {
-      showError(
-        `${
-          isImage ? "Ảnh" : "Video"
-        } vượt quá dung lượng. Tối đa ${maxFileSize}MB.`
-      );
+      showError(`${isImage ? "Ảnh" : "Video"} vượt quá dung lượng. Tối đa ${maxFileSize}MB.`);
       return;
     }
 

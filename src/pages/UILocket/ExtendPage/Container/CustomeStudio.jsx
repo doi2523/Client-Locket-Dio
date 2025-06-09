@@ -8,6 +8,7 @@ import GeneralThemes from "../CaptionItems/GeneralThemes";
 import ThemesCustomes from "../CaptionItems/ThemesCustomes";
 import DevCustomes from "../CaptionItems/DevCustomes";
 import ImageCaptionSelector from "../CaptionItems/ImageCaption";
+import PlanBadge from "../../../../components/UI/PlanBadge/PlanBadge";
 
 const ScreenCustomeStudio = () => {
   const navigate = useNavigate();
@@ -234,31 +235,7 @@ const ScreenCustomeStudio = () => {
             <div className="text-2xl font-lovehouse mt-1.5 font-semibold">
               Customize studio{" "}
             </div>
-            {userPlan?.plan_info?.id === "premium" && (
-              <span
-                className="px-2 py-0.5 text-xs rounded-full font-semibold shadow-md text-white ml-2"
-                style={{
-                  backgroundImage: "linear-gradient(45deg, #000000, #4B0082)",
-                }}
-              >
-                Premium
-              </span>
-            )}
-            {userPlan?.plan_info?.id === "pro" && (
-              <span
-                className="px-2 py-0.5 text-xs rounded-full font-semibold shadow-md text-white ml-2"
-                style={{
-                  backgroundImage: "linear-gradient(45deg, #2563EB, #4F46E5)",
-                }}
-              >
-                Pro
-              </span>
-            )}
-            {userPlan?.plan_info?.id === "free" && (
-              <span className="px-2 py-0.5 text-xs rounded-full font-semibold shadow-md bg-gray-400 text-black ml-2">
-                Free
-              </span>
-            )}
+            <PlanBadge/>
           </div>
           <button
             onClick={() => setIsFilterOpen(false)}

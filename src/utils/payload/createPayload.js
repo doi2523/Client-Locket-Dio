@@ -192,7 +192,7 @@ export const createRequestPayloadV5 = async (
     const { idToken, localId } = auth;
 
     // Upload file & chuẩn bị thông tin media
-    const fileInfo = await uploadFileAndGetInfo(selectedFile, previewType);
+    const fileInfo = await uploadFileAndGetInfo(selectedFile, previewType, localId);
     // console.log(fileInfo);
 
     const mediaInfo = {

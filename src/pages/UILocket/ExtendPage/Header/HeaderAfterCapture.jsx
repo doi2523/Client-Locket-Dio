@@ -14,7 +14,7 @@ const HeaderAfterCapture = ({ selectedFile }) => {
 
     const extension = selectedFile.type.split("/")[1] || "png";
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    const defaultName = `locket-${timestamp}.${extension}`;
+    const defaultName = `locketdio-${timestamp}.${extension}`;
 
     const link = document.createElement("a");
     link.href = url;

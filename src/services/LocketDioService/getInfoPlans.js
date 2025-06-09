@@ -1,3 +1,4 @@
+import axios from "axios";
 import * as utils from "../../utils";
 
 export const fetchUserPlan = async () => {
@@ -57,5 +58,23 @@ export const registerFreePlan = async (user, idToken) => {
   } catch (e) {
     console.error(e);
     return null;
+  }
+};
+export const getUserUploadStats = async (uid) => {
+  try {
+    const response = await axios.post(
+      utils.API_URL.GET_UPLOAD_STATS_URL,
+      { localId: uid }, // gửi uid trong body JSON
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching upload stats:", error);
+    throw error;
   }
 };

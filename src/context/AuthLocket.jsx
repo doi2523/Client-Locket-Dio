@@ -6,6 +6,7 @@ import {
   fetchUser,
   fetchUserPlan,
   getListIdFriends,
+  getUserUploadStats,
   registerFreePlan,
 } from "../services";
 
@@ -30,6 +31,10 @@ export const AuthProvider = ({ children }) => {
   // Load userPlan từ localStorage ngay khi component mount
   const [userPlan, setUserPlan] = useState(() => {
     const saved = localStorage.getItem("userPlan");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [uploadStats, setUploadStats] = useState(() => {
+    const saved = localStorage.getItem("uploadStats");
     return saved ? JSON.parse(saved) : null;
   });
 
@@ -152,15 +157,16 @@ export const AuthProvider = ({ children }) => {
       console.error("Lỗi khi fetch plan:", err);
     }
   };
-  //   useEffect(() => {
-  //   if (authTokens?.localId && authTokens?.idToken) {
-  //     fetchUserPlan(authTokens?.localId, authTokens?.idToken).then((data) => {
-  //       if (data) {
-  //         setUserPlan(data);
-  //       }
-  //     });
-  //   }
-  // }, [authTokens]);
+  useEffect(() => {
+    if (authTokens?.localId) {
+      getUserUploadStats(authTokens?.localId).then((data) => {
+        if (data) {
+          localStorage.setItem("uploadStats", JSON.stringify(data));
+          setUploadStats(data);
+        }
+      });
+    }
+  }, [authTokens]);
   // Load friendDetails và lưu vào state + localStorage
   useEffect(() => {
     const loadFriendDetails = async () => {
@@ -270,6 +276,8 @@ export const AuthProvider = ({ children }) => {
           setUserPlan,
           authTokens,
           resetAuthContext,
+          uploadStats,
+          setUploadStats,
         }}
       >
         {children}

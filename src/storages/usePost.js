@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthLocket";
 
 export const defaultPostOverlay = {
   overlay_id: "standard",
@@ -11,6 +12,7 @@ export const defaultPostOverlay = {
 };
 
 export const usePost = () => {
+  const { userPlan } = useContext(AuthContext);
   const [selectedColors, setSelectedColors] = useState({
     top: "", // Trong suốt
     bottom: "", // Trong suốt
@@ -33,6 +35,17 @@ export const usePost = () => {
   const [audience, setAudience] = useState("all"); // "all" | "selected"
   const [selectedRecipients, setSelectedRecipients] = useState([]); // array userId hoặc object bạn bè
 
+  const [maxImageSizeMB, setMaxImageSizeMB] = useState(""); // Giới hạn ảnh: 5MB
+  const [maxVideoSizeMB, setMaxVideoSizeMB] = useState(""); // Giới hạn video: 12MB
+
+  useEffect(() => {
+    const isHD = userPlan?.plan_info?.features?.upload_hd === true;
+    //Chia theo plan ( Plan / Free)
+    //Sửa thì sửa ở đây nhé.
+    setMaxImageSizeMB(isHD ? 8 : 2);
+    setMaxVideoSizeMB(isHD ? 14 : 10);
+  }, [userPlan]);
+
   return {
     caption,
     setCaption,
@@ -54,5 +67,9 @@ export const usePost = () => {
     setAudience,
     selectedRecipients,
     setSelectedRecipients,
+    maxImageSizeMB,
+    setMaxImageSizeMB,
+    maxVideoSizeMB,
+    setMaxVideoSizeMB,
   };
 };
