@@ -50,7 +50,7 @@ export default function SettingView() {
           }`}
         >
           <ImageWithLoader
-            src="https://firebasestorage.googleapis.com/v0/b/locket-dio.firebasestorage.app/o/Mockup%2Flocket_dio_webview.png?alt=media&token=71f4a342-a16d-4270-8cbf-7679783b687e"
+            src="./images/locket_dio_webview.png"
             alt="Web View"
           />
           <div className="flex items-center justify-between mt-2">
@@ -72,7 +72,7 @@ export default function SettingView() {
           }`}
         >
           <ImageWithLoader
-            src="https://firebasestorage.googleapis.com/v0/b/locket-dio.firebasestorage.app/o/Mockup%2Flocket_dio_appview.png?alt=media&token=7eb7f6c1-bd2f-4f54-be60-15979c6b2a08"
+            src="./images/locket_dio_appview.png"
             alt="App View"
           />
           <div className="flex items-center justify-between mt-2">

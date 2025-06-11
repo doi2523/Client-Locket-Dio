@@ -128,7 +128,7 @@ export default function ModalRegisterMember() {
     {/* Ảnh QR nhỏ hơn */}
     <div className="flex justify-center">
       <img
-        src="https://firebasestorage.googleapis.com/v0/b/locket-dio.firebasestorage.app/o/QR%2FIMG_7683.jpeg?alt=media&token=85692e42-035c-4b09-85af-bf4ad75b09c4"
+        src="./images/vcb_qr.jpg"
         alt="QR chuyển khoản"
         className="rounded-xl shadow-md w-40 h-auto"
         onLoad={() => console.log("Ảnh QR đã tải xong")}
@@ -192,11 +192,11 @@ export default function ModalRegisterMember() {
   <div className="p-4 border rounded-xl shadow-sm bg-white text-[13px] text-gray-600">
     <p>
       Vui lòng <strong>ghi đúng nội dung chuyển khoản</strong>. Hệ thống sẽ
-      tự động nâng cấp <strong>PREMIUM</strong> trong vòng <strong>5–10 phút</strong>.
+      tự động nâng cấp <strong>PLAN</strong> trong vòng <strong>5–10 phút</strong>.
       Nếu quá thời gian vẫn chưa được xử lý, vui lòng liên hệ Zalo CSKH:
       <a
         className="text-blue-600 underline ml-1"
-        href="https://zalo.me/xxxxxxxx"
+        href="https://zalo.me/0329254203"
         target="_blank"
         rel="noopener noreferrer"
       >
