@@ -91,7 +91,7 @@ const BottomHomeScreen = () => {
 
   return (
     <div
-      className={`fixed inset-0 flex flex-col transition-all duration-500 z-50 ${
+      className={`fixed inset-0 flex flex-col transition-all duration-500 z-50 bg-base-100 ${
         isBottomOpen
           ? "translate-y-0 opacity-100"
           : "translate-y-full opacity-0"
@@ -274,8 +274,8 @@ const BottomHomeScreen = () => {
         </div>
       </div>
 
-      {/* Bottom Button */}
-      <div className="absolute justify-evenly w-full bottom-2 flex flex-col px-4 py-2 text-base-content overflow-hidden">
+            {/* Bottom Button - Đã bỏ hoàn toàn màu nền */}
+            <div className="flex flex-col px-4 py-2 text-base-content overflow-hidden">
         <div className="flex items-center justify-between">
           {/* Close button */}
           <button
@@ -313,6 +313,7 @@ const BottomHomeScreen = () => {
           </button>
         </div>
       </div>
+
     </div>
   );
 };
