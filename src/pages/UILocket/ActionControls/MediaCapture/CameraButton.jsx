@@ -26,6 +26,7 @@ const CameraButton = () => {
     cameraActive,
     setCameraActive,
     setLoading,
+    IMAGE_SIZE_PX, VIDEO_RESOLUTION_PX, MAX_RECORD_TIME
   } = camera;
   const { preview, setPreview, setSelectedFile, setSizeMedia } = post;
   const { setIsCaptionLoading, uploadLoading, setUploadLoading } = useloading;
@@ -35,9 +36,6 @@ const CameraButton = () => {
   const mediaRecorderRef = useRef(null);
   const intervalRef = useRef(null);
 
-  // useEffect(() => {
-  //   console.log("🎬 Trạng thái isHolding thay đổi:", isHolding);
-  // }, [isHolding]);
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
@@ -58,9 +56,9 @@ const CameraButton = () => {
       const ctx = canvas.getContext("2d");
 
       const side = Math.min(video.videoWidth, video.videoHeight);
-      const outputSize = 1080;
-      canvas.width = outputSize;
-      canvas.height = outputSize;
+
+      canvas.width = VIDEO_RESOLUTION_PX; //1080
+      canvas.height = VIDEO_RESOLUTION_PX;
 
       // Capture từ canvas
       const canvasStream = canvas.captureStream();
@@ -121,7 +119,7 @@ const CameraButton = () => {
           recorder.stop();
           setIsHolding(false);
         }
-      }, constant.MAX_RECORD_TIME * 1000);
+      }, MAX_RECORD_TIME * 1000);
     }, 300);
   };
 
@@ -132,17 +130,15 @@ const CameraButton = () => {
     clearInterval(intervalRef.current);
     setHoldTime(heldTime);
 
+    //Nếu giữ nhỏ hơn 600ms thì chụp ảnh
     if (heldTime < 600) {
-      // Chụp ảnh
-      // console.log("📸 Chụp ảnh");
-
       const video = videoRef.current;
       const canvas = canvasRef.current;
       if (!video || !canvas) return;
 
       const ctx = canvas.getContext("2d");
-      canvas.width = 720;
-      canvas.height = 720;
+      canvas.width = IMAGE_SIZE_PX;
+      canvas.height = IMAGE_SIZE_PX;
 
       let sx = 0,
         sy = 0,
@@ -195,7 +191,7 @@ const CameraButton = () => {
   };
 
   const handleRotateCamera = async () => {
-    setRotation((prev) => prev + 180);
+    setRotation((prev) => prev - 180);
     const newMode = cameraMode === "user" ? "environment" : "user";
     setCameraMode(newMode);
 

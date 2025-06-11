@@ -136,16 +136,14 @@ const BottomHomeScreen = () => {
 
                   {item.video_url ? (
                     <>
-                      <video
-                        src={item.video_url}
-                        className={`object-cover w-full h-full rounded-2xl transition-all duration-300 group-hover:scale-105 ${
+                      <img
+                        src={item.thumbnail_url}
+                        className={`object-cover w-full h-full rounded-2xl transition-all duration-300 ${
                           isLoaded ? "opacity-100" : "opacity-0"
                         }`}
-                        muted
-                        playsInline
-                        preload="metadata"
-                        onLoadedData={() => handleLoaded(item.id)}
+                        onLoad={() => handleLoaded(item.id)}
                       />
+
                       <div className="absolute top-2 right-2 bg-primary/30 rounded-full p-1 z-20">
                         <MdSlowMotionVideo className="text-white" />
                       </div>
@@ -154,7 +152,7 @@ const BottomHomeScreen = () => {
                     <img
                       src={item.thumbnail_url || item.image_url}
                       alt={item.captions?.[0]?.text || "Image"}
-                      className={`object-cover w-full h-full rounded-2xl transition-all duration-300 group-hover:scale-105 ${
+                      className={`object-cover w-full h-full rounded-2xl transition-all duration-300 ${
                         isLoaded ? "opacity-100" : "opacity-0"
                       }`}
                       loading="lazy"
@@ -189,50 +187,45 @@ const BottomHomeScreen = () => {
 
       {/* Modal media lớn + caption */}
       <div
-        className={`absolute inset-0 backdrop-blur-[2px] flex justify-center items-center transition-all duration-500 ${
+        className={`absolute inset-0 flex justify-center items-center transition-all duration-500 ${
           selectedAnimate ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={handleCloseMedia}
       >
         <div
-          className="relative max-w-sm w-full mx-4 aspect-square bg-base-200 rounded-[32px] overflow-hidden"
+          className="relative max-w-sm w-full aspect-square bg-base-200 rounded-[64px] overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
-          <div
-            className="relative max-w-sm w-full mx-4 aspect-square bg-base-200 rounded-[32px] overflow-hidden flex items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {isMediaLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-base-200 z-10">
-                <LoadingRing color="black" />
-              </div>
-            )}
+          {isMediaLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-base-200 z-10">
+              <LoadingRing color="black" />
+            </div>
+          )}
 
-            {selectedVideo ? (
-              <video
-                src={selectedVideo}
-                autoPlay
-                loop
-                muted
-                playsInline
-                onLoadedData={() => setIsMediaLoading(false)}
-                className={`object-cover w-full h-full transition-opacity duration-300 ${
+          {selectedVideo ? (
+            <video
+              src={selectedVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+              onLoadedData={() => setIsMediaLoading(false)}
+              className={`object-cover w-full h-full transition-opacity duration-300 rounded-[64px] ${
+                isMediaLoading ? "opacity-0" : "opacity-100"
+              }`}
+            />
+          ) : (
+            selectedImage && (
+              <img
+                src={selectedImage}
+                alt="Selected"
+                onLoad={() => setIsMediaLoading(false)}
+                className={`object-cover w-full h-full transition-opacity duration-300 rounded-[64px] ${
                   isMediaLoading ? "opacity-0" : "opacity-100"
                 }`}
               />
-            ) : (
-              selectedImage && (
-                <img
-                  src={selectedImage}
-                  alt="Selected"
-                  onLoad={() => setIsMediaLoading(false)}
-                  className={`object-cover w-full h-full transition-opacity duration-300 ${
-                    isMediaLoading ? "opacity-0" : "opacity-100"
-                  }`}
-                />
-              )
-            )}
-          </div>
+            )
+          )}
 
           {/* Caption overlay */}
           {imageInfo && imageInfo.captions && imageInfo.captions.length > 0 && (
@@ -240,7 +233,7 @@ const BottomHomeScreen = () => {
               <div
                 className={`flex flex-col items-center space-y-1 py-2 px-4 rounded-2xl font-semibold backdrop-blur-lg ${
                   !imageInfo.captions[0].background?.colors.length
-                    ? "bg-black/70 text-white"
+                    ? "bg-black/30 text-white"
                     : ""
                 }`}
                 style={{

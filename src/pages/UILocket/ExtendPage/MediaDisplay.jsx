@@ -11,8 +11,15 @@ const MediaPreview = ({ capturedMedia }) => {
   const { userPlan } = useContext(AuthContext);
   const { post, useloading, camera } = useApp();
   const { selectedFile, preview, isSizeMedia } = post;
-  const { streamRef, videoRef, cameraActive, setCameraActive, cameraMode } =
-    camera;
+  const {
+    streamRef,
+    videoRef,
+    cameraActive,
+    setCameraActive,
+    cameraMode,
+    iscameraHD,
+    setIsCameraHD,
+  } = camera;
   const { isCaptionLoading, uploadLoading, sendLoading, setSendLoading } =
     useloading;
 
@@ -52,6 +59,10 @@ const MediaPreview = ({ capturedMedia }) => {
     }
   }, [preview, selectedFile, capturedMedia, setCameraActive]);
 
+  const handleChangeCamera = () => {
+    setIsCameraHD((prev) => !prev);
+  };
+
   return (
     <>
       <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">
@@ -59,35 +70,38 @@ const MediaPreview = ({ capturedMedia }) => {
       </h1>
 
       <div
-        className={`relative w-full max-w-md aspect-square bg-gray-800 rounded-[65px] overflow-hidden transition-transform duration-300`}
+        className={`relative w-full max-w-md aspect-square bg-gray-800 rounded-[65px] overflow-hidden transition-transform duration-500 `}
       >
-        {/* Overlay loading */}
-        {uploadLoading && (
-          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-3 text-white text-lg font-medium">
-            <Hourglass
-              size={50}
-              stroke={2}
-              bgOpacity={0.1}
-              speed={1.5}
-              color="white"
-            />
-            <div>Đang xử lý tệp...</div>
-          </div>
-        )}
-
         {/* Hiển thị camera nếu chưa có media */}
         {!preview && !selectedFile && !capturedMedia && cameraActive && (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className={`
+          <>
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`
     w-full h-full object-cover transition-all duration-200 ease-in-out
     ${cameraMode === "user" ? "scale-x-[-1]" : ""}
     ${cameraActive ? "opacity-100 scale-100" : "opacity-0 scale-95"}
   `}
-          />
+            />
+            <div className="absolute inset-0 top-7 px-7 z-50 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
+              <button
+                onClick={handleChangeCamera}
+                className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
+              >
+                {iscameraHD ? "HD" : "SD"}
+              </button>
+
+              <button
+                onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
+                className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
+              >
+                1x
+              </button>
+            </div>
+          </>
         )}
         {/* Preview media */}
         {preview?.type === "video" && (
@@ -97,7 +111,7 @@ const MediaPreview = ({ capturedMedia }) => {
             loop
             muted
             playsInline
-            className={`w-full h-full object-cover`}
+            className={`w-full h-full object-cover ${preview ? "opacity-100" : "opacity-0"}`}
           />
         )}
 
@@ -105,41 +119,20 @@ const MediaPreview = ({ capturedMedia }) => {
           <img
             src={preview.data}
             alt="Preview"
-            className="w-full h-full object-cover select-none"
+            className={`w-full h-full object-cover select-none transition-all duration-300 ${preview ? "opacity-100" : "opacity-0"}`}
           />
         )}
 
         {/* Caption */}
         {preview && selectedFile && (
           <div
-            className={`absolute z-10 inset-x-0 bottom-0 px-4 pb-4 transition-opacity duration-500 ${
+            className={`absolute z-10 inset-x-0 bottom-0 px-4 pb-4 transition-all duration-500 ${
               isCaptionLoading ? "opacity-100" : "opacity-0"
             }`}
           >
             <AutoResizeCaption />
           </div>
         )}
-        <div className="absolute inset-0 top-7 px-7 z-50 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
-          <button
-            onClick={() => {
-              if (userPlan?.plan_info?.features?.upload_hd) {
-                showInfo("Bạn đang sử dụng đặc quyền gói thành viên");
-              } else {
-                showInfo("Bạn không có quyền bật HD. Truy cập trang thành viên để nâng cấp!");
-              }
-            }}
-            className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
-          >
-            {userPlan?.plan_info?.features?.upload_hd ? "HD" : "SD"}
-          </button>
-
-          <button
-            onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
-            className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
-          >
-            1x
-          </button>
-        </div>
 
         {/* <div className="absolute h-full w-full top-0 left-0 z-50 pointer-events-none">
         <img src="./images/Leaves-Large_Normal.png" alt="" className="h-full w-full"/>

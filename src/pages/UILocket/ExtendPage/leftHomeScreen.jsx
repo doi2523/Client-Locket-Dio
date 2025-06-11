@@ -48,17 +48,17 @@ const LeftHomeScreen = () => {
     return () => div?.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    const getPosts = async () => {
-      try {
-        const response = await axios.get(API_URL.CAPTION_POSTS_URL);
-        setPosts(response.data);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
-    };
-    getPosts();
-  }, []);
+  // useEffect(() => {
+  //   const getPosts = async () => {
+  //     try {
+  //       const response = await axios.get(API_URL.CAPTION_POSTS_URL);
+  //       setPosts(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching posts:", error);
+  //     }
+  //   };
+  //   getPosts();
+  // }, []);
 
   useEffect(() => {
     document.body.classList.toggle("overflow-hidden", isProfileOpen);

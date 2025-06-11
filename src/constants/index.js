@@ -1,1 +1,1 @@
-export * from "./mediaRecordTime"
+export * from "./settingsCamera"
