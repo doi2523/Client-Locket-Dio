@@ -3,7 +3,7 @@ import { AuthContext } from "../../../context/AuthLocket";
 import { MessageCircle, Trash2, LayoutGrid } from "lucide-react";
 import { useApp } from "../../../context/AppContext";
 import { MdSlowMotionVideo } from "react-icons/md";
-import { showSuccess } from "../../../components/Toast";
+import { showInfo, showSuccess } from "../../../components/Toast";
 import BadgePlan from "./Badge";
 import LoadingRing from "../../../components/UI/Loading/ring";
 
@@ -91,7 +91,7 @@ const BottomHomeScreen = () => {
 
   return (
     <div
-      className={`fixed inset-0 flex flex-col transition-all duration-500 z-50 bg-base-100 ${
+      className={`fixed inset-0 flex flex-col transition-all duration-500 z-50 ${
         isBottomOpen
           ? "translate-y-0 opacity-100"
           : "translate-y-full opacity-0"
@@ -127,7 +127,7 @@ const BottomHomeScreen = () => {
               return (
                 <div
                   key={item.id}
-                  className="aspect-square overflow-hidden cursor-pointer bg-base-200 rounded-2xl relative group"
+                  className="aspect-square overflow-hidden cursor-pointer rounded-2xl relative group"
                   onClick={() => handleOpenMedia(item)}
                 >
                   {!isLoaded && (
@@ -187,7 +187,7 @@ const BottomHomeScreen = () => {
 
       {/* Modal media lớn + caption */}
       <div
-        className={`absolute inset-0 flex justify-center items-center transition-all duration-500 ${
+        className={`absolute inset-0 flex justify-center drop-shadow-2xl backdrop-blur-[2px] bg-base-100/20 items-center transition-all duration-500 ${
           selectedAnimate ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={handleCloseMedia}
@@ -274,8 +274,8 @@ const BottomHomeScreen = () => {
         </div>
       </div>
 
-      {/* Bottom Button - Đã bỏ hoàn toàn màu nền */}
-      <div className="flex flex-col px-4 py-2 text-base-content overflow-hidden bg-transparent">
+      {/* Bottom Button */}
+      <div className="absolute justify-evenly w-full bottom-2 flex flex-col px-4 py-2 text-base-content overflow-hidden">
         <div className="flex items-center justify-between">
           {/* Close button */}
           <button
@@ -304,7 +304,7 @@ const BottomHomeScreen = () => {
               if (imageInfo && imageInfo.id) {
                 handleDeleteImage(imageInfo.id);
               } else {
-                alert("Vui lòng chọn ảnh trước khi xóa!");
+                showInfo("Chưa hỗ trợ!");
               }
             }}
             data-tip="Bấm để xoá ảnh"

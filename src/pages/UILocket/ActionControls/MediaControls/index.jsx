@@ -173,12 +173,12 @@ const MediaControls = () => {
     const isVideo = previewType === "video";
     const maxFileSize = isImage ? maxImageSizeMB : maxVideoSizeMB;
 
+    if (isSizeMedia < 0.2) {
+      showError(`${isImage ? "Ảnh" : "Video"} không hợp lệ...`);
+      return;
+    }
     if (isSizeMedia > maxFileSize) {
-      showError(
-        `${
-          isImage ? "Ảnh" : "Video"
-        } vượt quá dung lượng. Tối đa ${maxFileSize}MB.`
-      );
+      showError(`${isImage ? "Ảnh" : "Video"} vượt quá dung lượng. Tối đa ${maxFileSize}MB.`);
       return;
     }
 

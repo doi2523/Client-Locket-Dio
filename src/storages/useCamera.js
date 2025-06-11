@@ -27,8 +27,8 @@ export const useCamera = () => {
     localStorage.setItem("iscameraHD", iscameraHD);
   }, [iscameraHD]);
 
-  const IMAGE_SIZE_PX = iscameraHD ? 1080 : 720;
-  const VIDEO_RESOLUTION_PX = iscameraHD ? 1080 : 1080;
+  const IMAGE_SIZE_PX = iscameraHD ? 1440 : 720;
+  const VIDEO_RESOLUTION_PX = iscameraHD ? 1080 : 720;
   const MAX_RECORD_TIME = 10;
 
   return {

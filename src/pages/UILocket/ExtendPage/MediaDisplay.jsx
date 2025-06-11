@@ -44,6 +44,7 @@ const MediaPreview = ({ capturedMedia }) => {
         }
       } catch (err) {
         console.error("🚫 Không thể truy cập camera:", err);
+        setCameraActive(false);
       }
     };
 
@@ -81,27 +82,29 @@ const MediaPreview = ({ capturedMedia }) => {
               playsInline
               muted
               className={`
-    w-full h-full object-cover transition-all duration-200 ease-in-out
-    ${cameraMode === "user" ? "scale-x-[-1]" : ""}
-    ${cameraActive ? "opacity-100 scale-100" : "opacity-0 scale-95"}
-  `}
+              w-full h-full object-cover transition-all duration-200 ease-in-out
+              ${cameraMode === "user" ? "scale-x-[-1]" : ""}
+              ${cameraActive ? "opacity-100 scale-100" : "opacity-0 scale-95"}
+            `}
             />
-            <div className="absolute inset-0 top-7 px-7 z-50 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
-              <button
-                onClick={handleChangeCamera}
-                className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
-              >
-                {iscameraHD ? "HD" : "SD"}
-              </button>
-
-              <button
-                onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
-                className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
-              >
-                1x
-              </button>
-            </div>
           </>
+        )}
+        {!preview && !selectedFile && (
+          <div className="absolute inset-0 top-7 px-7 z-50 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
+            <button
+              onClick={handleChangeCamera}
+              className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
+            >
+              {iscameraHD ? "HD" : "SD"}
+            </button>
+
+            <button
+              onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
+              className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
+            >
+              1x
+            </button>
+          </div>
         )}
         {/* Preview media */}
         {preview?.type === "video" && (
@@ -111,7 +114,9 @@ const MediaPreview = ({ capturedMedia }) => {
             loop
             muted
             playsInline
-            className={`w-full h-full object-cover ${preview ? "opacity-100" : "opacity-0"}`}
+            className={`w-full h-full object-cover ${
+              preview ? "opacity-100" : "opacity-0"
+            }`}
           />
         )}
 
@@ -119,7 +124,9 @@ const MediaPreview = ({ capturedMedia }) => {
           <img
             src={preview.data}
             alt="Preview"
-            className={`w-full h-full object-cover select-none transition-all duration-300 ${preview ? "opacity-100" : "opacity-0"}`}
+            className={`w-full h-full object-cover select-none transition-all duration-300 ${
+              preview ? "opacity-100" : "opacity-0"
+            }`}
           />
         )}
 

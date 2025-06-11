@@ -6,11 +6,11 @@ import React, {
   useMemo,
 } from "react";
 import { AuthContext } from "../../../context/AuthLocket";
-import { showInfo } from "../../../components/Toast";
+import { showInfo, showSuccess } from "../../../components/Toast";
 import { useApp } from "../../../context/AppContext";
 import { ChevronDown, Info, RefreshCw } from "lucide-react";
 import LoadingRing from "../../../components/UI/Loading/ring";
-import { fetchUserPlan, registerFreePlan } from "../../../services";
+import { fetchUserPlan, getUserUploadStats, registerFreePlan } from "../../../services";
 import PlanBadge from "../../../components/UI/PlanBadge/PlanBadge";
 
 // plans.js
@@ -151,7 +151,7 @@ const UserPlanCard = React.memo(
       () => (
         <div className="max-w-2xl mx-auto bg-gradient-to-br from-white via-purple-50 to-purple-100 border border-purple-200 rounded-3xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl mb-8">
           {/* Header với Avatar và Badge */}
-          <div className="relative bg-gradient-to-r p-4 lg:p-4 text-base-content">
+          <div className="relative bg-gradient-to-r p-4 lg:p-4 text-base-content mx-1">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 lg:gap-4">
                 <div className="relative">
@@ -165,7 +165,7 @@ const UserPlanCard = React.memo(
                   </div>
                 </div>
                 <div>
-                  <h1 className="font-semibold text-2xl">
+                  <h1 className="font-semibold text-2xl text-base-content">
                     {userPlan.display_name}
                   </h1>
                   <p className="text-base-content text-xs lg:text-sm font-semibold">
@@ -364,7 +364,7 @@ export default function RegisterMemberPage() {
   } = modal;
   const [isExpanded, setIsExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { user, userPlan, setUserPlan, authTokens, uploadStats } =
+  const { user, userPlan, setUserPlan, authTokens, uploadStats, setUploadStats } =
     useContext(AuthContext);
   const [lastRefreshTime, setLastRefreshTime] = useState(0);
 
@@ -418,19 +418,25 @@ export default function RegisterMemberPage() {
 
     setLoading(true);
     setLastRefreshTime(now);
-
     try {
-      const data = await fetchUserPlan();
-      if (data) {
-        setUserPlan(data);
-        showInfo("Đã cập nhật gói thành công!");
+      const [userPlanData, uploadStatsData] = await Promise.all([
+        fetchUserPlan(),
+        getUserUploadStats(authTokens?.localId)
+      ]);
+    
+      if (userPlanData) {
+        setUserPlan(userPlanData);
+        showSuccess("Làm mới thông tin thành công!");
       }
+    
+      setUploadStats(uploadStatsData);
+      
     } catch (err) {
-      console.error("❌ Lỗi khi cập nhật gói:", err);
-      showInfo("Đã xảy ra lỗi khi cập nhật.");
+      console.error("❌ Lỗi khi cập nhật gói hoặc thống kê:", err);
+      showInfo("⚠️ Đã xảy ra lỗi khi cập nhật thông tin người dùng.");
     } finally {
       setLoading(false);
-    }
+    }    
   }, [user, authTokens, lastRefreshTime, setUserPlan]);
 
   // Check if user has a valid plan (prevent duplicate rendering)

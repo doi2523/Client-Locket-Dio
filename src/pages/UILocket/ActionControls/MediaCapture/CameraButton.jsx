@@ -3,6 +3,7 @@ import { useApp } from "../../../../context/AppContext";
 import { RefreshCcw } from "lucide-react";
 import * as constant from "../../../../constants";
 import UploadFile from "./UploadFile";
+import { showError } from "../../../../components/Toast";
 
 //const MAX_RECORD_TIME = 10; // giây
 
@@ -26,7 +27,9 @@ const CameraButton = () => {
     cameraActive,
     setCameraActive,
     setLoading,
-    IMAGE_SIZE_PX, VIDEO_RESOLUTION_PX, MAX_RECORD_TIME
+    IMAGE_SIZE_PX,
+    VIDEO_RESOLUTION_PX,
+    MAX_RECORD_TIME,
   } = camera;
   const { preview, setPreview, setSelectedFile, setSizeMedia } = post;
   const { setIsCaptionLoading, uploadLoading, setUploadLoading } = useloading;
@@ -42,6 +45,11 @@ const CameraButton = () => {
     }
   };
   const startHold = () => {
+    if (!cameraActive) {
+      showError("Vui lòng bật camera trước khi chụp...");
+      return;
+    }
+    
     holdStartTimeRef.current = Date.now();
 
     holdTimeoutRef.current = setTimeout(() => {
@@ -56,9 +64,9 @@ const CameraButton = () => {
       const ctx = canvas.getContext("2d");
 
       const side = Math.min(video.videoWidth, video.videoHeight);
-
-      canvas.width = VIDEO_RESOLUTION_PX; //1080
-      canvas.height = VIDEO_RESOLUTION_PX;
+      const outputSize = VIDEO_RESOLUTION_PX;
+      canvas.width = outputSize;
+      canvas.height = outputSize;
 
       // Capture từ canvas
       const canvasStream = canvas.captureStream();
@@ -130,8 +138,10 @@ const CameraButton = () => {
     clearInterval(intervalRef.current);
     setHoldTime(heldTime);
 
-    //Nếu giữ nhỏ hơn 600ms thì chụp ảnh
     if (heldTime < 600) {
+      // Chụp ảnh
+      // console.log("📸 Chụp ảnh");
+
       const video = videoRef.current;
       const canvas = canvasRef.current;
       if (!video || !canvas) return;
@@ -164,7 +174,9 @@ const CameraButton = () => {
 
       canvas.toBlob((blob) => {
         if (blob) {
-          const file = new File([blob], "locket_dio.jpg", { type: "image/jpg" });
+          const file = new File([blob], "locket_dio.jpg", {
+            type: "image/jpg",
+          });
           const imgUrl = URL.createObjectURL(file);
           setPreview({ type: "image", data: imgUrl });
 
@@ -191,7 +203,7 @@ const CameraButton = () => {
   };
 
   const handleRotateCamera = async () => {
-    setRotation((prev) => prev - 180);
+    setRotation((prev) => prev + 180);
     const newMode = cameraMode === "user" ? "environment" : "user";
     setCameraMode(newMode);
 
