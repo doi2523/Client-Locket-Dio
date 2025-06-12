@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import AutoResizeCaption from "./AutoResizeCaption";
 import Hourglass from "../../../components/UI/Loading/hourglass";
 import { useApp } from "../../../context/AppContext";
@@ -23,45 +23,117 @@ const MediaPreview = ({ capturedMedia }) => {
   const { isCaptionLoading, uploadLoading, sendLoading, setSendLoading } =
     useloading;
 
-  // Bật camera nếu cần
-  useEffect(() => {
-    const startCamera = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: cameraMode || "user",
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-            // iOS không hỗ trợ zoom trực tiếp nhưng vẫn nên thử
-            zoom: 1,
-          },
-          audio: false,
-        });
-        streamRef.current = stream;
+  // Ref để theo dõi trạng thái camera
+  const cameraInitialized = useRef(false);
+  const lastCameraMode = useRef(cameraMode);
+  const lastCameraHD = useRef(iscameraHD);
+
+  // Hàm dừng camera được tối ưu
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => {
+        track.stop();
+      });
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    cameraInitialized.current = false;
+  };
+
+  // Hàm khởi động camera được tối ưu
+  const startCamera = async () => {
+    try {
+      // Nếu camera đã được khởi tạo và chế độ không thay đổi, không cần khởi tạo lại
+      if (
+        cameraInitialized.current && 
+        streamRef.current && 
+        lastCameraMode.current === cameraMode &&
+        lastCameraHD.current === iscameraHD
+      ) {
+        // Chỉ cần gán lại stream vào video element
         if (videoRef.current && !videoRef.current.srcObject) {
-          videoRef.current.srcObject = stream;
-          // console.log("🎥 Gán stream vào videoRef", stream);
+          videoRef.current.srcObject = streamRef.current;
         }
-      } catch (err) {
-        console.error("🚫 Không thể truy cập camera:", err);
-        setCameraActive(false);
+        return;
+      }
+
+      // Dừng camera cũ nếu có thay đổi cấu hình
+      if (
+        streamRef.current && 
+        (lastCameraMode.current !== cameraMode || lastCameraHD.current !== iscameraHD)
+      ) {
+        stopCamera();
+      }
+
+      // Cấu hình video constraints
+      const videoConstraints = {
+        facingMode: cameraMode || "user",
+        width: { ideal: iscameraHD ? 1920 : 1280 },
+        height: { ideal: iscameraHD ? 1080 : 720 },
+      };
+
+      // Chỉ yêu cầu quyền truy cập khi thực sự cần
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: videoConstraints,
+        audio: false,
+      });
+
+      streamRef.current = stream;
+      cameraInitialized.current = true;
+      lastCameraMode.current = cameraMode;
+      lastCameraHD.current = iscameraHD;
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+
+      console.log("🎥 Camera khởi động thành công");
+    } catch (err) {
+      // console.error("🚫 Không thể truy cập camera:", err);
+      setCameraActive(false);
+      cameraInitialized.current = false;
+    }
+  };
+
+  // Effect chính để quản lý camera
+  useEffect(() => {
+    if (cameraActive && (!preview && !selectedFile && !capturedMedia)) {
+      startCamera();
+    } else if (!cameraActive || preview || selectedFile || capturedMedia) {
+      // Chỉ dừng camera khi thực sự cần thiết
+      if (streamRef.current && (preview || selectedFile || capturedMedia)) {
+        stopCamera();
+      }
+    }
+
+    // Cleanup khi component unmount
+    return () => {
+      if (!preview && !selectedFile && !capturedMedia) {
+        // Chỉ cleanup nếu không có media đang hiển thị
+        stopCamera();
       }
     };
+  }, [cameraActive, cameraMode, iscameraHD, preview, selectedFile, capturedMedia]);
 
-    if (cameraActive && !streamRef.current) {
-      startCamera();
-    }
-  }, [cameraActive, cameraMode]);
-
+  // Effect để bật lại camera khi không có media
   useEffect(() => {
-    if (!preview && !selectedFile && !capturedMedia) {
+    if (!preview && !selectedFile && !capturedMedia && !cameraActive) {
       // console.log("✅ Không có media -> Bật lại camera");
       setCameraActive(true);
     }
-  }, [preview, selectedFile, capturedMedia, setCameraActive]);
+  }, [preview, selectedFile, capturedMedia, setCameraActive, cameraActive]);
 
   const handleChangeCamera = () => {
     setIsCameraHD((prev) => !prev);
+  };
+
+  // Hàm để chuyển đổi camera mode (front/back)
+  const handleSwitchCamera = () => {
+    const newMode = cameraMode === "user" ? "environment" : "user";
+    // Cập nhật camera mode thông qua context/state management
+    // setCameraMode(newMode); // Giả sử bạn có hàm này
   };
 
   return (
@@ -89,6 +161,7 @@ const MediaPreview = ({ capturedMedia }) => {
             />
           </>
         )}
+        
         {!preview && !selectedFile && (
           <div className="absolute inset-0 top-7 px-7 z-50 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
             <button
@@ -106,6 +179,7 @@ const MediaPreview = ({ capturedMedia }) => {
             </button>
           </div>
         )}
+
         {/* Preview media */}
         {preview?.type === "video" && (
           <video
@@ -141,9 +215,6 @@ const MediaPreview = ({ capturedMedia }) => {
           </div>
         )}
 
-        {/* <div className="absolute h-full w-full top-0 left-0 z-50 pointer-events-none">
-        <img src="./images/Leaves-Large_Normal.png" alt="" className="h-full w-full"/>
-        </div> */}
         {/* Viền loading */}
         <div className="absolute inset-0 z-50 pointer-events-none">
           <BorderProgress />

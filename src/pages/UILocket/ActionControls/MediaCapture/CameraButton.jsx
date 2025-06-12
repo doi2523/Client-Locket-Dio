@@ -27,6 +27,7 @@ const CameraButton = () => {
     cameraActive,
     setCameraActive,
     setLoading,
+    iscameraHD,
     IMAGE_SIZE_PX,
     VIDEO_RESOLUTION_PX,
     MAX_RECORD_TIME,
@@ -40,9 +41,11 @@ const CameraButton = () => {
   const intervalRef = useRef(null);
 
   const stopCamera = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
-    }
+    // if (videoRef.current && videoRef.current.srcObject) {
+    //   videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+    // }
+    console.log("Hello đang test camera à babi");
+    
   };
   const startHold = () => {
     if (!cameraActive) {
@@ -82,7 +85,8 @@ const CameraButton = () => {
       recorder.onstop = async () => {
         setCameraActive(false);
 
-        const blob = new Blob(chunks, { type: "video/webm" });
+        // const blob = new Blob(chunks, { type: "video/webm" });
+        const blob = new Blob(chunks, { type: "video/mp4" });
         const file = new File([blob], "locket_dio.mp4", { type: "video/mp4" });
         const videoUrl = URL.createObjectURL(file);
 
