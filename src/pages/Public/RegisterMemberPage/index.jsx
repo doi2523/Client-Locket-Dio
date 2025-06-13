@@ -34,7 +34,7 @@ const plans = [
     name: "Pro",
     price: 29000,
     duration_days: 60,
-    max_uploads: 20,
+    max_uploads: "∞",
     storage_limit: 500, // MB
     perks: {
       "📸 Không giới hạn đăng ảnh/video": true,
@@ -51,7 +51,7 @@ const plans = [
     name: "Premium",
     price: 49000,
     duration_days: 90,
-    max_uploads: 50,
+    max_uploads: "∞",
     storage_limit: 2000, // MB
     perks: {
       "📸 Không giới hạn đăng ảnh/video": true,
@@ -69,7 +69,7 @@ const plans = [
     name: "Pro Plus",
     price: 199000,
     duration_days: 365,
-    max_uploads: 100,
+    max_uploads: "∞",
     storage_limit: 5000, // MB
     perks: {
       "🌟 Toàn bộ tính năng Pro": true,

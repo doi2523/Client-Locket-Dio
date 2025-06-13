@@ -173,8 +173,8 @@ const MediaControls = () => {
     const isVideo = previewType === "video";
     const maxFileSize = isImage ? maxImageSizeMB : maxVideoSizeMB;
 
-    if (isSizeMedia < 0.2) {
-      showError(`${isImage ? "Ảnh" : "Video"} không hợp lệ...`);
+    if (isVideo && isSizeMedia < 0.2) {
+      showError("Video quá nhẹ hoặc không hợp lệ (dưới 0.2MB).");
       return;
     }
     if (isSizeMedia > maxFileSize) {
