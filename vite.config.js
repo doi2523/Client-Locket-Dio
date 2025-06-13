@@ -11,7 +11,7 @@ const manifestForPlugIn = {
   injectRegister: 'auto',
   includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.png"],
   manifest: {
-    name: "locket Dio",
+    name: "Locket Dio",
     short_name: "Locket Dio",
     description: "Locket Dio - Đăng ảnh & Video lên Locket",
     icons: [
