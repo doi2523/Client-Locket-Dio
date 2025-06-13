@@ -30,6 +30,7 @@ export const API_URL = {
   DELETE_FRIEND_REQUEST_URL: `${BASE_API_URL}${LOCKET_URL}/delete-incoming_friends`,
   DELETE_FRIEND_URL: `${BASE_API_URL}${LOCKET_URL}/delete_friends`,
   SPOTIFY_URL: `${BASE_API_URL}${LOCKET_URL}/spotify`,
+  REGISTER_PUSH_URL: `${BASE_API_URL}${LOCKET_URL}/register-push`,
   GET_UPLOAD_STATS_URL: `${BASE_API_URL}${LOCKET_URL}/get-upload-stats`,
 
   //API lấy dữ liệu từ máy chủ
