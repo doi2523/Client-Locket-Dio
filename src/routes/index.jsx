@@ -26,6 +26,7 @@ const publicRoutes = [
   { path: "/about-dio", component: AboutMe, title: `${APP_NAME} | Về Dio` },
   { path: "/timeline", component: Timeline, title: `${APP_NAME} | Dòng Thời Gian` },
   { path: "/docs", component: Docs, title: `${APP_NAME} | Docs` },
+  { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Locket` },
   { path: "/contact", component: Contact, title: `${APP_NAME} | Liên hệ` },
   { path: "/privacy", component: PrivacyPolicy, title: `${APP_NAME} | Privacy Policy for LocketDio - PrivacyPolicies.com` },
   { path: "/testv1", component: CameraCapture, title: `${APP_NAME} | Test` },
