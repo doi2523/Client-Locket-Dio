@@ -1,4 +1,4 @@
-import { showError } from "../../components/Toast";
+import { showError, showInfo } from "../../components/Toast";
 import { getCurrentUserTokenAndUid } from "../auth";
 import {
   prepareMediaInfo,
@@ -172,7 +172,7 @@ export const createRequestPayloadV4 = async (
     throw error;
   }
 };
-
+//Bản chính mới nhất
 export const createRequestPayloadV5 = async (
   selectedFile,
   previewType,
@@ -185,8 +185,9 @@ export const createRequestPayloadV5 = async (
     const auth = await getCurrentUserTokenAndUid();
 
     if (!auth) {
+      showInfo("Vui lòng đăng nhập trước khi sử dụng!")
       console.error("Không lấy được token và uid hiện tại.");
-      return [];
+      return;
     }
 
     const { idToken, localId } = auth;

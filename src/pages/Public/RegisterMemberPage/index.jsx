@@ -158,17 +158,17 @@ const UserPlanCard = React.memo(
                   <img
                     src={userPlan.profile_picture || "./prvlocket.png"}
                     alt="Avatar"
-                    className="w-16 h-16 lg:w-16 lg:h-16 rounded-full object-cover p-[2px] outline-3 shadow-lg"
+                    className="w-16 h-16 lg:w-16 lg:h-16 rounded-full object-cover p-[2px] outline-accent outline-3 shadow-lg"
                   />
                   <div className="absolute -bottom-1 -right-1 w-5 h-5 lg:w-6 lg:h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
                     <span className="text-white text-xs">✓</span>
                   </div>
                 </div>
                 <div>
-                  <h1 className="font-semibold text-2xl text-base-content">
+                  <h1 className="font-semibold text-3xl text-black mb-1">
                     {userPlan.display_name}
                   </h1>
-                  <p className="text-base-content text-xs lg:text-sm font-semibold">
+                  <p className="text-black text-xs lg:text-sm font-semibold">
                     ✨ Gói hiện tại
                   </p>
                 </div>
@@ -178,7 +178,7 @@ const UserPlanCard = React.memo(
                 <button
                   onClick={onRefresh}
                   disabled={loading}
-                  className={`p-2 rounded-full transition-all text-base-content duration-200 ${
+                  className={`p-2 rounded-full transition-all text-black duration-200 ${
                     loading
                       ? "bg-primary/30 cursor-wait"
                       : "bg-primary/30 hover:bg-primary/70 backdrop-blur-sm border border-white/30"
@@ -186,7 +186,7 @@ const UserPlanCard = React.memo(
                   title="Cập nhật gói"
                 >
                   <RefreshCw
-                    className={`w-4 h-4 text-base-content ${
+                    className={`w-4 h-4 text-black ${
                       loading ? "animate-spin" : ""
                     }`}
                   />
@@ -407,14 +407,8 @@ export default function RegisterMemberPage() {
   // Memoize the refresh handler with debouncing
   const handleRefreshPlan = useCallback(async () => {
     const now = Date.now();
-    const debounceDelay = 20 * 1000; // 20 giây
 
     if (!user || !authTokens?.idToken) return;
-
-    if (now - lastRefreshTime < debounceDelay) {
-      showInfo("Vui lòng đợi vài giây trước khi cập nhật lại.");
-      return;
-    }
 
     setLoading(true);
     setLastRefreshTime(now);

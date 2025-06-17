@@ -6,8 +6,9 @@ import { Star } from "lucide-react";
 import { StarProgress } from "../../../../components/UI/StarRating/StarProgress";
 import axios from "axios";
 import { showError, showSuccess } from "../../../../components/Toast";
-import { API_URL } from "../../../../utils";
+import { API_URL, useBatteryStatus } from "../../../../utils";
 import LocationInfoGenerator from "../../../../helpers/getInfoLocation";
+import { useLocationOptions } from "../../../../utils/enviroment";
 
 export default function GeneralThemes({ title }) {
   const { navigation, post, captiontheme } = useApp();
@@ -16,7 +17,8 @@ export default function GeneralThemes({ title }) {
   const { captionThemes } = captiontheme;
 
   const [time, setTime] = useState(() => new Date());
-  const [locationText, setLocationText] = useState("Vị trí");
+  const { level, charging } = useBatteryStatus();
+  const { addressOptions } = useLocationOptions();
 
   const [showSpotifyForm, setShowSpotifyForm] = useState(false);
   const [spotifyLink, setSpotifyLink] = useState("");
@@ -37,7 +39,7 @@ export default function GeneralThemes({ title }) {
     hour: "2-digit",
     minute: "2-digit",
   });
-
+  
   const handleCustomeSelect = ({
     preset_id = "standard",
     icon = "",
@@ -140,7 +142,19 @@ export default function GeneralThemes({ title }) {
         alert("Thời tiết sẽ sớm được tích hợp");
         break;
       case "battery":
-        alert("Mức pin hiện tại sớm ra mắt");
+        handleCustomeSelect({
+          preset_id: "battery",
+          caption: level || "50",
+          icon: charging,
+          type: "battery",
+        });
+        break;
+      case "heart":
+        handleCustomeSelect({
+          preset_id: "heart",
+          caption: "inlove",
+          type: "heart",
+        });
         break;
       default:
         break;
@@ -173,7 +187,7 @@ export default function GeneralThemes({ title }) {
           className="w-6 h-6 mr-1"
         />
       ),
-      label: locationText,
+      label: addressOptions[0] || "Vị trí",
     },
     {
       id: "weather",
@@ -193,7 +207,12 @@ export default function GeneralThemes({ title }) {
           className="w-6 h-6 mr-1"
         />
       ),
-      label: "Pin hiện tại",
+      label: `${level || "50"}%`,
+    },
+    {
+      id: "heart",
+      icon: <img src="./images/heart_icon_red.svg" className="w-6 h-6 mr-1" />,
+      label: "inlove",
     },
   ];
 
@@ -252,7 +271,9 @@ export default function GeneralThemes({ title }) {
             Nhập link Spotify:
           </label>
           <p className="text-xs">Caption nhạc chỉ hiển thị trên IOS</p>
-          <p className="text-xs mb-2">Android vẫn đăng và hiển thị nhưng chỉ IOS thấy</p>
+          <p className="text-xs mb-2">
+            Android vẫn đăng và hiển thị nhưng chỉ IOS thấy
+          </p>
 
           <input
             type="text"

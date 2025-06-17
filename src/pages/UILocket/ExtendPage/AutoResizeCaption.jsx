@@ -162,6 +162,18 @@ const AutoResizeCaption = () => {
             />
           </div>
         </div>
+      ) : postOverlay.type === "heart" ? (
+        <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
+          <img src="./images/heart_icon_red.svg" alt="" className="w-6 h-6"/>
+          <span>{postOverlay.caption}</span>
+          {/* <input value={postOverlay.caption || formattedTime} type="text" name="" id="" width={20}/> */}
+        </div>
+      ) : postOverlay.type === "battery" ? (
+        <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
+          <img src="https://img.icons8.com/?size=100&id=WDlpopZDVw4P&format=png&color=000000" alt="" className="w-6 h-6"/>
+          <span>{postOverlay.caption}%</span>
+          {/* <input value={postOverlay.caption || formattedTime} type="text" name="" id="" width={20}/> */}
+        </div>
       ) : postOverlay.type === "time" ? (
         <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
           <PiClockFill className="w-6 h-6 rotate-270" />

@@ -29,10 +29,7 @@ const Docs = () => {
           <li>Chọn bạn bè có thể xem khi đăng.</li>
           <li>Forums chia sẻ màu caption.</li>
           <li>Quay video hoặc chụp ảnh trực tiếp trên web.</li>
-          <li>
-            Tăng chất lượng ảnh/video{" "}
-            <span className="text-secondary">(coming soon)</span>.
-          </li>
+          <li>Tăng chất lượng ảnh/video</li>
         </ul>
 
         {/* Các Lưu Ý Quan Trọng */}

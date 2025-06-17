@@ -5,6 +5,7 @@ import PostMoments from "../pages/Auth/PostMoments";
 import Profile from "../pages/Auth/Profile";
 import AboutLocketDio from "../pages/Public/About";
 import Contact from "../pages/Public/Contact";
+import DevPage from "../pages/Public/DevPage";
 import Docs from "../pages/Public/Docs";
 import DonateHistory from "../pages/Public/HistoryDonate";
 import Home from "../pages/Public/Home";
@@ -33,7 +34,7 @@ const publicRoutes = [
   { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
   { path: "/locketdio-tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },
   { path: "/settings", component: Settings, title: `${APP_NAME} | Cài đặt` },
-  // { path: "/testv2", component: Docs, title: `${APP_NAME} | Đăng Moment Mới` },
+  { path: "/devpage", component: DevPage, title: `${APP_NAME} | Dev Page` },
 ];
 
 // 📌 Các route yêu cầu đăng nhập

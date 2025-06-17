@@ -1,3 +1,4 @@
+console.log("[SW] Locket Dio SW v2.2.1 - loaded");
 import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 import { registerRoute, NavigationRoute } from 'workbox-routing';
 import { createHandlerBoundToURL } from 'workbox-precaching';
@@ -5,9 +6,16 @@ import { createHandlerBoundToURL } from 'workbox-precaching';
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
+self.addEventListener("install", (event) => {
+  self.skipWaiting(); // Cập nhật ngay
+});
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
+});
 
 // Precache và cleanup
 precacheAndRoute(self.__WB_MANIFEST || []);
+console.log("[SW] started precache");
 cleanupOutdatedCaches();
 
 // Điều hướng fallback cho SPA

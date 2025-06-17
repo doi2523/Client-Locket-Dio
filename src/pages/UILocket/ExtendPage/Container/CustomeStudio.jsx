@@ -143,51 +143,6 @@ const ScreenCustomeStudio = () => {
 
     setIsFilterOpen(false);
   };
-  const captionThemesTest = {
-    image_icon: [
-      {
-        id: 1,
-        color_top: "#FF5733",
-        color_bottom: "#C70039",
-        text_color: "#FFF",
-        icon: "/path/to/icon1.png",
-        preset_caption: "Vibes",
-      },
-      {
-        id: 2,
-        color_top: "#3498DB",
-        color_bottom: "#2980B9",
-        text_color: "#FFF",
-        icon: "/path/to/icon2.png",
-        preset_caption: "Chill",
-      },
-    ],
-    music_icon: [
-      {
-        id: 1,
-        color_top: "",
-        color_bottom: "",
-        text_color: "",
-        icon: "/path/to/music_icon1.png",
-        preset_caption: "Click vào đây đi",
-      },
-      {
-        id: 2,
-        color_top: "#3498DB",
-        color_bottom: "#2980B9",
-        text_color: "#FFF",
-        icon: "/path/to/music_icon2.png",
-        preset_caption: "Stay",
-      },
-    ],
-  };
-  const preset = {
-    icon: "/clock-icon.png", // Đổi thành icon của bạn
-    preset_caption: new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-  };
   const normalizedPresets = savedPosts.map((item) => ({
     id: item.id,
     caption: item.options.caption || "",
@@ -247,7 +202,7 @@ const ScreenCustomeStudio = () => {
         {/* Nội dung - Cuộn được */}
         <div className="flex-1 overflow-y-auto px-4">
           <GeneralThemes
-            title="🎨 General - Thử nghiệm"
+            title="🎨 General"
             captionThemes={captionThemes}
             onSelect={handleCustomeSelectTest}
           />

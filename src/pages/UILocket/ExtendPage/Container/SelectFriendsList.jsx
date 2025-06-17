@@ -27,12 +27,6 @@ const SelectFriendsList = () => {
   }, [selectedFriends]);
 
   const handleToggle = (uid) => {
-    if (!userPlan?.plan_info?.features?.select_friends) {
-      alert(
-        "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói thành viên để mở khóa."
-      );
-      return;
-    }
     setAudience("selected");
     setSelectedFriends((prev) =>
       prev.includes(uid) ? prev.filter((id) => id !== uid) : [...prev, uid]
@@ -40,12 +34,6 @@ const SelectFriendsList = () => {
   };
 
   const handleSelectAll = () => {
-    if (!userPlan?.plan_info?.features?.select_friends) {
-      alert(
-        "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói thành viên để mở khóa."
-      );
-      return;
-    }
     const allIds = friendDetails.map((f) => f.uid);
     if (selectedFriends.length === friendDetails.length) {
       setAudience("selected");

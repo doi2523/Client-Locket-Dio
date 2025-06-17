@@ -157,16 +157,16 @@ export const AuthProvider = ({ children }) => {
       console.error("Lỗi khi fetch plan:", err);
     }
   };
-  // useEffect(() => {
-  //   if (authTokens?.localId) {
-  //     getUserUploadStats(authTokens?.localId).then((data) => {
-  //       if (data) {
-  //         localStorage.setItem("uploadStats", JSON.stringify(data));
-  //         setUploadStats(data);
-  //       }
-  //     });
-  //   }
-  // }, [authTokens]);
+  useEffect(() => {
+    if (authTokens?.localId) {
+      getUserUploadStats(authTokens?.localId).then((data) => {
+        if (data) {
+          localStorage.setItem("uploadStats", JSON.stringify(data));
+          setUploadStats(data);
+        }
+      });
+    }
+  }, [authTokens]);
   // Load friendDetails và lưu vào state + localStorage
   useEffect(() => {
     const loadFriendDetails = async () => {

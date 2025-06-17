@@ -256,7 +256,7 @@ export const rejectMultipleFriendRequests = async (uidList) => {
 
   try {
     const response = await axios.post(
-      API_URL.DELETE_FRIEND_REQUEST_URL,
+      utils.API_URL.DELETE_FRIEND_REQUEST_URL,
       {
         idToken,
         uids: uidList,

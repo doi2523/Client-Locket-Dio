@@ -7,7 +7,6 @@ import {
 } from "../../../services";
 import { AuthContext } from "../../../context/AuthLocket";
 import { showError, showInfo, showSuccess } from "../../../components/Toast";
-import { API_URL } from "../../../utils";
 import LoadingRing from "../../../components/UI/Loading/ring";
 
 const SESSION_KEY = "invites_session";
@@ -55,15 +54,6 @@ function DeleteFriendsTool() {
       return;
     }
 
-    // Kiểm tra quyền với plan_id tương ứng
-    // const allowedPlans = ["pro", "premium", "pro_plus"];
-    // if (!userPlan?.plan_id || !allowedPlans.includes(userPlan.plan_id)) {
-    //   alert(
-    //     "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp lên gói Pro để mở khóa."
-    //   );
-    //   return;
-    // }
-
     setLoading(true);
     const res = await getListRequestFriend();
 
@@ -95,7 +85,7 @@ function DeleteFriendsTool() {
   };
 
   const handleDeleteBatch = async () => {
-    const batch = invites.slice(0, 50);
+    const batch = invites.slice(0, 200);
     if (batch.length === 0) {
       showInfo("📭 Không còn lời mời để xoá.");
       return;
@@ -131,7 +121,7 @@ function DeleteFriendsTool() {
         </h2>
         <p>
           🎯 Công cụ này giúp bạn xoá lời mời kết bạn spam từ bạn bè một cách tự
-          động. Tính năng này chỉ áp dụng cho Pro, Premium, Pro Plus
+          động.
         </p>
       </div>
 
@@ -177,7 +167,7 @@ function DeleteFriendsTool() {
               className="btn btn-error w-full"
               disabled={deleting}
             >
-              {deleting ? "Đang xoá..." : `🗑️ Xoá 50 lời mời`}
+              {deleting ? "Đang xoá..." : `🗑️ Xoá 200 lời mời`}
             </button>
           </>
         )}
