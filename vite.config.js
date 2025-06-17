@@ -12,6 +12,9 @@ const manifestForPlugIn = {
 
   // ✅ Auto inject code register SW
   injectRegister: 'auto',
+  injectManifest: {
+    maximumFileSizeToCacheInBytes: 0, // ✅ TẮT HOÀN TOÀN cache tự động
+  },
 
   // ✅ Tự kiểm tra và cập nhật SW khi có bản mới
   registerType: 'autoUpdate',

@@ -7,7 +7,7 @@ import { registerSW } from 'virtual:pwa-register';
 const updateSW = registerSW({
   onNeedRefresh() {
     console.log("🔄 Có bản mới, đang cập nhật...");
-    updateSW(); // Gọi cập nhật ngay lập tức
+    updateSW(true); // ✅ Gọi để skipWaiting và reload
   },
   onOfflineReady() {
     console.log("✅ Đã sẵn sàng để dùng offline!");
