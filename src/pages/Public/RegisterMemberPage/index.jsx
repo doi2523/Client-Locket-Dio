@@ -424,6 +424,7 @@ export default function RegisterMemberPage() {
       }
     
       setUploadStats(uploadStatsData);
+      localStorage.setItem("uploadStats", JSON.stringify(uploadStatsData));
       
     } catch (err) {
       console.error("❌ Lỗi khi cập nhật gói hoặc thống kê:", err);
