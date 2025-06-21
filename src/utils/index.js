@@ -4,8 +4,9 @@ export * from "./cropImage"; // Xuất tất cả hàm từ cropimages.js
 export * from "./API/apiRoutes"; // Xuất tất cả hàm từ apiRoutes.js
 export * from "./payload/createPayload"; // Xuất tất cả hàm từ createPayload.js
 export * from "./cloudinary/uploadFileAndGetInfo"; // Xuất tất cả hàm từ uploadToCloudinary.js
-export * from "./storage"
-export * from "./standardize"
-export * from "./auth"
-export * from "./device"
-export * from "./enviroment"
+export * from "./storage";
+export * from "./standardize";
+export * from "./auth";
+export * from "./device";
+export * from "./enviroment";
+export * from "./process";

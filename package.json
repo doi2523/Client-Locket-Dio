@@ -22,7 +22,7 @@
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-easy-crop": "^5.4.1",
+    "react-easy-crop": "^5.4.2",
     "react-fast-marquee": "^1.6.5",
     "react-google-recaptcha": "^3.1.0",
     "react-icons": "^5.5.0",

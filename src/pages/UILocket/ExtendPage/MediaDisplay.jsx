@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import AutoResizeCaption from "./AutoResizeCaption";
 import Hourglass from "../../../components/UI/Loading/hourglass";
 import { useApp } from "../../../context/AppContext";
@@ -6,11 +12,13 @@ import MediaSizeInfo from "../../../components/UI/MediaSizeInfo";
 import BorderProgress from "../../../components/UI/SquareProgress";
 import { showInfo } from "../../../components/Toast";
 import { AuthContext } from "../../../context/AuthLocket";
+import Cropper from "react-easy-crop";
+import { getCroppedImg } from "../../../utils";
 
 const MediaPreview = ({ capturedMedia }) => {
   const { userPlan } = useContext(AuthContext);
   const { post, useloading, camera } = useApp();
-  const { selectedFile, preview, isSizeMedia } = post;
+  const { selectedFile, setSelectedFile, preview, isSizeMedia } = post;
   const {
     streamRef,
     videoRef,
@@ -22,6 +30,8 @@ const MediaPreview = ({ capturedMedia }) => {
   } = camera;
   const { isCaptionLoading, uploadLoading, sendLoading, setSendLoading } =
     useloading;
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
 
   // Ref để theo dõi trạng thái camera
   const cameraInitialized = useRef(false);
@@ -47,8 +57,8 @@ const MediaPreview = ({ capturedMedia }) => {
     try {
       // Nếu camera đã được khởi tạo và chế độ không thay đổi, không cần khởi tạo lại
       if (
-        cameraInitialized.current && 
-        streamRef.current && 
+        cameraInitialized.current &&
+        streamRef.current &&
         lastCameraMode.current === cameraMode &&
         lastCameraHD.current === iscameraHD
       ) {
@@ -61,8 +71,9 @@ const MediaPreview = ({ capturedMedia }) => {
 
       // Dừng camera cũ nếu có thay đổi cấu hình
       if (
-        streamRef.current && 
-        (lastCameraMode.current !== cameraMode || lastCameraHD.current !== iscameraHD)
+        streamRef.current &&
+        (lastCameraMode.current !== cameraMode ||
+          lastCameraHD.current !== iscameraHD)
       ) {
         stopCamera();
       }
@@ -97,9 +108,17 @@ const MediaPreview = ({ capturedMedia }) => {
     }
   };
 
+  // Effect để reset crop và zoom khi có ảnh mới
+  useEffect(() => {
+    if (preview?.type === "image") {
+      setCrop({ x: 0, y: 0 });
+      setZoom(1); // Reset zoom về 1 để ảnh lấp đầy khung
+    }
+  }, [preview?.data]);
+
   // Effect chính để quản lý camera
   useEffect(() => {
-    if (cameraActive && (!preview && !selectedFile && !capturedMedia)) {
+    if (cameraActive && !preview && !selectedFile && !capturedMedia) {
       startCamera();
     } else if (!cameraActive || preview || selectedFile || capturedMedia) {
       // Chỉ dừng camera khi thực sự cần thiết
@@ -115,7 +134,14 @@ const MediaPreview = ({ capturedMedia }) => {
         stopCamera();
       }
     };
-  }, [cameraActive, cameraMode, iscameraHD, preview, selectedFile, capturedMedia]);
+  }, [
+    cameraActive,
+    cameraMode,
+    iscameraHD,
+    preview,
+    selectedFile,
+    capturedMedia,
+  ]);
 
   // Effect để bật lại camera khi không có media
   useEffect(() => {
@@ -135,6 +161,36 @@ const MediaPreview = ({ capturedMedia }) => {
     // Cập nhật camera mode thông qua context/state management
     // setCameraMode(newMode); // Giả sử bạn có hàm này
   };
+
+  const [croppedImage, setCroppedImage] = useState(null);
+
+  const handleCropComplete = useCallback(
+    async (_, croppedAreaPixels) => {
+      try {
+        const croppedFile = await getCroppedImg(
+          preview?.data,
+          croppedAreaPixels
+        );
+        setCroppedImage(URL.createObjectURL(croppedFile)); // Hiển thị preview
+        setSelectedFile(croppedFile); // ✅ Lưu file để gửi lên server
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [preview?.data]
+  );
+  const [aspectRatio, setAspectRatio] = useState(1);
+
+  useEffect(() => {
+    if (preview?.type === "image" && preview.data) {
+      const img = new Image();
+      img.onload = () => {
+        const ratio = img.height;
+        setAspectRatio(ratio);
+      };
+      img.src = preview.data;
+    }
+  }, [preview?.data]);  
 
   return (
     <>
@@ -161,7 +217,7 @@ const MediaPreview = ({ capturedMedia }) => {
             />
           </>
         )}
-        
+
         {!preview && !selectedFile && (
           <div className="absolute inset-0 top-7 px-7 z-50 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
             <button
@@ -195,20 +251,54 @@ const MediaPreview = ({ capturedMedia }) => {
         )}
 
         {preview?.type === "image" && (
-          <img
-            src={preview.data}
-            alt="Preview"
-            className={`w-full h-full object-cover select-none transition-all duration-300 ${
-              preview ? "opacity-100" : "opacity-0"
-            }`}
-          />
+          <div className="absolute z-10 w-full h-full">
+            <Cropper
+              image={preview.data}
+              crop={crop}
+              zoom={zoom}
+              aspect={1} // Giữ aspect ratio 1:1 cho crop area
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={handleCropComplete}
+              // cropSize={{ width: 400, height: 400 }}
+              cropShape="rect"
+              style={{
+                containerStyle: {
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  width: "100%",
+                  height: "100%",
+                },
+                mediaStyle: {
+                  objectFit: "cover", // Lấp đầy container
+                },
+                cropAreaStyle: {
+                  display: "none", // Ẩn crop area
+                },
+              }}
+              showGrid={false}
+              zoomWithScroll={true} // Tắt zoom bằng scroll
+              touchAction="pan" // Chỉ cho phép pan, không zoom
+              objectFit="cover"
+              restrictPosition={true} // Giới hạn di chuyển trong khung
+              disableAutomaticStylesInjection={false}
+            />
+            <img
+              src={croppedImage}
+              alt="Cropped"
+              className={`w-full h-full object-cover no-select`}
+            />
+          </div>
         )}
 
         {/* Caption */}
         {preview && selectedFile && (
           <div
             className={`absolute z-10 inset-x-0 bottom-0 px-4 pb-4 transition-all duration-500 ${
-              isCaptionLoading ? "opacity-100" : "opacity-0"
+              crop ? "opacity-100" : "opacity-0"
             }`}
           >
             <AutoResizeCaption />
