@@ -16,6 +16,8 @@ export const useCamera = () => {
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(null);
   const [cameraMode, setCameraMode] = useState("user");
+  const [zoomLevel, setZoomLevel] = useState("1x"); // "0.5x" | "1x" | "3x"
+  const [deviceId, setDeviceId] = useState(null); // deviceId của camera hiện tại
 
   // Khởi tạo giá trị từ localStorage nếu có
   const initialCameraHD = localStorage.getItem("iscameraHD") === "true";
@@ -24,11 +26,11 @@ export const useCamera = () => {
 
   // Tự động lưu vào localStorage khi thay đổi
   useEffect(() => {
-    localStorage.setItem("iscameraHD", iscameraHD);
+    localStorage.removeItem("iscameraHD", iscameraHD);
   }, [iscameraHD]);
 
-  const IMAGE_SIZE_PX = iscameraHD ? 1440 : 720;
-  const VIDEO_RESOLUTION_PX = iscameraHD ? 1080 : 720;
+  const IMAGE_SIZE_PX = 1440;
+  const VIDEO_RESOLUTION_PX = 720;
   const MAX_RECORD_TIME = 10;
 
   return {
@@ -59,5 +61,7 @@ export const useCamera = () => {
     IMAGE_SIZE_PX,
     VIDEO_RESOLUTION_PX,
     MAX_RECORD_TIME,
+    deviceId, setDeviceId,
+    zoomLevel, setZoomLevel
   };
 };

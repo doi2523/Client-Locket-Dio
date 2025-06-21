@@ -29,6 +29,8 @@ const CameraButton = () => {
     IMAGE_SIZE_PX,
     VIDEO_RESOLUTION_PX,
     MAX_RECORD_TIME,
+    setDeviceId,
+    setZoomLevel,
   } = camera;
   const { preview, setPreview, setSelectedFile, setSizeMedia } = post;
   const { setIsCaptionLoading, uploadLoading, setUploadLoading } = useloading;
@@ -43,26 +45,29 @@ const CameraButton = () => {
   // Function để kiểm tra môi trường PWA
   const isPWA = () => {
     // Kiểm tra display mode
-    if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+    if (
+      window.matchMedia &&
+      window.matchMedia("(display-mode: standalone)").matches
+    ) {
       return true;
     }
-    
+
     // Kiểm tra navigator.standalone cho iOS
     if (window.navigator.standalone === true) {
       return true;
     }
-    
+
     // Kiểm tra document.referrer cho Android
-    if (document.referrer.includes('android-app://')) {
+    if (document.referrer.includes("android-app://")) {
       return true;
     }
-    
+
     // Kiểm tra user agent cho các trường hợp khác
     const userAgent = window.navigator.userAgent.toLowerCase();
-    if (userAgent.includes('wv') || userAgent.includes('webview')) {
+    if (userAgent.includes("wv") || userAgent.includes("webview")) {
       return true;
     }
-    
+
     return false;
   };
 
@@ -73,25 +78,24 @@ const CameraButton = () => {
   const startHold = (e) => {
     // Prevent default để tránh conflict trên iOS
     e.preventDefault();
-    
-    if (!cameraActive) {
-      showError("Vui lòng bật camera trước khi chụp...");
-      return;
-    }
-    
+
     isTryingToRecordRef.current = true;
     isRecordingRef.current = false; // Reset recording state
     holdStartTimeRef.current = Date.now();
 
     holdTimeoutRef.current = setTimeout(() => {
       if (!isTryingToRecordRef.current) return;
-      
+
       // Đánh dấu đang recording
       isRecordingRef.current = true;
       setIsHolding(true);
 
       const video = videoRef.current;
-      if (!video) return;
+      if (!video || video.readyState < 2) {
+        showError("Camera chưa sẵn sàng, vui lòng chờ giây lát...");
+        isTryingToRecordRef.current = false;
+        return;
+      }
 
       // Tạo canvas vuông
       const canvas = document.createElement("canvas");
@@ -104,10 +108,16 @@ const CameraButton = () => {
 
       // Điều chỉnh FPS dựa trên môi trường
       const targetFPS = isPWA() ? 30 : undefined; // PWA: 30fps, Web: tự động
-      const canvasStream = targetFPS ? canvas.captureStream(targetFPS) : canvas.captureStream();
-      
-      console.log(`🎥 Recording mode: ${isPWA() ? 'PWA' : 'Web'}, FPS: ${targetFPS || 'auto'}`);
-      
+      const canvasStream = targetFPS
+        ? canvas.captureStream(targetFPS)
+        : canvas.captureStream();
+
+      console.log(
+        `🎥 Recording mode: ${isPWA() ? "PWA" : "Web"}, FPS: ${
+          targetFPS || "auto"
+        }`
+      );
+
       // Thử các MIME type khác nhau cho iOS
       let mimeType = "video/webm";
       if (!MediaRecorder.isTypeSupported(mimeType)) {
@@ -116,14 +126,14 @@ const CameraButton = () => {
           mimeType = ""; // Để MediaRecorder tự chọn
         }
       }
-      
+
       // Cấu hình recorder options với bitrate phù hợp cho PWA
       const recorderOptions = mimeType ? { mimeType } : {};
       if (isPWA() && mimeType) {
         // Giảm bitrate cho PWA để tối ưu hiệu suất
         recorderOptions.videoBitsPerSecond = 2500000; // 2.5 Mbps cho PWA
       }
-      
+
       const recorder = new MediaRecorder(canvasStream, recorderOptions);
       mediaRecorderRef.current = recorder;
 
@@ -136,7 +146,7 @@ const CameraButton = () => {
 
       recorder.onstop = async () => {
         console.log("📹 Video recording stopped, chunks:", chunks.length);
-        
+
         if (chunks.length === 0) {
           console.error("No video data captured");
           return;
@@ -145,21 +155,23 @@ const CameraButton = () => {
         // Tạo blob với MIME type phù hợp
         const finalMimeType = mimeType || "video/mp4";
         const blob = new Blob(chunks, { type: finalMimeType });
-        
+
         // Tạo file name với extension phù hợp
         const extension = finalMimeType.includes("webm") ? "webm" : "mp4";
-        const file = new File([blob], `locket_dio.${extension}`, { type: finalMimeType });
-        
+        const file = new File([blob], `locket_dio.${extension}`, {
+          type: finalMimeType,
+        });
+
         console.log("📹 Video file created:", {
           size: file.size,
           type: file.type,
           name: file.name,
-          environment: isPWA() ? 'PWA' : 'Web'
+          environment: isPWA() ? "PWA" : "Web",
         });
 
         const videoUrl = URL.createObjectURL(file);
         const fileSizeInMB = file.size / (1024 * 1024);
-        
+
         setSizeMedia(fileSizeInMB.toFixed(2));
         setPreview({ type: "video", data: videoUrl });
         setSelectedFile(file);
@@ -167,7 +179,7 @@ const CameraButton = () => {
         setIsCaptionLoading(true);
         stopCamera();
         setLoading(false);
-        
+
         // Reset states
         isRecordingRef.current = false;
         setIsHolding(false);
@@ -181,7 +193,10 @@ const CameraButton = () => {
 
       try {
         recorder.start();
-        console.log("📹 Started recording with MIME type:", mimeType || "default");
+        console.log(
+          "📹 Started recording with MIME type:",
+          mimeType || "default"
+        );
       } catch (error) {
         console.error("Failed to start recording:", error);
         isRecordingRef.current = false;
@@ -192,7 +207,7 @@ const CameraButton = () => {
       // Hàm vẽ mỗi frame vào canvas với FPS control cho PWA
       let lastFrameTime = 0;
       const frameInterval = isPWA() ? 1000 / 45 : 0; // 45fps cho PWA, unlimited cho web
-      
+
       const drawFrame = (currentTime) => {
         if (video.paused || video.ended || recorder.state !== "recording") {
           return;
@@ -205,7 +220,7 @@ const CameraButton = () => {
           }
           return;
         }
-        
+
         lastFrameTime = currentTime;
 
         ctx.save();
@@ -235,25 +250,28 @@ const CameraButton = () => {
           recorder.stop();
         }
       }, MAX_RECORD_TIME * 1000);
-    }, 600);
+    }, 100);
   };
 
   const endHold = (e) => {
     // Prevent default để tránh conflict trên iOS
     e.preventDefault();
-    
+
     const heldTime = Date.now() - (holdStartTimeRef.current || Date.now());
-    
+
     // Clear timeouts
     clearTimeout(holdTimeoutRef.current);
     clearInterval(intervalRef.current);
     setHoldTime(heldTime);
-    
+
     // Đánh dấu không còn trying to record
     isTryingToRecordRef.current = false;
 
     // Nếu đang trong quá trình recording
-    if (isRecordingRef.current && mediaRecorderRef.current?.state === "recording") {
+    if (
+      isRecordingRef.current &&
+      mediaRecorderRef.current?.state === "recording"
+    ) {
       console.log("📹 Stopping video recording manually");
       mediaRecorderRef.current.stop();
       return; // Không chụp ảnh
@@ -302,22 +320,26 @@ const CameraButton = () => {
 
     ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
 
-    canvas.toBlob((blob) => {
-      if (blob) {
-        const file = new File([blob], "locket_dio.jpg", {
-          type: "image/jpeg",
-        });
-        const imgUrl = URL.createObjectURL(file);
-        setPreview({ type: "image", data: imgUrl });
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          const file = new File([blob], "locket_dio.jpg", {
+            type: "image/jpeg",
+          });
+          const imgUrl = URL.createObjectURL(file);
+          setPreview({ type: "image", data: imgUrl });
 
-        const fileSizeInMB = file.size / (1024 * 1024);
-        setSizeMedia(fileSizeInMB.toFixed(2));
+          const fileSizeInMB = file.size / (1024 * 1024);
+          setSizeMedia(fileSizeInMB.toFixed(2));
 
-        setSelectedFile(file);
-        setIsCaptionLoading(true);
-        setCameraActive(false);
-      }
-    }, "image/jpeg", 0.9);
+          setSelectedFile(file);
+          setIsCaptionLoading(true);
+          setCameraActive(false);
+        }
+      },
+      "image/jpeg",
+      1.0
+    );
 
     // Fix iOS
     setTimeout(() => {
@@ -330,7 +352,9 @@ const CameraButton = () => {
     setRotation((prev) => prev + 180);
     const newMode = cameraMode === "user" ? "environment" : "user";
     setCameraMode(newMode);
-
+    // ✅ Reset deviceId để tránh bị giữ lại cam cũ (zoom cam)
+    setZoomLevel("1x");
+    setDeviceId(null);
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
     }
@@ -362,7 +386,7 @@ const CameraButton = () => {
 
   // Log môi trường khi component mount
   useEffect(() => {
-    console.log(`🚀 App running in: ${isPWA() ? 'PWA' : 'Web'} mode`);
+    console.log(`🚀 App running in: ${isPWA() ? "PWA" : "Web"} mode`);
   }, []);
 
   return (
@@ -379,10 +403,10 @@ const CameraButton = () => {
           onTouchCancel={endHold}
           onContextMenu={(e) => e.preventDefault()} // Prevent long press menu on iOS
           className="relative flex items-center justify-center w-22 h-22"
-          style={{ 
-            touchAction: 'manipulation', // Improve touch response on iOS
-            userSelect: 'none',
-            WebkitUserSelect: 'none'
+          style={{
+            touchAction: "manipulation", // Improve touch response on iOS
+            userSelect: "none",
+            WebkitUserSelect: "none",
           }}
         >
           <div

@@ -13,7 +13,8 @@ import BorderProgress from "../../../components/UI/SquareProgress";
 import { showInfo } from "../../../components/Toast";
 import { AuthContext } from "../../../context/AuthLocket";
 import Cropper from "react-easy-crop";
-import { getCroppedImg } from "../../../utils";
+import { getAvailableCameras, getCroppedImg } from "../../../utils";
+import { Zap } from "lucide-react";
 
 const MediaPreview = ({ capturedMedia }) => {
   const { userPlan } = useContext(AuthContext);
@@ -27,6 +28,10 @@ const MediaPreview = ({ capturedMedia }) => {
     cameraMode,
     iscameraHD,
     setIsCameraHD,
+    zoomLevel,
+    setZoomLevel,
+    deviceId,
+    setDeviceId,
   } = camera;
   const { isCaptionLoading, uploadLoading, sendLoading, setSendLoading } =
     useloading;
@@ -80,9 +85,11 @@ const MediaPreview = ({ capturedMedia }) => {
 
       // Cấu hình video constraints
       const videoConstraints = {
+        deviceId: deviceId ? { exact: deviceId } : undefined,
         facingMode: cameraMode || "user",
-        width: { ideal: iscameraHD ? 1920 : 1280 },
-        height: { ideal: iscameraHD ? 1080 : 720 },
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+        aspectRatio: 3 / 4,
       };
 
       // Chỉ yêu cầu quyền truy cập khi thực sự cần
@@ -155,13 +162,6 @@ const MediaPreview = ({ capturedMedia }) => {
     setIsCameraHD((prev) => !prev);
   };
 
-  // Hàm để chuyển đổi camera mode (front/back)
-  const handleSwitchCamera = () => {
-    const newMode = cameraMode === "user" ? "environment" : "user";
-    // Cập nhật camera mode thông qua context/state management
-    // setCameraMode(newMode); // Giả sử bạn có hàm này
-  };
-
   const [croppedImage, setCroppedImage] = useState(null);
 
   const handleCropComplete = useCallback(
@@ -179,18 +179,47 @@ const MediaPreview = ({ capturedMedia }) => {
     },
     [preview?.data]
   );
-  const [aspectRatio, setAspectRatio] = useState(1);
+  const handleCycleZoomCamera = async () => {
+    const cameras = await getAvailableCameras();
 
-  useEffect(() => {
-    if (preview?.type === "image" && preview.data) {
-      const img = new Image();
-      img.onload = () => {
-        const ratio = img.height;
-        setAspectRatio(ratio);
-      };
-      img.src = preview.data;
+    const isBackCamera = cameraMode === "environment";
+
+    if (!isBackCamera) {
+      showInfo("Chỉ có thể thay đổi zoom khi đang dùng camera sau");
+      return;
     }
-  }, [preview?.data]);  
+
+    let newZoom = "1x";
+    let newDeviceId = null;
+
+    if (zoomLevel === "1x") {
+      newZoom = "0.5x";
+      newDeviceId = cameras?.backUltraWideCamera?.deviceId;
+    } else if (zoomLevel === "0.5x") {
+      newZoom = "3x";
+      newDeviceId = cameras?.backZoomCamera?.deviceId;
+    } else if (zoomLevel === "3x") {
+      newZoom = "1x";
+      newDeviceId = cameras?.backNormalCamera?.deviceId; // 🔒 luôn dùng camera sau
+    }
+
+    // Fallback nếu camera zoom/ultraWide không tồn tại
+    if (!newDeviceId && zoomLevel !== "1x") {
+      newZoom = "1x";
+      newDeviceId = cameras?.backNormalCamera?.deviceId; // 🔒 fallback vẫn là camera sau
+    }
+
+    if (newDeviceId) {
+      setZoomLevel(newZoom);
+      setDeviceId(newDeviceId);
+      setCameraActive(false);
+      setTimeout(() => {
+        setCameraActive(true);
+      }, 200);
+    } else {
+      showInfo("Không tìm thấy camera phù hợp để chuyển zoom");
+    }
+  };
 
   return (
     <>
@@ -221,17 +250,17 @@ const MediaPreview = ({ capturedMedia }) => {
         {!preview && !selectedFile && (
           <div className="absolute inset-0 top-7 px-7 z-50 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
             <button
-              onClick={handleChangeCamera}
-              className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
+              onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
+              className="pointer-events-auto w-7 h-7 p-1 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center"
             >
-              {iscameraHD ? "HD" : "SD"}
+              <Zap className="text-primary-content" />
             </button>
 
             <button
-              onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
-              className="pointer-events-auto w-6 h-6 rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
+              onClick={handleCycleZoomCamera}
+              className="pointer-events-auto w-6 h-6 text-primary-content font-semibold rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
             >
-              1x
+              {zoomLevel}
             </button>
           </div>
         )}
