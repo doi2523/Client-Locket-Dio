@@ -195,6 +195,18 @@ const MediaPreview = ({ capturedMedia }) => {
     },
     [preview?.data]
   );
+  const [aspectRatio, setAspectRatio] = useState(1);
+
+  useEffect(() => {
+    if (preview?.type === "image" && preview.data) {
+      const img = new Image();
+      img.onload = () => {
+        const ratio = img.height;
+        setAspectRatio(ratio);
+      };
+      img.src = preview.data;
+    }
+  }, [preview?.data]); 
 
   const handleCycleZoomCamera = async () => {
     const cameras = await getAvailableCameras();
