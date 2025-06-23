@@ -14,11 +14,11 @@ export default function GeneralThemes({ title }) {
   const { navigation, post, captiontheme } = useApp();
   const { isFilterOpen, setIsFilterOpen } = navigation;
   const { postOverlay, setPostOverlay } = post;
+  const { addressOptions } = useLocationOptions();
   const { captionThemes } = captiontheme;
 
   const [time, setTime] = useState(() => new Date());
   const { level, charging } = useBatteryStatus();
-  const { addressOptions } = useLocationOptions();
 
   const [showSpotifyForm, setShowSpotifyForm] = useState(false);
   const [spotifyLink, setSpotifyLink] = useState("");
@@ -27,6 +27,15 @@ export default function GeneralThemes({ title }) {
   const [reviewText, setReviewText] = useState("");
   const [reviewRating, setReviewRating] = useState(0); // mặc định 5 sao
   const [loading, setLoading] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState("");
+
+  const [savedAddressOptions, setSavedAddressOptions] = useState([]);
+
+  useEffect(() => {
+    if (addressOptions.length > 0) {
+      setSavedAddressOptions(addressOptions);
+    }
+  }, [addressOptions]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -39,7 +48,7 @@ export default function GeneralThemes({ title }) {
     hour: "2-digit",
     minute: "2-digit",
   });
-  
+
   const handleCustomeSelect = ({
     preset_id = "standard",
     icon = "",
@@ -136,7 +145,6 @@ export default function GeneralThemes({ title }) {
         });
         break;
       case "location":
-        alert("Lấy vị trí sẽ sớm được hỗ trợ");
         break;
       case "weather":
         alert("Thời tiết sẽ sớm được tích hợp");
@@ -180,16 +188,6 @@ export default function GeneralThemes({ title }) {
       label: formattedTime,
     },
     {
-      id: "location",
-      icon: (
-        <img
-          src="https://img.icons8.com/?size=100&id=NEiCAz3KRY7l&format=png&color=000000"
-          className="w-6 h-6 mr-1"
-        />
-      ),
-      label: addressOptions[0] || "Vị trí",
-    },
-    {
       id: "weather",
       icon: (
         <img
@@ -214,6 +212,16 @@ export default function GeneralThemes({ title }) {
       icon: <img src="./images/heart_icon_red.svg" className="w-6 h-6 mr-1" />,
       label: "inlove",
     },
+    {
+      id: "location",
+      icon: (
+        <img
+          src="https://img.icons8.com/?size=100&id=NEiCAz3KRY7l&format=png&color=000000"
+          className="w-6 h-6 mr-1"
+        />
+      ),
+      label: addressOptions[0] || "Vị trí",
+    },
   ];
 
   return (
@@ -233,9 +241,40 @@ export default function GeneralThemes({ title }) {
             onClick={() => handleClick(id)}
             className="flex flex-col whitespace-nowrap bg-base-200 dark:bg-white/30 backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
           >
-            <span className="text-base flex flex-row items-center">
+            <span className="text-base flex flex-row items-center gap-1">
               {icon}
-              {label}
+              {id === "location" ? (
+                <div className="relative w-max">
+                  {/* Hiển thị label tùy chỉnh */}
+                  <div className="cursor-pointer select-none">
+                    {savedAddressOptions[0] || "Vị trí"}
+                  </div>
+
+                  {/* Select vô hình, nhưng phủ lên toàn bộ div */}
+                  <select
+                    className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                    onChange={(e) =>
+                      handleCustomeSelect({
+                        preset_id: "location",
+                        caption: e.target.value,
+                        icon: "",
+                        type: "location",
+                      })
+                    }
+                  >
+                    <option value="" disabled>
+                      Chọn địa chỉ...
+                    </option>
+                    {savedAddressOptions.map((opt, idx) => (
+                      <option key={idx} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                label
+              )}
             </span>
           </button>
         ))}

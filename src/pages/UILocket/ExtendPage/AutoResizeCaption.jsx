@@ -139,7 +139,8 @@ const AutoResizeCaption = () => {
           />
 
           <div className="relative overflow-hidden whitespace-nowrap flex-1">
-            <div className="inline-block animate-marquee"
+            <div
+              className="inline-block animate-marquee"
               style={{
                 animationDuration:
                   postOverlay.caption.length < 30
@@ -147,7 +148,8 @@ const AutoResizeCaption = () => {
                     : postOverlay.caption.length < 60
                     ? "15s"
                     : "17s",
-              }}>
+              }}
+            >
               <span className="mr-4">{postOverlay.caption}</span>
               <span className="mr-4 absolute">{postOverlay.caption}</span>
             </div>
@@ -162,17 +164,63 @@ const AutoResizeCaption = () => {
             />
           </div>
         </div>
+      ) : postOverlay.type === "location" ? (
+        <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
+          <img
+            src="https://img.icons8.com/?size=100&id=NEiCAz3KRY7l&format=png&color=000000"
+            alt=""
+            className="w-6 h-6"
+          />
+          <textarea
+            ref={imageIconRef}
+            value={postOverlay.caption || ""}
+            onChange={(e) =>
+              setPostOverlay((prev) => ({
+                ...prev,
+                caption: e.target.value,
+              }))
+            }
+            placeholder={placeholder}
+            rows={1}
+            className="font-semibold w-auto outline-none resize-none overflow-hidden transition-all"
+            style={{
+              width: `${width}px`,
+              whiteSpace: shouldWrap ? "pre-wrap" : "nowrap",
+            }}
+          />
+        </div>
       ) : postOverlay.type === "heart" ? (
         <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
-          <img src="./images/heart_icon_red.svg" alt="" className="w-6 h-6"/>
+          <img src="./images/heart_icon_red.svg" alt="" className="w-6 h-6" />
           <span>{postOverlay.caption}</span>
           {/* <input value={postOverlay.caption || formattedTime} type="text" name="" id="" width={20}/> */}
         </div>
       ) : postOverlay.type === "battery" ? (
-        <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
-          <img src="https://img.icons8.com/?size=100&id=WDlpopZDVw4P&format=png&color=000000" alt="" className="w-6 h-6"/>
-          <span>{postOverlay.caption}%</span>
-          {/* <input value={postOverlay.caption || formattedTime} type="text" name="" id="" width={20}/> */}
+        <div className="flex items-center bg-white/50 w-3/12 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
+          <img
+            src="https://img.icons8.com/?size=100&id=WDlpopZDVw4P&format=png&color=000000"
+            alt=""
+            className="w-6 h-6"
+          />
+          <textarea
+            ref={imageIconRef}
+            value={
+              postOverlay.caption !== null && postOverlay.caption !== undefined
+                ? `${postOverlay.caption}`
+                : ""
+            }
+            onChange={(e) => {
+              let raw = e.target.value.replace(/\D/g, ""); // chỉ giữ số
+              let number = Math.min(parseInt(raw || "0", 10), 100); // giới hạn 0–100
+              setPostOverlay((prev) => ({
+                ...prev,
+                caption: number.toString(), // lưu lại chỉ số (không có %)
+              }));
+            }}
+            placeholder="0–100"
+            rows={1}
+            className="font-semibold outline-none w-auto resize-none overflow-hidden transition-all"
+          />
         </div>
       ) : postOverlay.type === "time" ? (
         <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">

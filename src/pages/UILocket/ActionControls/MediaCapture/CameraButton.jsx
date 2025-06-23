@@ -250,7 +250,7 @@ const CameraButton = () => {
           recorder.stop();
         }
       }, MAX_RECORD_TIME * 1000);
-    }, 100);
+    }, 600);
   };
 
   const endHold = (e) => {
@@ -349,7 +349,7 @@ const CameraButton = () => {
   };
 
   const handleRotateCamera = async () => {
-    setRotation((prev) => prev + 180);
+    setRotation((prev) => prev - 180);
     const newMode = cameraMode === "user" ? "environment" : "user";
     setCameraMode(newMode);
     // ✅ Reset deviceId để tránh bị giữ lại cam cũ (zoom cam)
