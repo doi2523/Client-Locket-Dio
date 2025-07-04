@@ -4,6 +4,7 @@ import ToolsLocket from "../pages/Auth/LocketDioTools";
 import PostMoments from "../pages/Auth/PostMoments";
 import Profile from "../pages/Auth/Profile";
 import AboutLocketDio from "../pages/Public/About";
+import ClearDataPage from "../pages/Public/ClearCache";
 import Contact from "../pages/Public/Contact";
 import DevPage from "../pages/Public/DevPage";
 import Docs from "../pages/Public/Docs";
@@ -15,6 +16,10 @@ import RegisterMemberPage from "../pages/Public/RegisterMemberPage";
 import Settings from "../pages/Public/Settings";
 import Timeline from "../pages/Public/Timeline";
 import CameraCapture from "../pages/UILocket";
+import HistorysPage from "../pages/UILocket/ExtendPage/pages/HistorysPage";
+import MainHomePage from "../pages/UILocket/ExtendPage/pages/MainHomePage";
+import HomePages from "../pages/UILocket/ExtendPage/pages/ProfilePage";
+import SettingsPage from "../pages/UILocket/ExtendPage/pages/SettingsPage";
 
 const APP_NAME = "Locket Dio - Đăng ảnh & Video lên Locket";
 
@@ -35,6 +40,7 @@ const publicRoutes = [
   { path: "/locketdio-tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },
   { path: "/settings", component: Settings, title: `${APP_NAME} | Cài đặt` },
   { path: "/devpage", component: DevPage, title: `${APP_NAME} | Dev Page` },
+  { path: "/clear", component: ClearDataPage, title: `${APP_NAME} | Clear Cache Website` },
 ];
 
 // 📌 Các route yêu cầu đăng nhập
@@ -49,14 +55,19 @@ const authRoutes = [
   { path: "/donatehistory", component: DonateHistory, title: `${APP_NAME} | DonateHistory` },
   { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
   { path: "/settings", component: Settings, title: `${APP_NAME} | Cài đặt` },
+  { path: "/devpage", component: DevPage, title: `${APP_NAME} | Dev Page` },
+  { path: "/clear", component: ClearDataPage, title: `${APP_NAME} | Clear Cache Website` },
 
-  { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Locket` },
+  { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Locket Camera` },
   { path: "/locketdio-tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },
 ];
 
 // 📌 Các route dành cho locket
 const locketRoutes = [
-  // { path: "/test", component: CameraCapture, title: `${APP_NAME} | Trang chủ` },
+  // { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Locket Camera` },
+  // { path: "/locket/profile", component: HomePages, title: `${APP_NAME} | Trang cá nhân Locket Camera` },
+  // { path: "/locket/history", component: HistorysPage, title: `${APP_NAME} | Lịch sử Locket Camera` },
+  // { path: "/locket/settings", component: SettingsPage, title: `${APP_NAME} | Cài đặt Locket Camera` },
 ];
 
 export { publicRoutes, authRoutes, locketRoutes };

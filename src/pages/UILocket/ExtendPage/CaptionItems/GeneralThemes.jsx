@@ -9,6 +9,7 @@ import { showError, showSuccess } from "../../../../components/Toast";
 import { API_URL, useBatteryStatus } from "../../../../utils";
 import LocationInfoGenerator from "../../../../helpers/getInfoLocation";
 import { useLocationOptions } from "../../../../utils/enviroment";
+import api from "../../../../lib/axios";
 
 export default function GeneralThemes({ title }) {
   const { navigation, post, captiontheme } = useApp();
@@ -87,7 +88,7 @@ export default function GeneralThemes({ title }) {
     e.preventDefault();
     setLoading(true); // Bật loading trước khi gọi API
     try {
-      const res = await axios.post(API_URL.SPOTIFY_URL, {
+      const res = await api.post(`${API_URL.SPOTIFY_URL}`, {
         spotifyUrl: spotifyLink,
       });
       setPostOverlay({

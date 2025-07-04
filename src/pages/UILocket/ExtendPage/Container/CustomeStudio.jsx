@@ -10,6 +10,7 @@ import DevCustomes from "../CaptionItems/DevCustomes";
 import ImageCaptionSelector from "../CaptionItems/ImageCaption";
 import PlanBadge from "../../../../components/UI/PlanBadge/PlanBadge";
 import Footer from "../../../../components/Footer";
+import CaptionGifThemes from "../CaptionItems/CaptionGifThemes";
 
 const ScreenCustomeStudio = () => {
   const navigate = useNavigate();
@@ -191,7 +192,7 @@ const ScreenCustomeStudio = () => {
             <div className="text-2xl font-lovehouse mt-1.5 font-semibold">
               Customize studio{" "}
             </div>
-            <PlanBadge/>
+            <PlanBadge />
           </div>
           <button
             onClick={() => setIsFilterOpen(false)}
@@ -206,11 +207,6 @@ const ScreenCustomeStudio = () => {
             title="🎨 General"
             captionThemes={captionThemes}
             onSelect={handleCustomeSelectTest}
-          />
-          <ThemesCustomes
-            title="🎨 Your Saved Theme"
-            presets={normalizedPresets}
-            onSelect={handleCustomeSelect}
           />
           <ThemesCustomes
             title="🎨 Suggest Theme"
@@ -233,10 +229,15 @@ const ScreenCustomeStudio = () => {
             captionThemes={captionThemes}
             onSelect={handleCustomeSelectTest}
           />
+          <CaptionGifThemes
+            title="🎨 Caption Gif - Member"
+            captionThemes={captionThemes}
+            onSelect={handleCustomeSelectTest}
+          />
           <ImageCaptionSelector title="🎨 Caption Ảnh - Truy cập sớm" />
           <div className="">
             <h2 className="text-md font-semibold text-primary mb-2">
-            ✏️ Ghi chú
+              ✏️ Ghi chú
             </h2>
             <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start text-base-content">
               <p>
@@ -272,7 +273,7 @@ const ScreenCustomeStudio = () => {
               </p>
             </div>
             <div className="bottom-0">
-              <Footer/>
+              <Footer />
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as utils from "../utils";
+import api from "../lib/axios";
 
 //Login
 export const login = async (email, password, captchaToken) => {
@@ -214,7 +215,7 @@ export const uploadMediaV2 = async (payload) => {
     }, timeoutDuration);
 
     // Gửi request với payload và header Content-Type: application/json
-    const response = await axios.post(utils.API_URL.UPLOAD_MEDIA_URL_V2, payload, {
+    const response = await api.post(utils.API_URL.UPLOAD_MEDIA_URL_V2, payload, {
       headers: {
         "Content-Type": "application/json", // Sử dụng JSON thay vì FormData
       },

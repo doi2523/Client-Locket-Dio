@@ -31,19 +31,23 @@ export const usePost = () => {
     const saved = localStorage.getItem("uploadedMoments");
     return saved ? JSON.parse(saved) : [];
   });
+  const [uploadPayloads, setuploadPayloads] = useState(() => {
+    const saved = localStorage.getItem("uploadPayloads");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const [audience, setAudience] = useState("all"); // "all" | "selected"
   const [selectedRecipients, setSelectedRecipients] = useState([]); // array userId hoặc object bạn bè
 
-  const [maxImageSizeMB, setMaxImageSizeMB] = useState(""); // Giới hạn ảnh: 5MB
-  const [maxVideoSizeMB, setMaxVideoSizeMB] = useState(""); // Giới hạn video: 12MB
+  const [maxImageSizeMB, setMaxImageSizeMB] = useState(""); // Giới hạn ảnh: 9MB
+  const [maxVideoSizeMB, setMaxVideoSizeMB] = useState(""); // Giới hạn video: 20MB
 
   useEffect(() => {
     const isHD = userPlan?.plan_info?.features?.upload_hd === true;
     //Chia theo plan ( Plan / Free)
     //Sửa thì sửa ở đây nhé.
     setMaxImageSizeMB(isHD ? 9 : 3);
-    setMaxVideoSizeMB(isHD ? 15 : 10);
+    setMaxVideoSizeMB(isHD ? 25 : 7);
   }, [userPlan]);
 
   return {
@@ -71,5 +75,7 @@ export const usePost = () => {
     setMaxImageSizeMB,
     maxVideoSizeMB,
     setMaxVideoSizeMB,
+    uploadPayloads,
+    setuploadPayloads,
   };
 };

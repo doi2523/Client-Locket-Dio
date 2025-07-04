@@ -2,19 +2,10 @@ import axios from "axios";
 import * as utils from "../../utils";
 
 export const fetchUserPlan = async () => {
-  // Đợi lấy token & uid
-  const auth = await utils.getCurrentUserTokenAndUid();
-
-  if (!auth) {
-    console.error("Không lấy được token và uid hiện tại.");
-    return [];
-  }
-
-  const { idToken, localId, refreshToken } = auth;
-
+  const { localId } = utils.getToken() || {};
   try {
     const res = await fetch(`${utils.API_URL.GET_USER_PLANS}/${localId}`, {
-      headers: { Authorization: `Bearer ${idToken}` },
+      // headers: { Authorization: `Bearer ${idToken}` },
     });
     if (!res.ok) throw new Error("Không lấy được user plan");
     const data = await res.json();
@@ -35,13 +26,13 @@ export const fetchUserPlan = async () => {
   }
 };
 
-export const registerFreePlan = async (user, idToken) => {
+export const registerFreePlan = async (user) => {
   try {
     const res = await fetch(utils.API_URL.REGISTER_USER_PLANS, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${idToken}`,
+        // Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify({
         uid: user.localId,
@@ -60,11 +51,12 @@ export const registerFreePlan = async (user, idToken) => {
     return null;
   }
 };
-export const getUserUploadStats = async (uid) => {
+export const getUserUploadStats = async () => {
+  const { localId } = utils.getToken() || {};
   try {
     const response = await axios.post(
       utils.API_URL.GET_UPLOAD_STATS_URL,
-      { localId: uid }, // gửi uid trong body JSON
+      { localId }, // gửi uid trong body JSON
       {
         headers: {
           "Content-Type": "application/json",

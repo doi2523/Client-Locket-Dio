@@ -206,7 +206,7 @@ const MediaPreview = ({ capturedMedia }) => {
       };
       img.src = preview.data;
     }
-  }, [preview?.data]); 
+  }, [preview?.data]);
 
   const handleCycleZoomCamera = async () => {
     const cameras = await getAvailableCameras();
@@ -318,47 +318,13 @@ const MediaPreview = ({ capturedMedia }) => {
         )}
 
         {preview?.type === "image" && (
-          <div className="absolute z-10 w-full h-full">
-            <Cropper
-              image={preview.data}
-              crop={crop}
-              zoom={zoom}
-              aspect={1} // Giữ aspect ratio 1:1 cho crop area
-              onCropChange={setCrop}
-              onZoomChange={setZoom}
-              onCropComplete={handleCropComplete}
-              // cropSize={{ width: 400, height: 400 }}
-              cropShape="rect"
-              style={{
-                containerStyle: {
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  width: "100%",
-                  height: "100%",
-                },
-                mediaStyle: {
-                  objectFit: "cover", // Lấp đầy container
-                },
-                cropAreaStyle: {
-                  display: "none", // Ẩn crop area
-                },
-              }}
-              showGrid={false}
-              zoomWithScroll={true} // Tắt zoom bằng scroll
-              touchAction="pan" // Chỉ cho phép pan, không zoom
-              objectFit="cover"
-              restrictPosition={true} // Giới hạn di chuyển trong khung
-              disableAutomaticStylesInjection={false}
-            />
-            <img
-              src={croppedImage}
-              alt="Cropped"
-              className={`w-full h-full object-cover no-select`}
-            />
-          </div>
+          <img
+            src={preview.data}
+            alt="Preview"
+            className={`w-full h-full object-cover select-none transition-all duration-300 ${
+              preview ? "opacity-100" : "opacity-0"
+            }`}
+          />
         )}
 
         {/* Caption */}

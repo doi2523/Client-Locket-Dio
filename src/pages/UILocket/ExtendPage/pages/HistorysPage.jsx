@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../../context/AuthLocket";
+import { AuthContext } from "../../../../context/AuthLocket";
 import {
   MessageCircle,
   Trash2,
@@ -7,18 +7,18 @@ import {
   RotateCcw,
   Check,
 } from "lucide-react";
-import { useApp } from "../../../context/AppContext";
-import { MdSlowMotionVideo } from "react-icons/md";
-import { showInfo, showSuccess, showError } from "../../../components/Toast";
-import BadgePlan from "./Badge";
-import LoadingRing from "../../../components/UI/Loading/ring";
-import UploadingQueue from "../../../components/UI/Moments/UploadingQueue";
-import RecentPostGrid from "../../../components/UI/Moments/RecentPostGrid";
-import LoadingOverlay from "../../../components/UI/Loading/LineSpinner";
-import { PostMoments } from "../../../services";
-import * as utils from "../../../utils";
+import { useApp } from "../../../../context/AppContext";
+import { showInfo, showSuccess, showError } from "../../../../components/Toast";
+import BadgePlan from "../Badge";
+import LoadingRing from "../../../../components/UI/Loading/ring";
+import UploadingQueue from "../../../../components/UI/Moments/UploadingQueue";
+import RecentPostGrid from "../../../../components/UI/Moments/RecentPostGrid";
+import LoadingOverlay from "../../../../components/UI/Loading/LineSpinner";
+import { PostMoments } from "../../../../services";
+import * as utils from "../../../../utils";
+import { Link } from "react-router-dom";
 
-const BottomHomeScreen = () => {
+const HistorysPage = () => {
   const { user } = useContext(AuthContext);
   const { navigation, post } = useApp();
   const { isBottomOpen, setIsBottomOpen } = navigation;
@@ -206,11 +206,7 @@ const BottomHomeScreen = () => {
 
   return (
     <div
-      className={`fixed inset-0 flex flex-col transition-all duration-500 z-50 bg-base-100 ${
-        isBottomOpen
-          ? "translate-y-0 opacity-100"
-          : "translate-y-full opacity-0"
-      }`}
+      className={`fixed inset-0 flex flex-col transition-all duration-500 z-50 bg-base-100`}
     >
       {/* Header */}
       <div className="flex flex-col shadow-lg px-4 py-2 text-base-content relative overflow-hidden">
@@ -389,15 +385,12 @@ const BottomHomeScreen = () => {
           </button>
 
           {/* Home button */}
-          <div className="scale-75">
-            <button
-              onClick={handleClick}
-              className="relative flex items-center justify-center w-20 h-20"
-            >
+          <Link to={"/locket"} className="scale-75">
+            <button className="relative flex items-center justify-center w-20 h-20">
               <div className="absolute w-20 h-20 border-4 border-base-content/30 rounded-full z-10"></div>
               <div className="absolute rounded-full w-16 h-16 bg-base-content z-0 hover:scale-105 transition-transform"></div>
             </button>
-          </div>
+          </Link>
 
           {/* Delete button */}
           <button
@@ -442,4 +435,4 @@ const BottomHomeScreen = () => {
   );
 };
 
-export default BottomHomeScreen;
+export default HistorysPage;

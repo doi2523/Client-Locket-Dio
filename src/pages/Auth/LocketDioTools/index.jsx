@@ -49,36 +49,29 @@ function DeleteFriendsTool() {
   }, [invites, nextPageToken]);
 
   const handleFetchInvites = async () => {
-    if (!user?.idToken || !user?.localId) {
-      showInfo("⚠️ Bạn chưa đăng nhập hợp lệ.");
-      return;
-    }
-
     setLoading(true);
     const res = await getListRequestFriend();
 
-    if (res.errorMessage) {
-      showError(res.errorMessage);
+    if (res.message) {
+      // showError(res.message);
       setLoading(false);
       return;
     }
 
-    setInvites(res.friends || []);
-    setNextPageToken(res.nextPageToken);
+    setInvites(res?.friends || []);
+    setNextPageToken(res?.nextPageToken);
     setLoading(false);
 
-    showSuccess(`Đã tải ${res.friends.length} lời mời!`);
+    showSuccess(`Đã tải ${res?.friends.length} lời mời!`);
   };
 
   const handleLoadMore = async () => {
-    if (!nextPageToken || !user?.idToken || !user?.localId) return;
+    if (!nextPageToken) return;
 
     setLoading(true);
-    const res = await getListRequestFriend(
-      user.idToken,
-      user.localId,
-      nextPageToken
-    );
+
+    const res = await getListRequestFriend(nextPageToken);
+
     setInvites((prev) => [...prev, ...(res.friends || [])]);
     setNextPageToken(res.nextPageToken);
     setLoading(false);
@@ -122,6 +115,11 @@ function DeleteFriendsTool() {
         <p>
           🎯 Công cụ này giúp bạn xoá lời mời kết bạn spam từ bạn bè một cách tự
           động.
+        </p>
+        <p className="text-sm">
+          Tránh bị lạm dụng nên tính năng này giới hạn xoá trong ngày là{" "}
+          <span className="font-semibold underline">200</span> lời mời. Nâng cấp
+          gói thành viên để xoá nhiều hơn?
         </p>
       </div>
 

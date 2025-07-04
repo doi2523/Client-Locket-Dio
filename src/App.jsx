@@ -19,7 +19,9 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <AppProvider> {/* 🟢 Thêm AppProvider ở đây */}
+        <AppProvider>
+          {" "}
+          {/* 🟢 Thêm AppProvider ở đây */}
           <Router>
             <AppContent />
           </Router>
@@ -30,13 +32,13 @@ function App() {
   );
 }
 
-
 function AppContent() {
   const { user, loading } = useContext(AuthContext);
   const location = useLocation();
+  const allRoutes = [...publicRoutes, ...authRoutes, ...locketRoutes];
+  const privateRoutes = [...authRoutes, ...locketRoutes];
 
   useEffect(() => {
-    const allRoutes = [...publicRoutes, ...authRoutes, ...locketRoutes];
     const currentRoute = allRoutes.find(
       (route) => route.path === location.pathname
     );
@@ -53,53 +55,40 @@ function AppContent() {
   //   });
   // }
 
-  
   return (
     <Routes>
-      {user
-        ? authRoutes.map(({ path, component: Component }, index) => {
-            const Layout = getLayout(path);
-            return (
-              <Route
-                key={index}
-                path={path}
-                element={
-                  <Layout>
-                    <Component />
-                  </Layout>
-                }
-              />
-            );
-          })
-        : publicRoutes.map(({ path, component: Component }, index) => {
-            const Layout = getLayout(path);
-            return (
-              <Route
-                key={index}
-                path={path}
-                element={
-                  <Layout>
-                    <Component />
-                  </Layout>
-                }
-              />
-            );
-          })}
+      {(user ? privateRoutes : publicRoutes).map(
+        ({ path, component: Component }) => {
+          const Layout = getLayout(path);
+          return (
+            <Route
+              key={path}
+              path={path}
+              element={
+                <Layout>
+                  <Component />
+                </Layout>
+              }
+            />
+          );
+        }
+      )}
 
+      {/* Điều hướng khi chưa đăng nhập cố vào route cần auth */}
       {!user &&
-        authRoutes.map(({ path }, index) => (
-          <Route key={index} path={path} element={<Navigate to="/login" />} />
+        privateRoutes.map(({ path }) => (
+          <Route key={path} path={path} element={<Navigate to="/login" />} />
         ))}
 
+      {/* Điều hướng ngược lại khi đã đăng nhập mà cố vào public route */}
       {user &&
-        publicRoutes.map(({ path }, index) => (
-          <Route key={index} path={path} element={<Navigate to="/home" />} />
+        publicRoutes.map(({ path }) => (
+          <Route key={path} path={path} element={<Navigate to="/locket" />} />
         ))}
 
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
-
 
 export default App;

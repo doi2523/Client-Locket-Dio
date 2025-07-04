@@ -8,7 +8,6 @@ import {
   FileImage,
 } from "lucide-react";
 import { showError, showToast } from "../../../components/Toast/index.jsx";
-import * as lockerService from "../../../services/locketService.js";
 import * as utils from "../../../utils";
 import LoadingRing from "../../../components/UI/Loading/ring.jsx";
 import { useApp } from "../../../context/AppContext.jsx";
@@ -16,6 +15,7 @@ import { Link } from "react-router-dom";
 import Hourglass from "../../../components/UI/Loading/hourglass.jsx";
 import MediaSizeInfo from "../../../components/UI/MediaSizeInfo/index.jsx";
 import { defaultPostOverlay } from "../../../storages/usePost.js";
+import { uploadMediaV2 } from "../../../services/index.js";
 
 const PostMoments = () => {
   const { post, useloading } = useApp();
@@ -36,6 +36,8 @@ const PostMoments = () => {
     setPostOverlay,
     recentPosts,
     setRecentPosts,
+    maxImageSizeMB,
+    maxVideoSizeMB,
   } = post;
 
   const fileInputRef = useRef(null);
@@ -99,7 +101,7 @@ const PostMoments = () => {
 
       showToast("info", `Đang tạo bài viết !`);
       // Gọi API upload
-      const response = await lockerService.uploadMediaV2(payload);
+      const response = await uploadMediaV2(payload);
 
       // Lấy dữ liệu cũ
       const savedResponses = JSON.parse(
@@ -319,8 +321,8 @@ const PostMoments = () => {
             className="btn btn-primary rounded-xl disabled:bg-gray-400"
             disabled={
               sendLoading ||
-              (preview?.type === "image" && isSizeMedia > 1) ||
-              (preview?.type === "video" && isSizeMedia > 10)
+              (preview?.type === "image" && isSizeMedia > maxImageSizeMB) ||
+              (preview?.type === "video" && isSizeMedia > maxVideoSizeMB)
             }
           >
             {sendLoading ? (

@@ -5,6 +5,7 @@ import {
   uploadToCloudinary,
 } from "../cloudinary/uploadFileAndGetInfo";
 import { uploadFileAndGetInfo } from "../firebase/uploadfiletofirebase";
+import { getToken } from "../storage";
 
 export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
   // Lấy token bằng getToken()
@@ -181,19 +182,18 @@ export const createRequestPayloadV5 = async (
   selectedRecipients
 ) => {
   try {
-    // Đợi lấy token & uid
-    const auth = await getCurrentUserTokenAndUid();
-
-    if (!auth) {
-      showInfo("Vui lòng đăng nhập trước khi sử dụng!")
-      console.error("Không lấy được token và uid hiện tại.");
-      return;
+    const { localId } = getToken() || {};
+    
+    if (!localId) {
+      showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+      return null;
     }
-
-    const { idToken, localId } = auth;
-
     // Upload file & chuẩn bị thông tin media
-    const fileInfo = await uploadFileAndGetInfo(selectedFile, previewType, localId);
+    const fileInfo = await uploadFileAndGetInfo(
+      selectedFile,
+      previewType,
+      localId
+    );
     // console.log(fileInfo);
 
     const mediaInfo = {
@@ -222,7 +222,7 @@ export const createRequestPayloadV5 = async (
 
     // Tạo payload cuối cùng
     const payload = {
-      userData: { idToken: idToken, localId },
+      // userData: { idToken: idToken, localId },
       options: optionsData,
       model: "Version-UploadmediaV3.1",
       mediaInfo,

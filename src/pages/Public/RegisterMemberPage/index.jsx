@@ -10,7 +10,11 @@ import { showInfo, showSuccess } from "../../../components/Toast";
 import { useApp } from "../../../context/AppContext";
 import { ChevronDown, Info, RefreshCw } from "lucide-react";
 import LoadingRing from "../../../components/UI/Loading/ring";
-import { fetchUserPlan, getUserUploadStats, registerFreePlan } from "../../../services";
+import {
+  fetchUserPlan,
+  getUserUploadStats,
+  registerFreePlan,
+} from "../../../services";
 import PlanBadge from "../../../components/UI/PlanBadge/PlanBadge";
 
 // plans.js
@@ -26,6 +30,7 @@ const plans = [
       "🖼️ Đăng tối đa 15 ảnh/video": true,
       "🎨 Tuỳ chỉnh nền và trang trí cơ bản": true,
       "📷 Đăng ảnh/video với chất lượng thấp": true,
+      "💾 Giới hạn dung lượng sử dụng 250MB": true,
       "🚫 Không hỗ trợ ưu tiên": false,
     },
   },
@@ -322,6 +327,20 @@ const UserPlanCard = React.memo(
                         : "Không giới hạn"}
                     </span>
                   </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base lg:text-lg">💾</span>
+                      <span className="text-xs lg:text-sm font-medium text-gray-600">
+                        Dung lượng tối đa
+                      </span>
+                    </div>
+                    <span className="text-xs lg:text-sm font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-lg">
+                      {userPlan?.plan_info?.storage_limit_mb === -1
+                        ? "Không giới hạn"
+                        : `${userPlan?.plan_info?.storage_limit_mb} MB`}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -364,14 +383,20 @@ export default function RegisterMemberPage() {
   } = modal;
   const [isExpanded, setIsExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { user, userPlan, setUserPlan, authTokens, uploadStats, setUploadStats } =
-    useContext(AuthContext);
+  const {
+    user,
+    userPlan,
+    setUserPlan,
+    authTokens,
+    uploadStats,
+    setUploadStats,
+  } = useContext(AuthContext);
   const [lastRefreshTime, setLastRefreshTime] = useState(0);
 
   // Memoize the select plan handler
   const handleSelectPlan = useCallback(
     async (planId) => {
-      if (!user || !authTokens?.idToken) {
+      if (!user) {
         showInfo("Vui lòng đăng nhập trước khi đăng ký gói.");
         return;
       }
@@ -384,7 +409,7 @@ export default function RegisterMemberPage() {
 
         try {
           setLoading(true);
-          await registerFreePlan(user, authTokens?.idToken);
+          await registerFreePlan(user);
           const data = await fetchUserPlan();
           if (data) setUserPlan(data);
           showInfo("Bạn đã đăng ký gói Free thành công!");
@@ -408,30 +433,27 @@ export default function RegisterMemberPage() {
   const handleRefreshPlan = useCallback(async () => {
     const now = Date.now();
 
-    if (!user || !authTokens?.idToken) return;
-
     setLoading(true);
     setLastRefreshTime(now);
     try {
       const [userPlanData, uploadStatsData] = await Promise.all([
         fetchUserPlan(),
-        getUserUploadStats(authTokens?.localId)
+        getUserUploadStats(),
       ]);
-    
+
       if (userPlanData) {
         setUserPlan(userPlanData);
         showSuccess("Làm mới thông tin thành công!");
       }
-    
+
       setUploadStats(uploadStatsData);
       localStorage.setItem("uploadStats", JSON.stringify(uploadStatsData));
-      
     } catch (err) {
       console.error("❌ Lỗi khi cập nhật gói hoặc thống kê:", err);
       showInfo("⚠️ Đã xảy ra lỗi khi cập nhật thông tin người dùng.");
     } finally {
       setLoading(false);
-    }    
+    }
   }, [user, authTokens, lastRefreshTime, setUserPlan]);
 
   // Check if user has a valid plan (prevent duplicate rendering)

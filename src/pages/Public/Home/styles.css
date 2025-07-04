@@ -113,3 +113,44 @@
     transform: translateY(-400%);
   }
 }
+@keyframes text-rotate {
+  0% { opacity: 0; transform: translateY(10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  25% { opacity: 1; transform: translateY(0); }
+  35% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+.word-rotate span {
+  position: absolute;
+  opacity: 0;
+  animation: text-rotate 10s infinite;
+}
+
+.word-rotate span:nth-child(1) {
+  animation-delay: 0s;
+}
+.word-rotate span:nth-child(2) {
+  animation-delay: 2.5s;
+}
+.word-rotate span:nth-child(3) {
+  animation-delay: 5s;
+}
+.word-rotate span:nth-child(4) {
+  animation-delay: 7.5s;
+}
+@keyframes float-up-down {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px); /* Độ nâng lên */
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.float-up-down {
+  animation: float-up-down 2s ease-in-out infinite;
+}

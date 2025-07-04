@@ -2,7 +2,7 @@ import { X, Send, Sparkles, Check } from "lucide-react";
 import * as utils from "../../../../utils/index.js";
 import LoadingRing from "../../../../components/UI/Loading/ring.jsx";
 import { useApp } from "../../../../context/AppContext.jsx";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   showError,
   showInfo,
@@ -11,8 +11,11 @@ import {
 import { defaultPostOverlay } from "../../../../storages/usePost.js";
 import { PostMoments } from "../../../../services/index.js";
 import UploadStatusIcon from "./UploadStatusIcon.jsx";
+import { useContext } from "react";
+import { AuthContext } from "../../../../context/AuthLocket.jsx";
 
 const MediaControls = () => {
+  const { uploadStats, userPlan } = useContext(AuthContext)
   const { navigation, post, useloading, camera } = useApp();
   const { setIsFilterOpen } = navigation;
   const { sendLoading, setSendLoading, uploadLoading, setUploadLoading } =
@@ -34,6 +37,7 @@ const MediaControls = () => {
     setSelectedRecipients,
     maxImageSizeMB,
     maxVideoSizeMB,
+    setuploadPayloads,
   } = post;
   const { setCameraActive } = camera;
 
@@ -57,39 +61,35 @@ const MediaControls = () => {
   // Biến global để theo dõi trạng thái upload
   let isProcessingQueue = false;
 
-  // Hàm xử lý upload tuần tự theo hàng đợi với delay
   const handleQueueUpload = async () => {
-    if (isProcessingQueue) return; // Tránh chạy đồng thời
+    if (isProcessingQueue) return;
+    isProcessingQueue = true;
 
     try {
-      isProcessingQueue = true;
-
-      // Lấy danh sách payload từ localStorage
-      const queuePayloads = JSON.parse(
+      let queuePayloads = JSON.parse(
         localStorage.getItem("uploadPayloads") || "[]"
       );
 
       if (queuePayloads.length === 0) {
-        isProcessingQueue = false;
-        console.log("✅ Hàng đợi upload đã hoàn thành");
+        console.log("✅ Không có bài nào trong hàng đợi.");
         return;
       }
 
-      console.log(
-        `🚀 Bắt đầu xử lý ${queuePayloads.length} bài trong hàng đợi`
-      );
+      console.log("🚀 Bắt đầu xử lý hàng đợi upload");
 
-      // Xử lý từng payload
       for (let i = 0; i < queuePayloads.length; i++) {
-        const payload = queuePayloads[i];
+        const currentPayload = queuePayloads[i];
+
+        // Chỉ xử lý nếu đang trong trạng thái "uploading"
+        if (currentPayload.status !== "uploading") {
+          continue;
+        }
 
         try {
           console.log(`📤 Đang upload bài ${i + 1}/${queuePayloads.length}`);
 
-          // Gửi request upload
-          const response = await PostMoments(payload);
+          const response = await PostMoments(currentPayload);
 
-          // Lưu kết quả thành công
           const savedResponses = JSON.parse(
             localStorage.getItem("uploadedMoments") || "[]"
           );
@@ -98,23 +98,18 @@ const MediaControls = () => {
           localStorage.setItem("uploadedMoments", JSON.stringify(updatedData));
           setRecentPosts(updatedData);
 
-          // Xóa payload đã upload thành công khỏi hàng đợi
-          queuePayloads.splice(i, 1);
-          i--; // Điều chỉnh index sau khi xóa
-          localStorage.setItem("uploadPayloads", JSON.stringify(queuePayloads));
+          // ✅ Đánh dấu thành công
+          queuePayloads[i].status = "done";
+          queuePayloads[i].lastUploaded = new Date().toISOString();
 
-          const previewType = payload.contentType || "image"; // Giả sử có field này
           showSuccess(
             `${
-              previewType === "video" ? "Video" : "Hình ảnh"
-            } đã được tải lên! (${queuePayloads.length} còn lại)`
+              currentPayload.contentType === "video" ? "Video" : "Hình ảnh"
+            } đã được tải lên!`
           );
 
-          console.log(
-            `✅ Upload thành công bài ${i + 2}/${queuePayloads.length + 1}`
-          );
+          console.log(`✅ Upload thành công bài ${i + 1}`);
         } catch (error) {
-          // Xử lý lỗi - lưu vào danh sách lỗi và tiếp tục
           const errorMessage =
             error?.response?.data?.message ||
             error.message ||
@@ -122,33 +117,25 @@ const MediaControls = () => {
 
           console.error(`❌ Upload thất bại bài ${i + 1}:`, errorMessage);
 
-          // Lưu payload bị lỗi vào localStorage riêng
-          const failedUploads = JSON.parse(
-            localStorage.getItem("failedUploads") || "[]"
-          );
-          failedUploads.push({
-            payload: payload,
-            error: errorMessage,
-            timestamp: new Date().toISOString(),
-            retryCount: (payload.retryCount || 0) + 1,
-          });
-          localStorage.setItem("failedUploads", JSON.stringify(failedUploads));
-
-          // Xóa payload bị lỗi khỏi hàng đợi chính
-          queuePayloads.splice(i, 1);
-          i--; // Điều chỉnh index sau khi xóa
-          localStorage.setItem("uploadPayloads", JSON.stringify(queuePayloads));
+          queuePayloads[i].status = "error";
+          queuePayloads[i].errorMessage = errorMessage;
+          queuePayloads[i].retryCount = (queuePayloads[i].retryCount || 0) + 1;
+          queuePayloads[i].lastTried = new Date().toISOString();
 
           showError(
             `Bài ${
-              i + 2
-            } tải lên thất bại: ${errorMessage}. Tiếp tục với bài tiếp theo...`
+              i + 1
+            } tải lên thất bại: ${errorMessage}. Tiếp tục bài tiếp theo...`
           );
         }
 
-        // Delay 1 giây giữa các lần upload (trừ lần cuối)
+        // ✅ Cập nhật localStorage và state sau mỗi lần
+        localStorage.setItem("uploadPayloads", JSON.stringify(queuePayloads));
+        setuploadPayloads([...queuePayloads]);
+
+        // ⏳ Delay nhỏ trước khi xử lý bài tiếp theo
         if (i < queuePayloads.length - 1) {
-          console.log("⏳ Chờ 1 giây trước khi upload bài tiếp theo...");
+          console.log("⏳ Chờ 1 giây...");
           await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
@@ -167,6 +154,12 @@ const MediaControls = () => {
       showError("Không có dữ liệu để tải lên.");
       return;
     }
+    const limit = userPlan?.plan_info?.storage_limit_mb;
+
+    if (limit !== -1 && uploadStats?.totalStorageUsedMB > limit) {
+      showError("Dung lượng sử dụng vượt quá giới hạn của gói hiện tại!");
+      return;
+    }    
 
     const { type: previewType } = preview || {};
     const isImage = previewType === "image";
@@ -178,7 +171,11 @@ const MediaControls = () => {
       return;
     }
     if (isSizeMedia > maxFileSize) {
-      showError(`${isImage ? "Ảnh" : "Video"} vượt quá dung lượng. Tối đa ${maxFileSize}MB.`);
+      showError(
+        `${
+          isImage ? "Ảnh" : "Video"
+        } vượt quá dung lượng. Tối đa ${maxFileSize}MB.`
+      );
       return;
     }
 
@@ -203,6 +200,7 @@ const MediaControls = () => {
       // Thêm thông tin bổ sung vào payload
       payload.contentType = previewType;
       payload.createdAt = new Date().toISOString();
+      payload.status = "uploading"; // Đánh dấu trạng thái là đang upload
 
       // Lưu payload vào localStorage
       const savedPayloads = JSON.parse(
@@ -210,6 +208,7 @@ const MediaControls = () => {
       );
       savedPayloads.push(payload);
       localStorage.setItem("uploadPayloads", JSON.stringify(savedPayloads));
+      setuploadPayloads(savedPayloads);
       // Kết thúc loading và hiển thị success
       setUploadLoading(false);
       setIsSuccess(true);

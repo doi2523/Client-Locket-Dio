@@ -25,7 +25,6 @@ const CameraButton = () => {
     cameraActive,
     setCameraActive,
     setLoading,
-    iscameraHD,
     IMAGE_SIZE_PX,
     VIDEO_RESOLUTION_PX,
     MAX_RECORD_TIME,

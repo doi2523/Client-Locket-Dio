@@ -20,10 +20,11 @@ import {
   Wrench,
   Settings2,
 } from "lucide-react";
-import { showToast } from "../Toast";
+import { showSuccess, showToast } from "../Toast";
 import * as ultils from "../../utils";
 import { useApp } from "../../context/AppContext";
 import { AuthContext } from "../../context/AuthLocket";
+import api from "../../lib/axios";
 
 const Sidebar = () => {
   const { user, setUser, resetAuthContext } = useContext(AuthContext);
@@ -46,13 +47,14 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
+      api.get(`${ultils.API_URL.LOGOUT_URL}`)
       resetAuthContext(); // Reset context state
-      // ultils.clearAuthData();
-      // ultils.removeUser();
-      // ultils.clearAuthStorage();
+      ultils.clearAuthData();
+      ultils.removeUser();
+      ultils.clearAuthStorage();
       ultils.clearLocalData();
 
-      showToast("success", "Đăng xuất thành công!");
+      showSuccess("Đăng xuất thành công!");
       navigate("/login");
     } catch (error) {
       showToast("error", "Đăng xuất thất bại!");

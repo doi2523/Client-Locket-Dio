@@ -1,9 +1,8 @@
 import LocketLayout from "./locketLayout";
 import DefaultLayout from "./mainLayout";
 
-
 const getLayout = (pathname) => {
-  if (pathname.includes("/test") || pathname === "/locket") {
+  if (pathname.startsWith("/locket")) {
     return LocketLayout;
   }
   return DefaultLayout;

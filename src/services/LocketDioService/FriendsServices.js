@@ -1,24 +1,12 @@
 import axios from "axios";
 import * as utils from "../../utils";
 import { showError } from "../../components/Toast";
+import api from "../../lib/axios";
 
 //lấy toàn bộ danh sách bạn bè (uid, createdAt) từ API
 export const getListIdFriends = async () => {
-  // Đợi lấy token & uid
-  const auth = await utils.getCurrentUserTokenAndUid();
-
-  if (!auth) {
-    console.error("Không lấy được token và uid hiện tại.");
-    return [];
-  }
-
-  const { idToken, localId, refreshToken } = auth;
-
   try {
-    const res = await axios.post(utils.API_URL.GET_LIST_FRIENDS_URL, {
-      idToken, // gửi đúng tên biến
-      localId,
-    });
+    const res = await api.post(utils.API_URL.GET_LIST_FRIENDS_URL);
 
     const allFriends = res?.data?.data || [];
 
@@ -38,14 +26,7 @@ export const getListIdFriends = async () => {
 //fetch dữ liệu chi tiết về user qua uid
 export const fetchUser = async (user_uid) => {
   // Đợi lấy token & uid
-  const auth = await utils.getCurrentUserTokenAndUid();
-
-  if (!auth) {
-    console.error("Không lấy được token và uid hiện tại.");
-    return [];
-  }
-
-  const { idToken, localId, refreshToken } = auth;
+  const { idToken } = utils.getToken() || {};
 
   return await axios.post(
     "https://api.locketcamera.com/fetchUserV2",
@@ -76,12 +57,11 @@ export const refreshFriends = async () => {
     // Lưu danh sách bạn bè vào localStorage
     localStorage.setItem("friendsList", JSON.stringify(friends));
 
-    const auth = await utils.getCurrentUserTokenAndUid();
-    if (!auth) {
-      console.error("Không có token người dùng");
-      return;
+    const { idToken, localId } = utils.getToken() || {};
+    if (!idToken || !localId) {
+      showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+      return null;
     }
-    const { idToken } = auth;
 
     // Tiến hành fetch
     const batchSize = 20;
@@ -131,24 +111,8 @@ export const refreshFriends = async () => {
   }
 };
 export const getListRequestFriend = async (pageToken = null) => {
-  // Đợi lấy token & uid
-  const auth = await utils.getCurrentUserTokenAndUid();
-
-  if (!auth) {
-    console.error("Không lấy được token và uid hiện tại.");
-    return {
-      friends: [],
-      nextPageToken: null,
-      errorMessage: "Không xác định được người dùng",
-    };
-  }
-
-  const { idToken, localId } = auth;
-
   try {
-    const res = await axios.post(utils.API_URL.GET_INCOMING_URL, {
-      idToken,
-      localId,
+    const res = await api.post(utils.API_URL.GET_INCOMING_URL, {
       pageToken,
     });
 
@@ -182,22 +146,11 @@ export const getListRequestFriend = async (pageToken = null) => {
     if (err.response) {
       console.error("API lỗi, status:", err.response.status);
       console.error("API lỗi data:", err.response.data);
-
-      return {
-        friends: [],
-        nextPageToken: null,
-        errorMessage:
-          err.response.data?.message ||
-          `Lỗi API với status code ${err.response.status}`,
-      };
+      return err.response?.data;
     } else {
       // Lỗi mạng hoặc lỗi khác
       console.error("Lỗi không xác định khi gọi API:", err.message);
-      return {
-        friends: [],
-        nextPageToken: null,
-        errorMessage: err.message || "Lỗi khi gọi API",
-      };
+      return err.response?.data;
     }
   }
 };
@@ -244,21 +197,10 @@ export const getListRequestFriend = async (pageToken = null) => {
 // };
 
 export const rejectMultipleFriendRequests = async (uidList) => {
-  // Lấy token & uid hiện tại
-  const auth = await utils.getCurrentUserTokenAndUid();
-
-  if (!auth) {
-    console.error("Không lấy được token và uid hiện tại.");
-    return [];
-  }
-
-  const { idToken } = auth;
-
   try {
-    const response = await axios.post(
-      utils.API_URL.DELETE_FRIEND_REQUEST_URL,
+    const response = await api.post(
+      `${utils.API_URL.DELETE_FRIEND_REQUEST_URL}`,
       {
-        idToken,
         uids: uidList,
       },
       {
@@ -277,12 +219,8 @@ export const rejectMultipleFriendRequests = async (uidList) => {
 
 export const removeFriend = async (user_uid) => {
   try {
-    const auth = await utils.getCurrentUserTokenAndUid();
-    const { idToken } = auth;
-
-    const response = await axios.post(utils.API_URL.DELETE_FRIEND_URL, {
+    const response = await api.post(utils.API_URL.DELETE_FRIEND_URL, {
       uid: user_uid,
-      idToken,
     });
 
     console.log("✅ Đã xoá:", response.data);

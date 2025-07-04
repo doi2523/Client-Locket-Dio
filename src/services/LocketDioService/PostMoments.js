@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as utils from "../../utils";
+import api from "../../lib/axios";
 
 export const uploadMedia = async (formData, setUploadProgress) => {
   let timeOutId;
@@ -75,11 +76,15 @@ export const uploadMediaV2 = async (payload) => {
     }, timeoutDuration);
 
     // Gửi request với payload và header Content-Type: application/json
-    const response = await axios.post(utils.API_URL.UPLOAD_MEDIA_URL, payload, {
-      headers: {
-        "Content-Type": "application/json", // Sử dụng JSON thay vì FormData
-      },
-    });
+    const response = await api.post(
+      utils.API_URL.UPLOAD_MEDIA_URL_V2,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     clearTimeout(timeoutId); // Hủy timeout khi upload thành công
     console.log("✅ Upload thành công:", response.data);
@@ -110,12 +115,16 @@ export const PostMoments = async (payload) => {
       console.log("⏳ Uploading is taking longer than expected...");
     }, timeoutDuration);
 
-    // Gửi request với payload và header Content-Type: application/json
-    const response = await axios.post(utils.API_URL.UPLOAD_MEDIA_URL_V2, payload, {
-      headers: {
-        "Content-Type": "application/json", // Sử dụng JSON thay vì FormData
-      },
-    });
+    // Gửi request như thường, headers không cần thêm Authorization vì đã cấu hình sẵn
+    const response = await api.post(
+      `${utils.API_URL.UPLOAD_MEDIA_URL_V2}`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json", // vẫn có thể custom nếu cần
+        },
+      }
+    );
 
     clearTimeout(timeoutId); // Hủy timeout khi upload thành công
     console.log("✅ Upload thành công:", response.data);

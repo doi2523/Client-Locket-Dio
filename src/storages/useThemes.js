@@ -14,6 +14,7 @@ const groupThemesByType = (themes) => {
     custome: sortByOrderIndex(themes.filter((t) => t.type === "custome")),
     background: sortByOrderIndex(themes.filter((t) => t.type === "background")),
     image_icon: sortByOrderIndex(themes.filter((t) => t.type === "image_icon")),
+    image_gif: sortByOrderIndex(themes.filter((t) => t.type === "image_gif")),
   };
 };
 
@@ -23,6 +24,7 @@ export const useThemes = () => {
     custome: [],
     background: [],
     image_icon: [],
+    image_gif: [],
   });
 
   useEffect(() => {

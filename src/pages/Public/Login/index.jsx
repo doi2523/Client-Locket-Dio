@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from "react";
-import { showToast } from "../../../components/Toast";
-import * as locketService from "../../../services/locketService";
+import { showError, showToast } from "../../../components/Toast";
+import * as DioService from "../../../services/LocketDioService";
 import { AuthContext } from "../../../context/AuthLocket";
 import * as utils from "../../../utils";
 import LoadingRing from "../../../components/UI/Loading/ring";
@@ -11,7 +11,7 @@ import FloatingNotification from "../../../components/UI/FloatingNotification";
 import Turnstile from "react-turnstile";
 
 const Login = () => {
-  const { setUser } = useContext(AuthContext);
+  const { setUser, setAuthTokens } = useContext(AuthContext);
   const [captchaToken, setCaptchaToken] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,17 +44,18 @@ const Login = () => {
 
     setIsLoginLoading(true);
     try {
-      const res = await locketService.login(email, password, captchaToken);
+      const res = await DioService.login(email, password, captchaToken);
       if (!res) throw new Error("Lỗi: Server không trả về dữ liệu!");
 
-      const { idToken, refreshToken, localId } = res.data;
+      const { idToken, localId } = res.data;
 
       // ⚡️ Lưu refreshToken theo rememberMe
       // Khi login thành công:
-      utils.saveToken({ idToken, refreshToken, localId }, rememberMe);
+      utils.saveToken({ idToken, localId }, rememberMe);
 
       // ⚡️ Lưu user data toàn bộ (gồm thông tin cá nhân)
       utils.saveUser(res.data);
+      setAuthTokens(utils.getToken());
       setUser(res.data);
 
       showToast("success", "Đăng nhập thành công!");
@@ -64,17 +65,28 @@ const Login = () => {
         switch (status) {
           case 400:
           case 401:
-            showToast("error", "Tài khoản hoặc mật khẩu không đúng!");
+            showError("Tài khoản hoặc mật khẩu không đúng!");
+            setEmail("");
+            setPassword("");
+            break;
+          case 429:
+            showError("Bạn nhập sai quá 5 lần. Vui lòng thử lại sau 15 phút!");
+            setEmail("");
+            setPassword("");
             break;
           case 403:
-            showToast("error", "Bạn không có quyền truy cập.");
+            showError("Bạn không có quyền truy cập.");
+            setEmail("");
+            setPassword("");
             window.location.href = "/login";
             break;
           case 500:
-            showToast("error", "Lỗi hệ thống, vui lòng thử lại sau!");
+            showError("Lỗi hệ thống, vui lòng thử lại sau!");
             break;
           default:
-            showToast("error", message || "Đăng nhập thất bại!");
+            showError(message || "Đăng nhập thất bại!");
+            setEmail("");
+            setPassword("");
         }
       } else {
         showToast(

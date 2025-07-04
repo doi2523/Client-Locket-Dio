@@ -98,7 +98,7 @@ const AutoResizeCaption = () => {
 
   return (
     <div ref={parentRef} className="relative w-full">
-      {postOverlay.type === "image_icon" ? (
+      {["image_icon", "image_gif"].includes(postOverlay.type) ? (
         <div
           className="flex items-center bg-white/50 backdrop-blur-2xl gap-2 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2"
           style={{
