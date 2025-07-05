@@ -229,39 +229,38 @@ export const AuthProvider = ({ children }) => {
   // Load friend details với debounce và cache thông minh
   useEffect(() => {
     const loadFriendDetails = async () => {
-      if (friends.length === 0) {
-        setFriendDetails([]);
-        return;
-      }
-
       const savedDetails = localStorage.getItem("friendDetails");
-
+  
       if (savedDetails) {
         try {
           const parsedDetails = JSON.parse(savedDetails);
-          const savedUids = parsedDetails.map((f) => f.uid).sort();
-          const currentUids = friends.map((f) => f.uid).sort();
-
-          const isSameList =
-            savedUids.length === currentUids.length &&
-            savedUids.every((uid, idx) => uid === currentUids[idx]);
-
-          if (isSameList) {
-            setFriendDetails(parsedDetails);
-            return; // ✅ Không cần fetch
-          }
+          setFriendDetails(parsedDetails);
         } catch (error) {
           console.error("❌ Parse friendDetails error:", error);
         }
       }
-
-      // Fetch nếu chưa có hoặc không khớp UID
+  
+      if (!friends || friends.length === 0) {
+        return; // Không fetch nếu không có bạn bè
+      }
+  
+      const savedUids = JSON.parse(savedDetails || "[]").map((f) => f.uid).sort();
+      const currentUids = friends.map((f) => f.uid).sort();
+  
+      const isSameList =
+        savedUids.length === currentUids.length &&
+        savedUids.every((uid, idx) => uid === currentUids[idx]);
+  
+      if (isSameList) {
+        return; // ✅ Cache hợp lệ rồi
+      }
+  
+      // Tiến hành fetch chi tiết
       const batchSize = 10;
       const allResults = [];
-
+  
       for (let i = 0; i < friends.length; i += batchSize) {
         const batch = friends.slice(i, i + batchSize);
-
         try {
           const results = await Promise.allSettled(
             batch.map((friend) =>
@@ -270,13 +269,12 @@ export const AuthProvider = ({ children }) => {
               )
             )
           );
-
+  
           const successResults = results
             .filter((result) => result.status === "fulfilled" && result.value)
             .map((result) => result.value);
-
+  
           allResults.push(...successResults);
-
           if (i + batchSize < friends.length) {
             await new Promise((resolve) => setTimeout(resolve, 100));
           }
@@ -284,7 +282,7 @@ export const AuthProvider = ({ children }) => {
           console.error("❌ Lỗi khi xử lý batch:", err);
         }
       }
-
+  
       setFriendDetails(allResults);
       try {
         localStorage.setItem("friendDetails", JSON.stringify(allResults));
@@ -292,9 +290,10 @@ export const AuthProvider = ({ children }) => {
         console.error("❌ Lỗi khi lưu vào localStorage:", error);
       }
     };
-
+  
     loadFriendDetails();
-  }, [friends.length]);
+  }, [friends]);
+  
 
   // Reset context và refs
   const resetAuthContext = () => {
