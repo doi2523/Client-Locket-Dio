@@ -59,7 +59,7 @@ const authRoutes = [
   { path: "/clear", component: ClearDataPage, title: `${APP_NAME} | Clear Cache Website` },
 
   { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Locket Camera` },
-  { path: "/locketdio-tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },
+  { path: "/tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },
 ];
 
 // 📌 Các route dành cho locket

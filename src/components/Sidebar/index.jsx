@@ -197,9 +197,9 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
-                    to="/locketdio-tools"
+                    to="/tools"
                     className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/locketdio-tools"
+                      location.pathname === "/tools"
                         ? "bg-base-300"
                         : "hover:bg-base-200"
                     }`}
