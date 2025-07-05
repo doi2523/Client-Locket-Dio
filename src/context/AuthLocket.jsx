@@ -294,7 +294,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     loadFriendDetails();
-  }, [friends]);
+  }, [friends.length]);
 
   // Reset context và refs
   const resetAuthContext = () => {
