@@ -230,7 +230,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadFriendDetails = async () => {
       const savedDetails = localStorage.getItem("friendDetails");
-  
+
       if (savedDetails) {
         try {
           const parsedDetails = JSON.parse(savedDetails);
@@ -239,26 +239,28 @@ export const AuthProvider = ({ children }) => {
           console.error("❌ Parse friendDetails error:", error);
         }
       }
-  
+
       if (!friends || friends.length === 0) {
         return; // Không fetch nếu không có bạn bè
       }
-  
-      const savedUids = JSON.parse(savedDetails || "[]").map((f) => f.uid).sort();
+
+      const savedUids = JSON.parse(savedDetails || "[]")
+        .map((f) => f.uid)
+        .sort();
       const currentUids = friends.map((f) => f.uid).sort();
-  
+
       const isSameList =
         savedUids.length === currentUids.length &&
         savedUids.every((uid, idx) => uid === currentUids[idx]);
-  
+
       if (isSameList) {
         return; // ✅ Cache hợp lệ rồi
       }
-  
+
       // Tiến hành fetch chi tiết
       const batchSize = 10;
       const allResults = [];
-  
+
       for (let i = 0; i < friends.length; i += batchSize) {
         const batch = friends.slice(i, i + batchSize);
         try {
@@ -269,11 +271,11 @@ export const AuthProvider = ({ children }) => {
               )
             )
           );
-  
+
           const successResults = results
             .filter((result) => result.status === "fulfilled" && result.value)
             .map((result) => result.value);
-  
+
           allResults.push(...successResults);
           if (i + batchSize < friends.length) {
             await new Promise((resolve) => setTimeout(resolve, 100));
@@ -282,7 +284,7 @@ export const AuthProvider = ({ children }) => {
           console.error("❌ Lỗi khi xử lý batch:", err);
         }
       }
-  
+
       setFriendDetails(allResults);
       try {
         localStorage.setItem("friendDetails", JSON.stringify(allResults));
@@ -290,10 +292,9 @@ export const AuthProvider = ({ children }) => {
         console.error("❌ Lỗi khi lưu vào localStorage:", error);
       }
     };
-  
+
     loadFriendDetails();
   }, [friends]);
-  
 
   // Reset context và refs
   const resetAuthContext = () => {
@@ -328,6 +329,31 @@ export const AuthProvider = ({ children }) => {
     hasFetchedUploadStats.current = false;
     setFriendDetails([]);
   }, [user?.uid]); // Chỉ reset khi user ID thay đổi
+
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") || "default"
+  );
+
+  // Cập nhật theme khi thay đổi
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    // Lấy màu thực tế từ biến CSS
+    const computedStyle = getComputedStyle(document.documentElement);
+    const baseColor =
+      computedStyle.getPropertyValue("--color-base-100")?.trim() || "#ffffff";
+
+    // Cập nhật meta theme-color
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute("content", baseColor);
+    } else {
+      const newMeta = document.createElement("meta");
+      newMeta.name = "theme-color";
+      newMeta.content = baseColor;
+      document.head.appendChild(newMeta);
+    }
+  }, [theme]);
 
   const contextValue = useMemo(
     () => ({

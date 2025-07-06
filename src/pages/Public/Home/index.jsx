@@ -46,16 +46,24 @@ const Home = () => {
           {/* LEFT */}
           <div className="flex flex-col justify-center gap-4 md:gap-6 text-left md:pr-8">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight tracking-tight relative h-[55px] md:h-[65px] lg:h-[70px]">
-              <span className="absolute word-rotate whitespace-nowrap text-white">
+              <span className="absolute word-rotate  whitespace-nowrap text-white">
                 <span>Trải nghiệm</span>
                 <span>Khám phá</span>
                 <span>Sáng tạo</span>
                 <span>Chia sẻ</span>
               </span>
             </h1>
-            <h2 className="text-5xl no-select md:text-6xl lg:text-7xl font-extrabold text-white leading-tight tracking-tight">
-              <span className="bg-clip-text font-lovehouse no-select">
-                Locket Camera
+            <h2 className="text-5xl inline-block no-select md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight -mb-3">
+              <span className="wave-effect inline-block no-select">
+                {"Locket Camera".split("").map((char, i) => (
+                  <span
+                    key={i}
+                    className="gradient-text-v2"
+                    style={{ animationDelay: `${i * 0.1}s` }}
+                  >
+                    {char === " " ? "\u00A0" : char}
+                  </span>
+                ))}
               </span>
             </h2>
 
@@ -68,6 +76,11 @@ const Home = () => {
             <p className="text-white text-base md:text-lg font-medium animate-fade-in delay-200">
               Bạn cần đăng nhập để sử dụng chức năng trên trang này!
             </p>
+            <p className="text-white/60 text-sm italic">
+              Locket Dio là một dự án cá nhân hoạt động độc lập. Mọi hoạt
+              động trên trang không liên kết với bất kỳ bên thứ ba nào, trừ khi
+              có thông báo từ Dio.
+            </p>
 
             <div className="flex flex-wrap gap-3 mt-2 animate-fade-in delay-400">
               <Link
@@ -77,7 +90,7 @@ const Home = () => {
                 Login now
               </Link>
               <Link
-                //href="/download" // tuỳ link download bạn xử lý
+                to={"/download"} // tuỳ link download bạn xử lý
                 className="px-8 py-3 bg-blue-600 text-white font-semibold text-base md:text-lg rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-105"
               >
                 Add to Screen
@@ -87,7 +100,7 @@ const Home = () => {
 
           {/* RIGHT */}
           <div className="flex justify-center animate-fade-in-up animation-delay-500 md:pl-6 no-select">
-            <div className="relative transform hover:scale-105 transition-transform duration-500 pt-5">
+            <div className="relative transform hover:scale-105 transition-transform duration-500 pt-6.5">
               <img
                 src="/2.png"
                 alt="Locket Dio WebApp Preview"
@@ -239,7 +252,10 @@ const Home = () => {
 
           {/* Call to Action */}
           <div className="text-center mt-8">
-            <button className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full transform hover:scale-105 transition-all duration-300 hover:from-blue-700 hover:to-purple-700">
+            <Link
+              to={"/login"}
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full transform hover:scale-105 transition-all duration-300 hover:from-blue-700 hover:to-purple-700"
+            >
               <span>Bắt đầu ngay</span>
               <svg
                 className="w-5 h-5 ml-2"
@@ -254,7 +270,7 @@ const Home = () => {
                   d="M13 7l5 5m0 0l-5 5m5-5H6"
                 />
               </svg>
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -313,17 +329,17 @@ const Home = () => {
             Bắt đầu hành trình sáng tạo
           </h2>
           <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-            Tải xuống Locket Dio ngay hôm nay và khám phá thế giới photography &
-            videography đầy màu sắc!
+            Cài đặt hoặc thêm Locket Dio vào màn hình chính ngay hôm nay và khám
+            phá thế giới photography & videography đầy màu sắc!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              disabled
-              className="px-8 opacity-50 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+            <Link
+              to={"/download"}
+              className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
             >
               <Download className="w-5 h-5" />
-              Tải xuống miễn phí
-            </button>
+              Cài đặt miễn phí
+            </Link>
             <a
               href="https://discord.gg/47buy9nMGc"
               target="_blank"

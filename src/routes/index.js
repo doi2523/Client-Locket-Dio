@@ -4,6 +4,7 @@ import ToolsLocket from "../pages/Auth/LocketDioTools";
 import PostMoments from "../pages/Auth/PostMoments";
 import Profile from "../pages/Auth/Profile";
 import AboutLocketDio from "../pages/Public/About";
+import AddToHomeScreenGuide from "../pages/Public/AddToScreen";
 import ClearDataPage from "../pages/Public/ClearCache";
 import Contact from "../pages/Public/Contact";
 import DevPage from "../pages/Public/DevPage";
@@ -40,6 +41,7 @@ const publicRoutes = [
   { path: "/locketdio-tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },
   { path: "/settings", component: Settings, title: `${APP_NAME} | Cài đặt` },
   { path: "/devpage", component: DevPage, title: `${APP_NAME} | Dev Page` },
+  { path: "/download", component: AddToHomeScreenGuide, title: `${APP_NAME} | Thêm ứng dụng vào màn hình chính` },
   { path: "/clear", component: ClearDataPage, title: `${APP_NAME} | Clear Cache Website` },
 ];
 
@@ -56,6 +58,7 @@ const authRoutes = [
   { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
   { path: "/settings", component: Settings, title: `${APP_NAME} | Cài đặt` },
   { path: "/devpage", component: DevPage, title: `${APP_NAME} | Dev Page` },
+  { path: "/download", component: AddToHomeScreenGuide, title: `${APP_NAME} | Thêm ứng dụng vào màn hình chính` },
   { path: "/clear", component: ClearDataPage, title: `${APP_NAME} | Clear Cache Website` },
 
   { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Locket Camera` },

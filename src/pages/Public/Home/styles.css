@@ -30,7 +30,7 @@
     border-color: transparent;
   }
 }
-/* From Uiverse.io by kennyotsu */ 
+/* From Uiverse.io by kennyotsu */
 
 .loader {
   color: rgb(124, 124, 124);
@@ -114,11 +114,26 @@
   }
 }
 @keyframes text-rotate {
-  0% { opacity: 0; transform: translateY(10px); }
-  10% { opacity: 1; transform: translateY(0); }
-  25% { opacity: 1; transform: translateY(0); }
-  35% { opacity: 0; transform: translateY(-10px); }
-  100% { opacity: 0; transform: translateY(-10px); }
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  35% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
 }
 
 .word-rotate span {
@@ -153,4 +168,47 @@
 
 .float-up-down {
   animation: float-up-down 2s ease-in-out infinite;
+}
+/* Wave Effect CSS */
+.gradient-text-v2 {
+  display: inline-block;
+  font-family: "LoveHouse", sans-serif;
+  background: linear-gradient(
+    45deg,
+    #ff3366,   /* đỏ hồng rực */
+    #ffffff,   /* trắng highlight */
+    #3399ff,   /* xanh dương nhạt */
+    #ea01ff,   /* tím */
+    #fcfc00,   /* vàng */
+    #ffffff    /* trắng */
+  );
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: gradientMove 5s ease-in-out infinite,
+    letterWave 2s ease-in-out infinite;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes letterWave {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
 }

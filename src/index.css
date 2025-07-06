@@ -55,7 +55,7 @@
 }
 @font-face {
   font-family: "LoveHouse";
-  src: url("./assets/fonts/LoveHouse.otf") format("truetype");
+  src: url("https://locketdio-cdn-dios-projects-66e801f0.vercel.app/fonts/LoveHouse.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
 }
@@ -237,14 +237,18 @@
 }
 
 /* styles.css */
-.gradient-text-v2 {
+/* .gradient-text-v2 {
   font-family: "LoveHouse", sans-serif;
   background: linear-gradient(45deg, #ff0000, #1a53ff, #ea01ff, #fcfc00);
   background-clip: text;
+  -webkit-background-clip: text;
   color: transparent;
-  background-size: 400% 400%;
+  -webkit-text-fill-color: transparent;
+  background-size: 300% 300%;
   animation: gradient 3s ease infinite;
+  display: inline-block;
 }
+
 @keyframes gradient {
   0% {
     background-position: 0% 50%;
@@ -255,7 +259,7 @@
   100% {
     background-position: 0% 50%;
   }
-}
+} */
 /* Animation send new moments */
 @layer utilities {
   .animate-slide-up {
@@ -360,3 +364,15 @@
 }
 
 
+@keyframes bounceY {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.bounce-y {
+  animation: bounceY 1.5s ease-in-out infinite;
+}
