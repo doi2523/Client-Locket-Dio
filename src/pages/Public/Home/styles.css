@@ -212,3 +212,34 @@
     transform: translateY(-15px);
   }
 }
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(147, 51, 234, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(147, 51, 234, 0.7);
+  }
+}
+
+.animate-glow {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+@keyframes shakeX {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-2px); }
+}
+
+.shake-x {
+  animation: shakeX 1s ease-in-out infinite;
+}
+@keyframes pulseBounce {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.05) translateY(-2px); }
+}
+
+.bounce-subtle {
+  animation: pulseBounce 2s ease-in-out infinite;
+}

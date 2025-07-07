@@ -41,7 +41,8 @@ const Home = () => {
   return (
     <div className="flex flex-col py-5 items-center justify-center min-h-screen w-full text-center bg-gradient-to-r from-blue-400 to-purple-500">
       <div className="h-16" />
-      <div className="w-full max-w-screen-xl mx-auto px-4">
+
+      <section className="w-full max-w-screen-xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-y-0 gap-x-12 items-start">
           {/* LEFT */}
           <div className="flex flex-col justify-center gap-4 md:gap-6 text-left md:pr-8">
@@ -77,9 +78,9 @@ const Home = () => {
               Bạn cần đăng nhập để sử dụng chức năng trên trang này!
             </p>
             <p className="text-white/60 text-sm italic">
-              Locket Dio là một dự án cá nhân hoạt động độc lập. Mọi hoạt
-              động trên trang không liên kết với bất kỳ bên thứ ba nào, trừ khi
-              có thông báo từ Dio.
+              Locket Dio là một dự án cá nhân hoạt động độc lập. Mọi hoạt động
+              trên trang không liên kết với bất kỳ bên thứ ba nào, trừ khi có
+              thông báo từ Dio.
             </p>
 
             <div className="flex flex-wrap gap-3 mt-2 animate-fade-in delay-400">
@@ -91,7 +92,7 @@ const Home = () => {
               </Link>
               <Link
                 to={"/download"} // tuỳ link download bạn xử lý
-                className="px-8 py-3 bg-blue-600 text-white font-semibold text-base md:text-lg rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-105"
+                className="px-8 py-3 rotate-[3deg] bg-blue-600 text-white font-semibold text-base md:text-lg rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-105"
               >
                 Add to Screen
               </Link>
@@ -102,7 +103,7 @@ const Home = () => {
           <div className="flex justify-center animate-fade-in-up animation-delay-500 md:pl-6 no-select">
             <div className="relative transform hover:scale-105 transition-transform duration-500 pt-6.5">
               <img
-                src="/2.png"
+                src="https://cdn.locket-dio.space/v1/images/double-phone-view-locketdio.png"
                 alt="Locket Dio WebApp Preview"
                 onLoad={() => setLoaded(true)}
                 className={`
@@ -114,7 +115,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <section className="w-full py-5 px-4">
         <div className="max-w-screen-xl mx-auto">
@@ -251,10 +252,10 @@ const Home = () => {
           </div>
 
           {/* Call to Action */}
-          <div className="text-center mt-8">
+          <div className="text-center mt-9">
             <Link
               to={"/login"}
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full transform hover:scale-105 transition-all duration-300 hover:from-blue-700 hover:to-purple-700"
+              className="inline-flex rotate-[3deg] bounce-subtle items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full transform hover:scale-105 transition-all duration-300 hover:from-blue-700 hover:to-purple-700"
             >
               <span>Bắt đầu ngay</span>
               <svg
