@@ -229,32 +229,23 @@ export const AuthProvider = ({ children }) => {
   // Load friend details với debounce và cache thông minh
   useEffect(() => {
     const loadFriendDetails = async () => {
+      // Ưu tiên lấy dữ liệu từ localStorage trước
       const savedDetails = localStorage.getItem("friendDetails");
 
       if (savedDetails) {
         try {
           const parsedDetails = JSON.parse(savedDetails);
           setFriendDetails(parsedDetails);
+          return; // Dừng ở đây, không cần fetch
         } catch (error) {
           console.error("❌ Parse friendDetails error:", error);
+          // Nếu parse lỗi, tiếp tục fetch từ API
         }
       }
 
+      // Chỉ fetch khi không có dữ liệu trong localStorage hoặc parse lỗi
       if (!friends || friends.length === 0) {
         return; // Không fetch nếu không có bạn bè
-      }
-
-      const savedUids = JSON.parse(savedDetails || "[]")
-        .map((f) => f.uid)
-        .sort();
-      const currentUids = friends.map((f) => f.uid).sort();
-
-      const isSameList =
-        savedUids.length === currentUids.length &&
-        savedUids.every((uid, idx) => uid === currentUids[idx]);
-
-      if (isSameList) {
-        return; // ✅ Cache hợp lệ rồi
       }
 
       // Tiến hành fetch chi tiết
@@ -277,6 +268,7 @@ export const AuthProvider = ({ children }) => {
             .map((result) => result.value);
 
           allResults.push(...successResults);
+
           if (i + batchSize < friends.length) {
             await new Promise((resolve) => setTimeout(resolve, 100));
           }
@@ -285,6 +277,7 @@ export const AuthProvider = ({ children }) => {
         }
       }
 
+      // Lưu vào state và localStorage
       setFriendDetails(allResults);
       try {
         localStorage.setItem("friendDetails", JSON.stringify(allResults));
@@ -327,7 +320,6 @@ export const AuthProvider = ({ children }) => {
     hasFetchedFriends.current = false;
     hasFetchedPlan.current = false;
     hasFetchedUploadStats.current = false;
-    setFriendDetails([]);
   }, [user?.uid]); // Chỉ reset khi user ID thay đổi
 
   const [theme, setTheme] = useState(
