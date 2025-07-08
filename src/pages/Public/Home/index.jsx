@@ -92,7 +92,7 @@ const Home = () => {
               </Link>
               <Link
                 to={"/download"} // tuỳ link download bạn xử lý
-                className="px-8 py-3 rotate-[3deg] bg-blue-600 text-white font-semibold text-base md:text-lg rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-105"
+                className="px-8 py-3 rotate-[3deg] gradient-effect text-white font-semibold text-base md:text-lg rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-105"
               >
                 Add to Screen
               </Link>

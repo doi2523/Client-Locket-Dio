@@ -175,12 +175,12 @@
   font-family: "LoveHouse", sans-serif;
   background: linear-gradient(
     45deg,
-    #ff3366,   /* đỏ hồng rực */
-    #ffffff,   /* trắng highlight */
-    #3399ff,   /* xanh dương nhạt */
-    #ea01ff,   /* tím */
-    #fcfc00,   /* vàng */
-    #ffffff    /* trắng */
+    #ff3366,
+    /* đỏ hồng rực */ #ffffff,
+    /* trắng highlight */ #3399ff,
+    /* xanh dương nhạt */ #ea01ff,
+    /* tím */ #fcfc00,
+    /* vàng */ #ffffff /* trắng */
   );
   background-size: 300% 300%;
   background-clip: text;
@@ -214,7 +214,8 @@
 }
 
 @keyframes glowPulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 10px rgba(147, 51, 234, 0.4);
   }
   50% {
@@ -226,20 +227,59 @@
   animation: glowPulse 2s ease-in-out infinite;
 }
 @keyframes shakeX {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  50% { transform: translateX(4px); }
-  75% { transform: translateX(-2px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
 }
 
 .shake-x {
   animation: shakeX 1s ease-in-out infinite;
 }
 @keyframes pulseBounce {
-  0%, 100% { transform: scale(1) translateY(0); }
-  50% { transform: scale(1.05) translateY(-2px); }
+  0%,
+  100% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1.05) translateY(-2px);
+  }
 }
 
 .bounce-subtle {
   animation: pulseBounce 2s ease-in-out infinite;
+}
+
+.gradient-effect {
+  background: linear-gradient(120deg, #ff6432 25%, #ff0065 45%, #7b2eff 75%) 50%
+    100% / 200% no-repeat;
+  animation: gradient-effect 2s linear infinite alternate;
+}
+
+@keyframes gradient-effect {
+  0% {
+    background-position: 0 100%;
+  }
+  25% {
+    background-position: 25%;
+  }
+
+  50% {
+    background-position: 50% 25%;
+  }
+  75% {
+    background-position: 75% 0;
+  }
+  100% {
+    background-position: 100%;
+  }
 }
