@@ -143,6 +143,8 @@ const BottomHomeScreen = () => {
 
       // Cập nhật state và localStorage
       setuploadPayloads([...payloads]);
+      setImageInfo(payloads[index]);
+
       localStorage.setItem("uploadPayloads", JSON.stringify(payloads));
 
       showInfo("Đang gửi lại...");
@@ -157,6 +159,7 @@ const BottomHomeScreen = () => {
           status: "done",
         };
         setuploadPayloads([...payloads]);
+
         localStorage.setItem("uploadPayloads", JSON.stringify(payloads));
 
         // Lưu vào uploadedMoments
@@ -196,6 +199,7 @@ const BottomHomeScreen = () => {
       };
 
       setuploadPayloads([...payloads]);
+      setImageInfo(payloads[index]);
       localStorage.setItem("uploadPayloads", JSON.stringify(payloads));
 
       showError(`Upload thất bại: ${errorMessage}`);
@@ -310,17 +314,11 @@ const BottomHomeScreen = () => {
                     <RotateCcw
                       strokeWidth={1.5}
                       className="w-16 h-16 transition-transform duration-700"
-                      style={{
-                        transform:
-                          retryingIndex === Number(selectItems)
-                            ? "rotate(-360deg)"
-                            : "rotate(0deg)",
-                      }}
                     />
 
                     {imageInfo?.errorMessage && (
                       <p className="text-xs text-center mt-2 text-white bg-black/50 px-2 py-1 rounded">
-                        {imageInfo.errorMessage}
+                        {imageInfo.errorMessage} - Lần thử lại: {imageInfo?.retryCount}
                       </p>
                     )}
                   </div>
@@ -377,7 +375,7 @@ const BottomHomeScreen = () => {
       </div>
 
       {/* Bottom Button */}
-      <div className="flex flex-col px-4 py-2 text-base-content overflow-hidden">
+      <div className="absolute w-full bottom-2 flex flex-col px-5 py-2 text-base-content">
         <div className="flex items-center justify-between">
           {/* Close button */}
           <button

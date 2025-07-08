@@ -26,8 +26,9 @@ const UploadingQueue = ({
 
   return (
     <>
-      <h1 className="text-base font-semibold mb-2">Ảnh/Video đang tải lên</h1>
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+      <h1 className="text-base font-semibold">Ảnh/Video đang tải lên</h1>
+      <p className="text-sm italic">Lưu ý phương tiện đang tải lên sẽ bị xoá sau một khoảng thời gian nhất định.</p>
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mt-2">
         {payloads.map((item, index) => {
           const media = item.mediaInfo;
           const status = item.status || "uploading";
