@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Check, RotateCcw } from "lucide-react";
+import { Link } from "react-router-dom";
 import LoadingOverlay from "../Loading/LineSpinner";
 
 const UploadingQueue = ({
@@ -28,6 +29,7 @@ const UploadingQueue = ({
     <>
       <h1 className="text-base font-semibold">Ảnh/Video đang tải lên</h1>
       <p className="text-sm italic">Lưu ý phương tiện đang tải lên sẽ bị xoá sau một khoảng thời gian nhất định.</p>
+      <Link to={"/reference"} className="text-sm underline cursor-pointer">Page tham khảo lỗi</Link>
       <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mt-2">
         {payloads.map((item, index) => {
           const media = item.mediaInfo;

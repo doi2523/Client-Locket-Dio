@@ -64,13 +64,13 @@ const Login = () => {
         const { status, message } = error;
         switch (status) {
           case 400:
-          case 401:
             showError("Tài khoản hoặc mật khẩu không đúng!");
-            setEmail("");
-            setPassword("");
+            break;
+          case 401:
+            showError("Phiên đăng nhập đã hết. Vui lòng đăng nhập lại!");
             break;
           case 429:
-            showError("Bạn nhập sai quá 5 lần. Vui lòng thử lại sau 15 phút!");
+            showError("Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 15 phút!");
             setEmail("");
             setPassword("");
             break;

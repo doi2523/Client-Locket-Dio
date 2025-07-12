@@ -9,6 +9,7 @@ import ClearDataPage from "../pages/Public/ClearCache";
 import Contact from "../pages/Public/Contact";
 import DevPage from "../pages/Public/DevPage";
 import Docs from "../pages/Public/Docs";
+import ErrorReferencePage from "../pages/Public/ErrorReferencePage";
 import DonateHistory from "../pages/Public/HistoryDonate";
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
@@ -43,6 +44,7 @@ const publicRoutes = [
   { path: "/devpage", component: DevPage, title: `${APP_NAME} | Dev Page` },
   { path: "/download", component: AddToHomeScreenGuide, title: `${APP_NAME} | Thêm ứng dụng vào màn hình chính` },
   { path: "/clear", component: ClearDataPage, title: `${APP_NAME} | Clear Cache Website` },
+  { path: "/reference", component: ErrorReferencePage, title: `${APP_NAME} | Trung tâm lỗi & cách khắc phục` },
 ];
 
 // 📌 Các route yêu cầu đăng nhập
@@ -62,6 +64,7 @@ const authRoutes = [
   { path: "/clear", component: ClearDataPage, title: `${APP_NAME} | Clear Cache Website` },
 
   { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Locket Camera` },
+  { path: "/reference", component: ErrorReferencePage, title: `${APP_NAME} | Trung tâm lỗi & cách khắc phục` },
   { path: "/tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },
 ];
 
