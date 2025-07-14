@@ -1,5 +1,6 @@
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../config/firebase";
+import { CLIENT_VERSION } from "../../constants/versionInfo";
 
 export const uploadFileAndGetInfo = async (
   file,
@@ -12,7 +13,7 @@ export const uploadFileAndGetInfo = async (
   const timestamp = Date.now();
   const extension = file.name.split(".").pop(); // lấy đuôi file, ví dụ jpg, mp4
 
-  const fileName = `locketdio_${timestamp}_${localId}.${extension}`;
+  const fileName = `locketdio_${timestamp}_${localId}_cli${CLIENT_VERSION}_.${extension}`;
   const filePath = `LocketCloud/${safeType}/${fileName}`;
   const fileRef = ref(storage, filePath);
 
