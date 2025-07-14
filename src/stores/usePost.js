@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthLocket";
+import { useFeatureVisible } from "../hooks/useFeatureVisible";
 
 export const defaultPostOverlay = {
   overlay_id: "standard",
@@ -41,14 +42,15 @@ export const usePost = () => {
   const [selectedRecipients, setSelectedRecipients] = useState([]); // array userId hoặc object bạn bè
 
   const [maxImageSizeMB, setMaxImageSizeMB] = useState(""); // Giới hạn ảnh: 9MB
-  const [maxVideoSizeMB, setMaxVideoSizeMB] = useState(""); // Giới hạn video: 20MB
+  const [maxVideoSizeMB, setMaxVideoSizeMB] = useState(""); // Giới hạn video: 30MB
+
+  const isHD = useFeatureVisible("upload_hd");
 
   useEffect(() => {
-    const isHD = userPlan?.plan_info?.features?.upload_hd === true;
     //Chia theo plan ( Plan / Free)
     //Sửa thì sửa ở đây nhé.
-    setMaxImageSizeMB(isHD ? 9 : 3);
-    setMaxVideoSizeMB(isHD ? 25 : 7);
+    setMaxImageSizeMB(isHD ? 9 : 7);
+    setMaxVideoSizeMB(isHD ? 30 : 15);
   }, [userPlan]);
 
   return {
@@ -58,7 +60,8 @@ export const usePost = () => {
     setSelectedColors,
     selectedFile,
     setSelectedFile,
-    imageToCrop, setImageToCrop,
+    imageToCrop,
+    setImageToCrop,
     preview,
     setPreview,
     isTextColor,

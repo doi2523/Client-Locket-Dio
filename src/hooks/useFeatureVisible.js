@@ -1,7 +1,8 @@
-import { useApp } from "../context/AppContext";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthLocket";
 
 export const useFeatureVisible = (type) => {
-  const { userPlan } = useApp();
+  const { userPlan } = useContext(AuthContext);
 
   return !!userPlan?.plan_info?.features?.[type];
 };

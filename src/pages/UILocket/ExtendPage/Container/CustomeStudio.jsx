@@ -6,7 +6,6 @@ import { useApp } from "../../../../context/AppContext";
 import CaptionIconSelector from "../CaptionItems/CaptionIconSelector";
 import GeneralThemes from "../CaptionItems/GeneralThemes";
 import ThemesCustomes from "../CaptionItems/ThemesCustomes";
-import DevCustomes from "../CaptionItems/DevCustomes";
 import ImageCaptionSelector from "../CaptionItems/ImageCaption";
 import PlanBadge from "../../../../components/UI/PlanBadge/PlanBadge";
 import Footer from "../../../../components/Footer";
@@ -23,6 +22,7 @@ const ScreenCustomeStudio = () => {
   const { isFilterOpen, setIsFilterOpen } = navigation;
   const { setPostOverlay } = post;
   const { captionThemes } = captiontheme;
+
   const canUseImageGif = useFeatureVisible("image_gif");
   const canUseImageIcon = useFeatureVisible("image_icon");
 
@@ -61,18 +61,6 @@ const ScreenCustomeStudio = () => {
     text_color,
     type
   ) => {
-    // Kiểm tra quyền hạn theo userPlan, ví dụ như userPlan.plan_info.features.custom_theme
-    // Kiểm tra quyền với type tương ứng
-    if (!userPlan?.plan_info?.features?.[type]) {
-      const shouldUpgrade = confirm(
-        "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói để mở khóa.\n\nTruy cập trang nâng cấp ngay?"
-      );
-      if (shouldUpgrade) {
-        navigate("/upgrade");
-      }
-      return;
-    }
-
     // Cập nhật postOverlay
     setPostOverlay({
       overlay_id: preset_id || "standard",
@@ -81,7 +69,6 @@ const ScreenCustomeStudio = () => {
       text_color: text_color || "#FFFFFF",
       icon: icon || "",
       caption: caption || "",
-      // type: "decorative" || "default",
       type: type || "default",
     });
 
@@ -105,16 +92,6 @@ const ScreenCustomeStudio = () => {
   const handleCustomeSelectTest = (preset) => {
     // Kiểm tra xem preset có đủ thông tin cần thiết không
     if (!preset) return;
-    // Kiểm tra quyền với type tương ứng
-    if (!userPlan?.plan_info?.features?.[preset.type]) {
-      const shouldUpgrade = confirm(
-        "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói để mở khóa.\n\nTruy cập trang nâng cấp ngay?"
-      );
-      if (shouldUpgrade) {
-        navigate("/upgrade");
-      }
-      return;
-    }
 
     // Log để kiểm tra dữ liệu dưới dạng bảng
     console.table([
@@ -152,14 +129,6 @@ const ScreenCustomeStudio = () => {
     type: item.options.type || "background",
     // Nếu bạn có thêm type, preset_id có thể thêm tương tự
   }));
-  const handleCustomeSelectTestV2 = () => {
-    const shouldUpgrade = confirm(
-      "🚧 Tính năng đang được phát triển.\n\nVui lòng mua gói Premium để trải nghiệm sớm.\n\nBạn có muốn truy cập trang nâng cấp ngay không?"
-    );
-    if (shouldUpgrade) {
-      navigate("/upgrade");
-    }
-  };
 
   return (
     <div
@@ -239,7 +208,7 @@ const ScreenCustomeStudio = () => {
             <ImageCaptionSelector title="🎨 Caption Ảnh - Truy cập sớm" />
           </FeatureGate>
 
-          <div className="">
+          <div className="px-4">
             <h2 className="text-md font-semibold text-primary mb-2">
               ✏️ Ghi chú
             </h2>

@@ -1,1 +1,2 @@
-export * from "./settingsCamera"
+export * from "./settingsCamera";
+export * from "./versionInfo";
