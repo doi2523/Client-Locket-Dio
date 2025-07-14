@@ -24,6 +24,7 @@ export const usePost = () => {
   const [caption, setCaption] = useState("");
   const [preview, setPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [imageToCrop, setImageToCrop] = useState(null);
   const [isTextColor, setTextColor] = useState(null);
   const [isSizeMedia, setSizeMedia] = useState(null);
 
@@ -57,6 +58,7 @@ export const usePost = () => {
     setSelectedColors,
     selectedFile,
     setSelectedFile,
+    imageToCrop, setImageToCrop,
     preview,
     setPreview,
     isTextColor,

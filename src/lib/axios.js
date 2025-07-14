@@ -144,7 +144,6 @@ api.interceptors.request.use(
   }
 );
 
-// Response Interceptor
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -155,7 +154,14 @@ api.interceptors.response.use(
       error.response?.data?.message ||
       error.response?.data?.error ||
       error.response?.data?.error?.message;
+
     const originalRequest = error.config;
+
+    // Nếu không có config (ví dụ lỗi mạng), thì không xử lý retry
+    if (!originalRequest) {
+      showInfo("Lỗi kết nối đến máy chủ. Vui lòng kiểm tra mạng hoặc thử lại.");
+      return Promise.reject(error);
+    }
 
     // Tránh retry liên tục
     if (originalRequest._retry) {
@@ -163,10 +169,8 @@ api.interceptors.response.use(
     }
 
     if (status === 401) {
-      // Đánh dấu request đã retry
       originalRequest._retry = true;
 
-      // Nếu không phải request refresh token và chưa đang refresh
       if (
         !originalRequest.url?.includes("refresh-token") &&
         !isRefreshing &&
@@ -178,7 +182,6 @@ api.interceptors.response.use(
         try {
           const newToken = await refreshPromise;
           if (newToken) {
-            // Retry request với token mới
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
             return api(originalRequest);
           } else {
@@ -193,7 +196,6 @@ api.interceptors.response.use(
           refreshPromise = null;
         }
       } else {
-        // Nếu là refresh token request bị 401 hoặc đã retry
         handleLogout();
         showInfo("Phiên đăng nhập đã hết. Vui lòng đăng nhập lại.");
         return Promise.reject(error);

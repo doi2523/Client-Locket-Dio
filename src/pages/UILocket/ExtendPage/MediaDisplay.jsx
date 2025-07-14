@@ -1,24 +1,24 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import AutoResizeCaption from "./AutoResizeCaption";
 import { useApp } from "../../../context/AppContext";
 import MediaSizeInfo from "../../../components/UI/MediaSizeInfo";
 import BorderProgress from "../../../components/UI/SquareProgress";
 import { showInfo } from "../../../components/Toast";
 import { AuthContext } from "../../../context/AuthLocket";
-import Cropper from "react-easy-crop";
-import { getAvailableCameras, getCroppedImg } from "../../../utils";
-import { Zap } from "lucide-react";
+import { getAvailableCameras } from "../../../utils";
 
 const MediaPreview = ({ capturedMedia }) => {
   const { userPlan } = useContext(AuthContext);
   const { post, useloading, camera } = useApp();
-  const { selectedFile, setSelectedFile, preview, isSizeMedia } = post;
+  const {
+    selectedFile,
+    setSelectedFile,
+    preview,
+    setPreview,
+    isSizeMedia,
+    imageToCrop,
+    setImageToCrop,
+  } = post;
   const {
     streamRef,
     videoRef,
@@ -34,8 +34,6 @@ const MediaPreview = ({ capturedMedia }) => {
   } = camera;
   const { isCaptionLoading, uploadLoading, sendLoading, setSendLoading } =
     useloading;
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
 
   // Ref để theo dõi trạng thái camera
   const cameraInitialized = useRef(false);
@@ -131,14 +129,6 @@ const MediaPreview = ({ capturedMedia }) => {
     }
   };
 
-  // Effect để reset crop và zoom khi có ảnh mới
-  useEffect(() => {
-    if (preview?.type === "image") {
-      setCrop({ x: 0, y: 0 });
-      setZoom(1); // Reset zoom về 1 để ảnh lấp đầy khung
-    }
-  }, [preview?.data]);
-
   // Effect chính để quản lý camera
   useEffect(() => {
     if (cameraActive && !preview && !selectedFile && !capturedMedia) {
@@ -177,36 +167,6 @@ const MediaPreview = ({ capturedMedia }) => {
   const handleChangeCamera = () => {
     setIsCameraHD((prev) => !prev);
   };
-
-  const [croppedImage, setCroppedImage] = useState(null);
-
-  const handleCropComplete = useCallback(
-    async (_, croppedAreaPixels) => {
-      try {
-        const croppedFile = await getCroppedImg(
-          preview?.data,
-          croppedAreaPixels
-        );
-        setCroppedImage(URL.createObjectURL(croppedFile)); // Hiển thị preview
-        setSelectedFile(croppedFile); // ✅ Lưu file để gửi lên server
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    [preview?.data]
-  );
-  const [aspectRatio, setAspectRatio] = useState(1);
-
-  useEffect(() => {
-    if (preview?.type === "image" && preview.data) {
-      const img = new Image();
-      img.onload = () => {
-        const ratio = img.height;
-        setAspectRatio(ratio);
-      };
-      img.src = preview.data;
-    }
-  }, [preview?.data]);
 
   const handleCycleZoomCamera = async () => {
     const cameras = await getAvailableCameras();
@@ -260,7 +220,6 @@ const MediaPreview = ({ capturedMedia }) => {
       <h1 className="text-3xl mb-1.5 font-semibold font-lovehouse">
         Locket Camera
       </h1>
-
       <div
         className={`relative w-full max-w-md aspect-square bg-gray-800 rounded-[65px] overflow-hidden transition-transform duration-500 `}
       >
@@ -286,7 +245,7 @@ const MediaPreview = ({ capturedMedia }) => {
         )}
 
         {!preview && !selectedFile && (
-          <div className="absolute inset-0 top-7 px-7 z-50 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
+          <div className="absolute inset-0 top-7 px-7 z-30 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
             <button
               onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
               className="pointer-events-auto w-7 h-7 p-1.5 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center"
@@ -330,9 +289,7 @@ const MediaPreview = ({ capturedMedia }) => {
         {/* Caption */}
         {preview && selectedFile && (
           <div
-            className={`absolute z-10 inset-x-0 bottom-0 px-4 pb-4 transition-all duration-500 ${
-              crop ? "opacity-100" : "opacity-0"
-            }`}
+            className={`absolute z-10 inset-x-0 bottom-0 px-4 pb-4 transition-all duration-500`}
           >
             <AutoResizeCaption />
           </div>

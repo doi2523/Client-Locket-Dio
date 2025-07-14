@@ -7,6 +7,7 @@ import BottomHomeScreen from "./ExtendPage/bottomHomeScreen.jsx";
 import Sidebar from "../../components/Sidebar/index.jsx";
 import Loading from "../../components/Loading/index.jsx";
 import ScreenCustomeStudio from "./ExtendPage/Container/CustomeStudio.jsx";
+import CropImageStudio from "../../components/common/CropImageStudio.jsx";
 
 // Lazy-load các component nặng
 const FriendsContainer = lazy(() => import("./ExtendPage/Container/FriendsContainer.jsx"));
@@ -20,7 +21,7 @@ const CameraCapture = () => {
   return (
     <>
       <MainHomeScreen />
-
+      <CropImageStudio />
       <Suspense fallback={<Loading/>}>
         <LeftHomeScreen />
         <RightHomeScreen />
