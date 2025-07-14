@@ -1,6 +1,7 @@
+import React from "react";
 import Mirage from "../UI/Loading/mirage";
 
-const Loading = ({ isLoading }) => {
+const LoadingPage = ({ isLoading }) => {
   return (
     <div
       className={`fixed inset-0 flex flex-col items-center justify-center z-50 bg-base-100 text-base-content transition-opacity duration-700 ${
@@ -14,4 +15,4 @@ const Loading = ({ isLoading }) => {
   );
 };
 
-export default Loading;
+export default LoadingPage;

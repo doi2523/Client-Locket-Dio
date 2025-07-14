@@ -10,18 +10,16 @@ import { publicRoutes, authRoutes, locketRoutes } from "./routes";
 import { AuthProvider, AuthContext } from "./context/AuthLocket";
 import { ThemeProvider } from "./context/ThemeContext"; // 🟢 Import ThemeProvider
 import { AppProvider } from "./context/AppContext";
-import Loading from "./components/Loading";
 import ToastProvider from "./components/Toast";
-import NotFoundPage from "./components/404";
 import getLayout from "./layouts";
+import LoadingPage from "./components/pages/LoadingPage";
+import NotFoundPage from "./components/pages/NotFoundPage";
 
 function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
         <AppProvider>
-          {" "}
-          {/* 🟢 Thêm AppProvider ở đây */}
           <Router>
             <AppContent />
           </Router>
@@ -42,10 +40,10 @@ function AppContent() {
     const currentRoute = allRoutes.find(
       (route) => route.path === location.pathname
     );
-    document.title = currentRoute ? currentRoute.title : "Ứng dụng của bạn";
+    document.title = currentRoute ? currentRoute.title : "Locket Dio";
   }, [location.pathname]);
 
-  if (loading) return <Loading isLoading={true} />;
+  if (loading) return <LoadingPage isLoading={true} />;
 
   // if ('serviceWorker' in navigator) {
   //   navigator.serviceWorker.register('/service-worker.js').then(registration => {

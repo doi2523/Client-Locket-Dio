@@ -1,1 +1,1 @@
-export * from "./cropImage";
+export * from "./PrsImage/cropImage";

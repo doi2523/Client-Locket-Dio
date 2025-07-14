@@ -7,14 +7,14 @@ import {
   Pencil,
   FileImage,
 } from "lucide-react";
-import { showError, showToast } from "../../../components/Toast/index.jsx";
+import { showToast } from "../../../components/Toast/index.jsx";
 import * as utils from "../../../utils";
 import LoadingRing from "../../../components/UI/Loading/ring.jsx";
 import { useApp } from "../../../context/AppContext.jsx";
 import { Link } from "react-router-dom";
 import Hourglass from "../../../components/UI/Loading/hourglass.jsx";
 import MediaSizeInfo from "../../../components/UI/MediaSizeInfo/index.jsx";
-import { defaultPostOverlay } from "../../../storages/usePost.js";
+import { defaultPostOverlay } from "../../../stores/usePost.js";
 import { uploadMediaV2 } from "../../../services/index.js";
 
 const PostMoments = () => {

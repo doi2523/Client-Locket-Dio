@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "../components/Header";
-import Loading from "../components/Loading";
 import Footer from "../components/Footer";
 import PlanDetailModal from "../components/UI/Modal/PlanDetailModal";
+import LoadingPage from "../components/pages/LoadingPage";
 
 const DefaultLayout = ({ children }) => {
   const location = useLocation();
@@ -22,7 +22,7 @@ const DefaultLayout = ({ children }) => {
       <Header />
       {isLoading && (
         <div className="absolute inset-0 z-20">
-          <Loading />
+          <LoadingPage />
         </div>
       )}
       {/* Main Content with Scroll */}

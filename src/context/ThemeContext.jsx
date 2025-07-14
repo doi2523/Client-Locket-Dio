@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import Loading from "../components/Loading";
+import LoadingPage from "../components/pages/LoadingPage";
 
 export const ThemeContext = createContext();
 
@@ -26,7 +26,7 @@ export const ThemeProvider = ({ children }) => {
   };
 
   if (!isMounted) {
-    return <Loading />;
+    return <LoadingPage isLoading={true} />;
   }
 
   return (

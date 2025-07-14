@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const NotFoundPage = () => {
   useEffect(() => {
     // Tắt cuộn trang khi trang NotFoundPage được tải
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
 
     // Khi component bị unmount, bật lại cuộn trang
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, []);
 
@@ -21,11 +21,7 @@ const NotFoundPage = () => {
         </p>
         <p className="mt-2">It seems we've lost this page somewhere.</p>
         <div className="mt-6">
-          <Link
-
-            to="/"
-            className="px-6 py-3 btn btn-info text-lg font-semibold"
-          >
+          <Link to="/" className="px-6 py-3 btn btn-info text-lg font-semibold">
             Go to Home
           </Link>
         </div>

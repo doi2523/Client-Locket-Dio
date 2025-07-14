@@ -5,8 +5,15 @@ import { ImageUp } from "lucide-react";
 
 const UploadFile = () => {
   const { post, useloading, camera } = useApp();
-  const { selectedFile, setSelectedFile, preview, setPreview, setSizeMedia, imageToCrop, setImageToCrop } =
-    post;
+  const {
+    selectedFile,
+    setSelectedFile,
+    preview,
+    setPreview,
+    setSizeMedia,
+    imageToCrop,
+    setImageToCrop,
+  } = post;
   const { uploadLoading, setUploadLoading, setIsCaptionLoading } = useloading;
   const { cameraActive, setCameraActive } = camera;
 

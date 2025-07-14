@@ -1,11 +1,13 @@
 // src/context/AppContext.jsx
 import React, { createContext, useContext } from "react";
-import { useNavigation } from "../storages/useNavigation";
-import { useCamera } from "../storages/useCamera";
-import { useLoading } from "../storages/useLoading";
-import { usePost } from "../storages/usePost";
-import { useThemes } from "../storages/useThemes";
-import { ModalState } from "../storages/ModalState";
+import {
+  ModalState,
+  useCamera,
+  useLoading,
+  useNavigation,
+  usePost,
+  useThemes,
+} from "../stores";
 
 const AppContext = createContext();
 
@@ -26,7 +28,7 @@ export const AppProvider = ({ children }) => {
         useloading,
         post,
         captiontheme,
-        modal
+        modal,
       }}
     >
       {children}

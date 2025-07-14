@@ -5,9 +5,9 @@ import { AuthContext } from "../../context/AuthLocket.jsx";
 import MainHomeScreen from "./ExtendPage/mainHomeScreen.jsx";
 import BottomHomeScreen from "./ExtendPage/bottomHomeScreen.jsx";
 import Sidebar from "../../components/Sidebar/index.jsx";
-import Loading from "../../components/Loading/index.jsx";
 import ScreenCustomeStudio from "./ExtendPage/Container/CustomeStudio.jsx";
 import CropImageStudio from "../../components/common/CropImageStudio.jsx";
+import LoadingPage from "../../components/pages/LoadingPage.jsx";
 
 // Lazy-load các component nặng
 const FriendsContainer = lazy(() => import("./ExtendPage/Container/FriendsContainer.jsx"));
@@ -22,13 +22,13 @@ const CameraCapture = () => {
     <>
       <MainHomeScreen />
       <CropImageStudio />
-      <Suspense fallback={<Loading/>}>
+      <Suspense fallback={<LoadingPage/>}>
         <LeftHomeScreen />
         <RightHomeScreen />
         <BottomHomeScreen />
       </Suspense>
 
-      <Suspense fallback={<Loading/>}>
+      <Suspense fallback={<LoadingPage/>}>
         <FriendsContainer />
         <SettingContainer />
         <ScreenCustomeStudio/>

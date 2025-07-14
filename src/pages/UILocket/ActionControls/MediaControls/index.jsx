@@ -1,6 +1,5 @@
 import { X, Send, Sparkles, Check } from "lucide-react";
 import * as utils from "../../../../utils/index.js";
-import LoadingRing from "../../../../components/UI/Loading/ring.jsx";
 import { useApp } from "../../../../context/AppContext.jsx";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -8,7 +7,7 @@ import {
   showInfo,
   showSuccess,
 } from "../../../../components/Toast/index.jsx";
-import { defaultPostOverlay } from "../../../../storages/usePost.js";
+import { defaultPostOverlay } from "../../../../stores/usePost.js";
 import { PostMoments } from "../../../../services/index.js";
 import UploadStatusIcon from "./UploadStatusIcon.jsx";
 import { useContext } from "react";

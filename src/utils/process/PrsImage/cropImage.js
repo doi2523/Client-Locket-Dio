@@ -1,13 +1,8 @@
-//Tìm gì mà vào tận đây thế :))) 
-export const getCroppedImg = async (imageSrc, crop, rotation = 0) => {
-  const createImage = (url) =>
-    new Promise((resolve, reject) => {
-      const image = new Image();
-      image.onload = () => resolve(image);
-      image.onerror = (error) => reject(error);
-      image.src = url;
-    });
+import { createImage } from "./createImage";
 
+//Tìm gì mà vào tận đây thế :)))
+export const getCroppedImg = async (imageSrc, crop, rotation = 0) => {
+  //Gọi hàm để tạo mới một ảnh
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
