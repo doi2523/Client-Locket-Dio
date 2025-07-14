@@ -10,7 +10,7 @@ const ThemesCustomes = ({ title = "Chọn preset", presets = [], onSelect }) => 
   const displayedPresets = presets;
 
   return (
-    <div className="">
+    <div className="px-4">
       {title && (
         <h2 className="text-md font-semibold text-primary mb-2">{title}</h2>
       )}

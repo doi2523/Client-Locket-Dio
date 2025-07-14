@@ -173,7 +173,7 @@ export default function ImageCaptionSelector({ title }) {
   };
 
   return (
-    <div className="relative">
+    <div className="relative px-4">
       {title && (
         <>
           <div className="flex flex-row gap-3 items-center mb-2">

@@ -2,7 +2,7 @@ import React from "react";
 
 export default function CaptionGifThemes({ title, captionThemes, onSelect }) {
   return (
-    <div>
+    <div className="px-4">
       {title && (
         <>
           <div className="flex flex-row gap-3 items-center mb-2">

@@ -226,7 +226,7 @@ export default function GeneralThemes({ title }) {
   ];
 
   return (
-    <div>
+    <div className="px-4">
       {title && (
         <>
           <div className="flex flex-row gap-3 items-center mb-2">

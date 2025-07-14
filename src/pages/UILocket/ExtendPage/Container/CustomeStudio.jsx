@@ -11,6 +11,8 @@ import ImageCaptionSelector from "../CaptionItems/ImageCaption";
 import PlanBadge from "../../../../components/UI/PlanBadge/PlanBadge";
 import Footer from "../../../../components/Footer";
 import CaptionGifThemes from "../CaptionItems/CaptionGifThemes";
+import { useFeatureVisible } from "../../../../hooks/useFeatureVisible";
+import FeatureGate from "../../../../components/common/FeatureGate";
 
 const ScreenCustomeStudio = () => {
   const navigate = useNavigate();
@@ -19,15 +21,10 @@ const ScreenCustomeStudio = () => {
   const { navigation, post, captiontheme } = useApp();
 
   const { isFilterOpen, setIsFilterOpen } = navigation;
-  const {
-    selectedColors,
-    setSelectedColors,
-    caption,
-    setCaption,
-    postOverlay,
-    setPostOverlay,
-  } = post;
+  const { setPostOverlay } = post;
   const { captionThemes } = captiontheme;
+  const canUseImageGif = useFeatureVisible("image_gif");
+  const canUseImageIcon = useFeatureVisible("image_icon");
 
   useEffect(() => {
     if (isFilterOpen) {
@@ -202,7 +199,7 @@ const ScreenCustomeStudio = () => {
           </button>
         </div>
         {/* Nội dung - Cuộn được */}
-        <div className="flex-1 overflow-y-auto px-4">
+        <div className="flex-1 overflow-y-auto">
           <GeneralThemes
             title="🎨 General"
             captionThemes={captionThemes}
@@ -224,17 +221,24 @@ const ScreenCustomeStudio = () => {
             presets={captionThemes.custome}
             onSelect={handleCustomeSelect}
           />
-          <CaptionIconSelector
-            title="🎨 Caption Icon - Truy cập sớm"
-            captionThemes={captionThemes}
-            onSelect={handleCustomeSelectTest}
-          />
-          <CaptionGifThemes
-            title="🎨 Caption Gif - Member"
-            captionThemes={captionThemes}
-            onSelect={handleCustomeSelectTest}
-          />
-          <ImageCaptionSelector title="🎨 Caption Ảnh - Truy cập sớm" />
+          <FeatureGate canUse={canUseImageIcon}>
+            <CaptionIconSelector
+              title="🎨 Caption Icon - Truy cập sớm"
+              captionThemes={captionThemes}
+              onSelect={handleCustomeSelectTest}
+            />
+          </FeatureGate>
+          <FeatureGate canUse={canUseImageGif}>
+            <CaptionGifThemes
+              title="🎨 Caption Gif - Member"
+              captionThemes={captionThemes}
+              onSelect={handleCustomeSelectTest}
+            />
+          </FeatureGate>
+          <FeatureGate canUse={canUseImageIcon}>
+            <ImageCaptionSelector title="🎨 Caption Ảnh - Truy cập sớm" />
+          </FeatureGate>
+
           <div className="">
             <h2 className="text-md font-semibold text-primary mb-2">
               ✏️ Ghi chú
