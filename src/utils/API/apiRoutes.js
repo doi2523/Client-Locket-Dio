@@ -32,6 +32,7 @@ export const API_URL = {
   SPOTIFY_URL: `${LOCKET_URL}/spotifyV2`,
   REGISTER_PUSH_URL: `${BASE_API_URL}${LOCKET_URL}/register-push`,
   GET_UPLOAD_STATS_URL: `${BASE_API_URL}${LOCKET_URL}/get-upload-stats`,
+  GET_WEATHER_URL: `${BASE_API_URL}${LOCKET_URL}/weather`,
 
   //API lấy dữ liệu từ máy chủ
   GET_LASTEST_URL: `${BASE_API_URL}${LOCKET_PRO}/getmoment`,

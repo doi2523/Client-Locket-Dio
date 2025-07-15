@@ -1,41 +1,60 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
+import { API_URL } from "../API/apiRoutes";
+
+const CACHE_KEY = "weather_cache";
+const CACHE_DURATION = 2 * 60 * 1000; // 2 phút
 
 export function useLocationWeather() {
-  const [location, setLocation] = useState(null); // { lat, lon }
-  const [address, setAddress] = useState("");     // "X. ..., H. ..., ..."
-  const [weather, setWeather] = useState(null);   // { temp, description, ... }
+  const [location, setLocation] = useState(null);
+  const [weather, setWeather] = useState(null);
 
   useEffect(() => {
-    // 1. Lấy tọa độ
+    const cached = localStorage.getItem(CACHE_KEY);
+    const now = Date.now();
+
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (now - parsed.timestamp < CACHE_DURATION) {
+          setLocation(parsed.location);
+          setWeather(parsed.weather);
+          return; // Dừng luôn, không gọi API nữa
+        }
+      } catch (e) {
+        console.warn("Lỗi parse weather cache:", e);
+      }
+    }
+
+    // Nếu cache hết hạn thì lấy lại vị trí và gọi API
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        const { latitude, longitude } = position.coords;
-        setLocation({ lat: latitude, lon: longitude });
+        try {
+          const { latitude, longitude } = position.coords;
 
-        // 2. Lấy địa chỉ từ toạ độ
-        const geoRes = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-        );
-        const geoData = await geoRes.json();
-        const { address } = geoData;
+          const res = await axios.get(
+            `${API_URL.GET_WEATHER_URL}?lat=${latitude}&lon=${longitude}`
+          );
 
-        const xa = address.suburb || address.village || address.town || address.city_district || "";
-        const huyen = address.county || address.district || "";
-        const tinh = address.state || address.region || address.city || "";
+          const data = res?.data?.data;
 
-        const customAddress = `X. ${xa} H. ${huyen}, ${tinh}`;
-        setAddress(customAddress);
+          if (data) {
+            setLocation(data.location);
+            setWeather(data.current);
 
-        // 3. Lấy thời tiết
-        const apiKey = "YOUR_OPENWEATHERMAP_API_KEY"; // Bạn cần có key
-        const weatherRes = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=vi&appid=${apiKey}`
-        );
-        const weatherData = await weatherRes.json();
-        setWeather({
-          temp: weatherData.main.temp,
-          desc: weatherData.weather[0].description,
-        });
+            // Cache lại kết quả
+            localStorage.setItem(
+              CACHE_KEY,
+              JSON.stringify({
+                timestamp: now,
+                location: data.location,
+                weather: data.current,
+              })
+            );
+          }
+        } catch (error) {
+          console.error("Lỗi khi gọi API thời tiết:", error);
+        }
       },
       (err) => {
         console.error("Lỗi lấy vị trí:", err);
@@ -43,5 +62,5 @@ export function useLocationWeather() {
     );
   }, []);
 
-  return { location, address, weather };
+  return { location, weather };
 }

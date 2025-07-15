@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { PiClockFill } from "react-icons/pi";
-import { FaBatteryFull } from "react-icons/fa";
 import { useApp } from "../../../../context/AppContext";
-import { Star } from "lucide-react";
 import { StarProgress } from "../../../../components/UI/StarRating/StarProgress";
-import axios from "axios";
 import { showError, showSuccess } from "../../../../components/Toast";
 import { API_URL, useBatteryStatus } from "../../../../utils";
-import LocationInfoGenerator from "../../../../helpers/getInfoLocation";
-import { useLocationOptions } from "../../../../utils/enviroment";
+import {
+  useLocationOptions,
+  useLocationWeather,
+} from "../../../../utils/enviroment";
 import api from "../../../../lib/axios";
 
 export default function GeneralThemes({ title }) {
-  const { navigation, post, captiontheme } = useApp();
-  const { isFilterOpen, setIsFilterOpen } = navigation;
-  const { postOverlay, setPostOverlay } = post;
+  const { navigation, post } = useApp();
+  const { setIsFilterOpen } = navigation;
+  const { setPostOverlay } = post;
   const { addressOptions } = useLocationOptions();
-  const { captionThemes } = captiontheme;
+  const { location, weather } = useLocationWeather();
 
   const [time, setTime] = useState(() => new Date());
   const { level, charging } = useBatteryStatus();
@@ -28,7 +27,6 @@ export default function GeneralThemes({ title }) {
   const [reviewText, setReviewText] = useState("");
   const [reviewRating, setReviewRating] = useState(0); // mặc định 5 sao
   const [loading, setLoading] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState("");
 
   const [savedAddressOptions, setSavedAddressOptions] = useState([]);
 
@@ -148,7 +146,11 @@ export default function GeneralThemes({ title }) {
       case "location":
         break;
       case "weather":
-        alert("Thời tiết sẽ sớm được tích hợp");
+        handleCustomeSelect({
+          preset_id: "weather",
+          caption: weather,
+          type: "weather",
+        });
         break;
       case "battery":
         handleCustomeSelect({
@@ -192,11 +194,19 @@ export default function GeneralThemes({ title }) {
       id: "weather",
       icon: (
         <img
-          src="./images/sun_max_indicator_Normal@3x.png"
+          src={
+            weather?.icon
+              ? `https:${weather.icon}`
+              : "./images/sun_max_indicator_Normal@3x.png"
+          }
+          alt={weather?.condition || "Thời tiết"}
           className="w-6 h-6 mr-1"
         />
       ),
-      label: "Thời tiết",
+      label:
+        weather?.temp_c_rounded !== undefined
+          ? `${weather.temp_c_rounded}°C`
+          : "Thời tiết",
     },
     {
       id: "battery",
@@ -236,50 +246,69 @@ export default function GeneralThemes({ title }) {
         </>
       )}
       <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
-        {buttons.map(({ id, icon, label }) => (
-          <button
-            key={id}
-            onClick={() => handleClick(id)}
-            className="flex flex-col whitespace-nowrap bg-base-200 dark:bg-white/30 backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center"
-          >
-            <span className="text-base flex flex-row items-center gap-1">
-              {icon}
-              {id === "location" ? (
-                <div className="relative w-max">
-                  {/* Hiển thị label tùy chỉnh */}
-                  <div className="cursor-pointer select-none">
-                    {savedAddressOptions[0] || "Vị trí"}
-                  </div>
+        {buttons.map(({ id, icon, label }) => {
+          const isWeather = id === "weather";
+          const isWeatherValid =
+            weather && weather.temp_c_rounded !== undefined;
 
-                  {/* Select vô hình, nhưng phủ lên toàn bộ div */}
-                  <select
-                    className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
-                    onChange={(e) =>
-                      handleCustomeSelect({
-                        preset_id: "location",
-                        caption: e.target.value,
-                        icon: "",
-                        type: "location",
-                      })
-                    }
-                  >
-                    <option value="" disabled>
-                      Chọn địa chỉ...
-                    </option>
-                    {savedAddressOptions.map((opt, idx) => (
-                      <option key={idx} value={opt}>
-                        {opt}
+          const isLocation = id === "location";
+          const hasLocationOptions =
+            savedAddressOptions && savedAddressOptions.length > 0;
+
+          // Nếu là weather mà không có dữ liệu, hoặc là location mà không có address -> disable
+          const isDisabled =
+            (isWeather && !isWeatherValid) ||
+            (isLocation && !hasLocationOptions);
+
+          return (
+            <button
+              key={id}
+              onClick={() => handleClick(id)}
+              disabled={isDisabled}
+              className={`
+          flex flex-col whitespace-nowrap bg-base-200 dark:bg-white/30
+          backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto
+          rounded-3xl font-semibold justify-center
+          ${isDisabled ? "pointer-events-none opacity-50" : ""}
+        `}
+            >
+              <span className="text-base flex flex-row items-center gap-1">
+                {icon}
+                {isLocation ? (
+                  <div className="relative w-max">
+                    <div className="cursor-pointer select-none">
+                      {savedAddressOptions[0] || "Vị trí"}
+                    </div>
+                    <select
+                      className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                      onChange={(e) =>
+                        handleCustomeSelect({
+                          preset_id: "location",
+                          caption: e.target.value,
+                          icon: "",
+                          type: "location",
+                        })
+                      }
+                    >
+                      <option value="" disabled>
+                        Chọn địa chỉ...
                       </option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                label
-              )}
-            </span>
-          </button>
-        ))}
+                      {savedAddressOptions.map((opt, idx) => (
+                        <option key={idx} value={opt}>
+                          {opt}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  label
+                )}
+              </span>
+            </button>
+          );
+        })}
       </div>
+
       {/* <LocationInfoGenerator/ */}
 
       {/* Popup Spotify */}
