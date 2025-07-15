@@ -14,7 +14,16 @@ export const uploadFileAndGetInfo = async (
   const extension = file.name.split(".").pop(); // lấy đuôi file, ví dụ jpg, mp4
 
   const fileName = `locketdio_${timestamp}_${localId}_cli${CLIENT_VERSION}_.${extension}`;
-  const filePath = `LocketCloud/${safeType}/${fileName}`;
+
+  // === Định dạng thư mục: D-13-07-25 ===
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const year = String(now.getFullYear()).slice(-2); // Lấy 2 số cuối
+
+  const folderName = `D-${day}-${month}-${year}`;
+
+  const filePath = `LocketCloud/${safeType}/${folderName}/${fileName}`;
   const fileRef = ref(storage, filePath);
 
   // Upload file
