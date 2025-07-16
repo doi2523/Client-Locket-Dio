@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }) => {
       // Kiểm tra cache với timestamp
       const cachedPlan = localStorage.getItem("userPlan");
       const planTimestamp = localStorage.getItem("userPlanTimestamp");
-      const PLAN_CACHE_DURATION = 5 * 60 * 60 * 1000; // 5 phút
+      const PLAN_CACHE_DURATION = 5 * 60 * 1000; // 5 phút
 
       if (cachedPlan && planTimestamp) {
         try {
@@ -190,6 +190,26 @@ export const AuthProvider = ({ children }) => {
       hasFetchedPlan.current = true;
     }
   };
+
+  useEffect(() => {
+    const checkAndRefreshPlan = async () => {
+      if (!user || !authTokens?.idToken) return;
+  
+      const planTimestamp = localStorage.getItem("userPlanTimestamp");
+      const PLAN_CACHE_DURATION = 5 * 60 * 1000; // 5 phút
+  
+      const now = Date.now();
+      const timestamp = parseInt(planTimestamp);
+  
+      // Nếu không có timestamp hoặc đã quá hạn thì làm mới
+      if (!timestamp || now - timestamp >= PLAN_CACHE_DURATION) {
+        hasFetchedPlan.current = false; // reset flag
+        await fetchPlan(user, authTokens.idToken); // gọi lại
+      }
+    };
+  
+    checkAndRefreshPlan();
+  }, [user, authTokens?.idToken]);
 
   // Fetch upload stats với cache
   useEffect(() => {
