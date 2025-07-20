@@ -11,6 +11,7 @@ const CropImageStudio = () => {
     preview,
     setPreview,
     isSizeMedia,
+    setSizeMedia,
     imageToCrop,
     setImageToCrop,
   } = useApp().post;
@@ -27,6 +28,8 @@ const CropImageStudio = () => {
 
       setSelectedFile(croppedFile); // ✅ Lưu file gửi lên server
       setPreview({ type: "image", data: localPreviewUrl });
+      const fileSizeInMB = croppedFile.size / (1024 * 1024);
+      setSizeMedia(fileSizeInMB.toFixed(2));
 
       setImageToCrop(null); // ✅ Ẩn cropper sau khi cắt
     } catch (e) {

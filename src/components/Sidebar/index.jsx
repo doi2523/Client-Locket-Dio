@@ -184,9 +184,9 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
-                    to="/upgrade"
+                    to="/pricing"
                     className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/upgrade"
+                      location.pathname === "/pricing"
                         ? "bg-base-300"
                         : "hover:bg-base-200"
                     }`}
@@ -348,9 +348,9 @@ const Sidebar = () => {
 
                 <li>
                   <Link
-                    to="/upgrade"
+                    to="/pricing"
                     className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/upgrade"
+                      location.pathname === "/pricing"
                         ? "bg-base-300"
                         : "hover:bg-base-220"
                     }`}

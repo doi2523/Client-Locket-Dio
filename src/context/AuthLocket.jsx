@@ -7,13 +7,14 @@ import React, {
 } from "react";
 import PropTypes from "prop-types";
 import * as utils from "../utils";
-import { showInfo } from "../components/Toast";
 import {
   fetchUser,
   fetchUserPlan,
   getListIdFriends,
+  getStats,
   getUserUploadStats,
   registerFreePlan,
+  updateUserInfo,
 } from "../services";
 import api from "../lib/axios";
 
@@ -40,10 +41,7 @@ export const AuthProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
-  const [userPlan, setUserPlan] = useState(() => {
-    const saved = localStorage.getItem("userPlan");
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [userPlan, setUserPlan] = useState(null);
 
   const [uploadStats, setUploadStats] = useState(() => {
     const saved = localStorage.getItem("uploadStats");
@@ -101,7 +99,7 @@ export const AuthProvider = ({ children }) => {
 
         // Fetch plan sau khi có friends
         if (!hasFetchedPlan.current) {
-          fetchPlan(user, authTokens.idToken);
+          fetchPlan();
         }
       } catch (error) {
         console.error("❌ Lỗi khi fetch friends:", error);
@@ -114,137 +112,101 @@ export const AuthProvider = ({ children }) => {
   }, [user, authTokens?.idToken, friends.length]);
 
   // Fetch plan với cache, điều kiện và retry logic
-  const fetchPlan = async (user, idToken) => {
-    if (hasFetchedPlan.current || !user || !idToken) return;
+  const fetchPlan = async () => {
+    if (
+      hasFetchedPlan.current ||
+      !authTokens?.idToken ||
+      !authTokens?.localId ||
+      !user
+    )
+      return;
 
     try {
-      // Kiểm tra cache với timestamp
-      const cachedPlan = localStorage.getItem("userPlan");
-      const planTimestamp = localStorage.getItem("userPlanTimestamp");
-      const PLAN_CACHE_DURATION = 5 * 60 * 1000; // 5 phút
+      const res = await api.get("/api/me");
+      const plan = res?.data?.data;
 
-      if (cachedPlan && planTimestamp) {
-        try {
-          const parsed = JSON.parse(cachedPlan);
-          const timestamp = parseInt(planTimestamp);
-          const now = Date.now();
-
-          // Cache còn hạn và có valid data
-          if (parsed && parsed.id && now - timestamp < PLAN_CACHE_DURATION) {
-            setUserPlan(parsed);
-            hasFetchedPlan.current = true;
-            return;
-          }
-        } catch (error) {
-          console.error("❌ Parse userPlan cache error:", error);
-          // Clear corrupted cache
-          localStorage.removeItem("userPlan");
-          localStorage.removeItem("userPlanTimestamp");
-        }
-      }
-
-      // Fetch plan từ API
-      let plan = null;
-      try {
-        plan = await fetchUserPlan();
-      } catch (error) {
-        console.error("❌ fetchUserPlan failed:", error);
-      }
-
-      // Nếu không có plan, register free plan
-      if (!plan) {
-        try {
-          const res = await registerFreePlan(user, idToken);
-          if (res?.data) {
-            plan = res.data;
-          }
-        } catch (error) {
-          console.error("❌ registerFreePlan failed:", error);
-          // Set default free plan nếu API fail
-          plan = {
-            id: "free_default",
-            type: "free",
-            name: "Free Plan",
-            limits: { storage: 100, uploads: 10 },
-          };
-        }
-      }
-
-      // Lưu plan với timestamp
       if (plan) {
         setUserPlan(plan);
-        localStorage.setItem("userPlan", JSON.stringify(plan));
-        localStorage.setItem("userPlanTimestamp", Date.now().toString());
-        hasFetchedPlan.current = true;
       }
     } catch (err) {
-      console.error("❌ Critical error in fetchPlan:", err);
-      // Fallback: set basic free plan
-      const fallbackPlan = {
-        id: "free_fallback",
-        type: "free",
-        name: "Free Plan",
-        limits: { storage: 100, uploads: 10 },
-      };
-      setUserPlan(fallbackPlan);
+      console.error("❌ fetchPlan failed:", err);
+      setUserPlan(null);
+    } finally {
       hasFetchedPlan.current = true;
     }
   };
-
+  
   useEffect(() => {
-    const checkAndRefreshPlan = async () => {
-      if (!user || !authTokens?.idToken) return;
+    if (!user || !authTokens?.idToken || !authTokens?.localId) return;
   
-      const planTimestamp = localStorage.getItem("userPlanTimestamp");
-      const PLAN_CACHE_DURATION = 5 * 60 * 1000; // 5 phút
-  
-      const now = Date.now();
-      const timestamp = parseInt(planTimestamp);
-  
-      // Nếu không có timestamp hoặc đã quá hạn thì làm mới
-      if (!timestamp || now - timestamp >= PLAN_CACHE_DURATION) {
-        hasFetchedPlan.current = false; // reset flag
-        await fetchPlan(user, authTokens.idToken); // gọi lại
+    const init = async () => {
+      if (!hasFetchedPlan.current) {
+        await fetchPlan(); // Đợi fetchPlan xong
       }
+  
+      await updateUserInfo(user); // Gọi sau khi fetchPlan hoàn tất
+      const stats = await getStats();
+      setUploadStats(stats)
     };
   
-    checkAndRefreshPlan();
-  }, [user, authTokens?.idToken]);
+    init();
+  }, [user, authTokens?.idToken, authTokens?.localId]);
+   
+
+  // useEffect(() => {
+  //   const checkAndRefreshPlan = async () => {
+  //     if (!user || !authTokens?.idToken) return;
+
+  //     const planTimestamp = localStorage.getItem("userPlanTimestamp");
+  //     const PLAN_CACHE_DURATION = 5 * 60 * 1000; // 5 phút
+
+  //     const now = Date.now();
+  //     const timestamp = parseInt(planTimestamp);
+
+  //     // Nếu không có timestamp hoặc đã quá hạn thì làm mới
+  //     if (!timestamp || now - timestamp >= PLAN_CACHE_DURATION) {
+  //       hasFetchedPlan.current = false; // reset flag
+  //       await fetchPlan(user, authTokens.idToken); // gọi lại
+  //     }
+  //   };
+
+  //   checkAndRefreshPlan();
+  // }, [user, authTokens?.idToken]);
 
   // Fetch upload stats với cache
-  useEffect(() => {
-    const fetchUploadStats = async () => {
-      if (!authTokens?.localId || hasFetchedUploadStats.current) return;
+  // useEffect(() => {
+  //   const fetchUploadStats = async () => {
+  //     if (!authTokens?.localId || hasFetchedUploadStats.current) return;
 
-      // Kiểm tra cache trước
-      const cachedStats = localStorage.getItem("uploadStats");
-      if (cachedStats) {
-        try {
-          const parsed = JSON.parse(cachedStats);
-          if (parsed) {
-            setUploadStats(parsed);
-            hasFetchedUploadStats.current = true;
-            return;
-          }
-        } catch (error) {
-          console.error("❌ Parse uploadStats error:", error);
-        }
-      }
+  //     // Kiểm tra cache trước
+  //     const cachedStats = localStorage.getItem("uploadStats");
+  //     if (cachedStats) {
+  //       try {
+  //         const parsed = JSON.parse(cachedStats);
+  //         if (parsed) {
+  //           setUploadStats(parsed);
+  //           hasFetchedUploadStats.current = true;
+  //           return;
+  //         }
+  //       } catch (error) {
+  //         console.error("❌ Parse uploadStats error:", error);
+  //       }
+  //     }
 
-      try {
-        const data = await getUserUploadStats(authTokens.localId);
-        if (data) {
-          localStorage.setItem("uploadStats", JSON.stringify(data));
-          setUploadStats(data);
-          hasFetchedUploadStats.current = true;
-        }
-      } catch (error) {
-        console.error("❌ Lỗi khi fetch upload stats:", error);
-      }
-    };
+  //     try {
+  //       const data = await getUserUploadStats(authTokens.localId);
+  //       if (data) {
+  //         localStorage.setItem("uploadStats", JSON.stringify(data));
+  //         setUploadStats(data);
+  //         hasFetchedUploadStats.current = true;
+  //       }
+  //     } catch (error) {
+  //       console.error("❌ Lỗi khi fetch upload stats:", error);
+  //     }
+  //   };
 
-    fetchUploadStats();
-  }, [authTokens?.localId]);
+  //   fetchUploadStats();
+  // }, [authTokens?.localId]);
 
   // Load friend details với debounce và cache thông minh
   useEffect(() => {

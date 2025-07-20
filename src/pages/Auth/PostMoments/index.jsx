@@ -1,4 +1,10 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useContext,
+} from "react";
 import {
   FolderOpen,
   RotateCcw,
@@ -7,7 +13,7 @@ import {
   Pencil,
   FileImage,
 } from "lucide-react";
-import { showToast } from "../../../components/Toast/index.jsx";
+import { showError, showToast } from "../../../components/Toast/index.jsx";
 import * as utils from "../../../utils";
 import LoadingRing from "../../../components/UI/Loading/ring.jsx";
 import { useApp } from "../../../context/AppContext.jsx";
@@ -16,9 +22,14 @@ import Hourglass from "../../../components/UI/Loading/hourglass.jsx";
 import MediaSizeInfo from "../../../components/UI/MediaSizeInfo/index.jsx";
 import { defaultPostOverlay } from "../../../stores/usePost.js";
 import { uploadMediaV2 } from "../../../services/index.js";
+import { getMaxUploads } from "../../../hooks/useFeature.js";
+import { AuthContext } from "../../../context/AuthLocket.jsx";
+import PlanBadge from "../../../components/UI/PlanBadge/PlanBadge.jsx";
+import StorageUsageBar from "./StorageUsageBar.jsx";
 
 const PostMoments = () => {
   const { post, useloading } = useApp();
+  const { uploadStats } = useContext(AuthContext);
   const { sendLoading, setSendLoading, uploadLoading } = useloading;
 
   const {
@@ -38,8 +49,9 @@ const PostMoments = () => {
     setRecentPosts,
     maxImageSizeMB,
     maxVideoSizeMB,
+    setImageToCrop,
   } = post;
-
+  const { storage_limit_mb } = getMaxUploads();
   const fileInputRef = useRef(null);
 
   // Đồng bộ caption và màu từ postOverlay → state
@@ -62,11 +74,15 @@ const PostMoments = () => {
       showToast("error", "Chỉ hỗ trợ ảnh và video.");
       return;
     }
-
-    setPreview({ type: fileType, data: localPreviewUrl });
-
     const fileSizeInMB = rawFile.size / (1024 * 1024);
     setSizeMedia(fileSizeInMB.toFixed(2));
+
+    if (fileType === "image") {
+      setImageToCrop(localPreviewUrl);
+      return;
+    }
+    setPreview({ type: fileType, data: localPreviewUrl });
+
     setSelectedFile(rawFile);
   }, []);
 
@@ -77,6 +93,13 @@ const PostMoments = () => {
   const handleSubmit = async () => {
     if (!selectedFile) {
       showToast("error", "Không có dữ liệu để tải lên.");
+      return;
+    }
+    if (
+      storage_limit_mb !== -1 &&
+      uploadStats?.total_storage_used_mb > storage_limit_mb
+    ) {
+      showError("Dung lượng sử dụng vượt quá giới hạn của gói hiện tại!");
       return;
     }
 
@@ -173,17 +196,23 @@ const PostMoments = () => {
 
         <div className="text-left">
           <p className="text-sm text-error mt-2">
-            Hệ thống chỉ hỗ trợ ảnh tối đa 1MB và video tối đa 10MB. Nếu gặp lỗi
-            khi tải lên, bạn có thể thử lại sau hoặc gửi ảnh/video qua
-            Zalo/Messenger và tải lại.
+            Hệ thống chỉ hỗ trợ ảnh tối đa{" "}
+            <span className="underline font-semibold">{maxImageSizeMB}MB</span>{" "}
+            và video tối đa{" "}
+            <span className="underline font-semibold">{maxVideoSizeMB}MB</span>.
+            Nếu gặp lỗi khi tải lên, bạn có thể thử lại sau hoặc gửi ảnh/video
+            qua Zalo/Messenger và tải lại.
             <Link to="/docs" className="underline">
               {" "}
               Xem thêm
             </Link>
           </p>
-          <p className="text-sm text-error">
-            Chế độ demo nếu có lỗi vui lòng báo với QTV
-          </p>
+          <div className="mt-2">
+            <StorageUsageBar
+              totalUsedMB={uploadStats.total_storage_used_mb}
+              storageLimitMB={storage_limit_mb}
+            />
+          </div>
         </div>
 
         {/* Preview */}
@@ -248,10 +277,13 @@ const PostMoments = () => {
 
         {/* Caption & Color */}
         <div className="text-center mb-6">
-          <h2 className="text-3xl font-semibold mb-4">Customize Caption</h2>
+          <h2 className="text-3xl font-semibold mb-4">Customize Caption </h2>
           <div className="p-4 rounded-md shadow-md border">
-            <h3 className="text-lg font-semibold mb-3 flex items-center">
-              <Pencil size={20} className="mr-2" /> Caption
+            <h3 className="text-lg font-semibold mb-3 flex items-center justify-between">
+              <div className="flex flex-row items-center">
+                <Pencil size={20} className="mr-2" /> Caption
+              </div>{" "}
+              <PlanBadge />
             </h3>
             <input
               type="text"

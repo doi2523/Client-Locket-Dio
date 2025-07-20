@@ -1,0 +1,24 @@
+{
+  "name": "Locket Dio (Notebook)",
+  "short_name": "Locket Dio",
+  "description": "Giao diện Locket với chủ đề Notebook",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#795548",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/notebook-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/notebook-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

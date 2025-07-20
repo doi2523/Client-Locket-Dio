@@ -60,7 +60,7 @@ const ThemeSelector = () => {
   return (
     <div className="w-full flex justify-center">
       {/* Custom Theme */}
-      <div className="w-full max-w-6xl">
+      <div className="w-full">
         <h1 className="font-lovehouse text-center text-3xl font-semibold">
           Setting Theme Locket Dio
         </h1>

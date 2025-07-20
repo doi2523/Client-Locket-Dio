@@ -70,7 +70,9 @@ const Login = () => {
             showError("Phiên đăng nhập đã hết. Vui lòng đăng nhập lại!");
             break;
           case 429:
-            showError("Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 15 phút!");
+            showError(
+              "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 15 phút!"
+            );
             setEmail("");
             setPassword("");
             break;
@@ -194,14 +196,16 @@ const Login = () => {
             <button
               type="submit"
               className={`
-                w-full btn btn-primary py-2 text-lg font-semibold rounded-lg transition flex items-center justify-center gap-2
-                ${
-                  isStatusServer !== true
-                    ? "bg-blue-400 cursor-not-allowed opacity-80"
-                    : ""
-                }
-              `}
-              disabled={isStatusServer !== true || isLoginLoading}
+    w-full btn btn-primary py-2 text-lg font-semibold rounded-lg transition flex items-center justify-center gap-2
+    ${
+      isStatusServer !== true || !captchaToken
+        ? "bg-blue-400 cursor-not-allowed opacity-80"
+        : ""
+    }
+  `}
+              disabled={
+                isStatusServer !== true || isLoginLoading || !captchaToken
+              }
             >
               {isLoginLoading ? (
                 <>
@@ -212,6 +216,7 @@ const Login = () => {
                 "Đăng Nhập"
               )}
             </button>
+
             <Turnstile
               sitekey="0x4AAAAAABgqVepYlILrC753"
               onVerify={(token) => setCaptchaToken(token)}

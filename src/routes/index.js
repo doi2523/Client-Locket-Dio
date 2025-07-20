@@ -13,6 +13,9 @@ import ErrorReferencePage from "../pages/Public/ErrorReferencePage";
 import DonateHistory from "../pages/Public/HistoryDonate";
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
+import PayPage from "../pages/Public/PayPage";
+import PricingPage from "../pages/Public/Pricing";
+import PlanDetailPage from "../pages/Public/PricingDetail";
 import PrivacyPolicy from "../pages/Public/PrivacyPolicy";
 import RegisterMemberPage from "../pages/Public/RegisterMemberPage";
 import Settings from "../pages/Public/Settings";
@@ -39,6 +42,7 @@ const publicRoutes = [
   { path: "/privacy", component: PrivacyPolicy, title: `${APP_NAME} | Privacy Policy for LocketDio - PrivacyPolicies.com` },
   { path: "/testv1", component: CameraCapture, title: `${APP_NAME} | Test` },
   { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
+  { path: "/pricing", component: PricingPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
   { path: "/locketdio-tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },
   { path: "/settings", component: Settings, title: `${APP_NAME} | Cài đặt` },
   { path: "/devpage", component: DevPage, title: `${APP_NAME} | Dev Page` },
@@ -62,6 +66,9 @@ const authRoutes = [
   { path: "/devpage", component: DevPage, title: `${APP_NAME} | Dev Page` },
   { path: "/download", component: AddToHomeScreenGuide, title: `${APP_NAME} | Thêm ứng dụng vào màn hình chính` },
   { path: "/clear", component: ClearDataPage, title: `${APP_NAME} | Clear Cache Website` },
+  { path: "/pricing", component: PricingPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
+  { path: "/pricing/:planId", component: PlanDetailPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
+  { path: "/pay", component: PayPage, title: `${APP_NAME} | Thanh toán gói thành viên` },
 
   { path: "/locket", component: CameraCapture, title: `${APP_NAME} | Locket Camera` },
   { path: "/reference", component: ErrorReferencePage, title: `${APP_NAME} | Trung tâm lỗi & cách khắc phục` },

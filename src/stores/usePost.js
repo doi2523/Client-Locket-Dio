@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthLocket";
-import { useFeatureVisible } from "../hooks/useFeatureVisible";
+import { getMaxUploads } from "../hooks/useFeature";
 
 export const defaultPostOverlay = {
   overlay_id: "standard",
@@ -44,13 +44,13 @@ export const usePost = () => {
   const [maxImageSizeMB, setMaxImageSizeMB] = useState(""); // Giới hạn ảnh: 9MB
   const [maxVideoSizeMB, setMaxVideoSizeMB] = useState(""); // Giới hạn video: 30MB
 
-  const isHD = useFeatureVisible("upload_hd");
+  const { image, video } = getMaxUploads();
 
   useEffect(() => {
-    //Chia theo plan ( Plan / Free)
-    //Sửa thì sửa ở đây nhé.
-    setMaxImageSizeMB(isHD ? 9 : 7);
-    setMaxVideoSizeMB(isHD ? 30 : 15);
+    if (userPlan) {
+      setMaxImageSizeMB(image);
+      setMaxVideoSizeMB(video);
+    }
   }, [userPlan]);
 
   return {

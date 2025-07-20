@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import PlanDetailModal from "../components/UI/Modal/PlanDetailModal";
 import LoadingPage from "../components/pages/LoadingPage";
+import CropImageStudio from "../components/common/CropImageStudio";
 
 const DefaultLayout = ({ children }) => {
   const location = useLocation();
@@ -29,8 +29,8 @@ const DefaultLayout = ({ children }) => {
       <main className="overflow-hidden bg-base-200 text-base-content relative">
         <div className="relative z-10">{children}</div>
       </main>
-      <PlanDetailModal />
       <Footer />
+      <CropImageStudio/>
     </div>
   );
 };

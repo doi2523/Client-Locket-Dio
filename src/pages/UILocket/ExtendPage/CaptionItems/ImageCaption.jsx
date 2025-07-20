@@ -230,16 +230,6 @@ export default function ImageCaptionSelector({ title }) {
         {/* Nút + */}
         <button
           onClick={() => {
-            // Kiểm tra quyền với type tương ứng
-            if (!userPlan?.plan_info?.features?.image_icon) {
-              const shouldUpgrade = confirm(
-                "Bạn không có quyền sử dụng tính năng này. Vui lòng nâng cấp gói để mở khóa.\n\nTruy cập trang nâng cấp ngay?"
-              );
-              if (shouldUpgrade) {
-                navigate("/upgrade");
-              }
-              return;
-            }
             // xử lý gì đó
             setShowUpload(true);
           }}

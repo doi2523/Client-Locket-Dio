@@ -33,6 +33,7 @@ export const API_URL = {
   REGISTER_PUSH_URL: `${BASE_API_URL}${LOCKET_URL}/register-push`,
   GET_UPLOAD_STATS_URL: `${BASE_API_URL}${LOCKET_URL}/get-upload-stats`,
   GET_WEATHER_URL: `${BASE_API_URL}${LOCKET_URL}/weather`,
+  ME_URL: `${BASE_API_URL}/api/me`,
 
   //API lấy dữ liệu từ máy chủ
   GET_LASTEST_URL: `${BASE_API_URL}${LOCKET_PRO}/getmoment`,
@@ -47,6 +48,7 @@ export const API_URL = {
   REGISTER_USER_PLANS: `${BASE_DB_API_URL}${LOCKET_PRO}/user-plans/register-free`,
   //Get plan user
   GET_USER_PLANS: `${BASE_DB_API_URL}${LOCKET_PRO}/user-plans`,
+  GET_DIO_PLANS: `${BASE_DB_API_URL}${LOCKET_PRO}/dio-plans`,
 
   //API dữ liệu Cloudinary
   UPLOAD_IMAGE_TO_CLOUD: `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,

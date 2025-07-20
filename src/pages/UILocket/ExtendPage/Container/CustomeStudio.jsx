@@ -10,7 +10,7 @@ import ImageCaptionSelector from "../CaptionItems/ImageCaption";
 import PlanBadge from "../../../../components/UI/PlanBadge/PlanBadge";
 import Footer from "../../../../components/Footer";
 import CaptionGifThemes from "../CaptionItems/CaptionGifThemes";
-import { useFeatureVisible } from "../../../../hooks/useFeatureVisible";
+import { useFeatureVisible } from "../../../../hooks/useFeature";
 import FeatureGate from "../../../../components/common/FeatureGate";
 
 const ScreenCustomeStudio = () => {
@@ -199,7 +199,7 @@ const ScreenCustomeStudio = () => {
           </FeatureGate>
           <FeatureGate canUse={canUseImageGif}>
             <CaptionGifThemes
-              title="🎨 Caption Gif - Member"
+              title="🎨 Caption Gif - Truy cập sớm"
               captionThemes={captionThemes}
               onSelect={handleCustomeSelectTest}
             />

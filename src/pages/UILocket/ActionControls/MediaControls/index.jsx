@@ -12,9 +12,10 @@ import { PostMoments } from "../../../../services/index.js";
 import UploadStatusIcon from "./UploadStatusIcon.jsx";
 import { useContext } from "react";
 import { AuthContext } from "../../../../context/AuthLocket.jsx";
+import { getMaxUploads } from "../../../../hooks/useFeature.js";
 
 const MediaControls = () => {
-  const { uploadStats, userPlan } = useContext(AuthContext)
+  const { uploadStats } = useContext(AuthContext)
   const { navigation, post, useloading, camera } = useApp();
   const { setIsFilterOpen } = navigation;
   const { sendLoading, setSendLoading, uploadLoading, setUploadLoading } =
@@ -39,6 +40,7 @@ const MediaControls = () => {
     setuploadPayloads,
   } = post;
   const { setCameraActive } = camera;
+  const { storage_limit_mb } = getMaxUploads();
 
   // State để quản lý hiệu ứng loading và success
   const [isSuccess, setIsSuccess] = useState(false);
@@ -153,12 +155,6 @@ const MediaControls = () => {
       showError("Không có dữ liệu để tải lên.");
       return;
     }
-    const limit = userPlan?.plan_info?.storage_limit_mb;
-
-    if (limit !== -1 && uploadStats?.totalStorageUsedMB > limit) {
-      showError("Dung lượng sử dụng vượt quá giới hạn của gói hiện tại!");
-      return;
-    }    
 
     const { type: previewType } = preview || {};
     const isImage = previewType === "image";
