@@ -33,7 +33,7 @@ const AboutMe = () => {
         {/* Avatar + Name */}
         <div className="flex flex-col items-center mb-10">
           <img
-            src="/avtdio.webp" // đổi thành avatar của bạn
+            src="https://cdn.locket-dio.space/v1/images/avt/avtdio.webp" // đổi thành avatar của bạn
             alt="Dio Avatar"
             className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-lg mb-4"
           />
@@ -63,13 +63,13 @@ const AboutMe = () => {
               <FaReact className="w-6 h-6 text-cyan-500" /> React.js
             </div>
             <div className="flex items-center gap-2">
-              <img src="/vite.svg" className="w-6.5 h-6.5" /> Vite
+              <img src="/svg/vite.svg" className="w-6.5 h-6.5" /> Vite
             </div>
             <div className="flex items-center gap-2">
               <FaNodeJs className="w-6 h-6 text-green-500" /> Node.js
             </div>
             <div className="flex items-center gap-2">
-              <img src="/Logomark_Full Color.svg" className="w-6 h-6" />{" "}
+              <img src="/svg/firebase.svg" className="w-6 h-6" />{" "}
               Firebase
             </div>
             <div className="flex items-center gap-2">
@@ -83,10 +83,10 @@ const AboutMe = () => {
               <RiVercelFill className="w-6 h-6 text-black" /> Vercel
             </div>
             <div className="flex items-center gap-2">
-              <img src="/logo.light.svg" /> Lucide Icons
+              <img src="/svg/lucide.svg" /> Lucide Icons
             </div>
             <div className="flex items-center">
-              <img src="/daisyui-logomark.svg" className="w-8 h-8" /> DaisyUi
+              <img src="/svg/daisyui.svg" className="w-8 h-8" /> DaisyUi
             </div>
           </div>
           <ImageMarquee />
@@ -161,7 +161,7 @@ const AboutMe = () => {
         <div className="flex flex-col items-center">
           {/* Hình ảnh vuông */}
           <img
-            src="donate.jpg" // Thay bằng link ảnh của bạn
+            src="https://cdn.locket-dio.space/v1/images/qr/donate.jpg" // Thay bằng link ảnh của bạn
             alt="Donate"
             className="w-37 h-37 object-cover mb-4 rounded-lg shadow-xl"
           />

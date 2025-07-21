@@ -170,7 +170,7 @@ const AutoResizeCaption = () => {
         src={
           postOverlay?.caption?.icon
             ? `https:${postOverlay?.caption?.icon}`
-            : "./images/sun_max_indicator_Normal@3x.png"
+            : "./images/sun_max_indicator.png"
         }
         alt={postOverlay?.caption?.condition || "Thời tiết"}
             className="w-6 h-6"

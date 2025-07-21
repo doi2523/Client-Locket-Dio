@@ -176,13 +176,13 @@ export default function GeneralThemes({ title }) {
     {
       id: "music",
       icon: (
-        <img src="./images/music_icon_Normal@3x.png" className="w-6 h-6 mr-2" />
+        <img src="./icons/music_icon.png" className="w-6 h-6 mr-2" />
       ),
       label: "Đang phát",
     },
     {
       id: "review",
-      icon: <img src="./images/star.png" className="w-5 h-5 mr-2" />,
+      icon: <img src="./icons/star_icon.png" className="w-5 h-5 mr-2" />,
       label: "Review",
     },
     {
@@ -197,7 +197,7 @@ export default function GeneralThemes({ title }) {
           src={
             weather?.icon
               ? `https:${weather.icon}`
-              : "./images/sun_max_indicator_Normal@3x.png"
+              : "./icons/sun_max_indicator.png"
           }
           alt={weather?.condition || "Thời tiết"}
           className="w-6 h-6 mr-1"
@@ -220,7 +220,7 @@ export default function GeneralThemes({ title }) {
     },
     {
       id: "heart",
-      icon: <img src="./images/heart_icon_red.svg" className="w-6 h-6 mr-1" />,
+      icon: <img src="./svg/heart-icon.svg" className="w-6 h-6 mr-1" />,
       label: "inlove",
     },
     {

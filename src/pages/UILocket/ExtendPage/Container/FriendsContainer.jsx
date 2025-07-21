@@ -170,7 +170,7 @@ const FriendsContainer = () => {
 
   return (
     <div
-      className={`fixed inset-0 z-90 flex justify-center items-end transition-all duration-500 ${
+      className={`fixed inset-0 z-90 flex justify-center items-end transition-all duration-800 ease-in-out ${
         isFriendsTabOpen
           ? "translate-y-0"
           : "pointer-events-none translate-y-full"
@@ -178,7 +178,7 @@ const FriendsContainer = () => {
     >
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-base-100/10 backdrop-blur-[2px] bg-opacity-50 transition-opacity duration-500 ${
+        className={`fixed inset-0 bg-base-100/10 backdrop-blur-[2px] bg-opacity-50 transition-opacity duration-800 ${
           isFriendsTabOpen ? "opacity-100" : "opacity-0"
         }`}
         onClick={() => {

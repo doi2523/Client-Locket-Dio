@@ -250,7 +250,7 @@ const MediaPreview = ({ capturedMedia }) => {
               onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
               className="pointer-events-auto w-7 h-7 p-1.5 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center"
             >
-              <img src="/images/bolt.fill.png" alt="" />
+              <img src="/icons/bolt.fill.png" alt="" />
             </button>
 
             <button
