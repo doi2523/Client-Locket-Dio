@@ -17,6 +17,7 @@ import {
   updateUserInfo,
 } from "../services";
 import api from "../lib/axios";
+import { bulkAddMoments } from "../cache/momentDB";
 
 export const AuthContext = createContext();
 
@@ -59,6 +60,27 @@ export const AuthProvider = ({ children }) => {
   //       })
   //       .catch((err) => console.warn("❌ Ping lỗi", err));
   //   }
+  // }, []);
+  // useEffect(() => {
+  //   const fetchMoments = async () => {
+  //     try {
+  //       const res = await api.post("/locket/reactMomentV2", {
+  //         reactionInfo: {
+  //           emoji: "💛", // Thay bằng uid thực tế hoặc state
+  //           moment_id: "yxYlqsP7lsq74AfXyNMG", // Tuỳ nhu cầu
+  //           intensity: 1000,
+  //         },
+  //         // thêm dữ liệu cần gửi vào đây
+  //       });
+
+  //       const moments = res.data.data;
+  //       console.log("✅ Connected, moments:", moments);
+  //     } catch (err) {
+  //       console.warn("❌ Ping lỗi", err);
+  //     }
+  //   };
+
+  //   fetchMoments();
   // }, []);
 
   useEffect(() => {
@@ -135,23 +157,22 @@ export const AuthProvider = ({ children }) => {
       hasFetchedPlan.current = true;
     }
   };
-  
+
   useEffect(() => {
     if (!user || !authTokens?.idToken || !authTokens?.localId) return;
-  
+
     const init = async () => {
       if (!hasFetchedPlan.current) {
         await fetchPlan(); // Đợi fetchPlan xong
       }
-  
+
       await updateUserInfo(user); // Gọi sau khi fetchPlan hoàn tất
       const stats = await getStats();
-      setUploadStats(stats)
+      setUploadStats(stats);
     };
-  
+
     init();
   }, [user, authTokens?.idToken, authTokens?.localId]);
-   
 
   // useEffect(() => {
   //   const checkAndRefreshPlan = async () => {

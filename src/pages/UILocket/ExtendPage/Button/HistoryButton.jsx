@@ -24,10 +24,10 @@ const HistoryArrow = () => {
       onClick={handleClick}
     >
       <div className="flex items-center justify-center space-x-2">
-        <div className="bg-accent text-base-content font-semibold px-[9px] py-0.5 rounded-lg shadow-md">
+        {/* <div className="bg-accent text-base-content font-semibold px-[9px] py-0.5 rounded-lg shadow-md">
           {recentPosts.length}
-        </div>
-        <span className="text-md font-semibold text-base-content">Lịch sử</span>
+        </div> */}
+        <span className="text-xl font-semibold text-base-content">Lịch sử</span>
       </div>
       <svg
         width="40"

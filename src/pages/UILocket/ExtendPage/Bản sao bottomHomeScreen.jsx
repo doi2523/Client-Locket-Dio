@@ -16,8 +16,7 @@ import FlyingEmojiEffect from "./Container/FlyingEmojiEffect";
 const BottomHomeScreen = () => {
   const { user } = useContext(AuthContext);
   const { navigation, post } = useApp();
-  const { isBottomOpen, setIsBottomOpen, showFlyingEffect, flyingEmojis } =
-    navigation;
+  const { isBottomOpen, setIsBottomOpen, showFlyingEffect, flyingEmojis } = navigation;
   const {
     recentPosts,
     setRecentPosts,
@@ -152,7 +151,7 @@ const BottomHomeScreen = () => {
           : "translate-y-full opacity-0"
       }`}
     >
-      <EmojiPicker />
+      <EmojiPicker/>
       {/* Header */}
       <HeaderHistory />
 
@@ -186,46 +185,50 @@ const BottomHomeScreen = () => {
       </div>
 
       {/* Bottom Button */}
-      {(selectedMoment == null && selectedQueue == null) && (
-        <div className="w-full fixed bottom-0 px-5 py-5 text-base-content z-30">
-          <div className="grid grid-cols-3 items-center">
-            {/* Left: Close viewer button */}
-            <div className="flex justify-start">
-              {selectedMoment !== null && selectedQueue !== undefined && (
-                <button
-                  className="p-2 text-base-content tooltip tooltip-right cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
-                  onClick={handleCloseMedia}
-                  data-tip="Bấm để xem danh sách lưới"
-                >
-                  <LayoutGrid size={28} />
-                </button>
-              )}
-            </div>
+      <div className="w-full fixed bottom-0 px-5 py-5 text-base-content z-30">
+        {(typeof selectedMoment === "number" ||
+          typeof selectedQueue === "number") && (
+            <InputForMoment/>
+        )}
 
-            {/* Center: Home button */}
-            <div className="flex justify-center scale-75">
+        <div className="grid grid-cols-3 items-center">
+          {/* Left: Close viewer button */}
+          <div className="flex justify-start">
+            {selectedMoment !== null && selectedMoment !== undefined && (
               <button
-                onClick={handleReturnHome}
-                className="relative flex items-center justify-center w-20 h-20"
+                className="p-2 text-base-content tooltip tooltip-right cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
+                onClick={handleCloseMedia}
+                data-tip="Bấm để xem danh sách lưới"
               >
-                <div className="absolute w-20 h-20 border-4 border-base-content/30 rounded-full z-10"></div>
-                <div className="absolute rounded-full w-16 h-16 bg-base-content z-0 hover:scale-105 transition-transform"></div>
+                <LayoutGrid size={28} />
               </button>
-            </div>
+            )}
+          </div>
 
-            {/* Right: Delete button */}
-            <div className="flex justify-end">
-              <button
-                onClick={handleDelete}
-                className="p-2 text-base-content tooltip-left tooltip cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
-                data-tip="Bấm để xoá ảnh"
-              >
-                <Trash2 size={28} />
-              </button>
-            </div>
+          {/* Center: Home button */}
+          <div className="flex justify-center scale-75">
+            <button
+              onClick={handleReturnHome}
+              className="relative flex items-center justify-center w-20 h-20"
+            >
+              <div className="absolute w-20 h-20 border-4 border-base-content/30 rounded-full z-10"></div>
+              <div className="absolute rounded-full w-16 h-16 bg-base-content z-0 hover:scale-105 transition-transform"></div>
+            </button>
+          </div>
+
+          {/* Right: Delete button */}
+          <div className="flex justify-end">
+            <button
+              onClick={handleDelete}
+              className="p-2 text-base-content tooltip-left tooltip cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
+              data-tip="Bấm để xoá ảnh"
+            >
+              <Trash2 size={28} />
+            </button>
           </div>
         </div>
-      )}
+      </div>
+      
     </div>
   );
 };

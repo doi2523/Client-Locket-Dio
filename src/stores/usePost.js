@@ -53,6 +53,20 @@ export const usePost = () => {
     }
   }, [userPlan]);
 
+  const [selectedMoment, setSelectedMoment] = useState(null);
+  const [selectedMomentId, setSelectedMomentId] = useState(null);
+
+  const [selectedQueue, setSelectedQueue] = useState(null);
+
+  const [selectedFriendUid, setSelectedFriendUid] = useState(null);
+
+        const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [reactionInfo, setReactionInfo] = useState({
+    emoji: "💛",
+    moment_id: null,
+    intensity: 1000,
+  });  
+
   return {
     caption,
     setCaption,
@@ -82,5 +96,11 @@ export const usePost = () => {
     setMaxVideoSizeMB,
     uploadPayloads,
     setuploadPayloads,
+    selectedMoment, setSelectedMoment,
+    selectedMomentId, setSelectedMomentId,
+    selectedQueue, setSelectedQueue,
+    selectedFriendUid, setSelectedFriendUid,
+    reactionInfo, setReactionInfo,
+    showEmojiPicker, setShowEmojiPicker
   };
 };

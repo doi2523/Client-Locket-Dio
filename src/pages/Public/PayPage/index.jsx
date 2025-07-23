@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../context/AuthLocket";
 import LoadingPage from "../../../components/pages/LoadingPage";
 import { Copy, XCircle } from "lucide-react";
-import { API_URL } from "../../../utils";
-import axios from "axios";
 import VietQRImage from "./QrCodeImage";
+import * as services from "../../../services";
+import { showSuccess } from "../../../components/Toast";
 
 export default function PayPage() {
   const { user } = useContext(AuthContext);
@@ -16,6 +16,7 @@ export default function PayPage() {
 
   const [plan, SetOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingRecheck, setLoadingRecheck] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const transferContent = `${user?.uid || "unknown"} - ${plan?.id}`;
@@ -24,10 +25,8 @@ export default function PayPage() {
     if (!orderId) return;
     const fetchPlan = async () => {
       try {
-        const res = await axios.post(`${API_URL.CHECK_SERVER}api/od`, {
-          id: orderId,
-        });
-        SetOrder(res.data.data);
+        const data = await services.GetInfoOrder(orderId);
+        SetOrder(data);
       } catch (error) {
         console.error("Lỗi khi lấy gói:", error);
       } finally {
@@ -48,16 +47,25 @@ export default function PayPage() {
   };
 
   const recheckOrder = async () => {
-    // setLoading(true);
+    setLoadingRecheck(true);
     try {
-      const res = await axios.post(`${API_URL.CHECK_SERVER}api/od`, {
-        id: orderId,
-      });
-      SetOrder(res.data.data);
+      const data = await services.GetInfoOrder(orderId);
+
+      if (data?.status === "PENDING") {
+        showWarning("⏳ Đơn hàng chưa được thanh toán.");
+      } else if (data?.status === "PAID") {
+        showSuccess("✅ Đơn hàng đã thanh toán thành công!");
+      } else if (data?.status === "CANCELLED") {
+        showWarning("❌ Đơn hàng đã bị huỷ.");
+      } else {
+        showWarning("⚠️ Trạng thái đơn hàng không xác định.");
+      }
+      
+      SetOrder(data);
     } catch (error) {
       console.error("Lỗi khi kiểm tra lại đơn hàng:", error);
     } finally {
-      // setLoading(false);
+      setLoadingRecheck(false);
     }
   };
   const handleCancelOrder = async ({ orderId, orderCode, onSuccess }) => {
@@ -67,18 +75,7 @@ export default function PayPage() {
     if (!confirmCancel) return;
 
     try {
-      await axios.post(
-        `${API_URL.CHECK_SERVER}api/orders/cancel`,
-        {
-          orderId,
-          orderCode,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await services.CancelToOrder(orderId, orderCode);
 
       alert("✅ Giao dịch đã được huỷ.");
       if (onSuccess) onSuccess(); // callback nếu có
@@ -117,8 +114,8 @@ export default function PayPage() {
             Quét mã QR để thanh toán
           </h2>
           <VietQRImage
-            description={plan.payos_description}
-            amount={plan.price}
+            description={plan.info_order.description}
+            amount={plan.info_order.amount}
           />
 
           <div className="grid grid-cols-2 gap-4 text-center text-sm w-full max-w-xs">
@@ -180,7 +177,9 @@ export default function PayPage() {
               {/* Chủ tài khoản */}
               <div>
                 <p className="text-xs text-gray-500">Chủ tài khoản</p>
-                <p className="text-sm font-medium text-primary">DAO VAN DOI</p>
+                <p className="text-sm font-medium text-primary">
+                  {plan.bank_info.accountName}
+                </p>
               </div>
 
               {/* Số tài khoản */}
@@ -188,11 +187,13 @@ export default function PayPage() {
                 <p className="text-xs text-gray-500">Số tài khoản</p>
                 <div className="flex items-center justify-between px-3 py-2 bg-base-200 rounded-md">
                   <span className="font-semibold text-primary">
-                    66222222222266
+                    {plan.bank_info.accountNumber}
                   </span>
                   <button
                     onClick={() => {
-                      navigator.clipboard.writeText("66222222222266");
+                      navigator.clipboard.writeText(
+                        plan.bank_info.accountNumber
+                      );
                       setCopied("stk");
                       setTimeout(() => setCopied(false), 1500);
                     }}
@@ -238,12 +239,12 @@ export default function PayPage() {
                 <p className="text-xs text-gray-500">Nội dung</p>
                 <div className="flex items-center justify-between px-3 py-2 bg-base-200 rounded-md">
                   <span className="font-semibold text-primary">
-                    {plan?.payos_description}
+                    {plan.info_order.description}
                   </span>
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(
-                        `NAP-${user?.uid || "UID"}`
+                        plan.info_order.description
                       );
                       setCopied("content");
                       setTimeout(() => setCopied(false), 1500);
@@ -278,7 +279,7 @@ export default function PayPage() {
                   onClick={() =>
                     handleCancelOrder({
                       orderId: plan?.id,
-                      orderCode: plan?.payos_order_code,
+                      orderCode: plan?.info_order.orderCode,
                       onSuccess: () => navigate(-1),
                     })
                   }
@@ -288,10 +289,11 @@ export default function PayPage() {
                   <span>Huỷ giao dịch</span>
                 </button>
                 <button
+                  disabled={loadingRecheck}
                   onClick={recheckOrder}
                   className="btn btn-primary flex-1"
                 >
-                  Kiểm tra thanh toán
+                  {loadingRecheck ? "Đang kiểm tra..." : "Kiểm tra thanh toán"}
                 </button>
               </>
             ) : (

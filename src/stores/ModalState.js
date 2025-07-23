@@ -8,6 +8,8 @@ export const ModalState = () => {
   const [isModalNotifyOpen, setIsModalNotifyOpen] = useState(false);
   const [notifyMessage, setNotifyMessage] = useState(""); // nội dung thông báo
 
+  const [isModalMoment, setIsModalMoment] = useState(false);
+
   return {
     // Modal đăng ký thành viên
     isModalRegMemberOpen, setIsModalRegMemberOpen,
@@ -15,6 +17,7 @@ export const ModalState = () => {
 
     // Modal thông báo lỗi/chặn truy cập
     isModalNotifyOpen, setIsModalNotifyOpen,
-    notifyMessage, setNotifyMessage
+    notifyMessage, setNotifyMessage,
+    isModalMoment, setIsModalMoment
   };
 };

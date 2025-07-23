@@ -3,9 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Copy, ArrowLeft, Check, X } from "lucide-react";
 import { AuthContext } from "../../../context/AuthLocket";
 import LoadingPage from "../../../components/pages/LoadingPage";
-import { API_URL } from "../../../utils";
+import { API_URL, PAYMENT_API_URL } from "../../../utils";
 import api from "../../../lib/axios";
-import axios from "axios";
+import * as services from "../../../services";
 
 const FEATURE_LABELS = {
   image_upload: "Cho phép đăng ảnh",
@@ -121,12 +121,12 @@ export default function PlanDetailPage() {
       setLoadingCreate(true);
 
       // Gửi API tạo đơn hàng (axios-style)
-      const response = await api.post("/api/orders", {
-        planId: planData.id,
-        price: planData.price,
-      });
+      const response = await services.CreateNewOrder(
+        planData.id,
+        planData.price
+      );
 
-      const data = response.data;
+      const data = response;
 
       if (data?.ExistingOrder) {
         const confirm = window.confirm(
@@ -136,11 +136,7 @@ export default function PlanDetailPage() {
         if (!confirm) {
           // Gọi API huỷ đơn hàng
           try {
-            await api.post("/api/orders/cancel", {
-              ExistingOrder: data.ExistingOrder,
-              orderCode: data.orderCode, // nếu cần cho PayOS
-              orderId: data.orderId,
-            });
+            await services.CancelToOrder(data.orderId, data.orderCode);
 
             alert("✅ Đơn hàng đã được huỷ.");
           } catch (error) {

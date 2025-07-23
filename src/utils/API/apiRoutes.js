@@ -7,6 +7,7 @@
 const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
 const BASE_DB_API_URL = import.meta.env.VITE_BASE_API_URL_DB;
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+export const PAYMENT_API_URL = import.meta.env.VITE_PAYMENT_API_URL;
 // const BASE_API_URL = "https://apilocket-diov2-production.up.railway.app";
 
 const LOCKET_URL = "/locket";

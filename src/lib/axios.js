@@ -81,7 +81,7 @@ function handleLogout() {
 
 // Khởi tạo axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "/api",
+  baseURL: import.meta.env.VITE_BASE_API_URL || "/api",
   withCredentials: true,
 });
 

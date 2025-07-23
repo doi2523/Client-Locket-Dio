@@ -26,6 +26,8 @@ export const useNavigation = () => {
       setIsFullview(true);
     }
   }, []);
+    const [showFlyingEffect, setShowFlyingEffect] = useState(false);
+    const [flyingEmojis, setFlyingEmojis] = useState(null);
 
   return {
     isProfileOpen,
@@ -44,5 +46,7 @@ export const useNavigation = () => {
     setIsFullview,
     isSettingTabOpen,
     setSettingTabOpen,
+    showFlyingEffect, setShowFlyingEffect,
+    flyingEmojis, setFlyingEmojis
   };
 };

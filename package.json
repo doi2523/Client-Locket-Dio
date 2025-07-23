@@ -14,6 +14,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.0.9",
     "axios": "^1.8.1",
+    "dexie": "^4.0.11",
     "firebase": "^11.9.0",
     "framer-motion": "^12.4.10",
     "jwt-decode": "^4.0.0",
