@@ -15,7 +15,7 @@
 
 [![React](https://img.shields.io/badge/React-18.2+-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.0+-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-ES6+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/docs/Web/JavaScript)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0+-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 
 [**🌐 Demo Trực Tiếp**](https://locket-dio.space) | [**📱 Repo Frontend**](https://github.com/doi2523/Client-Locket-Dio) | [**💬 Telegram**](https://t.me/ddevdio) | [**📖 Tài Liệu**](#-tài-liệu)
