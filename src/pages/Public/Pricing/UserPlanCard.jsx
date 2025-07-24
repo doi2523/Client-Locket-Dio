@@ -65,7 +65,7 @@ export const UserPlanCard = React.memo(
     // Memoize the rendered JSX to prevent unnecessary re-renders
     return useMemo(
       () => (
-        <div className="max-w-2xl mx-auto bg-gradient-to-br from-white via-purple-50 to-purple-100 border border-purple-200 rounded-3xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl mb-8">
+        <div className="max-w-2xl mx-auto bg-gradient-to-br from-white via-purple-50 to-purple-100 border border-purple-200 rounded-3xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
           {/* Header với Avatar và Badge */}
           <div className="relative bg-gradient-to-r p-4 lg:p-4 text-base-content mx-1">
             <div className="flex items-center justify-between">

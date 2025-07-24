@@ -154,39 +154,43 @@ const BottomHomeScreen = () => {
     >
       <EmojiPicker />
       {/* Header */}
-      <HeaderHistory />
 
       <FlyingEmojiEffect emoji={flyingEmojis} show={showFlyingEffect} />
 
       {/* Main content area */}
-      <div className="flex-1 overflow-hidden relative pt-16">
-        <div
-          className={`overflow-auto h-full p-2 transition-all duration-500 ${
-            selectedAnimate ? "opacity-0 scale-90" : "opacity-100 scale-100"
-          }`}
-        >
-          <UploadingQueue
-            payloads={uploadPayloads}
-            setuploadPayloads={setuploadPayloads}
-            handleLoaded={handleLoaded}
-            setselectItems={setselectItems}
-          />
-          <MomentsGrid />
+      <div className="flex-1 overflow-hidden relative">
+        <div className={`overflow-auto h-full transition-all duration-500`}>
+          <div className="sticky top-0 z-50">
+            <HeaderHistory />
+          </div>
+          <div
+            className={`${
+              selectedAnimate ? "opacity-0 scale-90" : "opacity-100 scale-100"
+            }`}
+          >
+            <UploadingQueue
+              payloads={uploadPayloads}
+              setuploadPayloads={setuploadPayloads}
+              handleLoaded={handleLoaded}
+              setselectItems={setselectItems}
+            />
+            <MomentsGrid />
+          </div>
+
+          {typeof selectedMoment === "number" ||
+          typeof selectedQueue === "number" ? (
+            <div className="absolute inset-0 z-20">
+              {typeof selectedMoment === "number" && (
+                <MomentViewer visibleCount={visibleCount} />
+              )}
+              {typeof selectedQueue === "number" && <QueueViewer />}
+            </div>
+          ) : null}
         </div>
         {/* Nếu đang chọn Moment hoặc Queue thì hiển thị Viewer */}
-        {typeof selectedMoment === "number" ||
-        typeof selectedQueue === "number" ? (
-          <div className="absolute inset-0 z-20">
-            {typeof selectedMoment === "number" && (
-              <MomentViewer visibleCount={visibleCount} />
-            )}
-            {typeof selectedQueue === "number" && <QueueViewer />}
-          </div>
-        ) : null}
       </div>
-
       {/* Bottom Button */}
-      {(selectedMoment == null && selectedQueue == null) && (
+      {selectedMoment == null && selectedQueue == null && (
         <div className="w-full fixed bottom-0 px-5 py-5 text-base-content z-30">
           <div className="grid grid-cols-3 items-center">
             {/* Left: Close viewer button */}

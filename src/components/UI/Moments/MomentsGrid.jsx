@@ -210,6 +210,14 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount = 20 }) => {
               onClick={() => {
                 setSelectedMoment(index);
                 setSelectedMomentId(item.id);
+                console.log("🟢 Clicked moment:", {
+                  index,
+                  id: item.id,
+                  caption: item.caption,
+                  date: item.date,
+                  thumbnail: item.thumbnail_url,
+                  isVideo: !!item.video_url,
+                });
               }}              
               className="aspect-square overflow-hidden cursor-pointer rounded-2xl relative group"
             >

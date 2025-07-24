@@ -1,15 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { useApp } from "../../../context/AppContext";
-import { getAllMoments } from "../../../cache/momentDB";
+import { getAllMoments, getMomentsByUser } from "../../../cache/momentDB";
 import { Heart, Send, Smile, ThumbsUp, X } from "lucide-react";
 import LoadingRing from "../Loading/ring";
 import BottomMenu from "./BottomMenu";
 import { AuthContext } from "../../../context/AuthLocket";
 
 const MomentViewer = () => {
-  const { user: me } = useContext(AuthContext)
+  const { user: me } = useContext(AuthContext);
   const { post } = useApp();
-  const { selectedMoment, setSelectedMoment } = post;
+  const { selectedMoment, setSelectedMoment, selectedMomentId, selectedFriendUid } = post;
 
   const [moments, setMoments] = useState([]);
 
@@ -18,13 +18,21 @@ const MomentViewer = () => {
   useEffect(() => {
     const fetchMoments = async () => {
       setLoading(true);
+      if (selectedFriendUid !== null) {
+        setLoading(true);
+        const data = await getMomentsByUser(selectedFriendUid);
+        const sorted = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setMoments(sorted);
+        setLoading(false);
+        return;
+      }
       const data = await getAllMoments();
       const sorted = data.sort((a, b) => new Date(b.date) - new Date(a.date));
       setMoments(sorted);
       setLoading(false);
     };
     fetchMoments();
-  }, []);
+  }, [selectedMomentId]);
 
   // Hiện tại có moment không?
   const hasValidMoment =
@@ -205,17 +213,18 @@ const MomentViewer = () => {
           {(() => {
             const user = getUserFromFriendDetails(currentMoment?.user);
 
-            if (!user) return (
-              <div className="flex items-center gap-1">
-              <img
-                src={me?.profilePicture || "./prvlocket.png"}
-                alt={me?.fullName}
-                className="w-10 h-10 rounded-full object-cover"
-              />
-              <span className="truncate max-w-[80px]">Bạn</span>
-              <span className="mx-1">·</span>
-            </div>
-            );
+            if (!user)
+              return (
+                <div className="flex items-center gap-1">
+                  <img
+                    src={me?.profilePicture || "./prvlocket.png"}
+                    alt={me?.fullName}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <span className="truncate max-w-[80px]">Bạn</span>
+                  <span className="mx-1">·</span>
+                </div>
+              );
             const fullName = `${user.firstName} ${user.lastName || ""}`.trim();
             const shortName =
               fullName.length > 10 ? fullName.slice(0, 10) + "…" : fullName;

@@ -5,6 +5,7 @@ import { AuthContext } from "../../../../context/AuthLocket";
 import { HiUsers } from "react-icons/hi2";
 import { useApp } from "../../../../context/AppContext";
 import Avatar from "../Badge/Avatar";
+import { showWarning } from "../../../../components/Toast";
 
 const HeaderHistory = () => {
   const { friendDetails, user } = useContext(AuthContext);
@@ -18,6 +19,10 @@ const HeaderHistory = () => {
   const [isVisible, setIsVisible] = useState(false); // Điều khiển mount/unmount
   const [searchTerm, setSearchTerm] = useState("");
   const [friendName, setFriendName] = useState("Mọi người");
+
+  const truncateName = (name, length = 10) => {
+    return name.length > length ? name.slice(0, length) + "..." : name;
+  };
 
   const toggleDropdown = () => {
     if (!isVisible) {
@@ -45,8 +50,12 @@ const HeaderHistory = () => {
     setTimeout(() => setIsVisible(false), 500);
   };
 
+  const Click = () => {
+    showWarning("Chưa hỗ trợ điều này!");
+  };
+
   return (
-    <div className="w-full px-4 py-2 text-base-content absolute z-60 top-0">
+    <div className="w-full px-4 py-2 text-base-content z-50 top-0 sticky">
       <div className="grid grid-cols-3 items-center">
         {/* Trái: Badge */}
         <div className="flex justify-start items-center">
@@ -57,9 +66,9 @@ const HeaderHistory = () => {
         <div className="flex justify-center items-center relative">
           <div
             onClick={toggleDropdown}
-            className="bg-base-300/20 drop-shadow-2xl backdrop-blur-md px-4 py-2.5 rounded-3xl font-semibold text-md flex items-center cursor-pointer hover:bg-base-300 transition"
+            className="bg-base-300/20 whitespace-nowrap drop-shadow-2xl backdrop-blur-md px-4 py-2.5 rounded-3xl font-semibold text-md flex items-center cursor-pointer hover:bg-base-300 transition"
           >
-            {friendName}
+            {truncateName(friendName)}
             <ChevronDown
               className={`ml-1 w-5 h-5 transition-transform ${
                 isOpen ? "rotate-180" : ""
@@ -71,7 +80,10 @@ const HeaderHistory = () => {
 
         {/* Phải: Tin nhắn */}
         <div className="flex justify-end items-center">
-          <button className="rounded-full p-2 backdrop-blur-2xl relative">
+          <button
+            onClick={Click}
+            className="rounded-full p-2 backdrop-blur-2xl relative"
+          >
             <MessageCircle size={30} />
           </button>
         </div>

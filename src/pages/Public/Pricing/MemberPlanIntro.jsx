@@ -20,7 +20,7 @@ export default function MemberPlanIntro() {
   ];
 
   return (
-    <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-2xl p-4 shadow-xl">
+    <div className="bg-white/80 h-full backdrop-blur-md border border-gray-200 rounded-2xl p-4 shadow-xl">
       {/* Header */}
       <div className="flex items-center gap-2 mb-6">
         <div className="w-10 h-10 animated-gradient rounded-full flex items-center justify-center text-white">

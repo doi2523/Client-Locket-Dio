@@ -46,7 +46,7 @@ const BottomMenu = () => {
   };
 
   return (
-    <div className="w-full bottom-0 px-5 py-5 text-base-content space-y-6">
+    <div className="w-full bottom-0 px-5 pb-5 text-base-content space-y-3">
       {/* Input chỉ hiện khi có selected */}
       {(typeof selectedMoment === "number" ||
         typeof selectedQueue === "number") && <InputForMoment />}
