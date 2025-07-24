@@ -91,3 +91,17 @@ export const logout = async () => {
     throw error.response?.data || error.message; // ✅ Trả về lỗi nếu có
   }
 };
+
+export const GetUserData = async () => {
+  try {
+    const res = await api.get("/api/me");
+    return res.data?.data;
+  } catch (error) {
+    console.error(
+      "❌ Lỗi khi lấy thông tin người dùng:",
+      error.response?.data || error.message
+    );
+    throw error.response?.data || error.message;
+  }
+};
+

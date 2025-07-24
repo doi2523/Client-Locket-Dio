@@ -110,6 +110,7 @@ export const refreshFriends = async () => {
     return null;
   }
 };
+
 export const getListRequestFriend = async (pageToken = null) => {
   try {
     const res = await api.post(utils.API_URL.GET_INCOMING_URL, {
@@ -154,6 +155,62 @@ export const getListRequestFriend = async (pageToken = null) => {
     }
   }
 };
+
+export const loadFriendDetails = async (friends) => {
+  // Ưu tiên lấy dữ liệu từ localStorage trước
+  const savedDetails = localStorage.getItem("friendDetails");
+
+  if (savedDetails) {
+    try {
+      const parsedDetails = JSON.parse(savedDetails);
+      return parsedDetails;
+    } catch (error) {
+      console.error("❌ Parse friendDetails error:", error);
+      // Tiếp tục fetch nếu lỗi
+    }
+  }
+
+  if (!friends || friends.length === 0) {
+    return []; // Không fetch nếu không có bạn bè
+  }
+
+  const batchSize = 10;
+  const allResults = [];
+
+  for (let i = 0; i < friends.length; i += batchSize) {
+    const batch = friends.slice(i, i + batchSize);
+    try {
+      const results = await Promise.allSettled(
+        batch.map((friend) =>
+          fetchUser(friend?.uid).then((res) =>
+            utils.normalizeFriendData(res.data)
+          )
+        )
+      );
+
+      const successResults = results
+        .filter((r) => r.status === "fulfilled" && r.value)
+        .map((r) => r.value);
+
+      allResults.push(...successResults);
+
+      if (i + batchSize < friends.length) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    } catch (err) {
+      console.error("❌ Lỗi khi xử lý batch:", err);
+    }
+  }
+
+  try {
+    localStorage.setItem("friendDetails", JSON.stringify(allResults));
+  } catch (error) {
+    console.error("❌ Lỗi khi lưu vào localStorage:", error);
+  }
+
+  return allResults;
+};
+
 // Hàm xoá nhiều lời mời (tối đa 50 mỗi lần)
 // export const rejectMultipleFriendRequests = async (
 //   uidList = [],

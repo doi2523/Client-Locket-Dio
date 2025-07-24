@@ -17,7 +17,6 @@ import PayPage from "../pages/Public/PayPage";
 import PricingPage from "../pages/Public/Pricing";
 import PlanDetailPage from "../pages/Public/PricingDetail";
 import PrivacyPolicy from "../pages/Public/PrivacyPolicy";
-import RegisterMemberPage from "../pages/Public/RegisterMemberPage";
 import Settings from "../pages/Public/Settings";
 import Timeline from "../pages/Public/Timeline";
 import CameraCapture from "../pages/UILocket";
@@ -41,7 +40,6 @@ const publicRoutes = [
   { path: "/contact", component: Contact, title: `${APP_NAME} | Liên hệ` },
   { path: "/privacy", component: PrivacyPolicy, title: `${APP_NAME} | Privacy Policy for LocketDio - PrivacyPolicies.com` },
   { path: "/testv1", component: CameraCapture, title: `${APP_NAME} | Test` },
-  { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
   { path: "/pricing", component: PricingPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
   { path: "/locketdio-tools", component: ToolsLocket, title: `${APP_NAME} | Công cụ mở rộng` },
   { path: "/settings", component: Settings, title: `${APP_NAME} | Cài đặt` },
@@ -61,7 +59,6 @@ const authRoutes = [
   { path: "/aboutdio", component: AboutMe, title: `${APP_NAME} | Về Dio` },
   { path: "/docs", component: Docs, title: `${APP_NAME} | Docs` },
   { path: "/donatehistory", component: DonateHistory, title: `${APP_NAME} | DonateHistory` },
-  { path: "/upgrade", component: RegisterMemberPage, title: `${APP_NAME} | Đăng ký gói thành viên` },
   { path: "/settings", component: Settings, title: `${APP_NAME} | Cài đặt` },
   { path: "/devpage", component: DevPage, title: `${APP_NAME} | Dev Page` },
   { path: "/download", component: AddToHomeScreenGuide, title: `${APP_NAME} | Thêm ứng dụng vào màn hình chính` },

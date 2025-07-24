@@ -116,3 +116,14 @@ export const getStats = async () => {
     throw error;
   }
 };
+
+export const GetListInfoPlans = async () => {
+  try {
+    const response = await axios.get(utils.API_URL.GET_DIO_PLANS);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching upload stats:", error);
+    throw error;
+  }
+};

@@ -436,3 +436,25 @@
   animation-timing-function: ease-out;
   animation-fill-mode: forwards;
 }
+
+.animated-gradient {
+  background: linear-gradient(270deg, #9333ea, #ec4899, #9333ea);
+  background-size: 400% 400%;
+  color: white;
+  animation: gradientFlow 6s ease infinite;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+  border-radius: 9999px; /* full rounded */
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
