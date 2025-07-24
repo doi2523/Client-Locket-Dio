@@ -1,65 +1,543 @@
-# 📸 Locket Pro - Vite + React
+# 📸 Locket Dio
 
-**Locket Pro** là một WebApp mở rộng dành cho cộng đồng người dùng **Locket Widget**, cho phép bạn đăng ảnh và video dễ dàng, nhanh chóng trực tiếp từ trình duyệt trên Android hoặc máy tính.
+<div align="center">
 
-Với giao diện hiện đại, hiệu năng tối ưu và các tính năng tiện dụng, Locket Pro giúp bạn chia sẻ khoảnh khắc với người thân ngay trên màn hình chính của họ.
+<p align="center">
+  <img src="https://cdn.locket-dio.space/v1/images/locket-dio-logo.png" alt="Locket Dio Logo" width="200" />
+</p>
 
-> 🔗 Truy cập WebApp: [https://locket-dio.space](https://locket-dio.space)  
-> 💻 Repo Frontend: [https://github.com/doi2523/Client-Locket-Dio](https://github.com/doi2523/Client-Locket-Dio)
+**Ứng dụng web hiện đại dành cho cộng đồng Locket Widget - Chia sẻ ảnh và video ngay lập tức từ trình duyệt**
+
+[![Phiên bản](https://img.shields.io/badge/phiên_bản-1.0.0-blue.svg?cacheSeconds=2592000)](https://github.com/doi2523/Client-Locket-Dio/releases)
+[![Giấy phép: MIT](https://img.shields.io/badge/Giấy_phép-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Demo trực tiếp](https://img.shields.io/badge/demo-trực_tiếp-green.svg)](https://locket-dio.space)
+[![PRs được chào đón](https://img.shields.io/badge/PRs-được_chào_đón-brightgreen.svg)](http://makeapullrequest.com)
+
+[![React](https://img.shields.io/badge/React-18.2+-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5.0+-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-ES6+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0+-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+
+[**🌐 Demo Trực Tiếp**](https://locket-dio.space) | [**📱 Repo Frontend**](https://github.com/doi2523/Client-Locket-Dio) | [**💬 Telegram**](https://t.me/ddevdio) | [**📖 Tài Liệu**](#-tài-liệu)
+
+</div>
 
 ---
 
-## ✨ Tính năng nổi bật
+## 📋 Mục Lục
 
-- 🔐 **Đăng nhập nhanh chóng**: Tích hợp hệ thống xác thực đơn giản, tiện lợi.
-- 📷 **Chụp ảnh trực tiếp trên web**: Không cần rời khỏi trình duyệt.
-- 🎥 **Quay video ngay trong trình duyệt**: Ghi lại khoảnh khắc một cách tiện lợi.
-- 🖼️ **Tải ảnh/video từ thư viện**: Hỗ trợ đầy đủ upload từ thiết bị.
-- ✏️ **Tùy chỉnh caption**: Cho phép bạn thêm ghi chú hoặc cảm xúc theo sở thích.
-- ⚙️ **Giao diện hiện đại, tối ưu hiệu suất**: Hoạt động mượt mà cả trên điện thoại và desktop.
-- 👀 **Xem trước nội dung**: Trước khi gửi ảnh/video đến widget.
-- 🕰️ **Xem lại moment đã gửi**: Hệ thống lưu lịch sử các khoảnh khắc của bạn.
+- [✨ Tính Năng](#-tính-năng)
+- [🚀 Demo](#-demo)
+- [🛠️ Cài Đặt](#️-cài-đặt)
+- [⚙️ Cấu Hình](#️-cấu-hình)
+- [🏗️ Công Nghệ](#️-công-nghệ)
+- [📁 Cấu Trúc Dự Án](#-cấu-trúc-dự-án-tham-khảo)
+- [🔧 Tham Khảo API](#-tham-khảo-api)
+- [🤝 Đóng Góp](#-đóng-góp)
+- [📜 Giấy Phép](#-giấy-phép)
+- [👥 Tác Giả](#-tác-giả)
+- [🙏 Lời Cảm Ơn](#-lời-cảm-ơn)
+- [📞 Hỗ Trợ](#-hỗ-trợ)
 
 ---
 
-## 🖼️ Hình ảnh minh họa
+## ✨ Tính Năng
+
+### 🔐 Xác Thực & Bảo Mật
+- **🚀 Đăng Nhập Nhanh** - Hệ thống xác thực đơn giản và an toàn
+- **🔒 Bảo Mật Dữ Liệu** - Không lưu trữ dữ liệu người dùng, ưu tiên quyền riêng tư
+- **🛡️ Phiên Bảo Mật** - Xác thực dựa trên JWT token
+- **🔐 Bảo Vệ Route** - Bảo mật cấp độ đường dẫn
+
+### 📸 Camera & Quay Chụp
+- **📷 Truy Cập Camera Trực Tiếp** - Chụp ảnh ngay trong trình duyệt
+- **🎥 Quay Video HD** - Quay video chất lượng cao
+- **🔄 Chuyển Đổi Camera** - Hỗ trợ camera trước/sau trên di động
+- **⚡ Xem Trước Thời Gian Thực** - Live camera feed với điều khiển
+
+### 🖼️ Quản Lý Media
+- **📂 Tải File Lên** - Upload từ thư viện thiết bị
+- **👁️ Xem Trước Media** - Xem trước nội dung trước khi chia sẻ
+- **✂️ Cắt Thông Minh** - Cắt vuông với lựa chọn tùy chỉnh
+- **📝 Caption Tùy Chỉnh** - Thêm tin nhắn cá nhân hóa
+- **❤️ Tương Tác** - Hệ thống thả cảm xúc tương tác
+
+### 🎨 Trải Nghiệm Người Dùng
+- **📱 Thiết Kế Responsive** - Hoạt động trên mọi thiết bị và kích thước màn hình
+- **🌙 Giao Diện Hiện Đại** - Interface sạch sẽ, trực quan
+- **⚡ Hiệu Suất Nhanh** - Được tối ưu hóa với Vite bundler
+- **🔮 Animation Mượt Mà** - Được hỗ trợ bởi Framer Motion
+- **📊 Lịch Sử Moment** - Xem lại các khoảnh khắc đã chia sẻ
+
+### 🔔 Tính Năng Nâng Cao
+- **🔔 Thông Báo Đẩy** - Thông báo thời gian thực qua Firebase
+- **💾 Hỗ Trợ Offline** - IndexedDB cho chức năng offline
+- **🌐 PWA Sẵn Sàng** - Khả năng Progressive Web App
+- **☁️ Lưu Trữ Đám Mây** - Tích hợp Cloudinary cho media
+- **🎯 Theo Dõi Hiệu Suất** - Analytics tích hợp sẵn
+
+---
+
+## 🚀 Demo
+
+<div align="center">
+
+[![Demo Trực Tiếp](https://img.shields.io/badge/🎯_Demo_Trực_Tiếp-Truy_Cập_Ngay-FF6B6B?style=for-the-badge)](https://locket-dio.space)
+
+</div>
+
+### 📱 Ảnh Chụp Màn Hình
 
 <details>
-  <summary>Nhấn để xem ảnh giao diện</summary>
+<summary><strong>🖼️ Xem Ảnh Giao Diện</strong></summary>
 
-  <img src="./public/images/preview_1.jpg" width="300px" alt="Screenshot 1">
-  <img src="./public/images/preview_2.jpg" width="300px" alt="Screenshot 1">
-  <!-- Thêm các ảnh khác nếu có -->
-  
+<div align="center">
+  <img src="./public/images/preview_1.jpg" width="300px" alt="Giao diện chính" style="border-radius: 10px; margin: 10px;">
+  <img src="./public/images/preview_2.jpg" width="300px" alt="Tính năng Camera" style="border-radius: 10px; margin: 10px;">
+  <img src="./public/images/preview_3.jpg" width="300px" alt="Xem thư viện" style="border-radius: 10px; margin: 10px;">
+</div>
+
 </details>
 
 ---
 
-## 🤝 Đóng góp & Hỗ trợ
+## 🛠️ Cài Đặt
 
-Nếu bạn có ý tưởng hay phát hiện lỗi, đừng ngần ngại tạo **Issue** hoặc **Pull Request** để cùng mình cải thiện dự án.
-<p align="left">
-  <a target="_blank">
-    <img src="./public/images/buymeacoffe.png" alt="Image">
-  </a>
-</p>
-<p align="left">
-  <img src="./public/images/donate.jpg" alt="Ủng hộ" width="300px">
-</p>
+### 📋 Yêu Cầu Hệ Thống
+
+Trước khi bắt đầu, hãy đảm bảo bạn đã cài đặt:
+
+- **Node.js** >= 18.0.0
+- **npm** >= 8.0.0 hoặc **yarn** >= 1.22.0
+- **Git** để quản lý phiên bản
+
+### ⬇️ Clone Repository
+
+```bash
+git clone https://github.com/doi2523/Client-Locket-Dio.git
+cd Client-Locket-Dio
+```
+
+### 📦 Cài Đặt Dependencies
+
+Sử dụng npm:
+```bash
+npm install
+```
+
+Sử dụng yarn:
+```bash
+yarn install
+```
+
+### 🏃‍♂️ Chạy Development Server
+
+```bash
+npm run dev
+# hoặc
+yarn dev
+```
+
+Mở [http://localhost:5173](http://localhost:5173) để xem trong trình duyệt.
+
+### 🏗️ Build cho Production
+
+```bash
+npm run build
+# hoặc
+yarn build
+```
+
+### 👀 Xem Trước Production Build
+
+```bash
+npm run preview
+# hoặc
+yarn preview
+```
 
 ---
 
-## 📢 Ghi chú
+## ⚙️ Cấu Hình
 
-- Hệ thống **không lưu trữ thông tin người dùng**. Tất cả dữ liệu chỉ phục vụ chức năng tải ảnh/video.
-- **Backend hiện chưa được public** do chứa nhiều thành phần nội bộ và chưa sẵn sàng chia sẻ.
+### 🔧 Biến Môi Trường
+
+Tạo file `.env` trong thư mục gốc:
+
+```env
+# =========================
+# 🌐 Cấu Hình API
+# =========================
+
+# API chính cho logic, moments, users
+VITE_BASE_API_URL=https://apilocket-diov2.onrender.com
+
+# API test cơ sở dữ liệu
+VITE_BASE_API_URL_DB=http://localhost:3001
+
+# API thanh toán (PayOS hoặc cổng tùy chỉnh)
+VITE_PAYMENT_API_URL=http://localhost:5005
+
+# =========================
+# ☁️ Cấu Hình Cloudinary
+# =========================
+
+# Tên Cloudinary cloud để tải media lên
+VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name_here
+
+# =========================
+# 🔔 Thông Báo Đẩy
+# =========================
+
+# VAPID public key cho web push notifications
+VITE_VAPID_PUBLIC_KEY=your_vapid_public_key_here
+
+# =========================
+# 🔥 Cấu Hình Firebase
+# =========================
+
+# Firebase API key
+VITE_FIREBASE_API_KEY=your_firebase_api_key_here
+
+# Auth domain (định dạng: your-app.firebaseapp.com)
+VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain_here
+
+# Firebase project ID
+VITE_FIREBASE_PROJECT_ID=your_firebase_project_id_here
+
+# Storage bucket cho files, hình ảnh, video
+VITE_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket_here
+
+# Messaging sender ID cho push notifications
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id_here
+
+# Firebase app ID
+VITE_FIREBASE_APP_ID=your_firebase_app_id_here
+
+# Measurement ID cho Google Analytics
+VITE_FIREBASE_MEASUREMENT_ID=your_firebase_measurement_id_here
+```
+
+### 🔑 Lấy API Keys
+
+<details>
+<summary><strong>Thiết Lập Firebase</strong></summary>
+
+1. Truy cập [Firebase Console](https://console.firebase.google.com/)
+2. Tạo project mới hoặc chọn project hiện có
+3. Điều hướng đến Project Settings > General
+4. Copy các giá trị cấu hình vào file `.env` của bạn
+
+</details>
+
+<details>
+<summary><strong>Thiết Lập Cloudinary</strong></summary>
+
+1. Đăng ký tại [Cloudinary](https://cloudinary.com/)
+2. Truy cập Dashboard
+3. Copy Cloud Name của bạn vào `VITE_CLOUDINARY_CLOUD_NAME`
+
+</details>
 
 ---
 
-⭐ Nếu bạn thấy dự án hữu ích, hãy để lại một ⭐ trên repo để ủng hộ mình nhé!  
-📬 Tham gia kênh **Telegram**: https://t.me/ddevdio để cập nhật sự kiện và tính năng mới sớm nhất!
+## 🏗️ Công Nghệ
+
+<div align="center">
+
+| Frontend | Backend Services | Development |
+|----------|------------------|-------------|
+| [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/) | [![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/) | [![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/) |
+| [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript) | [![Cloudinary](https://img.shields.io/badge/Cloudinary-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)](https://cloudinary.com/) | [![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white)](https://eslint.org/) |
+| [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/) | [![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)](https://axios-http.com/) | [![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black)](https://prettier.io/) |
+| [![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/) | [![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)](https://jwt.io/) | |
+
+</div>
 
 ---
 
-© 2025 [Locket Dio](https://locket-dio.space) by Dio. All rights reserved.  
+## 📁 Cấu Trúc Dự Án Tham Khảo
 
+```
+Client-Locket-Dio/
+├── 📂 public/                      # Tài nguyên tĩnh, truy cập trực tiếp
+│   ├── 📁 images/                  # Ảnh minh họa, biểu tượng
+│   ├── 📄 favicon.ico             # Icon website
+│   ├── 📄 manifest.json           # Thông tin PWA (Progressive Web App)
+│   └── 📄 robots.txt              # Quy tắc crawl cho bot tìm kiếm
+│
+├── 📂 src/                         # Mã nguồn chính
+│   ├── 📁 assets/                 # Ảnh, font, video dùng trong code
+│   ├── 📁 components/             # Các thành phần UI tái sử dụng
+│   │   ├── 📁 common/            # Các UI nhỏ như Button, Modal, Icon
+│   │   ├── 📁 camera/            # Component Camera, Recorder
+│   │   ├── 📁 media/             # Preview, Editor, Upload
+│   │   └── 📁 auth/              # Đăng nhập, đăng ký, xác thực
+│   │
+│   ├── 📁 context/                # React Context: Auth, Theme, AppState...
+│   ├── 📁 cache/                  # Setting cache với indexDB...
+│   ├── 📁 config/                 # Cài đặt kết nối...
+│   ├── 📁 hooks/                  # Custom hooks: useAuth, useTheme...
+│   ├── 📁 layout/                 # MainLayout, LocketLayout...
+│   ├── 📁 pages/                  # Các trang chính: Home, Login, Moment...
+│   ├── 📁 routes/                 # Định tuyến React Router
+│   ├── 📁 services/               # Gọi API (axios/fetch)
+│   ├── 📁 lib/                    # Cấu trúc axios, fetch...
+│   ├── 📁 utils/                  # Hàm tiện ích: formatDate, validate...
+│   ├── 📁 constants/              # Biến cấu hình, enums, routes...
+│   ├── 📁 styles/                 # CSS/tailwind bổ sung (nếu cần)
+│   │   └── global.css
+│   │
+│   ├── ⚙️ App.jsx                 # App chính, chứa Router & Layout
+│   ├── ⚙️ main.jsx                # Entry Point chính
+│   ├── ⚙️ sw.jsx                  # Service Worker (PWA, push...)
+│   └── 📄 index.css               # CSS toàn cục (import Tailwind)
+│
+├── 📄 .env                        # Biến môi trường thực tế (không commit)
+├── 📄 .env.example                # Biến môi trường mẫu
+├── 📄 .gitignore                  # Bỏ qua file khi push Git
+├── 📄 README.md                  # Mô tả dự án
+│
+├── 📦 package.json               # Danh sách thư viện và script
+├── 📦 package-lock.json          # Khóa phiên bản chính xác
+│
+├── ⚙️ vite.config.js              # Cấu hình Vite và PWA
+├── 🎨 tailwind.config.js          # Cấu hình Tailwind CSS
+├── 🔥 firebase.json               # Cấu hình Firebase (hosting, rewrites)
+```
+
+---
+
+## 📚 Dependencies Chính
+
+| Package | Phiên Bản | Mô Tả |
+|---------|-----------|-------|
+| **Frontend Framework** |
+| `react` | ^18.2.0 | Thư viện React để xây dựng UI |
+| `react-dom` | ^18.2.0 | React DOM renderer |
+| `react-router-dom` | ^7.2.0 | Client-side routing |
+| **Styling & Animation** |
+| `@tailwindcss/vite` | ^4.0.9 | Tailwind CSS cho styling |
+| `lucide-react` | ^0.476.0 | Thư viện icon đẹp |
+| **Backend Integration** |
+| `firebase` | ^11.9.0 | Firebase SDK cho backend services |
+| `axios` | ^1.8.1 | HTTP client cho API calls |
+| `jwt-decode` | ^4.0.0 | JWT token decoder |
+| **Media & Storage** |
+| `dexie` | ^4.0.11 | IndexedDB wrapper cho offline storage |
+| `react-easy-crop` | ^5.4.2 | Component cắt hình ảnh |
+| **UI/UX Enhancement** |
+| `react-toastify` | ^11.0.5 | Hệ thống toast notification |
+
+---
+
+## 🔧 Tham Khảo API
+
+### 🔐 Xác Thực
+
+```http
+POST /locket/login
+Content-Type: application/json
+
+{
+  "username": "string",
+  "password": "string"
+}
+```
+
+### 📸 Tải Media Lên
+
+```http
+POST /locket/postMomentV2
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "model": "Version-UploadmediaV3.1",
+  "mediaInfo": {
+    "url": "https://cdn.example.com/path/to/file.jpg",
+    "path": "user_uploads/abc123.jpg",
+    "name": "abc123.jpg",
+    "size": 194203,
+    "contentType": "image/jpeg",
+    "timeCreated": "2025-07-24T14:30:00Z",
+    "type": "image"
+  },
+  "options": {
+    "caption": "Caption tuỳ chọn",
+    "overlay_id": "abc123",
+    "type": "caption_theme",
+    "icon": "❤️",
+    "text_color": "#FFFFFF",
+    "color_top": "#000000",
+    "color_bottom": "#FF0000",
+    "audience": "selected",
+    "recipients": ["uid1", "uid2"],
+    "music": "https://cdn.example.com/music.mp3"
+  }
+}
+```
+
+---
+
+## 🤝 Đóng Góp
+
+Chúng tôi yêu thích những đóng góp! Vui lòng đọc [Hướng Dẫn Đóng Góp](CONTRIBUTING.md) để tìm hiểu về quy trình phát triển, cách đề xuất sửa lỗi và cải tiến.
+
+### 🚀 Bắt Đầu Nhanh cho Contributors
+
+1. **Fork** repository này
+2. **Clone** fork của bạn: `git clone https://github.com/doi2523/Client-Locket-Dio.git`
+3. **Cài đặt** dependencies: `npm install`
+4. **Tạo** branch: `git checkout -b feature/new-feature-babi`
+5. **Thực hiện** thay đổi của bạn
+6. **Test** thay đổi: `npm run test`
+7. **Commit** thay đổi: `git commit -m 'Thêm tính năng tuyệt vời'`
+8. **Push** lên branch: `git push origin feature/tinh-nang-tuyet-voi`
+9. **Mở** Pull Request
+
+### 📋 Hướng Dẫn Phát Triển
+
+- Tuân theo style code hiện có
+- Viết commit message rõ ràng
+- Thêm test cho tính năng mới
+- Cập nhật tài liệu khi cần
+- Đảm bảo tất cả test pass trước khi submit PR
+
+### 🐛 Báo Cáo Lỗi
+
+Khi báo cáo lỗi, vui lòng bao gồm:
+
+- **Mô tả** vấn đề
+- **Các bước tái hiện** vấn đề
+- **Hành vi mong đợi**
+- **Screenshots** (nếu có)
+- **Chi tiết môi trường** (OS, trình duyệt, phiên bản)
+
+---
+
+## 🗺️ Lộ Trình
+
+- [ ] 🎨 **Chỉnh Sửa Hình Ảnh Nâng Cao** - Bộ lọc và hiệu ứng cho ảnh/video
+- [ ] 🌙 **Hệ Thống Theme** - Chế độ Dark/Light với nhiều theme
+- [ ] 🔔 **Thông Báo Nâng Cao** - Hệ thống push notification tiên tiến
+- [ ] 📱 **Progressive Web App** - Triển khai PWA đầy đủ
+- [ ] 🔍 **Tìm Kiếm & Khám Phá** - Tìm và khám phá moments
+- [ ] 👥 **Tính Năng Xã Hội** - Bạn bè, nhóm và chia sẻ
+
+---
+
+## 📊 Thống Kê Dự Án
+
+<div align="center">
+
+![GitHub stars](https://img.shields.io/github/stars/doi2523/Client-Locket-Dio?style=social)
+![GitHub forks](https://img.shields.io/github/forks/doi2523/Client-Locket-Dio?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/doi2523/Client-Locket-Dio?style=social)
+
+![GitHub last commit](https://img.shields.io/github/last-commit/doi2523/Client-Locket-Dio)
+![GitHub issues](https://img.shields.io/github/issues/doi2523/Client-Locket-Dio)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/doi2523/Client-Locket-Dio)
+![GitHub code size](https://img.shields.io/github/languages/code-size/doi2523/Client-Locket-Dio)
+
+</div>
+
+---
+
+## 📜 Giấy Phép
+
+Dự án này được cấp phép theo Giấy phép MIT - xem file [LICENSE](LICENSE) để biết chi tiết.
+
+```
+Giấy Phép MIT
+
+Bản quyền (c) 2025 Locket Dio
+
+Được cấp phép miễn phí cho bất kỳ ai có được bản sao
+của phần mềm này và các file tài liệu liên quan (gọi là "Phần mềm"), để xử lý
+Phần mềm mà không bị hạn chế, bao gồm không giới hạn các quyền
+sử dụng, sao chép, sửa đổi, hợp nhất, xuất bản, phân phối, cấp phép con và/hoặc bán
+các bản sao của Phần mềm, và cho phép những người được cung cấp
+Phần mềm làm như vậy, với điều kiện sau:
+
+Thông báo bản quyền này và thông báo cho phép này phải được bao gồm trong tất cả
+các bản sao hoặc phần quan trọng của Phần mềm.
+```
+
+---
+
+## 👥 Tác Giả
+
+<div align="center">
+
+**🚀 Được tạo với ❤️ bởi**
+
+[![Dio](https://img.shields.io/badge/👨‍💻_Dio-Lead_Developer-4285f4?style=for-the-badge)](https://github.com/doi2523)
+
+<a href="https://github.com/doi2523">
+  <img src="https://github.com/doi2523.png" width="100px" style="border-radius: 50%;">
+</a>
+
+**[Dio (@doi2523)](https://github.com/doi2523)**  
+*Full Stack Developer*
+
+</div>
+
+---
+
+## 🙏 Lời Cảm Ơn
+
+- 🎨 **Cảm Hứng Thiết Kế** - Xu hướng thiết kế web hiện đại và mẫu trải nghiệm người dùng
+- 📚 **Cộng Đồng Open Source** - Cho những thư viện và công cụ tuyệt vời
+- 🔥 **Đội Ngũ Firebase** - Vì đã cung cấp dịch vụ backend xuất sắc
+- ☁️ **Cloudinary** - Cho giải pháp quản lý media đáng tin cậy
+- 💡 **Cộng Đồng Locket Widget** - Vì cảm hứng và phản hồi
+- 🌟 **Contributors** - Mọi người đã đóng góp cho dự án này
+
+---
+
+## 📞 Hỗ Trợ
+
+<div align="center">
+
+### 💬 Nhận Trợ Giúp
+
+[![GitHub Issues](https://img.shields.io/badge/🐛_Báo_Cáo_Lỗi-GitHub_Issues-red?style=for-the-badge)](https://github.com/doi2523/Client-Locket-Dio/issues)
+[![GitHub Discussions](https://img.shields.io/badge/💡_Đề_Xuất_Tính_Năng-Discussions-purple?style=for-the-badge)](https://github.com/doi2523/Client-Locket-Dio/discussions)
+[![Telegram](https://img.shields.io/badge/💬_Cộng_Đồng-Telegram-26A5E4?style=for-the-badge&logo=telegram)](https://t.me/ddevdio)
+
+### ☕ Ủng Hộ Dự Án
+
+[![Buy Me A Coffee](https://img.shields.io/badge/☕_Mua_Cà_Phê-Ủng_Hộ_Phát_Triển-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/dio)
+[![Donate](https://img.shields.io/badge/💝_Ủng_Hộ-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://locket-dio.space/donate)
+
+</div>
+
+### 📧 Thông Tin Liên Hệ
+
+- **Email**: doibncm2003@gmail.com
+- **Website**: [https://locket-dio.space](https://locket-dio.space)
+- **Telegram**: [@ddevdio](https://t.me/ddevdio)
+- **GitHub**: [@doi2523](https://github.com/doi2523)
+
+---
+
+## ⚠️ Lưu Ý Quan Trọng
+
+> 🔒 **Ưu Tiên Quyền Riêng Tư**: Ứng dụng này tuân theo phương pháp ưu tiên quyền riêng tư. Chúng tôi không lưu trữ dữ liệu người dùng không cần thiết.
+
+> 🔧 **Trạng Thái Backend**: Dịch vụ backend hiện đang ở chế độ riêng tư và chứa các thành phần nội bộ chưa sẵn sàng để phát hành công khai.
+
+> 🌟 **Phát Triển Tích Cực**: Dự án này được duy trì và cập nhật thường xuyên.
+
+---
+
+<div align="center">
+
+### ⭐ Hãy Star repository này nếu bạn thấy hữu ích!
+
+**Được tạo với ❤️ bởi [Dio](https://github.com/doi2523) | © 2025 [Locket Dio](https://locket-dio.space) | Tất cả quyền được bảo lưu**
+
+[![Về đầu trang](https://img.shields.io/badge/⬆️_Về_Đầu_Trang-Nhấn_Vào_Đây-blue?style=for-the-badge)](#-locket-dio)
+
+</div>
