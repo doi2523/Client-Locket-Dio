@@ -247,7 +247,7 @@ const MomentViewer = () => {
       </div>
 
       {/* Bottom menu luôn cố định dưới cùng */}
-      <BottomMenu />
+      <BottomMenu onClick={handleClose}/>
     </div>
   );
 };

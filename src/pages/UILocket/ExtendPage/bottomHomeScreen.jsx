@@ -1,20 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../../context/AuthLocket";
-import { MessageCircle, Trash2, LayoutGrid, Send } from "lucide-react";
+import { Trash2, LayoutGrid } from "lucide-react";
 import { useApp } from "../../../context/AppContext";
 import { showSuccess, showWarning } from "../../../components/Toast";
-import BadgePlan from "./Badge";
 import UploadingQueue from "../../../components/UI/Moments/UploadingQueue";
 import MomentsGrid from "../../../components/UI/Moments/MomentsGrid";
 import MomentViewer from "../../../components/UI/Moments/MomentViewer";
 import QueueViewer from "../../../components/UI/Moments/QueueViewer";
 import HeaderHistory from "./Header/HeaderHistory";
-import InputForMoment from "../../../components/UI/Moments/InputForMoment";
 import EmojiPicker from "./Container/EmojiStudio";
 import FlyingEmojiEffect from "./Container/FlyingEmojiEffect";
 
 const BottomHomeScreen = () => {
-  const { user } = useContext(AuthContext);
   const { navigation, post } = useApp();
   const { isBottomOpen, setIsBottomOpen, showFlyingEffect, flyingEmojis } =
     navigation;
@@ -51,18 +47,6 @@ const BottomHomeScreen = () => {
     }
   }, [isBottomOpen, setRecentPosts]);
 
-  const handleClick = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsBottomOpen(false);
-      setVisibleCount(6);
-      setIsClosing(false);
-      setSelectedImage(null);
-      setSelectedVideo(null);
-      setImageInfo(null);
-      setSelectedAnimate(false);
-    }, 0);
-  };
   const handleReturnHome = () => {
     setIsClosing(true);
     setSelectedMoment(null);
@@ -159,12 +143,12 @@ const BottomHomeScreen = () => {
 
       {/* Main content area */}
       <div className="flex-1 overflow-hidden relative">
-        <div className={`overflow-auto h-full transition-all duration-500`}>
+        <div className={`overflow-auto h-full`}>
           <div className="sticky top-0 z-50">
             <HeaderHistory />
           </div>
           <div
-            className={`${
+            className={`transition-all duration-500 ${
               selectedAnimate ? "opacity-0 scale-90" : "opacity-100 scale-100"
             }`}
           >
@@ -195,15 +179,6 @@ const BottomHomeScreen = () => {
           <div className="grid grid-cols-3 items-center">
             {/* Left: Close viewer button */}
             <div className="flex justify-start">
-              {selectedMoment !== null && selectedQueue !== undefined && (
-                <button
-                  className="p-2 text-base-content tooltip tooltip-right cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
-                  onClick={handleCloseMedia}
-                  data-tip="Bấm để xem danh sách lưới"
-                >
-                  <LayoutGrid size={28} />
-                </button>
-              )}
             </div>
 
             {/* Center: Home button */}

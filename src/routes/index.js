@@ -1,29 +1,32 @@
-import AboutMe from "../pages/Auth/AboutMe";
-import AuthHome from "../pages/Auth/Home";
-import ToolsLocket from "../pages/Auth/LocketDioTools";
-import PostMoments from "../pages/Auth/PostMoments";
-import Profile from "../pages/Auth/Profile";
-import AboutLocketDio from "../pages/Public/About";
-import AddToHomeScreenGuide from "../pages/Public/AddToScreen";
-import ClearDataPage from "../pages/Public/ClearCache";
-import Contact from "../pages/Public/Contact";
-import DevPage from "../pages/Public/DevPage";
-import Docs from "../pages/Public/Docs";
-import ErrorReferencePage from "../pages/Public/ErrorReferencePage";
-import DonateHistory from "../pages/Public/HistoryDonate";
-import Home from "../pages/Public/Home";
-import Login from "../pages/Public/Login";
-import PayPage from "../pages/Public/PayPage";
-import PricingPage from "../pages/Public/Pricing";
-import PlanDetailPage from "../pages/Public/PricingDetail";
-import PrivacyPolicy from "../pages/Public/PrivacyPolicy";
-import Settings from "../pages/Public/Settings";
-import Timeline from "../pages/Public/Timeline";
-import CameraCapture from "../pages/UILocket";
-import HistorysPage from "../pages/UILocket/ExtendPage/pages/HistorysPage";
-import MainHomePage from "../pages/UILocket/ExtendPage/pages/MainHomePage";
-import HomePages from "../pages/UILocket/ExtendPage/pages/ProfilePage";
-import SettingsPage from "../pages/UILocket/ExtendPage/pages/SettingsPage";
+import React from "react";
+
+// React.lazy: Tự động tách JS thành từng file nhỏ khi dùng
+const AboutMe = React.lazy(() => import("../pages/Auth/AboutMe"));
+const AuthHome = React.lazy(() => import("../pages/Auth/Home"));
+const ToolsLocket = React.lazy(() => import("../pages/Auth/LocketDioTools"));
+const PostMoments = React.lazy(() => import("../pages/Auth/PostMoments"));
+const Profile = React.lazy(() => import("../pages/Auth/Profile"));
+const AboutLocketDio = React.lazy(() => import("../pages/Public/About"));
+const AddToHomeScreenGuide = React.lazy(() => import("../pages/Public/AddToScreen"));
+const ClearDataPage = React.lazy(() => import("../pages/Public/ClearCache"));
+const Contact = React.lazy(() => import("../pages/Public/Contact"));
+const DevPage = React.lazy(() => import("../pages/Public/DevPage"));
+const Docs = React.lazy(() => import("../pages/Public/Docs"));
+const ErrorReferencePage = React.lazy(() => import("../pages/Public/ErrorReferencePage"));
+const DonateHistory = React.lazy(() => import("../pages/Public/HistoryDonate"));
+const Home = React.lazy(() => import("../pages/Public/Home"));
+const Login = React.lazy(() => import("../pages/Public/Login"));
+const PayPage = React.lazy(() => import("../pages/Public/PayPage"));
+const PricingPage = React.lazy(() => import("../pages/Public/Pricing"));
+const PlanDetailPage = React.lazy(() => import("../pages/Public/PricingDetail"));
+const PrivacyPolicy = React.lazy(() => import("../pages/Public/PrivacyPolicy"));
+const Settings = React.lazy(() => import("../pages/Public/Settings"));
+const Timeline = React.lazy(() => import("../pages/Public/Timeline"));
+const CameraCapture = React.lazy(() => import("../pages/UILocket"));
+const HistorysPage = React.lazy(() => import("../pages/UILocket/ExtendPage/pages/HistorysPage"));
+const MainHomePage = React.lazy(() => import("../pages/UILocket/ExtendPage/pages/MainHomePage"));
+const HomePages = React.lazy(() => import("../pages/UILocket/ExtendPage/pages/ProfilePage"));
+const SettingsPage = React.lazy(() => import("../pages/UILocket/ExtendPage/pages/SettingsPage"));
 
 const APP_NAME = "Locket Dio - Đăng ảnh & Video lên Locket";
 

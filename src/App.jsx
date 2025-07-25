@@ -1,3 +1,4 @@
+import React, { Suspense, useContext, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -5,10 +6,10 @@ import {
   useLocation,
   Navigate,
 } from "react-router-dom";
-import { useContext, useEffect } from "react";
+
 import { publicRoutes, authRoutes, locketRoutes } from "./routes";
 import { AuthProvider, AuthContext } from "./context/AuthLocket";
-import { ThemeProvider } from "./context/ThemeContext"; // 🟢 Import ThemeProvider
+import { ThemeProvider } from "./context/ThemeContext";
 import { AppProvider } from "./context/AppContext";
 import ToastProvider from "./components/Toast";
 import getLayout from "./layouts";
@@ -33,6 +34,7 @@ function App() {
 function AppContent() {
   const { user, loading } = useContext(AuthContext);
   const location = useLocation();
+
   const allRoutes = [...publicRoutes, ...authRoutes, ...locketRoutes];
   const privateRoutes = [...authRoutes, ...locketRoutes];
 
@@ -45,47 +47,41 @@ function AppContent() {
 
   if (loading) return <LoadingPage isLoading={true} />;
 
-  // if ('serviceWorker' in navigator) {
-  //   navigator.serviceWorker.register('/service-worker.js').then(registration => {
-  //     console.log('Service Worker đăng ký thành công: ', registration);
-  //   }).catch(error => {
-  //     console.log('Service Worker đăng ký thất bại: ', error);
-  //   });
-  // }
-
   return (
-    <Routes>
-      {(user ? privateRoutes : publicRoutes).map(
-        ({ path, component: Component }) => {
-          const Layout = getLayout(path);
-          return (
-            <Route
-              key={path}
-              path={path}
-              element={
-                <Layout>
-                  <Component />
-                </Layout>
-              }
-            />
-          );
-        }
-      )}
+    <Suspense fallback={<LoadingPage isLoading={true} />}>
+      <Routes>
+        {(user ? privateRoutes : publicRoutes).map(
+          ({ path, component: Component }) => {
+            const Layout = getLayout(path);
+            return (
+              <Route
+                key={path}
+                path={path}
+                element={
+                  <Layout>
+                    <Component />
+                  </Layout>
+                }
+              />
+            );
+          }
+        )}
 
-      {/* Điều hướng khi chưa đăng nhập cố vào route cần auth */}
-      {!user &&
-        privateRoutes.map(({ path }) => (
-          <Route key={path} path={path} element={<Navigate to="/login" />} />
-        ))}
+        {/* Điều hướng khi chưa đăng nhập cố vào route cần auth */}
+        {!user &&
+          privateRoutes.map(({ path }) => (
+            <Route key={path} path={path} element={<Navigate to="/login" />} />
+          ))}
 
-      {/* Điều hướng ngược lại khi đã đăng nhập mà cố vào public route */}
-      {user &&
-        publicRoutes.map(({ path }) => (
-          <Route key={path} path={path} element={<Navigate to="/locket" />} />
-        ))}
+        {/* Điều hướng ngược lại khi đã đăng nhập mà cố vào public route */}
+        {user &&
+          publicRoutes.map(({ path }) => (
+            <Route key={path} path={path} element={<Navigate to="/locket" />} />
+          ))}
 
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </Suspense>
   );
 }
 

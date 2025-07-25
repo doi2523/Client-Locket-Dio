@@ -63,6 +63,10 @@ const manifestForPlugIn = {
 };
 
 export default defineConfig({
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],  
   server: {
     host: true,
   },

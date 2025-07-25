@@ -3,7 +3,7 @@ import InputForMoment from "./InputForMoment";
 import { useApp } from "../../../context/AppContext";
 import { showWarning, showSuccess } from "../../Toast";
 
-const BottomMenu = () => {
+const BottomMenu = ({ onClick }) => {
   const { navigation, post } = useApp();
   const { isBottomOpen, setIsBottomOpen } = navigation;
   const {
@@ -41,10 +41,6 @@ const BottomMenu = () => {
     }
   };
 
-  const handleCloseMedia = () => {
-    setSelectedMoment(null);
-  };
-
   return (
     <div className="w-full bottom-0 px-5 pb-5 text-base-content space-y-3">
       {/* Input chỉ hiện khi có selected */}
@@ -58,7 +54,7 @@ const BottomMenu = () => {
           {selectedMoment !== null && (
             <button
               className="p-2 text-base-content tooltip tooltip-right cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
-              onClick={handleCloseMedia}
+              onClick={onClick}
               data-tip="Bấm để xem danh sách lưới"
             >
               <LayoutGrid size={28} />
