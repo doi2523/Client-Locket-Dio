@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Trash2, LayoutGrid } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Trash2 } from "lucide-react";
 import { useApp } from "../../../context/AppContext";
 import { showSuccess, showWarning } from "../../../components/Toast";
 import UploadingQueue from "../../../components/UI/Moments/UploadingQueue";
@@ -25,17 +25,11 @@ const BottomHomeScreen = () => {
     setSelectedQueue,
   } = post;
 
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [selectedAnimate, setSelectedAnimate] = useState(false);
-  const [imageInfo, setImageInfo] = useState(null);
-  const [overlaysInfo, setOverlaysInfo] = useState(null);
-  const [isMediaLoading, setIsMediaLoading] = useState(true);
+  // Chỉ giữ lại các state thực sự cần thiết
   const [visibleCount, setVisibleCount] = useState(6);
   const [isClosing, setIsClosing] = useState(false);
   const [loadedItems, setLoadedItems] = useState([]);
   const [selectItems, setselectItems] = useState(null);
-  const [retryingIndex, setRetryingIndex] = useState(null);
 
   useEffect(() => {
     if (isBottomOpen) {
@@ -55,29 +49,17 @@ const BottomHomeScreen = () => {
       setIsBottomOpen(false);
       setVisibleCount(20);
       setIsClosing(false);
-      setSelectedImage(null);
-      setSelectedVideo(null);
-      setImageInfo(null);
-      setSelectedAnimate(false);
     }, 0);
   };
 
-  useEffect(() => {
-    setSelectedAnimate(
-      (selectedMoment !== null && selectedQueue === null) ||
-        (selectedMoment === null && selectedQueue !== null)
-    );
-  }, [selectedMoment, selectedQueue]);
+  // Tính toán selectedAnimate dựa trên selectedMoment và selectedQueue
+  const selectedAnimate = 
+    (selectedMoment !== null && selectedQueue === null) ||
+    (selectedMoment === null && selectedQueue !== null);
 
   const handleCloseMedia = () => {
     setSelectedMoment(null);
     setSelectedQueue(null);
-    setSelectedAnimate(false);
-    setTimeout(() => {
-      setSelectedImage(null);
-      setSelectedVideo(null);
-      setImageInfo(null);
-    }, 500);
   };
 
   const handleLoaded = (id) => {
@@ -120,8 +102,8 @@ const BottomHomeScreen = () => {
     );
     localStorage.setItem("uploadPayloads", JSON.stringify(updatedPayloads));
 
-    // 4. Đóng preview nếu đang xem ảnh đó
-    if (imageInfo?.id === id) {
+    // 4. Đóng preview nếu đang xem item đó
+    if (selectedMoment !== null || selectedQueue !== null) {
       handleCloseMedia();
     }
 
@@ -171,7 +153,6 @@ const BottomHomeScreen = () => {
             </div>
           ) : null}
         </div>
-        {/* Nếu đang chọn Moment hoặc Queue thì hiển thị Viewer */}
       </div>
       {/* Bottom Button */}
       {selectedMoment == null && selectedQueue == null && (

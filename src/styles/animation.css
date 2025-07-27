@@ -1,0 +1,24 @@
+.gradient-effect {
+  background: linear-gradient(120deg, #ff6432 25%, #ff0065 45%, #7b2eff 75%) 50%
+    100% / 200% no-repeat;
+  animation: gradient-effect 2s linear infinite alternate;
+}
+
+@keyframes gradient-effect {
+  0% {
+    background-position: 0 100%;
+  }
+  25% {
+    background-position: 25%;
+  }
+
+  50% {
+    background-position: 50% 25%;
+  }
+  75% {
+    background-position: 75% 0;
+  }
+  100% {
+    background-position: 100%;
+  }
+}

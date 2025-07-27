@@ -9,7 +9,12 @@ import { AuthContext } from "../../../context/AuthLocket";
 const MomentViewer = () => {
   const { user: me } = useContext(AuthContext);
   const { post } = useApp();
-  const { selectedMoment, setSelectedMoment, selectedMomentId, selectedFriendUid } = post;
+  const {
+    selectedMoment,
+    setSelectedMoment,
+    selectedMomentId,
+    selectedFriendUid,
+  } = post;
 
   const [moments, setMoments] = useState([]);
 
@@ -247,7 +252,7 @@ const MomentViewer = () => {
       </div>
 
       {/* Bottom menu luôn cố định dưới cùng */}
-      <BottomMenu onClick={handleClose}/>
+      <BottomMenu onClick={handleClose} />
     </div>
   );
 };

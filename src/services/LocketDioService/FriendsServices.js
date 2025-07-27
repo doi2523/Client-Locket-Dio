@@ -111,48 +111,47 @@ export const refreshFriends = async () => {
   }
 };
 
-export const getListRequestFriend = async (pageToken = null) => {
+export const getListRequestFriend = async (pageToken = null, limit = 10) => {
   try {
-    const res = await api.post(utils.API_URL.GET_INCOMING_URL, {
+    const res = await api.post("/locket/get-incoming-friends", {
       pageToken,
+      limit,
     });
 
-    console.log("Response data:", res.data);
+    const { success, message, data, nextPageToken } = res.data;
 
-    if (res.data.success === false) {
-      // API trả về lỗi, truyền message cho client
+    if (!success) {
       return {
         friends: [],
         nextPageToken: null,
-        errorMessage: res.data.message || "Lỗi khi lấy danh sách lời mời",
+        errorMessage: message || "Lỗi khi lấy danh sách lời mời",
       };
     }
 
-    const friends = res?.data?.data || [];
-    const cleanedFriends = friends.map((friend) => ({
+    const cleanedFriends = (data || []).map((friend) => ({
       uid: friend.uid,
       createdAt: friend.date,
     }));
 
-    // Nếu nextPageToken nằm trong res.data, không trong data array
-    const next = res?.data?.nextPageToken || null;
-
     return {
       friends: cleanedFriends,
-      nextPageToken: next,
+      nextPageToken: nextPageToken || null,
       errorMessage: null,
     };
   } catch (err) {
-    // Lấy chi tiết lỗi từ response nếu có
-    if (err.response) {
-      console.error("API lỗi, status:", err.response.status);
-      console.error("API lỗi data:", err.response.data);
-      return err.response?.data;
-    } else {
-      // Lỗi mạng hoặc lỗi khác
-      console.error("Lỗi không xác định khi gọi API:", err.message);
-      return err.response?.data;
-    }
+    console.error("❌ Lỗi khi gọi API getListRequestFriend:", err);
+
+    const errorMessage =
+      err?.response?.data?.message ||
+      err?.response?.data?.error ||
+      err.message ||
+      "Lỗi không xác định";
+
+    return {
+      friends: [],
+      nextPageToken: null,
+      errorMessage,
+    };
   }
 };
 
@@ -211,6 +210,43 @@ export const loadFriendDetails = async (friends) => {
   return allResults;
 };
 
+export const loadFriendDetailsV2 = async (friends) => {
+  if (!friends || friends.length === 0) {
+    return []; // Không fetch nếu không có bạn bè
+  }
+
+  const batchSize = 10;
+  const allResults = [];
+
+  for (let i = 0; i < friends.length; i += batchSize) {
+    const batch = friends.slice(i, i + batchSize);
+
+    try {
+      const results = await Promise.allSettled(
+        batch.map((friend) =>
+          fetchUser(friend?.uid).then((res) =>
+            utils.normalizeFriendData(res.data)
+          )
+        )
+      );
+
+      const successResults = results
+        .filter((r) => r.status === "fulfilled" && r.value)
+        .map((r) => r.value);
+
+      allResults.push(...successResults);
+
+      // Thêm delay nhỏ để tránh spam server nếu quá nhiều user
+      if (i + batchSize < friends.length) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    } catch (err) {
+      console.error("❌ Lỗi khi xử lý batch:", err);
+    }
+  }
+
+  return allResults;
+};
 // Hàm xoá nhiều lời mời (tối đa 50 mỗi lần)
 // export const rejectMultipleFriendRequests = async (
 //   uidList = [],
@@ -284,6 +320,78 @@ export const removeFriend = async (user_uid) => {
     return response.data;
   } catch (error) {
     console.error("❌ Lỗi khi xoá bạn:", error);
+    throw error;
+  }
+};
+
+// Hàm tìm bạn qua username
+export const FindFriendByUserName = async (eqfriend) => {
+  const { idToken } = utils.getToken();
+  try {
+    const response = await axios.post(
+      "https://api.locketcamera.com/getUserByUsername",
+      {
+        data: { username: eqfriend },
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+      }
+    );
+    return response.data?.result?.data;
+  } catch (error) {
+    console.error("❌ Lỗi khi tìm bạn:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Hàm tìm bạn qua username
+export const SendRequestToFriend = async (uid) => {
+  try {
+    const response = await api.post(
+      "/locket/sendrq_friend",
+      {
+        data: { uid: uid },
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data?.result?.data;
+  } catch (error) {
+    console.error("❌ Lỗi khi tìm bạn:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const AcceptRequestToFriend = async (uid) => {
+  try {
+    const response = await api.post(
+      "/locket/accept-friend-request",
+      { uid },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const result = response.data;
+
+    if (!result.success) {
+      throw new Error(result.message || "Không thể chấp nhận lời mời");
+    }
+
+    return result?.data; // trả về dữ liệu cần thiết nếu có
+  } catch (error) {
+    console.error(
+      "❌ Lỗi khi chấp nhận lời mời:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };

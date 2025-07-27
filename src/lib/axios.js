@@ -16,7 +16,7 @@ function parseJwt(token) {
 function isTokenExpired(token) {
   const payload = parseJwt(token);
   const now = Math.floor(Date.now() / 1000);
-  return !payload || payload.exp - now < 60;
+  return !payload || payload.exp - now < 300;
 }
 
 // Biến để track trạng thái refresh và promise

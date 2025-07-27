@@ -5,8 +5,6 @@ import {
   Home,
   Upload,
   User,
-  LogOut,
-  LogIn,
   LucideTimer,
   Smartphone,
   Briefcase,
@@ -25,6 +23,9 @@ import * as ultils from "../../utils";
 import { useApp } from "../../context/AppContext";
 import { AuthContext } from "../../context/AuthLocket";
 import api from "../../lib/axios";
+import { clearMoments } from "../../cache/momentDB";
+import { MenuItem } from "./MenuItem";
+import { AuthButton } from "./AuthButton";
 
 const Sidebar = () => {
   const { user, setUser, resetAuthContext } = useContext(AuthContext);
@@ -47,12 +48,14 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
-      api.get(`${ultils.API_URL.LOGOUT_URL}`)
+      api.get(`${ultils.API_URL.LOGOUT_URL}`);
       resetAuthContext(); // Reset context state
       ultils.clearAuthData();
       ultils.removeUser();
       ultils.clearAuthStorage();
       ultils.clearLocalData();
+
+      await clearMoments();
 
       showSuccess("Đăng xuất thành công!");
       navigate("/login");
@@ -61,6 +64,31 @@ const Sidebar = () => {
       console.error("❌ Lỗi khi đăng xuất:", error);
     }
   };
+
+  // Menu configurations
+  const userMenuItems = [
+    { to: "/home", icon: Home, text: "Trang chủ" },
+    { to: "/aboutdio", icon: Briefcase, text: "Giới thiệu" },
+    { to: "/timeline", icon: LucideTimer, text: "Lịch sử" },
+    { to: "/postmoments", icon: Upload, text: "Đăng ảnh, video", badge: "Hot" },
+    { to: "/locket", icon: Smartphone, text: "Locket UI", badge: "Hot" },
+    { to: "/profile", icon: User, text: "Hồ sơ" },
+    { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "New" },
+    { to: "/tools", icon: Wrench, text: "Công cụ Locket" },
+    { to: "/docs", icon: BookMarked, text: "Docs" },
+    { to: "/settings", icon: Settings2, text: "Cài đặt", badge: "New" },
+  ];
+
+  const guestMenuItems = [
+    { to: "/", icon: Home, text: "Trang chủ" },
+    { to: "/about", icon: Info, text: "Locket Dio" },
+    { to: "/about-dio", icon: Briefcase, text: "Giới thiệu Dio" },
+    { to: "/contact", icon: Mail, text: "Liên hệ", badge: "Support" },
+    { to: "/docs", icon: FileText, text: "Tài liệu" },
+    { to: "/privacy", icon: ShieldCheck, text: "Quyền riêng tư" },
+    { to: "/timeline", icon: History, text: "Lịch sử" },
+    { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "New" },
+  ];
 
   return (
     <>
@@ -72,15 +100,18 @@ const Sidebar = () => {
             : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setIsSidebarOpen(false)}
-      ></div>
+      />
 
       {/* Sidebar */}
       <div
-        className={`fixed z-60 top-0 right-0 h-full w-60 shadow-xl transition-all duration-500 bg-base-100 ${
-          isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full"
+        className={`fixed z-60 top-0 right-0 h-full w-60 shadow-xl transition-all duration-500 bg-base-100 flex flex-col ${
+          isSidebarOpen
+            ? "opacity-100 translate-x-0"
+            : "opacity-0 translate-x-full"
         }`}
       >
-        <div className="flex justify-between items-center py-3 px-5 border-b border-base-300">
+        {/* Header */}
+        <div className="flex justify-between items-center py-3 px-5 border-b border-base-300 flex-shrink-0">
           <Link to="/" className="flex items-center gap-1">
             <img
               src="/icons8-heart-100.png"
@@ -100,282 +131,35 @@ const Sidebar = () => {
           </button>
         </div>
 
-        <div className="h-[calc(100vh-56px)] overflow-y-auto bg-base-100 text-base-content">
-          <ul className="menu bg-base-100 text-base-content w-full py-4 px-2 text-md font-semibold space-y-1">
-            {user ? (
-              <>
-                <li>
-                  <Link
-                    to="/home"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/home"
-                        ? "bg-base-300"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Home size={22} /> Trang chủ
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/aboutdio"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/aboutdio"
-                        ? "bg-base-300"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Briefcase size={22} /> Giới thiệu
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/timeline"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/timeline"
-                        ? "bg-base-300"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <LucideTimer size={22} /> Lịch sử
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/postmoments"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/postmoments"
-                        ? "bg-base-300"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Upload size={22} /> Đăng ảnh, video <div className="badge badge-sm badge-secondary">Hot</div>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/locket"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/locket"
-                        ? "bg-base-300"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Smartphone size={22} /> Locket UI <div className="badge badge-sm badge-secondary">Hot</div>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/profile"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/profile"
-                        ? "bg-base-300"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <User size={22} /> Hồ sơ
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/pricing"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/pricing"
-                        ? "bg-base-300"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Rocket size={22} /> Gói thành viên <div className="badge badge-sm badge-secondary">New</div>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/tools"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/tools"
-                        ? "bg-base-300"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Wrench size={22} /> Công cụ Locket
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/docs"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/docs"
-                        ? "bg-base-300"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <BookMarked size={22} /> Docs
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/settings"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/settings"
-                        ? "bg-base-300"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Settings2 size={22} /> Cài đặt <div className="badge badge-sm badge-secondary">New</div>
-                  </Link>
-                </li>
-                <li className="mt-5">
-                  <button
-                    className="flex items-center w-full px-3 py-3 rounded-lg btn transition"
-                    onClick={() => {
-                      handleLogout();
-                      setIsSidebarOpen(false);
-                    }}
-                  >
-                    <LogOut size={22} /> Đăng xuất
-                  </button>
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  <Link
-                    to="/"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/"
-                        ? "bg-base-300"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Home size={22} /> Trang chủ
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/about"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/about"
-                        ? "bg-base-300"
-                        : "hover:bg-base-220"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Info size={22} /> Locket Dio
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/about-dio"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/about-dio"
-                        ? "bg-base-300"
-                        : "hover:bg-base-220"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Briefcase size={22} /> Giới thiệu Dio
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/contact"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/contact"
-                        ? "bg-base-300"
-                        : "hover:bg-base-220"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Mail size={22} /> Liên hệ <div className="badge badge-sm badge-secondary">Support</div>
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/docs"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/docs"
-                        ? "bg-base-300"
-                        : "hover:bg-base-220"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <FileText size={22} /> Tài liệu
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/privacy"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/privacy"
-                        ? "bg-base-300"
-                        : "hover:bg-base-220"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <ShieldCheck size={22} /> Quyền riêng tư
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/timeline"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/timeline"
-                        ? "bg-base-300"
-                        : "hover:bg-base-220"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <History size={22} /> Lịch sử
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/pricing"
-                    className={`flex items-center px-3 py-3 rounded-lg transition ${
-                      location.pathname === "/pricing"
-                        ? "bg-base-300"
-                        : "hover:bg-base-220"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <Rocket size={22} /> Gói thành viên <div className="badge badge-sm badge-secondary">New</div>
-                  </Link>
-                </li>
-
-                <li className="mt-5">
-                  <Link
-                    to="/login"
-                    className={`flex items-center w-full px-3 py-3 rounded-lg btn transition ${
-                      location.pathname === "/login"
-                        ? "bg-base-300"
-                        : "hover:bg-base-220"
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <LogIn size={22} /> Đăng nhập
-                  </Link>
-                </li>
-              </>
-            )}
+        {/* Navigation Menu */}
+        <div className="flex-1 overflow-y-auto">
+          <ul className="menu bg-base-100 text-base-content w-full py-2 px-2 text-md font-semibold space-y-1">
+            {(user ? userMenuItems : guestMenuItems).map((item) => (
+              <MenuItem
+                key={item.to}
+                to={item.to}
+                icon={item.icon}
+                badge={item.badge}
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                {item.text}
+              </MenuItem>
+            ))}
           </ul>
+        </div>
+
+        {/* Auth Button */}
+        <AuthButton
+          user={user}
+          onLogout={handleLogout}
+          onClose={() => setIsSidebarOpen(false)}
+        />
+        <div>
+          <p className="text-center text-xs pb-2 text-base-content/70">
+            © {new Date().getFullYear()}{" "}
+            <span className="font-semibold font-lovehouse">Dio</span>. All
+            rights reserved.
+          </p>
         </div>
       </div>
     </>

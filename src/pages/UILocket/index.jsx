@@ -8,7 +8,6 @@ import Sidebar from "../../components/Sidebar/index.jsx";
 import ScreenCustomeStudio from "./ExtendPage/Container/CustomeStudio.jsx";
 import CropImageStudio from "../../components/common/CropImageStudio.jsx";
 import LoadingPage from "../../components/pages/LoadingPage.jsx";
-import EmojiPicker from "./ExtendPage/Container/EmojiStudio.jsx";
 
 // Lazy-load các component nặng
 const FriendsContainer = lazy(() => import("./ExtendPage/Container/FriendsContainer.jsx"));
