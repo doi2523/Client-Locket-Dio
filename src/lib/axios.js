@@ -203,13 +203,16 @@ api.interceptors.response.use(
     }
 
     if (status === 403) {
-      showInfo("Bạn không có quyền truy cập!");
+      showInfo(message || "Bạn không có quyền truy cập!");
     }
 
     if (status === 429) {
       showInfo(
         message || "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau."
       );
+    }
+    if (status === 409) {
+      showInfo(message || "Tệp này đã được xử lý trước đó.");
     }
 
     return Promise.reject(error);

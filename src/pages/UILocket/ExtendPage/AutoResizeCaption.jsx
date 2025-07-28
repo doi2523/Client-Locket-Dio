@@ -206,7 +206,7 @@ const AutoResizeCaption = () => {
         </div>
       ) : postOverlay.type === "heart" ? (
         <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
-          <img src="./images/heart_icon_red.svg" alt="" className="w-6 h-6" />
+          <img src="./svg/heart-icon.svg" alt="" className="w-6 h-6" />
           <span>{postOverlay.caption}</span>
           {/* <input value={postOverlay.caption || formattedTime} type="text" name="" id="" width={20}/> */}
         </div>

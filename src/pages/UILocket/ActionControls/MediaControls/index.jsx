@@ -1,5 +1,6 @@
 import { X, Send, Sparkles, Check } from "lucide-react";
 import * as utils from "../../../../utils/index.js";
+import * as services from "../../../../services";
 import { useApp } from "../../../../context/AppContext.jsx";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -180,7 +181,7 @@ const MediaControls = () => {
       setIsSuccess(false);
 
       // Tạo payload
-      const payload = await utils.createRequestPayloadV5(
+      const payload = await services.createRequestPayloadV5(
         selectedFile,
         previewType,
         postOverlay,

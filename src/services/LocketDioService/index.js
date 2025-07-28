@@ -3,3 +3,5 @@ export * from "./FriendsServices";
 export * from "./PostMoments"
 export * from "./MemberPlans";
 export * from "./PaymentServices";
+export * from "./StorageServices";
+export * from "./PayloadServices";

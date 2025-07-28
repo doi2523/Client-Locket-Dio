@@ -15,13 +15,13 @@ import {
 } from "lucide-react";
 import { showError, showToast } from "../../../components/Toast/index.jsx";
 import * as utils from "../../../utils";
+import * as services from "../../../services";
 import LoadingRing from "../../../components/UI/Loading/ring.jsx";
 import { useApp } from "../../../context/AppContext.jsx";
 import { Link } from "react-router-dom";
 import Hourglass from "../../../components/UI/Loading/hourglass.jsx";
 import MediaSizeInfo from "../../../components/UI/MediaSizeInfo/index.jsx";
 import { defaultPostOverlay } from "../../../stores/usePost.js";
-import { uploadMediaV2 } from "../../../services/index.js";
 import { getMaxUploads } from "../../../hooks/useFeature.js";
 import { AuthContext } from "../../../context/AuthLocket.jsx";
 import PlanBadge from "../../../components/UI/PlanBadge/PlanBadge.jsx";
@@ -109,7 +109,7 @@ const PostMoments = () => {
         "info",
         `Đang chuẩn bị ${preview.type === "video" ? "video" : "ảnh"} !`
       );
-      const payload = await utils.createRequestPayloadV5(
+      const payload = await services.createRequestPayloadV5(
         selectedFile,
         preview.type,
         postOverlay
@@ -124,7 +124,7 @@ const PostMoments = () => {
 
       showToast("info", `Đang tạo bài viết !`);
       // Gọi API upload
-      const response = await uploadMediaV2(payload);
+      const response = await services.uploadMediaV2(payload);
 
       // Lấy dữ liệu cũ
       const savedResponses = JSON.parse(

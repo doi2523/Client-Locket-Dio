@@ -4,7 +4,7 @@ import {
   prepareMediaInfo,
   uploadToCloudinary,
 } from "../cloudinary/uploadFileAndGetInfo";
-import { uploadFileAndGetInfo } from "../firebase/uploadfiletofirebase";
+import { uploadFileAndGetInfo, uploadFileAndGetInfoR2 } from "../firebase/uploadfiletofirebase";
 import { getToken } from "../storage";
 
 export const createRequestPayload = (mediaInfo, caption, selectedColors) => {
@@ -189,7 +189,7 @@ export const createRequestPayloadV5 = async (
       return null;
     }
     // Upload file & chuẩn bị thông tin media
-    const fileInfo = await uploadFileAndGetInfo(
+    const fileInfo = await uploadFileAndGetInfoR2(
       selectedFile,
       previewType,
       localId
@@ -198,11 +198,10 @@ export const createRequestPayloadV5 = async (
 
     const mediaInfo = {
       url: fileInfo.downloadURL,
-      path: fileInfo.metadata.fullPath, // đường dẫn đầy đủ trong Storage
+      path: fileInfo.metadata.path, // đường dẫn đầy đủ trong Storage
       name: fileInfo.metadata.name, // tên file
       size: fileInfo.metadata.size, // kích thước file (bytes)
-      contentType: fileInfo.metadata.contentType, // loại file (image/jpg,...)
-      timeCreated: fileInfo.metadata.timeCreated, // thời gian tạo
+      uploadedAt: fileInfo.metadata.uploadedAt, // thời gian tạo
       type: previewType,
     };
 

@@ -3,7 +3,7 @@ import { useApp } from "../../../context/AppContext";
 import { Check, RotateCcw, X } from "lucide-react";
 import * as utils from "../../../utils";
 import LoadingOverlay from "../Loading/LineSpinner";
-import { showInfo, showSuccess } from "../../Toast";
+import { showError, showInfo, showSuccess } from "../../Toast";
 import { PostMoments } from "../../../services";
 import BottomMenu from "./BottomMenu";
 
@@ -58,17 +58,18 @@ const QueueViewer = () => {
     try {
       setRetryingIndex(selectedQueue);
 
-      // Cập nhật trạng thái về 'uploading'
-      payloads[selectedQueue] = {
+      // ✅ Cập nhật state: chuyển sang "uploading" ngay lập tức
+      const updatedPayload = {
         ...retryPayload,
         status: "uploading",
-        errorMessage: null, // Xóa thông báo lỗi cũ
+        errorMessage: null,
+        retryCount: (retryPayload.retryCount || 0) + 1,
+        lastTried: new Date().toISOString(),
       };
+      payloads[selectedQueue] = updatedPayload;
 
-      // Cập nhật state và localStorage
       setuploadPayloads([...payloads]);
-      setQueueInfo(payloads[selectedQueue]);
-
+      setQueueInfo(updatedPayload);
       localStorage.setItem("uploadPayloads", JSON.stringify(payloads));
 
       showInfo("Đang gửi lại...");
@@ -77,13 +78,11 @@ const QueueViewer = () => {
       const response = await PostMoments(retryPayload);
 
       if (response?.data) {
-        // Cập nhật trạng thái thành công
         payloads[selectedQueue] = {
           ...payloads[selectedQueue],
           status: "done",
         };
         setuploadPayloads([...payloads]);
-
         localStorage.setItem("uploadPayloads", JSON.stringify(payloads));
 
         // Lưu vào uploadedMoments
@@ -94,7 +93,7 @@ const QueueViewer = () => {
         const updatedData = [...savedResponses, ...normalizedNewData];
 
         localStorage.setItem("uploadedMoments", JSON.stringify(updatedData));
-        setRecentPosts(updatedData.reverse()); // Reverse để hiển thị mới nhất trước
+        setRecentPosts(updatedData.reverse());
 
         showSuccess(
           `${
@@ -102,29 +101,38 @@ const QueueViewer = () => {
           } đã được tải lên thành công!`
         );
 
-        // Tự động đóng modal sau khi upload thành công
-        handleClose();
+        handleClose(); // đóng modal sau khi thành công
       }
     } catch (error) {
       console.error("❌ Upload thất bại:", error);
 
+      const errorCode = error?.response?.status;
       const errorMessage =
         error?.response?.data?.message || error.message || "Lỗi không xác định";
 
-      // Cập nhật thông tin lỗi
-      payloads[selectedQueue] = {
-        ...payloads[selectedQueue],
-        status: "error",
-        errorMessage: errorMessage,
-        retryCount: (payloads[selectedQueue].retryCount || 0) + 1,
-        lastTried: new Date().toISOString(),
-      };
+      if (errorCode === 409) {
+        // Xoá phần tử bị lỗi 409
+        payloads.splice(selectedQueue, 1);
 
-      setuploadPayloads([...payloads]);
-      setQueueInfo(payloads[selectedQueue]);
-      localStorage.setItem("uploadPayloads", JSON.stringify(payloads));
+        setuploadPayloads([...payloads]);
+        localStorage.setItem("uploadPayloads", JSON.stringify(payloads));
+        handleClose(); // Đóng modal nếu cần
+      } else {
+        // Các lỗi khác
+        payloads[selectedQueue] = {
+          ...payloads[selectedQueue],
+          status: "error",
+          errorMessage: errorMessage,
+          retryCount: (payloads[selectedQueue].retryCount || 0) + 1,
+          lastTried: new Date().toISOString(),
+        };
 
-      showError(`Upload thất bại: ${errorMessage}`);
+        setuploadPayloads([...payloads]);
+        setQueueInfo(payloads[selectedQueue]);
+        localStorage.setItem("uploadPayloads", JSON.stringify(payloads));
+
+        showError(`Upload thất bại: ${errorMessage}`);
+      }
     } finally {
       setRetryingIndex(null);
     }
