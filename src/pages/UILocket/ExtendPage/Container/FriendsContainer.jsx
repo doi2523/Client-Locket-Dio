@@ -275,7 +275,7 @@ const FriendsContainer = () => {
               </div>
               <div className="w-full flex justify-center">
                 {foundUser ? (
-                  <FriendFind friend={foundUser} onSend={handleSendRqFriend} />
+                  <FriendFind friend={foundUser} />
                 ) : (
                   <p className="text-center h-[70px] text-gray-400">
                     Không tìm thấy người dùng nào

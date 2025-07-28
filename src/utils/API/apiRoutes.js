@@ -30,10 +30,10 @@ export const API_URL = {
   GET_INCOMING_URL: `${BASE_API_URL}${LOCKET_URL}/get-incoming_friends`,
   DELETE_FRIEND_REQUEST_URL: `${LOCKET_URL}/delete-incoming_friends`,
   DELETE_FRIEND_URL: `${BASE_API_URL}${LOCKET_URL}/delete_friends`,
-  SPOTIFY_URL: `${LOCKET_URL}/spotifyV2`,
-  REGISTER_PUSH_URL: `${BASE_API_URL}${LOCKET_URL}/register-push`,
+  SPOTIFY_URL: "/api/spotifyV2",
+  REGISTER_PUSH_URL: `${BASE_API_URL}/api/push/register`,
   GET_UPLOAD_STATS_URL: `${BASE_API_URL}${LOCKET_URL}/get-upload-stats`,
-  GET_WEATHER_URL: `${BASE_API_URL}${LOCKET_URL}/weather`,
+  GET_WEATHER_URL: `${BASE_API_URL}/api/weather`,
   ME_URL: `${BASE_API_URL}/api/me`,
 
   //API lấy dữ liệu từ máy chủ
