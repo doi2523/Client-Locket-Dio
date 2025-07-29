@@ -199,7 +199,8 @@ const MediaPreview = ({ capturedMedia }) => {
       // fallback
       if (!newDeviceId && zoomLevel !== "1x") {
         newZoom = "1x";
-        newDeviceId = cameras?.backNormalCamera?.deviceId;
+        newDeviceId =
+        cameras?.backNormalCamera?.deviceId || cameras?.backCameras?.[0]?.deviceId;
       }
     }
 

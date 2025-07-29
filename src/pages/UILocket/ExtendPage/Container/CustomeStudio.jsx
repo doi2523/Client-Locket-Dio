@@ -23,8 +23,9 @@ const ScreenCustomeStudio = () => {
   const { setPostOverlay } = post;
   const { captionThemes } = captiontheme;
 
-  const canUseImageGif = useFeatureVisible("image_gif");
-  const canUseImageIcon = useFeatureVisible("image_icon");
+  const canUseCaptionGif = useFeatureVisible("caption_gif");
+  const canUseCaptionIcon = useFeatureVisible("caption_icon");
+  const canUseCaptionimage = useFeatureVisible("caption_image");
 
   useEffect(() => {
     if (isFilterOpen) {
@@ -190,21 +191,21 @@ const ScreenCustomeStudio = () => {
             presets={captionThemes.custome}
             onSelect={handleCustomeSelect}
           />
-          <FeatureGate canUse={canUseImageIcon}>
+          <FeatureGate canUse={canUseCaptionIcon}>
             <CaptionIconSelector
               title="🎨 Caption Icon - Truy cập sớm"
               captionThemes={captionThemes}
               onSelect={handleCustomeSelectTest}
             />
           </FeatureGate>
-          <FeatureGate canUse={canUseImageGif}>
+          <FeatureGate canUse={canUseCaptionGif}>
             <CaptionGifThemes
               title="🎨 Caption Gif - Truy cập sớm"
               captionThemes={captionThemes}
               onSelect={handleCustomeSelectTest}
             />
           </FeatureGate>
-          <FeatureGate canUse={canUseImageIcon}>
+          <FeatureGate canUse={canUseCaptionimage}>
             <ImageCaptionSelector title="🎨 Caption Ảnh - Truy cập sớm" />
           </FeatureGate>
 

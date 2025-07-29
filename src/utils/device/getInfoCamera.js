@@ -13,12 +13,12 @@ export const getAvailableCameras = async () => {
     const label = device.label.toLowerCase();
 
     // 📱 Camera trước
-    if (/mặt trước|front|user|trước/.test(label)) {
+    if (/mặt trước|front|user|trước|facing front/.test(label)) {
       frontCameras.push(device);
     }
 
     // 📷 Camera sau
-    else if (/mặt sau|back|rear|environment|sau/.test(label)) {
+    else if (/mặt sau|back|rear|environment|sau|facing back/.test(label)) {
       backCameras.push(device);
 
       // ➕ Phân loại theo đặc điểm

@@ -1,9 +1,9 @@
 import React from "react";
+const CameraCapture = React.lazy(() => import("../pages/UILocket"));
 
 const AuthHome = React.lazy(() => import("../pages/Auth/Home"));
 const Profile = React.lazy(() => import("../pages/Auth/Profile"));
 const PostMoments = React.lazy(() => import("../pages/Auth/PostMoments"));
-const CameraCapture = React.lazy(() => import("../pages/UILocket"));
 const AboutMe = React.lazy(() => import("../pages/Auth/AboutMe"));
 const Docs = React.lazy(() => import("../pages/Public/Docs"));
 const DonateHistory = React.lazy(() => import("../pages/Public/HistoryDonate"));

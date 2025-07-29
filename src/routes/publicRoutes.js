@@ -1,12 +1,12 @@
 import React from "react";
+const CameraCapture = React.lazy(() => import("../pages/UILocket"));
+import Home from "../pages/Public/Home";
+import Login from "../pages/Public/Login";
 
-const Home = React.lazy(() => import("../pages/Public/Home"));
-const Login = React.lazy(() => import("../pages/Public/Login"));
 const AboutLocketDio = React.lazy(() => import("../pages/Public/About"));
 const AboutMe = React.lazy(() => import("../pages/Auth/AboutMe"));
 const Timeline = React.lazy(() => import("../pages/Public/Timeline"));
 const Docs = React.lazy(() => import("../pages/Public/Docs"));
-const CameraCapture = React.lazy(() => import("../pages/UILocket"));
 const Contact = React.lazy(() => import("../pages/Public/Contact"));
 const PrivacyPolicy = React.lazy(() => import("../pages/Public/PrivacyPolicy"));
 const PricingPage = React.lazy(() => import("../pages/Public/Pricing"));
