@@ -34,6 +34,7 @@ export const API_URL = {
   REGISTER_PUSH_URL: `${BASE_API_URL}/api/push/register`,
   GET_UPLOAD_STATS_URL: `${BASE_API_URL}${LOCKET_URL}/get-upload-stats`,
   GET_WEATHER_URL: `${BASE_API_URL}/api/weather`,
+  GET_WEATHER_URL_V2: `${BASE_API_URL}/api/weatherV2`,
   ME_URL: `${BASE_API_URL}/api/me`,
 
   //API lấy dữ liệu từ máy chủ

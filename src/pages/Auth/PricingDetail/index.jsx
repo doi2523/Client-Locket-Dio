@@ -1,10 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Copy, ArrowLeft, Check, X } from "lucide-react";
+import { ArrowLeft, Check, X } from "lucide-react";
 import { AuthContext } from "../../../context/AuthLocket";
 import LoadingPage from "../../../components/pages/LoadingPage";
-import { API_URL, PAYMENT_API_URL } from "../../../utils";
-import api from "../../../lib/axios";
+import { API_URL } from "../../../utils";
 import * as services from "../../../services";
 
 const FEATURE_LABELS = {

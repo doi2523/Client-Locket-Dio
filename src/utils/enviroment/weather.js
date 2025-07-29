@@ -3,7 +3,7 @@ import axios from "axios";
 import { API_URL } from "../API/apiRoutes";
 
 const CACHE_KEY = "weather_cache";
-const CACHE_DURATION = 2 * 60 * 1000; // 2 phút
+const CACHE_DURATION = 10 * 60 * 1000; // 2 phút
 
 export function useLocationWeather() {
   const [location, setLocation] = useState(null);
@@ -32,9 +32,10 @@ export function useLocationWeather() {
         try {
           const { latitude, longitude } = position.coords;
 
-          const res = await axios.get(
-            `${API_URL.GET_WEATHER_URL}?lat=${latitude}&lon=${longitude}`
-          );
+          const res = await axios.post(API_URL.GET_WEATHER_URL_V2, {
+            lat: latitude,
+            lon: longitude,
+          });          
 
           const data = res?.data?.data;
 

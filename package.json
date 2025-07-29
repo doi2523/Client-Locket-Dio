@@ -15,7 +15,6 @@
     "@tailwindcss/vite": "^4.0.9",
     "axios": "^1.8.1",
     "dexie": "^4.0.11",
-    "firebase": "^11.9.0",
     "jwt-decode": "^4.0.0",
     "ldrs": "^1.0.2",
     "lucide-react": "^0.476.0",
