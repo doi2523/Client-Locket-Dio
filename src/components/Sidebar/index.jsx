@@ -12,11 +12,16 @@ import {
   Rocket,
   Info,
   Mail,
-  FileText,
   ShieldCheck,
-  History,
   Wrench,
-  Settings2,
+  Code2,
+  BookText,
+  UserCircle,
+  Clock,
+  Link2,
+  Bug,
+  Braces,
+  Settings,
 } from "lucide-react";
 import { showSuccess, showToast } from "../Toast";
 import * as ultils from "../../utils";
@@ -76,18 +81,24 @@ const Sidebar = () => {
     { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "New" },
     { to: "/tools", icon: Wrench, text: "Công cụ Locket" },
     { to: "/docs", icon: BookMarked, text: "Docs" },
-    { to: "/settings", icon: Settings2, text: "Cài đặt", badge: "New" },
+    { to: "/devpage", icon: Code2, text: "Trang lập trình", badge: "New" },
+    { to: "/incidents", icon: Bug, text: "Sự cố hệ thống" },
+    { to: "/settings", icon: Settings, text: "Cài đặt", badge: "New" },
   ];
 
   const guestMenuItems = [
     { to: "/", icon: Home, text: "Trang chủ" },
     { to: "/about", icon: Info, text: "Locket Dio" },
-    { to: "/about-dio", icon: Briefcase, text: "Giới thiệu Dio" },
+    { to: "/about-dio", icon: UserCircle, text: "Về Dio" },
     { to: "/contact", icon: Mail, text: "Liên hệ", badge: "Support" },
-    { to: "/docs", icon: FileText, text: "Tài liệu" },
-    { to: "/privacy", icon: ShieldCheck, text: "Quyền riêng tư" },
-    { to: "/timeline", icon: History, text: "Lịch sử" },
+    { to: "/docs", icon: BookText, text: "Tài liệu" },
+    { to: "/devpage", icon: Code2, text: "Trang lập trình" },
+    { to: "/incidents", icon: Bug, text: "Sự cố hệ thống" },
+    { to: "/reference", icon: Braces, text: "Tài liệu API" },
+    { to: "/privacy", icon: ShieldCheck, text: "Riêng tư" },
+    { to: "/timeline", icon: Clock, text: "Lịch sử" },
     { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "New" },
+    { to: "/settings", icon: Settings, text: "Cài đặt" },
   ];
 
   return (

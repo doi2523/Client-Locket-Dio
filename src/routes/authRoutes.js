@@ -37,6 +37,6 @@ export const authRoutes = [
   { path: "/pricing/:planId", component: PlanDetailPage, title: `Chi tiết gói | ${APP_NAME}` },
   { path: "/pay", component: PayPage, title: `Thanh toán | ${APP_NAME}` },
   { path: "/locket", component: CameraCapture, title: `Locket Camera | ${APP_NAME}` },
-  { path: "/reference", component: ErrorReferencePage, title: `Trung tâm lỗi | ${APP_NAME}` },
+  { path: "/incidents", component: ErrorReferencePage, title: `Trung tâm sự cố | ${APP_NAME}` },
   { path: "/tools", component: ToolsLocket, title: `Công cụ mở rộng | ${APP_NAME}` },
 ];

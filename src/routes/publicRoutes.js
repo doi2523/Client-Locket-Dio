@@ -36,6 +36,6 @@ export const publicRoutes = [
   { path: "/devpage", component: DevPage, title: `Dev Page | ${APP_NAME}` },
   { path: "/download", component: AddToHomeScreenGuide, title: `Thêm ứng dụng vào màn hình chính | ${APP_NAME}` },
   { path: "/clear", component: ClearDataPage, title: `Clear Cache Website | ${APP_NAME}` },
-  { path: "/reference", component: ErrorReferencePage, title: `Trung tâm lỗi | ${APP_NAME}` },
+  { path: "/incidents", component: ErrorReferencePage, title: `Trung tâm sự cố | ${APP_NAME}` },
   { path: "/test", component: AuthHome, title: `Test | ${APP_NAME}` },
 ];
