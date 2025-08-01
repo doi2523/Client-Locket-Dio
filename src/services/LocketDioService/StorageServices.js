@@ -28,6 +28,8 @@ export const uploadFileAndGetInfoR2 = async (
   const res = await api.post(`${STORAGE_API_URL}/api/presignedV2`, {
     filename: filePath,
     contentType: file.type,
+    size: file.size,
+    uploadedAt: new Date().toISOString(),
   });
 
   const { url, expiresIn } = res.data.data;
