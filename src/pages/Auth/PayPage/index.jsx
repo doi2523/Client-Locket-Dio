@@ -106,7 +106,7 @@ export default function PayPage() {
   }
 
   return (
-    <div className="min-h-screen bg-base-100 px-6 pt-20 pb-6 flex items-center justify-center">
+    <div className="min-h-screen bg-base-100 px-6 py-6 flex items-center justify-center">
       <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8 bg-base-100 shadow-2xl rounded-xl p-6">
         {/* Bên trái: QR + thông tin cơ bản */}
         <div className="space-y-6 flex flex-col items-center">

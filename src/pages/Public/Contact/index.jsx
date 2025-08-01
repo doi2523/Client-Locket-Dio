@@ -9,7 +9,7 @@ import {
 
 export default function Contact() {
   return (
-    <section className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 pt-16 flex items-center justify-center">
+    <section className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 flex items-center justify-center">
       <div className="max-w-xl w-full bg-white shadow-2xl rounded-3xl p-4 text-center">
         {/* SEO Heading */}
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">

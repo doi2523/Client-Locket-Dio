@@ -3,7 +3,6 @@ import React from "react";
 const Docs = () => {
   return (
     <div className="min-h-screen px-4 flex flex-col items-center py-5">
-      <div className="h-16"></div>
       <h1 className="text-3xl font-semibold mb-5">
         Hướng Dẫn Sử Dụng Trang Web Locket Dio by Dio
       </h1>

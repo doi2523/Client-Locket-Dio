@@ -3,52 +3,44 @@ import {
   Search,
   AlertTriangle,
   CheckCircle,
-  Code,
-  ExternalLink,
-  Eye,
-  EyeOff,
   Bug,
   Lightbulb,
   Copy,
   Check,
   X,
+  Eye,
 } from "lucide-react";
 
 const ErrorReferencePage = () => {
-  // Dữ liệu mẫu về các lỗi lập trình và cách khắc phục
   const [errorData] = useState([
     {
       id: 1,
       errorCode: "500",
       errorName: "Lỗi máy chủ",
-      title: "❌ Lỗi khi tải ảnh hoặc video: Không thể kết nối máy chủ",
+      title: "Không thể tải ảnh hoặc video",
       description:
-        "Lỗi này thường xảy ra khi ứng dụng không thể liên lạc với máy chủ. Có thể do mất mạng hoặc máy chủ đang bị lỗi.",
+        "Bạn gặp lỗi này khi ứng dụng không kết nối được với máy chủ. Có thể do mất mạng hoặc máy chủ đang gặp sự cố.",
       category: "Kết nối mạng",
       severity: "Cao",
-      tags: ["mạng", "lỗi server", "không tải được"],
+      tags: ["mạng", "máy chủ", "tải lỗi"],
       language: "JavaScript",
       errorImage:
         "https://firebasestorage.googleapis.com/v0/b/webdio-20ca8.appspot.com/o/images%2FLocket%2FIMG_8968.PNG?alt=media&token=652291d1-6483-4aec-ac97-3f325d3cdcb0",
-      solution: `
-  ✅ Cách xử lý:
-  - Kiểm tra lại kết nối Internet.
-  - Thử tải lại sau vài phút.
-  - Nếu vẫn không được, có thể server đang bảo trì. Hãy thử lại sau.`,
+      solution: [
+        "Kiểm tra kết nối Internet của bạn.",
+        "Thử làm mới trang hoặc đợi vài phút.",
+        "Nếu vẫn lỗi, máy chủ có thể đang bảo trì. Vui lòng thử lại sau.",
+      ],
       causes: [
-        "Mất kết nối mạng",
-        "Máy chủ bị lỗi hoặc quá tải",
-        "Lỗi cấu hình từ hệ thống",
+        "Mất kết nối Internet",
+        "Máy chủ quá tải hoặc gặp sự cố",
+        "Cấu hình hệ thống không đúng",
       ],
       preventions: [
-        "Đảm bảo thiết bị có kết nối Internet ổn định",
-        "Thử lại vào lúc khác khi server ổn định hơn",
+        "Đảm bảo kết nối mạng ổn định",
+        "Tránh sử dụng ứng dụng vào giờ cao điểm",
       ],
-      relatedErrors: [
-        "Không đọc được dữ liệu",
-        "Lỗi mạng",
-        "Lỗi truy cập máy chủ (CORS)",
-      ],
+      relatedErrors: ["Lỗi mạng", "Không đọc được dữ liệu"],
       dateAdded: "2024-01-15",
       views: 1250,
       helpful: 89,
@@ -56,32 +48,27 @@ const ErrorReferencePage = () => {
     {
       id: 2,
       errorCode: "404",
-      errorName: "Không tìm thấy dữ liệu",
-      title: "❌ Lỗi 404: Không tìm thấy thông tin yêu cầu",
+      errorName: "Không tìm thấy",
+      title: "Không tìm thấy nội dung yêu cầu",
       description:
-        "Lỗi này xảy ra khi thông tin bạn yêu cầu không tồn tại trên hệ thống.",
-      category: "Đường dẫn hoặc dữ liệu không tồn tại",
+        "Lỗi này xảy ra khi nội dung bạn tìm không tồn tại, có thể do liên kết sai hoặc nội dung đã bị xóa.",
+      category: "Đường dẫn lỗi",
       severity: "Trung bình",
-      tags: ["đường dẫn", "không tìm thấy", "404"],
+      tags: ["liên kết", "404", "không tìm thấy"],
       language: "HTTP",
       errorImage:
         "https://firebasestorage.googleapis.com/v0/b/webdio-20ca8.appspot.com/o/images%2FLocket%2FIMG_8968.PNG?alt=media&token=652291d1-6483-4aec-ac97-3f325d3cdcb0",
-      solution: `
-  ✅ Cách xử lý:
-  - Kiểm tra lại đường dẫn bạn đang truy cập (ví dụ: đường link hoặc địa chỉ).
-  - Thử tải lại hoặc quay lại trang trước.
-  - Nếu bạn nhấp vào liên kết nào đó mà bị lỗi, có thể nội dung đã bị xóa hoặc không còn tồn tại.`,
-      causes: [
-        "Bạn nhập sai đường dẫn",
-        "Dữ liệu hoặc trang đã bị xoá",
-        "Liên kết không còn hoạt động",
+      solution: [
+        "Kiểm tra lại liên kết bạn vừa nhập.",
+        "Quay lại trang trước hoặc thử làm mới trang.",
+        "Liên hệ hỗ trợ nếu lỗi vẫn xuất hiện.",
       ],
+      causes: ["Liên kết sai", "Nội dung đã bị xóa", "Lỗi truy cập"],
       preventions: [
-        "Luôn kiểm tra kỹ liên kết trước khi truy cập",
-        "Không lưu hoặc chia sẻ liên kết đã cũ",
-        "Nếu gặp lỗi thường xuyên, liên hệ hỗ trợ",
+        "Kiểm tra kỹ liên kết trước khi nhấp",
+        "Cập nhật ứng dụng để tránh lỗi cũ",
       ],
-      relatedErrors: ["Không được phép truy cập", "Lỗi hệ thống 500"],
+      relatedErrors: ["Lỗi 500", "Không được phép truy cập"],
       dateAdded: "2024-01-20",
       views: 980,
       helpful: 75,
@@ -91,46 +78,34 @@ const ErrorReferencePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSeverity, setSelectedSeverity] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("");
   const [showSolution, setShowSolution] = useState({});
   const [copiedCode, setCopiedCode] = useState("");
   const [modalImage, setModalImage] = useState(null);
 
-  // Lấy danh sách unique values
   const categories = [...new Set(errorData.map((item) => item.category))];
   const severities = [...new Set(errorData.map((item) => item.severity))];
-  const languages = [...new Set(errorData.map((item) => item.language))];
 
-  // Filter dữ liệu
   const filteredData = useMemo(() => {
-    return errorData.filter((item) => {
-      const matchesSearch =
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.errorCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.errorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.tags.some((tag) =>
-          tag.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+    return errorData
+      .filter((item) => {
+        const matchesSearch =
+          item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.errorCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.errorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.tags.some((tag) =>
+            tag.toLowerCase().includes(searchTerm.toLowerCase())
+          );
 
-      const matchesCategory =
-        !selectedCategory || item.category === selectedCategory;
-      const matchesSeverity =
-        !selectedSeverity || item.severity === selectedSeverity;
-      const matchesLanguage =
-        !selectedLanguage || item.language === selectedLanguage;
+        const matchesCategory =
+          !selectedCategory || item.category === selectedCategory;
+        const matchesSeverity =
+          !selectedSeverity || item.severity === selectedSeverity;
 
-      return (
-        matchesSearch && matchesCategory && matchesSeverity && matchesLanguage
-      );
-    });
-  }, [
-    errorData,
-    searchTerm,
-    selectedCategory,
-    selectedSeverity,
-    selectedLanguage,
-  ]);
+        return matchesSearch && matchesCategory && matchesSeverity;
+      })
+      .sort((a, b) => b.views - a.views);
+  }, [errorData, searchTerm, selectedCategory, selectedSeverity]);
 
   const toggleSolution = (id) => {
     setShowSolution((prev) => ({
@@ -139,14 +114,14 @@ const ErrorReferencePage = () => {
     }));
   };
 
-  const copyToClipboard = (code, id) => {
-    navigator.clipboard.writeText(code);
+  const copyToClipboard = (solution, id) => {
+    navigator.clipboard.writeText(solution.join("\n"));
     setCopiedCode(id);
     setTimeout(() => setCopiedCode(""), 2000);
   };
 
-  const openImageModal = (imageUrl, errorCode, errorName) => {
-    setModalImage({ url: imageUrl, errorCode, errorName });
+  const openImageModal = (imageUrl, errorCode, errorName, description) => {
+    setModalImage({ url: imageUrl, errorCode, errorName, description });
   };
 
   const closeImageModal = () => {
@@ -154,156 +129,144 @@ const ErrorReferencePage = () => {
   };
 
   const getSeverityColor = (severity) => {
-    switch (severity) {
-      case "low":
+    switch (severity.toLowerCase()) {
+      case "thấp":
         return "bg-green-100 text-green-800 border-green-200";
-      case "medium":
+      case "trung bình":
         return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "high":
+      case "cao":
         return "bg-red-100 text-red-800 border-red-200";
       default:
-        return "bg-gray-100 text-gray-800 ";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getSeverityIcon = (severity) => {
-    switch (severity) {
-      case "low":
-        return <CheckCircle className="w-4 h-4" />;
-      case "medium":
-        return <AlertTriangle className="w-4 h-4" />;
-      case "high":
-        return <Bug className="w-4 h-4" />;
+    switch (severity.toLowerCase()) {
+      case "thấp":
+        return <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />;
+      case "trung bình":
+        return <AlertTriangle className="w-4 h-4 md:w-5 md:h-5" />;
+      case "cao":
+        return <Bug className="w-4 h-4 md:w-5 md:h-5" />;
       default:
-        return <AlertTriangle className="w-4 h-4" />;
+        return <AlertTriangle className="w-4 h-4 md:w-5 md:h-5" />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-base-100 p-4">
-      <div className="h-16"></div>
+    <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 md:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-base-content mb-2">
-            🐛 Tra Cứu Lỗi Khi Sử Dụng
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+            Tìm và Sửa Lỗi Nhanh Chóng
           </h1>
-          <p className="text-gray-600 text-lg">
-            Tìm kiếm mã lỗi, nguyên nhân và cách khắc phục nhanh chóng
+          <p className="text-gray-600 text-base sm:text-lg">
+            Nhập mã lỗi hoặc mô tả để tìm cách khắc phục
           </p>
         </div>
 
         {/* Search and Filter Bar */}
-        <div className="bg-base-200 rounded-xl shadow-lg p-6 mb-8 border ">
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
-            {/* Search */}
-            <div className="flex-1 relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content w-5 h-5" />
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-8">
+          <div className="flex flex-col gap-4">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Tìm kiếm lỗi, mã lỗi, ngôn ngữ..."
-                className="w-full pl-10 pr-4 py-3 border border-base-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                placeholder="Nhập mã lỗi hoặc mô tả (VD: 500, không tải ảnh)"
+                className="w-full pl-10 pr-4 py-2 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 text-base sm:text-lg"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
 
-            {/* Category Filter */}
-            <select
-              className="px-4 py-3 border border-base-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="">Tất cả danh mục</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <select
+                className="w-full sm:w-1/2 px-4 py-2 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 text-base sm:text-lg"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="">Tất cả danh mục</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
 
-            {/* Severity Filter */}
-            <select
-              className="px-4 py-3 border border-base-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              value={selectedSeverity}
-              onChange={(e) => setSelectedSeverity(e.target.value)}
-            >
-              <option value="">Tất cả mức độ</option>
-              {severities.map((severity) => (
-                <option key={severity} value={severity}>
-                  {severity === "low"
-                    ? "Thấp"
-                    : severity === "medium"
-                    ? "Trung bình"
-                    : "Cao"}
-                </option>
-              ))}
-            </select>
-          </div>
+              <select
+                className="w-full sm:w-1/2 px-4 py-2 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 text-base sm:text-lg"
+                value={selectedSeverity}
+                onChange={(e) => setSelectedSeverity(e.target.value)}
+              >
+                <option value="">Tất cả mức độ</option>
+                {severities.map((severity) => (
+                  <option key={severity} value={severity}>
+                    {severity}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* Results Count */}
-          <div className="mt-4 text-sm text-gray-600">
-            Tìm thấy {filteredData.length} lỗi phù hợp
+            <div className="text-sm text-gray-500">
+              Tìm thấy {filteredData.length} kết quả
+            </div>
           </div>
         </div>
 
         {/* Error Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {filteredData.map((error) => (
             <div
               key={error.id}
-              className="bg-base-200 rounded-xl shadow-lg border  overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              className="bg-white rounded-lg shadow-md overflow-hidden"
             >
-              {/* Header */}
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
+              <div className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row items-start justify-between mb-4">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-0">
                     <div
-                      className={`flex items-center gap-1 px-3 py-1 rounded-full border ${getSeverityColor(
+                      className={`flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full border ${getSeverityColor(
                         error.severity
                       )}`}
                     >
                       {getSeverityIcon(error.severity)}
                       <span className="text-sm font-medium">
-                        {error.severity === "low"
-                          ? "Thấp"
-                          : error.severity === "medium"
-                          ? "Trung bình"
-                          : "Cao"}
+                        {error.severity}
                       </span>
                     </div>
-                    <span className="text-sm text-gray-600 bg-base-300 px-2 py-1 rounded">
+                    <span className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded">
                       {error.category}
                     </span>
                   </div>
                   <div className="text-right text-sm text-gray-500">
                     <div>{error.views} lượt xem</div>
                     <div className="flex items-center gap-1 mt-1">
-                      <Lightbulb className="w-3 h-3" />
+                      <Lightbulb className="w-4 h-4" />
                       {error.helpful}% hữu ích
                     </div>
                   </div>
                 </div>
 
-                {/* Error Code & Name */}
                 <div className="mb-4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl font-bold text-red-600 bg-red-50 px-3 py-1 rounded-lg border border-red-200">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                    <span className="text-xl sm:text-2xl font-bold text-red-600 bg-red-50 px-2 sm:px-3 py-1 rounded-lg border border-red-200">
                       {error.errorCode}
                     </span>
-                    <h3 className="text-xl font-bold text-base-content flex-1">
-                      {error.errorName}
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
+                      {error.title}
                     </h3>
                   </div>
-                  <p className="text-gray-600 text-sm">{error.description}</p>
+                  <p className="text-gray-600 text-sm sm:text-base">
+                    {error.description}
+                  </p>
                 </div>
 
-                {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {error.tags.map((tag, idx) => (
                     <span
                       key={idx}
-                      className="bg-base-300 text-blue-800 text-xs px-2 py-1 rounded-full"
+                      className="bg-blue-50 text-blue-600 text-xs sm:text-sm px-2 py-1 rounded-full"
                     >
                       #{tag}
                     </span>
@@ -311,46 +274,37 @@ const ErrorReferencePage = () => {
                 </div>
               </div>
 
-              {/* Error Image */}
-              <div className="px-6 py-4 bg-base-100 border-base-100">
+              <div className="px-4 sm:px-6 py-4 bg-gray-50">
                 <div className="flex items-center gap-2 mb-3">
-                  <Eye className="w-4 h-4 text-gray-600" />
-                  <span className="font-medium text-base-content">Ví dụ lỗi</span>
+                  <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                  <span className="font-medium text-gray-800 text-sm sm:text-base">
+                    Hình ảnh lỗi
+                  </span>
                 </div>
-
-                <div className="relative group">
+                <div className="relative">
                   <img
                     src={error.errorImage}
-                    alt={`Error ${error.errorCode}: ${error.errorName}`}
-                    className="w-full h-48 object-cover rounded-lg border  cursor-pointer transition-transform duration-200 hover:scale-105"
-                  />
-                  <div
+                    alt={`Lỗi ${error.errorCode}: ${error.errorName}`}
+                    className="w-full h-40 sm:h-48 object-cover rounded-lg border border-gray-200 cursor-pointer"
                     onClick={() =>
                       openImageModal(
                         error.errorImage,
                         error.errorCode,
-                        error.errorName
+                        error.errorName,
+                        error.description
                       )
                     }
-                    className="absolute inset-0 bg-black/20 bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 rounded-lg flex items-center justify-center"
-                  >
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-base-200 bg-opacity-90 px-3 py-2 rounded-lg">
-                      <span className="text-sm font-medium text-base-content">
-                        Nhấn để phóng to
-                      </span>
-                    </div>
-                  </div>
+                  />
                 </div>
               </div>
 
-              {/* Solution */}
-              <div className="px-6 py-4">
+              <div className="px-4 sm:px-6 py-4">
                 <button
                   onClick={() => toggleSolution(error.id)}
-                  className="flex items-center gap-2 text-green-600 hover:text-green-800 font-medium mb-3"
+                  className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium text-sm sm:text-base mb-3"
                 >
-                  <Lightbulb className="w-4 h-4" />
-                  {showSolution[error.id] ? "Ẩn" : "Hiện"} cách khắc phục
+                  <Lightbulb className="w-4 h-4 sm:w-5 sm:h-5" />
+                  {showSolution[error.id] ? "Ẩn cách sửa" : "Xem cách sửa"}
                 </button>
 
                 {showSolution[error.id] && (
@@ -358,59 +312,60 @@ const ErrorReferencePage = () => {
                     <div className="relative">
                       <button
                         onClick={() =>
-                          copyToClipboard(
-                            error.solution,
-                            `solution-${error.id}`
-                          )
+                          copyToClipboard(error.solution, `solution-${error.id}`)
                         }
-                        className="absolute top-2 right-2 p-1 rounded hover:bg-gray-700 z-10"
+                        className="absolute top-2 right-2 p-2 rounded hover:bg-gray-100"
                       >
                         {copiedCode === `solution-${error.id}` ? (
-                          <Check className="w-4 h-4" />
+                          <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                         ) : (
-                          <Copy className="w-4 h-4" />
+                          <Copy className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
                         )}
                       </button>
-                      <pre className="text-gray-500 p-4 rounded-lg text-sm overflow-x-auto">
-                        <code>{error.solution}</code>
-                      </pre>
+                      <div className="bg-gray-50 p-4 rounded-lg text-gray-700 text-sm sm:text-base">
+                        <h4 className="font-semibold text-gray-800 mb-2">
+                          Các bước khắc phục:
+                        </h4>
+                        <ol className="list-decimal list-inside space-y-2">
+                          {error.solution.map((step, idx) => (
+                            <li key={idx}>{step}</li>
+                          ))}
+                        </ol>
+                      </div>
                     </div>
 
-                    {/* Causes */}
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">
-                        🔍 Nguyên nhân thường gặp:
+                      <h4 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
+                        Nguyên nhân có thể:
                       </h4>
-                      <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                      <ul className="list-disc list-inside text-gray-600 text-sm sm:text-base space-y-1">
                         {error.causes.map((cause, idx) => (
                           <li key={idx}>{cause}</li>
                         ))}
                       </ul>
                     </div>
 
-                    {/* Preventions */}
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">
-                        💡 Cách phòng tránh:
+                      <h4 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
+                        Cách tránh lỗi:
                       </h4>
-                      <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                      <ul className="list-disc list-inside text-gray-600 text-sm sm:text-base space-y-1">
                         {error.preventions.map((prevention, idx) => (
                           <li key={idx}>{prevention}</li>
                         ))}
                       </ul>
                     </div>
 
-                    {/* Related Errors */}
                     {error.relatedErrors.length > 0 && (
                       <div>
-                        <h4 className="font-semibold text-gray-900 mb-2">
-                          🔗 Lỗi liên quan:
+                        <h4 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
+                          Lỗi tương tự:
                         </h4>
                         <div className="flex flex-wrap gap-2">
                           {error.relatedErrors.map((relatedError, idx) => (
                             <span
                               key={idx}
-                              className="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded"
+                              className="bg-orange-50 text-orange-600 text-xs sm:text-sm px-2 py-1 rounded"
                             >
                               {relatedError}
                             </span>
@@ -422,18 +377,14 @@ const ErrorReferencePage = () => {
                 )}
               </div>
 
-              {/* Footer */}
-              <div className="px-6 py-4 bg-base-100">
-                <div className="flex justify-between items-center text-sm text-gray-500">
+              <div className="px-4 sm:px-6 py-4 bg-gray-50">
+                <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500">
                   <span>
-                    Cập nhật:{" "}
-                    {new Date(error.dateAdded).toLocaleDateString("vi-VN")}
+                    Cập nhật: {new Date(error.dateAdded).toLocaleDateString("vi-VN")}
                   </span>
-                  <div className="flex gap-4">
-                    <button className="hover:text-green-600">👍 Hữu ích</button>
-                    <button className="hover:text-red-600">
-                      👎 Không hữu ích
-                    </button>
+                  <div className="flex gap-4 mt-2 sm:mt-0">
+                    <button className="hover:text-blue-600">👍 Hữu ích</button>
+                    <button className="hover:text-red-600">👎 Không hữu ích</button>
                   </div>
                 </div>
               </div>
@@ -444,60 +395,68 @@ const ErrorReferencePage = () => {
         {/* No Results */}
         {filteredData.length === 0 && (
           <div className="text-center py-12">
-            <div className="text-base-content text-6xl mb-4">🤔</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Không tìm thấy lỗi phù hợp
+            <div className="text-gray-400 text-5xl sm:text-6xl mb-4">🤔</div>
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
+              Không tìm thấy lỗi nào
             </h3>
-            <p className="text-gray-600">
-              Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc để tìm lỗi khác
+            <p className="text-gray-600 text-sm sm:text-base mb-4">
+              Vui lòng thử:
             </p>
+            <ul className="list-disc list-inside text-gray-600 text-sm sm:text-base mx-auto max-w-md">
+              <li>Thay đổi từ khóa tìm kiếm (VD: mã lỗi, mô tả ngắn)</li>
+              <li>Bỏ bớt bộ lọc danh mục hoặc mức độ</li>
+              <li>Liên hệ hỗ trợ nếu cần giúp ngay</li>
+            </ul>
           </div>
         )}
-      </div>
 
-      {/* Image Modal */}
-      {modalImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-          <div className="relative max-w-4xl max-h-full">
-            <button
-              onClick={closeImageModal}
-              className="absolute -top-10 right-0 text-white hover:text-base-100 transition-colors"
-            >
-              <X className="w-8 h-8" />
-            </button>
+        {/* Image Modal */}
+        {modalImage && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 sm:p-6">
+            <div className="relative w-full max-w-3xl max-h-[90vh]">
+              <button
+                onClick={closeImageModal}
+                className="absolute -top-8 right-0 text-white hover:text-gray-300 transition-colors"
+              >
+                <X className="w-6 h-6 sm:w-8 sm:h-8" />
+              </button>
 
-            <div className="bg-white rounded-lg overflow-hidden shadow-2xl">
-              <div className="p-4 bg-gray-50">
-                <div className="flex items-center gap-3">
-                  <span className="text-xl font-bold text-red-600 bg-red-50 px-3 py-1 rounded-lg border border-red-200">
-                    {modalImage.errorCode}
-                  </span>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {modalImage.errorName}
-                  </h3>
+              <div className="bg-white rounded-lg overflow-hidden shadow-2xl">
+                <div className="p-4 sm:p-6 bg-gray-50">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-lg sm:text-xl font-bold text-red-600 bg-red-50 px-2 sm:px-3 py-1 rounded-lg border border-red-200">
+                      {modalImage.errorCode}
+                    </span>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-800">
+                      {modalImage.errorName}
+                    </h3>
+                  </div>
+                  <p className="text-gray-600 text-sm sm:text-base">
+                    {modalImage.description}
+                  </p>
                 </div>
-              </div>
 
-              <div className="p-4">
-                <img
-                  src={modalImage.url}
-                  alt={`Error ${modalImage.errorCode}: ${modalImage.errorName}`}
-                  className="max-w-full max-h-96 object-contain mx-auto"
-                />
-              </div>
+                <div className="p-4 sm:p-6">
+                  <img
+                    src={modalImage.url}
+                    alt={`Lỗi ${modalImage.errorCode}: ${modalImage.errorName}`}
+                    className="w-full max-h-[60vh] sm:max-h-[70vh] object-contain mx-auto"
+                  />
+                </div>
 
-              <div className="p-4 bg-gray-50 border-t  text-center">
-                <button
-                  onClick={closeImageModal}
-                  className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                >
-                  Đóng
-                </button>
+                <div className="p-4 sm:p-6 bg-gray-50 text-center">
+                  <button
+                    onClick={closeImageModal}
+                    className="px-4 sm:px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm sm:text-base"
+                  >
+                    Đóng
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

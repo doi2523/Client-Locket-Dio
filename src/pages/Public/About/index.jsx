@@ -4,9 +4,9 @@ import FeatureList from "../../../components/UI/FeatureList";
 
 export default function AboutLocketDio() {
   return (
-    <section className="min-h-screen bg-gradient-to-b from-white via-purple-50 to-white text-gray-800 px-6 py-16 md:px-12 lg:px-32">
+    <section className="min-h-screen bg-gradient-to-b from-white via-purple-50 to-white text-gray-800 px-6 md:px-12 lg:px-32">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-bold mb-6 pt-10 text-center text-purple-700">
+        <h1 className="text-4xl font-bold mb-6 py-10 text-center text-purple-700">
           Giới thiệu về <span className="text-black">Locket Dio</span>
         </h1>
 

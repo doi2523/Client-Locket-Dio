@@ -146,8 +146,7 @@ export default function Profile() {
   
 
   return (
-    <div className="flex flex-col items-center min-h-screen w-full px-6 py-5">
-      <div className="h-16"></div>
+    <div className="flex flex-col items-center min-h-screen w-full p-6">
       <h1 className="text-3xl font-bold pb-6">
         Chào mừng, "
         <span className="">

@@ -91,7 +91,6 @@ const DevPage = () => {
 
   return (
     <div className="min-h-screen bg-base-100 p-4">
-      <div className="h-20"></div>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">

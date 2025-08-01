@@ -173,10 +173,7 @@ export default function PlanDetailPage() {
   return (
     <div className="min-h-screen bg-base-100">
       {/* Header Gradient */}
-      <div
-        className="h-16"
-        style={{ background: planData.ui?.gradient || "#6366F1" }}
-      ></div>
+      <div style={{ background: planData.ui?.gradient || "#6366F1" }}></div>
 
       {/* Header Content */}
       <div

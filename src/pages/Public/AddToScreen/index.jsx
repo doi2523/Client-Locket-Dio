@@ -47,8 +47,8 @@ const AddToHomeScreenGuide = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
-      <div className="max-w-3xl mx-auto pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <div className="max-w-3xl mx-auto py-10 px-4">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">

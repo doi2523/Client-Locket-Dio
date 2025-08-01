@@ -40,8 +40,6 @@ const Home = () => {
 
   return (
     <div className="flex flex-col py-5 items-center justify-center min-h-screen w-full text-center bg-gradient-to-r from-blue-400 to-purple-500">
-      <div className="h-16" />
-
       <section className="w-full max-w-screen-xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-y-0 gap-x-12 items-start">
           {/* LEFT */}

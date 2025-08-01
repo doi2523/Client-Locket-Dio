@@ -1,21 +1,9 @@
 import React from "react";
-import {
-  Code2,
-  Github,
-  Mail,
-  Braces,
-  Palette,
-  Database,
-  Flame,
-  Coffee,
-  Globe,
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { Code2, Mail, Coffee, Globe } from "lucide-react";
 import ImageMarquee from "../../../components/UI/Marquee/LanguageMarquee";
 import {
   FaReact,
   FaGithub,
-  FaLinkedin,
   FaFacebook,
   FaInstagram,
   FaTiktok,
@@ -28,8 +16,7 @@ const AboutMe = () => {
   return (
     <>
       {" "}
-      <div className="h-20"></div>
-      <div className="min-h-screen flex flex-col px-6 items-center">
+      <div className="min-h-screen flex flex-col px-6 items-center p-6">
         {/* Avatar + Name */}
         <div className="flex flex-col items-center mb-10">
           <img
@@ -69,8 +56,7 @@ const AboutMe = () => {
               <FaNodeJs className="w-6 h-6 text-green-500" /> Node.js
             </div>
             <div className="flex items-center gap-2">
-              <img src="/svg/firebase.svg" className="w-6 h-6" />{" "}
-              Firebase
+              <img src="/svg/firebase.svg" className="w-6 h-6" /> Firebase
             </div>
             <div className="flex items-center gap-2">
               <FaGithub className="w-6 h-6 text-black" /> Github

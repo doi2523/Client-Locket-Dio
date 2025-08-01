@@ -8,7 +8,6 @@ const AuthHome = () => {
 
   return (
     <div className="flex flex-col items-center justify-center py-6 bg-base-200 px-6">
-      <div className="h-16"></div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl w-full items-center">
         <div className="text-center lg:text-left">
           <h1 className="text-4xl font-extrabold leading-tight">

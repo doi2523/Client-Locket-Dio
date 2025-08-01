@@ -17,6 +17,7 @@ const AddToHomeScreenGuide = React.lazy(() => import("../pages/Public/AddToScree
 const ClearDataPage = React.lazy(() => import("../pages/Public/ClearCache"));
 const ErrorReferencePage = React.lazy(() => import("../pages/Public/ErrorReferencePage"));
 const AuthHome = React.lazy(() => import("../pages/Auth/Home"));
+const ReferencePage = React.lazy(() => import("../pages/Public/APIDocs"));
 
 const APP_NAME = "Locket Dio - Đăng ảnh & Video lên Locket";
 
@@ -38,4 +39,5 @@ export const publicRoutes = [
   { path: "/clear", component: ClearDataPage, title: `Clear Cache Website | ${APP_NAME}` },
   { path: "/incidents", component: ErrorReferencePage, title: `Trung tâm sự cố | ${APP_NAME}` },
   { path: "/test", component: AuthHome, title: `Test | ${APP_NAME}` },
+  { path: "/reference", component: ReferencePage, title: `API Docs | ${APP_NAME}` },
 ];

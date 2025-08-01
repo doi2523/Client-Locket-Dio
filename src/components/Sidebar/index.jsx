@@ -82,7 +82,7 @@ const Sidebar = () => {
     { to: "/tools", icon: Wrench, text: "Công cụ Locket" },
     { to: "/docs", icon: BookMarked, text: "Docs" },
     { to: "/devpage", icon: Code2, text: "Trang lập trình", badge: "New" },
-    { to: "/incidents", icon: Bug, text: "Sự cố hệ thống" },
+    { to: "/incidents", icon: Bug, text: "Trung tâm sự cố" },
     { to: "/settings", icon: Settings, text: "Cài đặt", badge: "New" },
   ];
 
@@ -93,7 +93,7 @@ const Sidebar = () => {
     { to: "/contact", icon: Mail, text: "Liên hệ", badge: "Support" },
     { to: "/docs", icon: BookText, text: "Tài liệu" },
     { to: "/devpage", icon: Code2, text: "Trang lập trình" },
-    { to: "/incidents", icon: Bug, text: "Sự cố hệ thống" },
+    { to: "/incidents", icon: Bug, text: "Trung tâm sự cố" },
     { to: "/reference", icon: Braces, text: "Tài liệu API" },
     { to: "/privacy", icon: ShieldCheck, text: "Riêng tư" },
     { to: "/timeline", icon: Clock, text: "Lịch sử" },

@@ -237,10 +237,9 @@ export default function ToolsLocket() {
   const [activeTab, setActiveTab] = useState(toolsList[0].key);
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-base-200 pb-16 md:pb-0">
-      <div className="h-16"></div>
+    <div className="flex flex-col min-h-screen w-full bg-base-200 p-6">
 
-      <h1 className="text-3xl font-bold mb-4 pt-6 text-primary text-center">
+      <h1 className="text-3xl font-bold mb-4 text-primary text-center">
         🧰 ToolsLocket by Dio
       </h1>
 

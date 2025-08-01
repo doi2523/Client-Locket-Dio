@@ -49,8 +49,7 @@ export default function Timeline() {
   // 👉 UI loading/error/no data
   if (loading) {
     return (
-      <div className="w-full md:w-[90%] max-w-2xl mx-auto px-6 py-5">
-        <div className="h-16"></div>
+      <div className="w-full md:w-[90%] max-w-2xl mx-auto p-6">
         <h1 className="text-3xl font-bold text-center mb-8">Lịch sử cập nhật</h1>
         <ul className="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
           {[...Array(7)].map((_, index) => (
@@ -76,8 +75,7 @@ export default function Timeline() {
   if (!timelineData.length) return <div className="text-center mt-10">Không có dữ liệu lịch sử.</div>;
 
   return (
-    <div className="w-full md:w-[90%] max-w-2xl mx-auto px-6 py-5">
-      <div className="h-16"></div>
+    <div className="w-full md:w-[90%] max-w-2xl mx-auto p-6">
       <h1 className="text-3xl font-bold text-center mb-8">Lịch sử cập nhật</h1>
       <ul className="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
         {timelineData.map((update, index) => (
