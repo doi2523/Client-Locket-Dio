@@ -111,7 +111,7 @@ export const refreshFriends = async () => {
   }
 };
 
-export const getListRequestFriend = async (pageToken = null, limit = 10) => {
+export const getListRequestFriend = async (pageToken = null, limit = 100) => {
   try {
     const res = await api.post("/locket/get-incoming-friends", {
       pageToken,
@@ -247,52 +247,11 @@ export const loadFriendDetailsV2 = async (friends) => {
 
   return allResults;
 };
-// Hàm xoá nhiều lời mời (tối đa 50 mỗi lần)
-// export const rejectMultipleFriendRequests = async (
-//   uidList = [],
-//   delay = 200
-// ) => {
-//   // Đợi lấy token & uid
-//   const auth = await utils.getCurrentUserTokenAndUid();
-
-//   if (!auth) {
-//     console.error("Không lấy được token và uid hiện tại.");
-//     return [];
-//   }
-
-//   const { idToken, localId, refreshToken } = auth;
-
-//   const results = [];
-//   const MAX_BATCH = 50;
-
-//   // Chia uidList thành các nhóm 50
-//   for (let i = 0; i < uidList.length; i += MAX_BATCH) {
-//     const batch = uidList.slice(i, i + MAX_BATCH);
-
-//     // Promise all xoá từng uid trong batch
-//     const batchResults = await Promise.all(
-//       batch.map(async (uid) => {
-//         const res = await rejectFriendRequest(idToken, uid);
-//         return { uid, ...res };
-//       })
-//     );
-
-//     results.push(...batchResults);
-
-//     // Nếu còn batch tiếp theo thì chờ delay
-//     if (i + MAX_BATCH < uidList.length) {
-//       console.log(`⏳ Đợi ${delay}ms trước khi xử lý batch tiếp theo...`);
-//       await new Promise((resolve) => setTimeout(resolve, delay));
-//     }
-//   }
-
-//   return results;
-// };
 
 export const rejectMultipleFriendRequests = async (uidList) => {
   try {
     const response = await api.post(
-      `${utils.API_URL.DELETE_FRIEND_REQUEST_URL}`,
+      "/locket/delete-incoming-friends",
       {
         uids: uidList,
       },

@@ -1,31 +1,28 @@
 import React, { useContext, useEffect, useState } from "react";
 import { VideoIcon, Wrench, Settings2, Users } from "lucide-react";
 import {
-  fetchUserPlan,
   getListRequestFriend,
   rejectMultipleFriendRequests,
 } from "../../../services";
 import { AuthContext } from "../../../context/AuthLocket";
 import { showError, showInfo, showSuccess } from "../../../components/Toast";
 import LoadingRing from "../../../components/UI/Loading/ring";
+import { useFeatureVisible } from "../../../hooks/useFeature";
 
 const SESSION_KEY = "invites_session";
 
 // Component riêng xử lý logic lời mời
 function DeleteFriendsTool() {
-  const { user, userPlan, setUserPlan, authTokens } = useContext(AuthContext);
+  const actionDelete = useFeatureVisible("invite_cleanup_tool");
   const [invites, setInvites] = useState([]);
-  const [nextPageToken, setNextPageToken] = useState(null);
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [fetchProgress, setFetchProgress] = useState({
+    current: 0,
+    total: 0,
+    isEstimating: true,
+  });
 
-  useEffect(() => {
-    fetchUserPlan().then((data) => {
-      if (data) {
-        setUserPlan(data);
-      }
-    });
-  }, []);
   // Load từ sessionStorage khi component mount
   useEffect(() => {
     const cached = sessionStorage.getItem(SESSION_KEY);
@@ -33,7 +30,6 @@ function DeleteFriendsTool() {
       try {
         const parsed = JSON.parse(cached);
         setInvites(parsed.invites || []);
-        setNextPageToken(parsed.nextPageToken || null);
       } catch (err) {
         console.error("Failed to parse session data", err);
       }
@@ -42,38 +38,62 @@ function DeleteFriendsTool() {
 
   // Cập nhật sessionStorage mỗi khi invites thay đổi
   useEffect(() => {
-    sessionStorage.setItem(
-      SESSION_KEY,
-      JSON.stringify({ invites, nextPageToken })
-    );
-  }, [invites, nextPageToken]);
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ invites }));
+  }, [invites]);
 
-  const handleFetchInvites = async () => {
+  // Hàm lấy tất cả lời mời tự động
+  const handleFetchAllInvites = async () => {
     setLoading(true);
-    const res = await getListRequestFriend();
+    setInvites([]);
+    setFetchProgress({ current: 0, total: 0, isEstimating: true });
 
-    if (res.message) {
-      // showError(res.message);
-      setLoading(false);
-      return;
+    try {
+      let allInvites = [];
+      let nextPageToken = null;
+      let pageCount = 0;
+
+      do {
+        pageCount++;
+        const res = await getListRequestFriend(nextPageToken, 80);
+
+        if (res.message) {
+          showError(res.message);
+          break;
+        }
+
+        const newInvites = res?.friends || [];
+        allInvites = [...allInvites, ...newInvites];
+        nextPageToken = res?.nextPageToken;
+
+        // Cập nhật progress
+        setFetchProgress({
+          current: allInvites.length,
+          total: nextPageToken ? allInvites.length + 50 : allInvites.length, // Ước tính
+          isEstimating: !!nextPageToken,
+        });
+
+        // Cập nhật state để hiển thị dữ liệu trong khi tải
+        setInvites([...allInvites]);
+
+        // Delay nhỏ để tránh spam API
+        if (nextPageToken) {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }
+      } while (nextPageToken);
+
+      setFetchProgress({
+        current: allInvites.length,
+        total: allInvites.length,
+        isEstimating: false,
+      });
+
+      showSuccess(
+        `✅ Đã tải xong ${allInvites.length} lời mời! (${pageCount} trang)`
+      );
+    } catch (error) {
+      showError("❌ Lỗi khi tải lời mời: " + error.message);
     }
 
-    setInvites(res?.friends || []);
-    setNextPageToken(res?.nextPageToken);
-    setLoading(false);
-
-    showSuccess(`Đã tải ${res?.friends.length} lời mời!`);
-  };
-
-  const handleLoadMore = async () => {
-    if (!nextPageToken) return;
-
-    setLoading(true);
-
-    const res = await getListRequestFriend(nextPageToken);
-
-    setInvites((prev) => [...prev, ...(res.friends || [])]);
-    setNextPageToken(res.nextPageToken);
     setLoading(false);
   };
 
@@ -114,24 +134,44 @@ function DeleteFriendsTool() {
         </h2>
         <p>
           🎯 Công cụ này giúp bạn xoá lời mời kết bạn spam từ bạn bè một cách tự
-          động.
+          động. Lưu ý hành động này không thể hoàn tác.
         </p>
         <p className="text-sm">
-          Tránh bị lạm dụng nên tính năng này giới hạn xoá trong ngày là{" "}
-          <span className="font-semibold underline">200</span> lời mời. Nâng cấp
-          gói thành viên để xoá nhiều hơn?
+          Tránh bị lạm dụng nên tính năng này giới hạn xoá là{" "}
+          <span className="font-semibold underline">200</span> lời mời.
         </p>
       </div>
 
       <div className="mt-6 flex flex-col gap-4">
         <button
-          onClick={handleFetchInvites}
+          onClick={handleFetchAllInvites}
           className="btn btn-primary w-full"
-          disabled={loading}
+          disabled={loading || actionDelete}
         >
           {loading && <LoadingRing size={20} stroke={2} color="white" />}
-          {loading ? "Đang tải..." : "📥 Lấy danh sách lời mời"}
+          {loading ? "Đang tải..." : "📥 Lấy tất cả lời mời"}
         </button>
+
+        {/* Progress bar khi đang tải */}
+        {loading && fetchProgress.current > 0 && (
+          <div className="bg-base-100 border rounded-lg p-4">
+            <div className="text-sm mb-2">
+              Đang tải: <strong>{fetchProgress.current}</strong>
+              {fetchProgress.isEstimating ? "+" : ""} lời mời
+              {!fetchProgress.isEstimating && ` (hoàn thành)`}
+            </div>
+            <div className="w-full bg-base-300 rounded-full h-2">
+              <div
+                className="bg-primary h-2 rounded-full transition-all duration-300"
+                style={{
+                  width: fetchProgress.isEstimating
+                    ? "70%"
+                    : `${(fetchProgress.current / fetchProgress.total) * 100}%`,
+                }}
+              ></div>
+            </div>
+          </div>
+        )}
 
         {invites.length > 0 && (
           <>
@@ -150,16 +190,6 @@ function DeleteFriendsTool() {
               ))}
             </ul>
 
-            {nextPageToken && (
-              <button
-                onClick={handleLoadMore}
-                className="btn btn-outline w-full"
-                disabled={loading}
-              >
-                {loading ? "Đang tải thêm..." : "📄 Tải thêm lời mời"}
-              </button>
-            )}
-
             <button
               onClick={handleDeleteBatch}
               className="btn btn-error w-full"
@@ -173,6 +203,7 @@ function DeleteFriendsTool() {
     </>
   );
 }
+
 const toolsList = [
   {
     key: "delete_friends",
@@ -238,7 +269,6 @@ export default function ToolsLocket() {
 
   return (
     <div className="flex flex-col min-h-screen w-full bg-base-200 p-6">
-
       <h1 className="text-3xl font-bold mb-4 text-primary text-center">
         🧰 ToolsLocket by Dio
       </h1>
