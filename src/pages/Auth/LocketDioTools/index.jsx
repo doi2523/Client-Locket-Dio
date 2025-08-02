@@ -13,7 +13,7 @@ const SESSION_KEY = "invites_session";
 
 // Component riêng xử lý logic lời mời
 function DeleteFriendsTool() {
-  const actionDelete = useFeatureVisible("invite_cleanup_tool");
+  const actionDelete = !useFeatureVisible("invite_cleanup_tool");
   const [invites, setInvites] = useState([]);
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
