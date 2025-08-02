@@ -9,7 +9,7 @@ import BottomMenu from "./BottomMenu";
 
 const QueueViewer = () => {
   const { post } = useApp();
-  const { uploadPayloads, selectedQueue, setSelectedQueue, setuploadPayloads } =
+  const { uploadPayloads, selectedQueue, setSelectedQueue, setuploadPayloads, setRecentPosts } =
     post;
   const [queueInfo, setQueueInfo] = useState(uploadPayloads[selectedQueue]);
 
