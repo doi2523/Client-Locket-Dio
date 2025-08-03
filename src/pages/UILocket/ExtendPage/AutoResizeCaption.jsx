@@ -152,7 +152,7 @@ const MusicOverlay = ({ postOverlay }) => {
       <div className="flex items-center gap-2 shrink-0 no-select no-save">
         <div className="border-l border-white h-5"></div>
         <img
-          src="./icons/music_icon.png"
+          src="./icons/spotify_icon.png"
           alt="Spotify Icon"
           className="w-6 h-6 object-contain"
         />
