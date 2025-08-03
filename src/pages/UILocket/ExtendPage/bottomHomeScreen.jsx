@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { CalendarHeart } from "lucide-react";
 import { useApp } from "../../../context/AppContext";
-import { showSuccess, showWarning } from "../../../components/Toast";
+import { showInfo } from "../../../components/Toast";
 import UploadingQueue from "../../../components/UI/Moments/UploadingQueue";
 import MomentsGrid from "../../../components/UI/Moments/MomentsGrid";
 import MomentViewer from "../../../components/UI/Moments/MomentViewer";
@@ -9,6 +9,7 @@ import QueueViewer from "../../../components/UI/Moments/QueueViewer";
 import HeaderHistory from "./Header/HeaderHistory";
 import EmojiPicker from "./Container/EmojiStudio";
 import FlyingEmojiEffect from "./Container/FlyingEmojiEffect";
+import { INITIAL_MOMENTS_VISIBLE } from "../../../constants";
 
 const BottomHomeScreen = () => {
   const { navigation, post } = useApp();
@@ -26,7 +27,7 @@ const BottomHomeScreen = () => {
   } = post;
 
   // Chỉ giữ lại các state thực sự cần thiết
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_MOMENTS_VISIBLE);
   const [isClosing, setIsClosing] = useState(false);
   const [loadedItems, setLoadedItems] = useState([]);
   const [selectItems, setselectItems] = useState(null);
@@ -37,7 +38,7 @@ const BottomHomeScreen = () => {
         localStorage.getItem("uploadedMoments") || "[]"
       ).reverse();
       setRecentPosts(localData);
-      setVisibleCount(20);
+      setVisibleCount(INITIAL_MOMENTS_VISIBLE);
     }
   }, [isBottomOpen, setRecentPosts]);
 
@@ -47,13 +48,13 @@ const BottomHomeScreen = () => {
     setSelectedQueue(null);
     setTimeout(() => {
       setIsBottomOpen(false);
-      setVisibleCount(20);
+      setVisibleCount(INITIAL_MOMENTS_VISIBLE);
       setIsClosing(false);
     }, 0);
   };
 
   // Tính toán selectedAnimate dựa trên selectedMoment và selectedQueue
-  const selectedAnimate = 
+  const selectedAnimate =
     (selectedMoment !== null && selectedQueue === null) ||
     (selectedMoment === null && selectedQueue !== null);
 
@@ -64,50 +65,6 @@ const BottomHomeScreen = () => {
 
   const handleLoaded = (id) => {
     setLoadedItems((prev) => (prev.includes(id) ? prev : [...prev, id]));
-  };
-
-  const handleDelete = () => {
-    if (selectedMoment !== null) {
-      showWarning("Đang phát triển!!!");
-      return;
-    } else if (selectedQueue !== null) {
-      const updatedPayloads = uploadPayloads.filter(
-        (_, index) => index !== selectedQueue
-      );
-
-      setuploadPayloads(updatedPayloads);
-      localStorage.setItem("uploadPayloads", JSON.stringify(updatedPayloads));
-
-      setSelectedQueue(null);
-      showSuccess("Đã xoá thành công!");
-    }
-  };
-
-  const handleDeleteImage = (id) => {
-    if (!id) return;
-    console.log(id);
-
-    // 1. Xoá khỏi uploadPayloads
-    const updatedPayloads = uploadPayloads.filter((item) => item.id !== id);
-    setuploadPayloads(updatedPayloads);
-
-    // 2. Xoá khỏi recentPosts
-    const updatedRecent = recentPosts.filter((item) => item.id !== id);
-    setRecentPosts(updatedRecent);
-
-    // 3. Cập nhật localStorage
-    localStorage.setItem(
-      "uploadedMoments",
-      JSON.stringify([...updatedRecent].reverse())
-    );
-    localStorage.setItem("uploadPayloads", JSON.stringify(updatedPayloads));
-
-    // 4. Đóng preview nếu đang xem item đó
-    if (selectedMoment !== null || selectedQueue !== null) {
-      handleCloseMedia();
-    }
-
-    showSuccess("Đã xoá thành công!");
   };
 
   return (
@@ -140,7 +97,7 @@ const BottomHomeScreen = () => {
               handleLoaded={handleLoaded}
               setselectItems={setselectItems}
             />
-            <MomentsGrid />
+            <MomentsGrid visibleCount={visibleCount} />
           </div>
 
           {typeof selectedMoment === "number" ||
@@ -159,8 +116,7 @@ const BottomHomeScreen = () => {
         <div className="w-full fixed bottom-0 px-5 py-5 text-base-content z-30">
           <div className="grid grid-cols-3 items-center">
             {/* Left: Close viewer button */}
-            <div className="flex justify-start">
-            </div>
+            <div className="flex justify-start"></div>
 
             {/* Center: Home button */}
             <div className="flex justify-center scale-75">
@@ -169,18 +125,17 @@ const BottomHomeScreen = () => {
                 className="relative flex items-center justify-center w-20 h-20"
               >
                 <div className="absolute w-20 h-20 border-4 border-base-content/30 rounded-full z-10"></div>
-                <div className="absolute rounded-full w-16 h-16 bg-base-content z-0 hover:scale-105 transition-transform"></div>
+                <div className="absolute rounded-full w-16 h-16 bg-neutral z-0 hover:scale-105 transition-transform"></div>
               </button>
             </div>
 
             {/* Right: Delete button */}
             <div className="flex justify-end">
               <button
-                onClick={handleDelete}
-                className="p-2 text-base-content tooltip-left tooltip cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
-                data-tip="Bấm để xoá ảnh"
+                onClick={() => showInfo("Chức năng này đang phát triển!")}
+                className="p-2 backdrop-blur-xs bg-base-100/30 text-base-content tooltip-left tooltip cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
               >
-                <Trash2 size={28} />
+                <CalendarHeart size={28} />
               </button>
             </div>
           </div>

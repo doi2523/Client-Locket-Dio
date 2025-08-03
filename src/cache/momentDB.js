@@ -7,15 +7,35 @@ momentDB.version(1).stores({
   moments: "id, user, date", // id là primary key
 });
 //Nhập dữ liệu mảng vào indexdb
+const MAX_MOMENTS_CACHE = 1000; // Giới hạn cache tối đa
+
 export const bulkAddMoments = async (moments) => {
   try {
-    // Sắp xếp theo ngày mới nhất trước
-    const sortedMoments = [...moments].sort((a, b) => {
-      return new Date(b.date) - new Date(a.date); // DESC
-    });
+    // Sắp xếp bài mới nhất trước
+    const sortedMoments = [...moments].sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
 
     await momentDB.moments.bulkPut(sortedMoments);
-    console.log(`💾 Đã lưu ${sortedMoments.length} moments vào cache`);
+    // console.log(`💾 Đã lưu ${sortedMoments.length} moments vào cache`);
+
+    // Sau khi lưu, kiểm tra tổng số lượng
+    const total = await momentDB.moments.count();
+
+    if (total > MAX_MOMENTS_CACHE) {
+      const excess = total - MAX_MOMENTS_CACHE;
+
+      // Lấy danh sách ID của những bài cũ nhất để xoá
+      const oldMoments = await momentDB.moments
+        .orderBy("date")
+        .limit(excess)
+        .toArray();
+
+      const idsToDelete = oldMoments.map((item) => item.id);
+      await momentDB.moments.bulkDelete(idsToDelete);
+
+      // console.log(`🧹 Đã xoá ${excess} moments cũ để giữ trong giới hạn ${MAX_MOMENTS_CACHE}`);
+    }
   } catch (err) {
     console.error("❌ Lỗi khi lưu bulk moments:", err);
   }
