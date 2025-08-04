@@ -2,28 +2,52 @@ import axios from "axios";
 import { API_URL, clearLocalData, removeToken, removeUser } from "../utils";
 import { showInfo } from "../components/Toast";
 
-// Hàm giải mã JWT
+// ==== Hàm parse JWT an toàn (base64url) ====
 function parseJwt(token) {
   try {
-    const base64 = token.split(".")[1];
-    return JSON.parse(atob(base64));
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"))
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
   } catch {
     return null;
   }
 }
 
-// Kiểm tra token sắp hết hạn (dưới 1 phút)
+// ==== Kiểm tra token sắp hết hạn (dưới 5 phút) ====
+let cachedExp = null;
 function isTokenExpired(token) {
-  const payload = parseJwt(token);
+  if (!token) return true;
+
   const now = Math.floor(Date.now() / 1000);
-  return !payload || payload.exp - now < 300;
+
+  if (!cachedExp) {
+    const payload = parseJwt(token);
+    if (!payload) return true;
+    cachedExp = payload.exp;
+  }
+
+  const timeLeft = cachedExp - now;
+
+  console.log(
+    `⏰ Token còn lại: ${timeLeft}s (hết hạn lúc: ${new Date(
+      cachedExp * 1000
+    ).toLocaleString()})`
+  );
+
+  return timeLeft < 300; // < 5 phút thì coi là sắp hết hạn
 }
 
-// Biến để track trạng thái refresh và promise
+// ==== Biến toàn cục để tránh gọi refresh nhiều lần ====
 let isRefreshing = false;
 let refreshPromise = null;
 
-// Gọi API để refresh idToken (nếu cookie refreshToken còn hiệu lực)
+// ==== Gọi API để refresh idToken (nếu cookie còn hiệu lực) ====
 async function refreshIdToken() {
   try {
     const res = await axios.post(
@@ -31,13 +55,13 @@ async function refreshIdToken() {
       {},
       { withCredentials: true }
     );
-
     const newToken = res?.data?.data?.id_token;
-    const newlocalId = res?.data?.data?.user_id;
+    const newLocalId = res?.data?.data?.user_id;
 
     if (newToken) {
       localStorage.setItem("idToken", newToken);
-      localStorage.setItem("localId", newlocalId);
+      localStorage.setItem("localId", newLocalId);
+      cachedExp = null; // Reset lại cache khi nhận token mới
       return newToken;
     }
 
@@ -46,13 +70,10 @@ async function refreshIdToken() {
     const status = err?.response?.status;
 
     if (status === 401) {
-      // ❌ Phiên hết hạn thật → cần logout
       handleLogout();
     } else if (status === 429) {
-      // ⚠️ Quá nhiều yêu cầu → không logout
       showInfo("Bạn đang thao tác quá nhanh. Vui lòng thử lại sau.");
     } else {
-      // ❗Lỗi khác → báo lỗi nhẹ
       showInfo("Lỗi máy chủ. Vui lòng thử lại sau.");
     }
 
@@ -61,34 +82,33 @@ async function refreshIdToken() {
   }
 }
 
-// Hàm logout tập trung
+// ==== Đăng xuất tập trung ====
 function handleLogout() {
-  // Ngăn chặn việc gọi refresh token nữa
   isRefreshing = false;
   refreshPromise = null;
+  cachedExp = null;
 
   clearLocalData();
   removeUser();
   removeToken();
-  localStorage.removeItem("localId");
   localStorage.removeItem("idToken");
+  localStorage.removeItem("localId");
 
-  // Chỉ redirect một lần và tránh loop
   if (window.location.pathname !== "/login") {
     window.location.href = "/login";
   }
 }
 
-// Khởi tạo axios instance
+// ==== Khởi tạo axios instance ====
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_API_URL || "/api",
   withCredentials: true,
 });
 
-// Request Interceptor
+// ==== Request Interceptor ====
 api.interceptors.request.use(
   async (config) => {
-    // Bỏ qua nếu đang ở trang login hoặc là request refresh token
+    // Bỏ qua nếu đang ở trang login hoặc là request refresh-token
     if (
       window.location.pathname === "/login" ||
       config.url?.includes("refresh-token") ||
@@ -99,26 +119,21 @@ api.interceptors.request.use(
 
     let token = localStorage.getItem("idToken");
 
-    // Nếu không có token hoặc token hết hạn
     if (!token || isTokenExpired(token)) {
-      // Nếu đang refresh, chờ kết quả
       if (isRefreshing && refreshPromise) {
         try {
           token = await refreshPromise;
         } catch (error) {
-          // Nếu refresh thất bại, logout
           handleLogout();
           return Promise.reject(new Error("Token refresh failed"));
         }
       } else if (!isRefreshing) {
-        // Bắt đầu refresh token
         isRefreshing = true;
         refreshPromise = refreshIdToken();
 
         try {
           token = await refreshPromise;
           if (!token) {
-            // Nếu refresh thất bại, logout
             handleLogout();
             return Promise.reject(new Error("Token refresh failed"));
           }
@@ -132,23 +147,19 @@ api.interceptors.request.use(
       }
     }
 
-    // Chỉ thêm token nếu có
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
+// ==== Response Interceptor ====
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    console.log(error);
-
     const status = error.response?.status || error.status;
     const message =
       error.response?.data?.message ||
@@ -157,14 +168,7 @@ api.interceptors.response.use(
 
     const originalRequest = error.config;
 
-    // Nếu không có config (ví dụ lỗi mạng), thì không xử lý retry
-    if (!originalRequest) {
-      showInfo("Lỗi kết nối đến máy chủ. Vui lòng kiểm tra mạng hoặc thử lại.");
-      return Promise.reject(error);
-    }
-
-    // Tránh retry liên tục
-    if (originalRequest._retry) {
+    if (!originalRequest || originalRequest._retry) {
       return Promise.reject(error);
     }
 
@@ -206,13 +210,39 @@ api.interceptors.response.use(
       showInfo(message || "Bạn không có quyền truy cập!");
     }
 
+    if (status === 404) {
+      showInfo(message || "Không tìm thấy nội dung yêu cầu.");
+    }
     if (status === 429) {
       showInfo(
         message || "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau."
       );
     }
+
     if (status === 409) {
       showInfo(message || "Tệp này đã được xử lý trước đó.");
+    }
+
+    if (status === 500) {
+      showInfo(message || "Lỗi máy chủ. Vui lòng thử lại sau.");
+    }
+
+    if (status === 502) {
+      showInfo(
+        message || "Máy chủ phản hồi không hợp lệ. Vui lòng thử lại sau."
+      );
+    }
+
+    if (status === 503) {
+      showInfo(
+        message || "Dịch vụ hiện không khả dụng. Vui lòng quay lại sau."
+      );
+    }
+
+    if (status === 504) {
+      showInfo(
+        message || "Hết thời gian phản hồi từ máy chủ. Vui lòng thử lại sau."
+      );
     }
 
     return Promise.reject(error);
