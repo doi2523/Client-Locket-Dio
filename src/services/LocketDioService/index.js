@@ -5,3 +5,4 @@ export * from "./MemberPlans";
 export * from "./PaymentServices";
 export * from "./StorageServices";
 export * from "./PayloadServices";
+export * from "./ApplyCoupon";

@@ -2,11 +2,12 @@ import axios from "axios";
 import { PAYMENT_API_URL } from "../../utils";
 import api from "../../lib/axios";
 
-export const CreateNewOrder = async (planId, price) => {
+export const CreateNewOrder = async (planId, price, coupon) => {
   try {
     const res = await api.post(`${PAYMENT_API_URL}/api/orders`, {
       planId,
-      price
+      price,
+      coupon,
     });
     const orderData = res?.data?.data;
     return orderData;
