@@ -208,8 +208,13 @@ const ScreenCustomeStudio = () => {
           <FeatureGate canUse={canUseCaptionimage}>
             <ImageCaptionSelector title="🎨 Caption Ảnh - Truy cập sớm" />
           </FeatureGate>
-
           <div className="px-4">
+            <h2 className="text-md font-semibold text-primary">
+              🎨 Caption Logo
+            </h2>
+            <p className="text-xs">Comming Soon?...</p>
+          </div>
+          <div className="px-4 mt-2">
             <h2 className="text-md font-semibold text-primary mb-2">
               ✏️ Ghi chú
             </h2>
