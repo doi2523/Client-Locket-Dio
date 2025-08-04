@@ -157,7 +157,7 @@ export default function PlanDetailPage() {
           <div className="space-y-6">
             {/* Plan Information */}
             <div className="bg-base-200 rounded-2xl shadow-lg p-4 sm:p-6">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+              <div className="flex flex-row justify-between items-center mb-6 gap-4">
                 <h2 className="text-xl sm:text-2xl font-bold text-base-content">
                   Thông tin gói
                 </h2>
@@ -167,7 +167,7 @@ export default function PlanDetailPage() {
                   </span>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 text-sm">
+              <div className="grid grid-cols-2 gap-4 sm:gap-6 text-sm">
                 <div>
                   <p className="text-gray-600">Giá</p>
                   <p className="text-xl sm:text-2xl font-semibold text-green-600">
@@ -255,7 +255,7 @@ export default function PlanDetailPage() {
                   </p>
                 </div>
 
-                <hr className="border-base-200" />
+                <hr className="border-base-300" />
 
                 {/* Tóm tắt thanh toán */}
                 <div className="bg-base-200 rounded-lg p-4 space-y-2">
@@ -295,13 +295,13 @@ export default function PlanDetailPage() {
                 >
                   Mã giảm giá
                 </label>
-                <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex flex-row gap-2">
                   <input
                     id="coupon"
                     type="text"
                     value={coupon}
                     onChange={(e) => setCoupon(e.target.value)}
-                    className="input input-bordered flex-1 rounded-xl text-base focus:ring-2 focus:ring-indigo-500"
+                    className="input input-bordered flex-1 px-4 py-2.5 rounded-xl text-base focus:ring-2 focus:ring-indigo-500"
                     placeholder="Nhập mã giảm giá..."
                   />
                   <button
@@ -331,9 +331,9 @@ export default function PlanDetailPage() {
                   <h4 className="font-semibold text-yellow-800">Lưu ý:</h4>
                 </div>
                 <p className="text-sm text-yellow-700">
-                  Nhấn <strong>"Tiếp tục thanh toán"</strong> để hoàn tất. Gói
-                  sẽ được kích hoạt trong vòng <strong>5–10 phút</strong> sau
-                  khi thanh toán. Liên hệ hỗ trợ qua{" "}
+                  1. Nhấn <strong>"Tiếp tục thanh toán"</strong> để hoàn tất.
+                  Gói sẽ được kích hoạt trong vòng <strong>5–10 phút</strong>{" "}
+                  sau khi thanh toán. Liên hệ hỗ trợ qua{" "}
                   <a
                     className="text-blue-600 underline"
                     href="https://zalo.me/0329254203"
@@ -343,6 +343,9 @@ export default function PlanDetailPage() {
                     Zalo
                   </a>
                   .
+                </p>
+                <p className="text-sm text-yellow-700">
+                  2. Mã giảm giá chỉ có hiệu lực cho một lần sử dụng.
                 </p>
               </div>
 
