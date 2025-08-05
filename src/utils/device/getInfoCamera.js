@@ -18,11 +18,11 @@ export const getAvailableCameras = async () => {
     }
 
     // 📷 Camera sau
-    else if (/mặt sau|back|rear|environment|sau|facing back/.test(label)) {
+    else if (/mặt sau|back|rear|environment|sau|facing back|camera2 0/.test(label)) {
       backCameras.push(device);
 
       // ➕ Phân loại theo đặc điểm
-      if (/cực rộng|ultra|0.5x|góc rộng/.test(label)) {
+      if (/cực rộng|ultra|0.5x|góc rộng|camera2 2/.test(label)) {
         backUltraWideCamera ??= device;
       } else if (/chụp xa|tele|zoom|2x|3x|5x/.test(label)) {
         backZoomCamera ??= device;
