@@ -5,17 +5,17 @@ import { RefreshCcw, X } from "lucide-react";
 import { FaUserFriends, FaSearchPlus } from "react-icons/fa";
 import { FindFriendByUserName, refreshFriends, removeFriend } from "@/services";
 import LoadingRing from "@/components/ui/Loading/ring";
-import FriendItem from "@/components/ui/FriendView/FriendItem";
+import FriendItem from "./FriendItem";
 import SearchInput from "@/components/ui/Input/SearchInput";
 import { showError } from "@/components/Toast";
-import FriendFind from "@/components/ui/FriendView/FriendFind";
-import IncomingFriendRequests from "@/components/ui/FriendView/IncomingRequests";
+import FriendFind from "./FriendFind";
+import IncomingFriendRequests from "./IncomingRequests";
 
 const FriendsContainer = () => {
   const { user, friendDetails, setFriendDetails } = useContext(AuthContext);
   const popupRef = useRef(null);
   const { navigation } = useApp();
-  const { isFriendsTabOpen, setFriendsTabOpen, isFullview } = navigation;
+  const { isFriendsTabOpen, setFriendsTabOpen, isPWA } = navigation;
   const [showAllFriends, setShowAllFriends] = useState(false);
 
   const [startY, setStartY] = useState(null);
@@ -203,7 +203,7 @@ const FriendsContainer = () => {
         <div
           ref={popupRef}
           className={`
-            relative w-full ${isFullview ? "h-[95vh]" : "h-[85vh]"}
+            relative w-full ${isPWA ? "h-[95vh]" : "h-[85vh]"}
             bg-base-100 flex flex-col rounded-t-4xl shadow-lg
             will-change-transform outline-2 outline-base-content outline-dashed z-50
           `}

@@ -1,22 +1,20 @@
 import { Palette, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { AuthContext } from "../../../../../context/AuthLocket";
-import { useApp } from "../../../../../context/AppContext";
+import React, { useEffect, useRef, useState } from "react";
+import { useApp } from "@/context/AppContext";
 import CaptionIconSelector from "./CaptionItems/CaptionIconSelector";
 import GeneralThemes from "./CaptionItems/GeneralThemes";
 import ThemesCustomes from "./CaptionItems/ThemesCustomes";
 import ImageCaptionSelector from "./CaptionItems/ImageCaption";
-import PlanBadge from "../../../../../components/ui/PlanBadge/PlanBadge";
-import Footer from "../../../../../components/Footer";
+import PlanBadge from "@/components/ui/PlanBadge/PlanBadge";
+import Footer from "@/components/Footer";
 import CaptionGifThemes from "./CaptionItems/CaptionGifThemes";
-import { useFeatureVisible } from "../../../../../hooks/useFeature";
-import FeatureGate from "../../../../../components/common/FeatureGate";
+import { useFeatureVisible } from "@/hooks/useFeature";
+import FeatureGate from "@/components/common/FeatureGate";
 
 const ScreenCustomeStudio = () => {
   const navigate = useNavigate();
   const popupRef = useRef(null);
-  const { user, setUser, userPlan } = useContext(AuthContext);
   const { navigation, post, captiontheme } = useApp();
 
   const { isFilterOpen, setIsFilterOpen } = navigation;
@@ -251,9 +249,9 @@ const ScreenCustomeStudio = () => {
                 </Link>
               </p>
             </div>
-            <div className="bottom-0">
-              <Footer />
-            </div>
+          </div>
+          <div className="bottom-0">
+            <Footer />
           </div>
         </div>
       </div>

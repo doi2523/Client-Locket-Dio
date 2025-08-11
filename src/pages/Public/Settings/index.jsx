@@ -1,5 +1,5 @@
-import SettingView from "./SettingView";
-import ThemeSelector from "../../../components/Theme/ThemeSelector";
+// import SettingView from "./SettingView";
+import ThemeSelector from "@/components/Theme/ThemeSelector";
 import SettingsExtras from "./SettingsExtras";
 
 export default function Settings() {
@@ -19,7 +19,7 @@ export default function Settings() {
             <ThemeSelector />
           </div>
           <div className="bg-base-300 rounded-2xl shadow-md p-4">
-            <SettingView />
+            {/* <SettingView /> */}
           </div>
           {/* Thêm phần tử trống hoặc thêm component khác */}
           <div className="bg-base-300 rounded-2xl shadow-md p-4"></div>

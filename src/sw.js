@@ -1,4 +1,4 @@
-console.log("[SW] Locket Dio SW v2.2.7.36.555.4-6.3 - loaded");
+console.log("[SW] Locket Dio SW v2.2.7.3636.555.4-6.3 - loaded");
 import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 import { registerRoute, NavigationRoute } from 'workbox-routing';
 import { createHandlerBoundToURL } from 'workbox-precaching';
