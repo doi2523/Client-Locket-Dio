@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ThemeSelector from "../../../components/Theme/ThemeSelector";
-import MockupiPhone from "../../../components/UI/MockupiPhone";
+import MockupiPhone from "../../../components/ui/MockupiPhone";
 
 const AuthHome = () => {
   const [iframeUrl] = useState("https://locket-dio.space");

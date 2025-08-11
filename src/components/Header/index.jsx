@@ -1,7 +1,5 @@
-import React from "react";
 import "./header.css";
 import { Menu } from "lucide-react";
-import Sidebar from "../Sidebar";
 import { Link } from "react-router-dom";
 import { useApp } from "../../context/AppContext";
 
@@ -13,7 +11,7 @@ const Header = () => {
   return (
     <>
       <header className="sticky top-0 z-50 shadow-md bg-base-100 navbar flex items-center justify-between px-6 py-3 text-base-content border-base-300">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2" aria-label="Trang chủ">
           <span className="font-semibold gradient-text disable-select">
             Locket Dio
           </span>
@@ -30,13 +28,12 @@ const Header = () => {
           <button
             onClick={() => setIsSidebarOpen(true)}
             className="p-2 rounded-md transition cursor-pointer btn"
+            aria-label="Mở menu"
           >
             <Menu size={28} strokeWidth={2} />
           </button>
         </div>
       </header>
-
-      <Sidebar />
     </>
   );
 };

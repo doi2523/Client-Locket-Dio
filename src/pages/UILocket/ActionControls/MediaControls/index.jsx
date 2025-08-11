@@ -1,26 +1,19 @@
-import { X, Send, Sparkles, Check } from "lucide-react";
-import * as utils from "../../../../utils/index.js";
-import * as services from "../../../../services";
-import { useApp } from "../../../../context/AppContext.jsx";
-import { useCallback, useEffect, useState } from "react";
-import {
-  showError,
-  showInfo,
-  showSuccess,
-} from "../../../../components/Toast/index.jsx";
-import { defaultPostOverlay } from "../../../../stores/usePost.js";
-import { PostMoments } from "../../../../services/index.js";
+import { X, Sparkles } from "lucide-react";
+import * as utils from "@/utils/index.js";
+import * as services from "@/services";
+import { useApp } from "@/context/AppContext.jsx";
+import { useCallback, useState } from "react";
+import { showError, showInfo, showSuccess } from "@/components/Toast/index.jsx";
+import { defaultPostOverlay } from "@/stores/usePost.js";
+import { PostMoments } from "@/services/index.js";
 import UploadStatusIcon from "./UploadStatusIcon.jsx";
-import { useContext } from "react";
-import { AuthContext } from "../../../../context/AuthLocket.jsx";
-import { getMaxUploads } from "../../../../hooks/useFeature.js";
+import { getMaxUploads } from "@/hooks/useFeature.js";
+import { useStreakToDay } from "@/hooks/useStreak.js";
 
 const MediaControls = () => {
-  const { uploadStats } = useContext(AuthContext)
   const { navigation, post, useloading, camera } = useApp();
   const { setIsFilterOpen } = navigation;
-  const { sendLoading, setSendLoading, uploadLoading, setUploadLoading } =
-    useloading;
+  const { sendLoading, uploadLoading, setUploadLoading } = useloading;
   const {
     preview,
     setPreview,
@@ -42,6 +35,7 @@ const MediaControls = () => {
   } = post;
   const { setCameraActive } = camera;
   const { storage_limit_mb } = getMaxUploads();
+  const isStreaktoday = useStreakToDay();
 
   // State để quản lý hiệu ứng loading và success
   const [isSuccess, setIsSuccess] = useState(false);
@@ -186,7 +180,8 @@ const MediaControls = () => {
         previewType,
         postOverlay,
         audience,
-        selectedRecipients
+        selectedRecipients,
+        isStreaktoday
       );
 
       if (!payload) {

@@ -38,11 +38,26 @@ function AppContent() {
   const allRoutes = [...publicRoutes, ...authRoutes, ...locketRoutes];
   const privateRoutes = [...authRoutes, ...locketRoutes];
 
+  function setMeta(selector, content) {
+    let el = document.querySelector(selector);
+    if (el) el.setAttribute("content", content);
+  }
+
   useEffect(() => {
-    const currentRoute = allRoutes.find(
-      (route) => route.path === location.pathname
-    );
-    document.title = currentRoute ? currentRoute.title : "Locket Dio";
+    const r = allRoutes.find((route) => route.path === location.pathname);
+    document.title = r?.title || "Locket Dio - Đăng ảnh & Video lên Locket";
+
+    const url = "https://locket-dio.com" + location.pathname;
+    (
+      document.querySelector("link[rel='canonical']") ||
+      document.head.appendChild(
+        Object.assign(document.createElement("link"), { rel: "canonical" })
+      )
+    ).href = url;
+
+    setMeta("meta[property='og:title']", document.title);
+    setMeta("meta[property='og:url']", url);
+    setMeta("meta[name='twitter:title']", document.title);
   }, [location.pathname]);
 
   if (loading) return <LoadingPage isLoading={true} />;

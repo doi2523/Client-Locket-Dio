@@ -1,9 +1,8 @@
 import React, { useEffect, useRef } from "react";
-import { useApp } from "../../../../context/AppContext";
+import { useApp } from "@/context/AppContext";
 import { RefreshCcw } from "lucide-react";
-import * as constant from "../../../../constants";
 import UploadFile from "./UploadFile";
-import { showError } from "../../../../components/Toast";
+import { showError } from "@/components/Toast";
 
 const CameraButton = () => {
   const { camera, post, useloading } = useApp();

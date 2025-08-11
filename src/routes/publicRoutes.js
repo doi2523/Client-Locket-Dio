@@ -1,7 +1,8 @@
 import React from "react";
-const CameraCapture = React.lazy(() => import("../pages/UILocket"));
+// const CameraCapture = React.lazy(() => import("../pages/UILocket"));
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
+// import CameraCapture from "@/pages/UILocket";
 
 const AboutLocketDio = React.lazy(() => import("../pages/Public/About"));
 const AboutMe = React.lazy(() => import("../pages/Auth/AboutMe"));
@@ -14,7 +15,6 @@ const ToolsLocket = React.lazy(() => import("../pages/Auth/LocketDioTools"));
 const Settings = React.lazy(() => import("../pages/Public/Settings"));
 const DevPage = React.lazy(() => import("../pages/Public/DevPage"));
 const AddToHomeScreenGuide = React.lazy(() => import("../pages/Public/AddToScreen"));
-const ClearDataPage = React.lazy(() => import("../pages/Public/ClearCache"));
 const ErrorReferencePage = React.lazy(() => import("../pages/Public/ErrorReferencePage"));
 const AuthHome = React.lazy(() => import("../pages/Auth/Home"));
 const ReferencePage = React.lazy(() => import("../pages/Public/APIDocs"));
@@ -28,7 +28,7 @@ export const publicRoutes = [
   { path: "/about-dio", component: AboutMe, title: `Về Dio | ${APP_NAME}` },
   { path: "/timeline", component: Timeline, title: `Dòng Thời Gian | ${APP_NAME}` },
   { path: "/docs", component: Docs, title: `Tài liệu | ${APP_NAME}` },
-  { path: "/locket", component: CameraCapture, title: `Locket Camera | ${APP_NAME}` },
+  // { path: "/locket", component: CameraCapture, title: `Locket Camera | ${APP_NAME}` },
   { path: "/contact", component: Contact, title: `Liên hệ | ${APP_NAME}` },
   { path: "/privacy", component: PrivacyPolicy, title: `Chính sách riêng tư | ${APP_NAME}` },
   { path: "/pricing", component: PricingPage, title: `Đăng ký gói thành viên | ${APP_NAME}` },
@@ -36,7 +36,6 @@ export const publicRoutes = [
   { path: "/settings", component: Settings, title: `Cài đặt | ${APP_NAME}` },
   { path: "/devpage", component: DevPage, title: `Dev Page | ${APP_NAME}` },
   { path: "/download", component: AddToHomeScreenGuide, title: `Thêm ứng dụng vào màn hình chính | ${APP_NAME}` },
-  { path: "/clear", component: ClearDataPage, title: `Clear Cache Website | ${APP_NAME}` },
   { path: "/incidents", component: ErrorReferencePage, title: `Trung tâm sự cố | ${APP_NAME}` },
   { path: "/test", component: AuthHome, title: `Test | ${APP_NAME}` },
   { path: "/reference", component: ReferencePage, title: `API Docs | ${APP_NAME}` },

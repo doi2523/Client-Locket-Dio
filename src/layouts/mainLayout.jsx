@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+// const Sidebar = lazy(() => import("@/components/Sidebar"));
 import LoadingPage from "../components/pages/LoadingPage";
-import CropImageStudio from "../components/common/CropImageStudio";
+import Sidebar from "@/components/Sidebar";
+const CropImageStudio = lazy(() =>
+  import("@/components/common/CropImageStudio.jsx")
+);
 
 const DefaultLayout = ({ children }) => {
   const location = useLocation();
@@ -30,7 +34,10 @@ const DefaultLayout = ({ children }) => {
         <div className="relative z-10">{children}</div>
       </main>
       <Footer />
-      <CropImageStudio/>
+      <Suspense fallback={null}>
+        <CropImageStudio />
+      </Suspense>
+      <Sidebar />
     </div>
   );
 };

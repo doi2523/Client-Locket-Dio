@@ -1,42 +1,25 @@
-import React, { useContext, lazy, Suspense } from "react";
-import { AuthContext } from "../../context/AuthLocket.jsx";
+import React, { lazy, Suspense } from "react";
+import LoadingPage from "@/components/pages/LoadingPage.jsx";
+import MainHomeScreen from "./MainHomeScreen";
 
-// Giữ nguyên (không lazy)
-import MainHomeScreen from "./ExtendPage/mainHomeScreen.jsx";
-import BottomHomeScreen from "./ExtendPage/bottomHomeScreen.jsx";
-import Sidebar from "../../components/Sidebar/index.jsx";
-import ScreenCustomeStudio from "./ExtendPage/Container/CustomeStudio.jsx";
-import CropImageStudio from "../../components/common/CropImageStudio.jsx";
-import LoadingPage from "../../components/pages/LoadingPage.jsx";
-
-// Lazy-load các component nặng
-const FriendsContainer = lazy(() => import("./ExtendPage/Container/FriendsContainer.jsx"));
-const SettingContainer = lazy(() => import("./ExtendPage/Container/SettingContainer.jsx"));
-const LeftHomeScreen = lazy(() => import("./ExtendPage/leftHomeScreen.jsx"));
-const RightHomeScreen = lazy(() => import("./ExtendPage/rightHomeScreen.jsx"));
+// Lazy load các phần nặng
+const LeftHomeScreen = lazy(() => import("./LeftHomeScreen"));
+const RightHomeScreen = lazy(() => import("./RightHomeScreen"));
+const BottomHomeScreen = lazy(() => import("./BottomHomeScreen"));
+const CropImageStudio = lazy(() =>
+  import("@/components/common/CropImageStudio.jsx")
+);
 
 const CameraCapture = () => {
-  const { user, setUser } = useContext(AuthContext);
-
   return (
-    <>
+    <Suspense fallback={<LoadingPage isLoading={true}/>}>
+      {/* Component không lazy vẫn load bình thường */}
       <MainHomeScreen />
+      <LeftHomeScreen />
+      <RightHomeScreen />
+      <BottomHomeScreen />
       <CropImageStudio />
-      {/* <EmojiPicker/> */}
-      <Suspense fallback={<LoadingPage/>}>
-        <LeftHomeScreen />
-        <RightHomeScreen />
-        <BottomHomeScreen />
-      </Suspense>
-
-      <Suspense fallback={<LoadingPage/>}>
-        <FriendsContainer />
-        <SettingContainer />
-        <ScreenCustomeStudio/>
-      </Suspense>
-      
-      <Sidebar />
-    </>
+    </Suspense>
   );
 };
 

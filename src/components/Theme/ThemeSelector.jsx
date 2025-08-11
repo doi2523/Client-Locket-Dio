@@ -9,12 +9,10 @@ const themes = [
   "corporate",
   "synthwave",
   "retro",
-  "cyberpunk",
   "valentine",
   "halloween",
   "garden",
   "forest",
-  "aqua",
   "lofi",
   "pastel",
   "fantasy",
@@ -61,28 +59,27 @@ const ThemeSelector = () => {
     <div className="w-full flex justify-center">
       {/* Custom Theme */}
       <div className="w-full">
-        <h1 className="font-lovehouse text-center text-3xl font-semibold">
-          Setting Theme Locket Dio
+        <h1 className="font-lovehouse text-base-content text-center text-3xl font-semibold">
+          Setting Theme
         </h1>
 
-        <fieldset className="p-4 border rounded-lg shadow-lg w-full">
-          <legend className="font-semibold text-lg text-left">
+        <fieldset className="border rounded-2xl shadow-md w-full py-3">
+          <legend className="font-semibold text-base-content text-lg text-left ml-5">
             🎨 Chọn Giao Diện:
           </legend>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[400px] overflow-y-auto px-4 py-3">
             {themes.map((t) => (
               <label
                 key={t}
-                className={`flex flex-col items-center gap-2 p-2 rounded-lg shadow transition tooltip
+                className={`flex flex-col items-center gap-2 p-2 rounded-lg shadow-sm transition-all duration-300
             bg-base-100 hover:bg-base-300 
             ${
               theme === t
-                ? "outline-3 outline-dotted outline-primary opacity-50 cursor-not-allowed"
+                ? "outline-3 scale-80 outline-dotted outline-primary opacity-70 cursor-not-allowed"
                 : "cursor-pointer"
             }`}
                 data-theme={t}
-                data-tip={t}
               >
                 <div className="grid grid-cols-5 grid-rows-3 w-30 h-12 rounded-lg overflow-hidden border border-gray-300">
                   <div className="bg-base-200 col-start-1 row-span-2 row-start-1"></div>

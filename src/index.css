@@ -55,9 +55,10 @@
 }
 @font-face {
   font-family: "LoveHouse";
-  src: url("https://cdn.locket-dio.space/v1/fonts/LoveHouse.woff") format("woff2");
+  src: url("https://cdn.locket-dio.com/v1/fonts/LoveHouse.woff") format("woff2");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 /* @font-face {
   font-family: 'SF Compact Rounded Black';

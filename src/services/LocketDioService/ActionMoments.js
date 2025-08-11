@@ -16,3 +16,13 @@ export const SendReactMoment = async (emoji, selectedMomentId, power) => {
     console.warn("❌ React Failed", err);
   }
 };
+
+export const GetLastestMoment = async () => {
+  try {
+    const res = await api.get("/locket/getLatestMomentV2");
+    const moments = res.data.data;
+    return moments;
+  } catch (err) {
+    console.warn("❌ React Failed", err);
+  }
+};

@@ -1,68 +1,10 @@
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../../context/AuthLocket";
-import LoadingRing from "../../../components/UI/Loading/ring";
-import * as locketService from "../../../services/locketService";
-import * as utils from "../../../utils";
-import axios from "axios";
-import { getListIdFriends } from "../../../services";
+import { useContext, useState } from "react";
+import { AuthContext } from "@/context/AuthLocket";
+import LoadingRing from "@/components/ui/Loading/ring";
 
 export default function Profile() {
   const { user, setUser } = useContext(AuthContext);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [userinfo, setUserinfo] = useState({});
-
-  // const getListIdFriend = async (idToken, localId) => {
-  //   const allFriends = [];
-  //   let nextPageToken = null;
-  
-  //   try {
-  //     do {
-  //       // console.log("🔁 Gọi API với pageToken:", nextPageToken);
-  
-  //       const res = await axios.post(`http://localhost:5004/locket/get-incoming_friends`, {
-  //         idToken,
-  //         localId,
-  //         pageToken: nextPageToken, // Gửi pageToken nếu có
-  //       });
-  
-  //       const friends = res?.data?.data?.friendsList || [];
-  //       const cleanedFriends = friends.map(friend => ({
-  //         uid: friend.uid,
-  //         createdAt: friend.date,
-  //       }));
-  
-  //       allFriends.push(...cleanedFriends);
-  
-  //       nextPageToken = res?.data?.data?.nextPageToken;
-  //       // console.log("👉 nextPageToken sau lần gọi:", nextPageToken);
-  
-  //     } while (nextPageToken); // Vẫn tiếp tục nếu có token
-  
-  //     return allFriends;
-  //   } catch (err) {
-  //     console.error("❌ Lỗi khi gọi API get-friends:", err);
-  //     return [];
-  //   }
-  // };
-  
-  // useEffect(() => {
-  //   const fetchFriends = async () => {
-  //     try {
-  //       const data = await getListIdFriends(user.idToken, user.localId);
-  //       console.log("✅ Danh sách bạn bè:", data);
-  //       setUserinfo(prev => ({ ...prev, friends: data }));
-  
-  //       // Lưu vào sessionStorage
-  //       sessionStorage.setItem('friendsList', JSON.stringify(data));
-  //     } catch (err) {
-  //       console.error("❌ Lỗi lấy danh sách bạn bè:", err);
-  //     }
-  //   };
-  
-  //   if (user?.idToken && user?.localId) {
-  //     fetchFriends();
-  //   }
-  // }, [user]);
   
   // Convert timestamp thành ngày giờ đọc được
   const formatDate = (timestamp) => {
@@ -105,44 +47,6 @@ export default function Profile() {
 
     return date.toLocaleString("vi-VN", options);
   };
-  useEffect(() => {
-    const fetchLatestMoment = async () => {
-      try {
-        // console.log("start get");
-        const idToken = utils.getAuthCookies().idToken;
-        // const response = await locketService.getLatestMoment(idToken);
-        // console.log(response);
-        // return response.data;
-      } catch (error) {
-        console.error(
-          "❌ Lỗi khi gọi API latest moment:",
-          error.response?.data.success || error.message
-        );
-        return null;
-      }
-    };
-
-    fetchLatestMoment();
-  }, []); // ✅ Dependency array rỗng => chỉ chạy khi component mount
-  const { idToken, localId } = utils.getAuthCookies();
-  const updateProfile = async () => {
-    try {
-      const response = await axios.post("http://localhost:5004/locket/changeProfileInfo", {
-        badge: "locket_gold",
-        idToken,
-        celebrity: true,
-        // additionalData: {
-        //   username: "Dio",
-        //   bio: "Developer",
-        // },
-      });
-      console.log("✅ Cập nhật thành công:", response.data);
-    } catch (error) {
-      console.error("❌ Lỗi khi cập nhật profile:", error.message);
-    }
-  };
-  
-  // updateProfile();
   
 
   return (

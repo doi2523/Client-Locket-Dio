@@ -6,7 +6,7 @@ function ImageWithLoader({ src, alt }) {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className="relative w-full aspect-[1/2] bg-gray-100 rounded-lg overflow-hidden">
+    <div className="relative w-full aspect-[1/2] rounded-lg overflow-hidden">
       {/* Spinner khi chưa load xong */}
       {!loaded && (
         <div className="absolute inset-0 flex items-center justify-center">
@@ -38,7 +38,7 @@ export default function SettingView() {
   return (
     <div>
       <h1 className="text-3xl font-semibold font-lovehouse text-center mb-4 no-select">
-        Setting View Locket Dio
+        Setting View
       </h1>
 
       <div className="grid grid-cols-2 gap-6 w-full max-w-[600px] md:max-w-[400px] mx-auto">
@@ -46,7 +46,7 @@ export default function SettingView() {
         <div
           onClick={() => handleSelect(false)}
           className={`cursor-pointer border-2 rounded-xl p-3 transition-all duration-500 hover:shadow-lg ${
-            !isFullview ? "scale-105" : "scale-100 border-transparent"
+            !isFullview ? "scale-80" : "scale-100 border-transparent"
           }`}
         >
           <ImageWithLoader
@@ -68,7 +68,7 @@ export default function SettingView() {
         <div
           onClick={() => handleSelect(true)}
           className={`cursor-pointer border-2 rounded-xl p-3 transition-all duration-500 hover:shadow-lg ${
-            isFullview ? "scale-105" : "scale-100 border-transparent"
+            isFullview ? "scale-80" : "scale-100 border-transparent"
           }`}
         >
           <ImageWithLoader

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Camera, Cloud, Copy, Monitor, Thermometer } from "lucide-react";
 import { useLocationWeather } from "../../../utils";
 

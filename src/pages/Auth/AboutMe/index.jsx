@@ -1,6 +1,6 @@
 import React from "react";
 import { Code2, Mail, Coffee, Globe } from "lucide-react";
-import ImageMarquee from "../../../components/UI/Marquee/LanguageMarquee";
+import ImageMarquee from "../../../components/ui/Marquee/LanguageMarquee";
 import {
   FaReact,
   FaGithub,
@@ -23,6 +23,7 @@ const AboutMe = () => {
             src="https://cdn.locket-dio.space/v1/images/avt/avtdio.webp" // đổi thành avatar của bạn
             alt="Dio Avatar"
             className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-lg mb-4"
+            loading="lazy"
           />
           <h1 className="text-3xl md:text-4xl font-semibold text-center">
             Đào Văn Đôi (Dio)

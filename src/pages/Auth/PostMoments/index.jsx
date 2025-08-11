@@ -13,18 +13,18 @@ import {
   Pencil,
   FileImage,
 } from "lucide-react";
-import { showError, showToast } from "../../../components/Toast/index.jsx";
-import * as utils from "../../../utils";
-import * as services from "../../../services";
-import LoadingRing from "../../../components/UI/Loading/ring.jsx";
-import { useApp } from "../../../context/AppContext.jsx";
+import { showError, showToast } from "@/components/Toast/index.jsx";
+import * as utils from "@/utils";
+import * as services from "@/services";
+import LoadingRing from "@/components/ui/Loading/ring.jsx";
+import { useApp } from "@/context/AppContext.jsx";
 import { Link } from "react-router-dom";
-import Hourglass from "../../../components/UI/Loading/hourglass.jsx";
-import MediaSizeInfo from "../../../components/UI/MediaSizeInfo/index.jsx";
-import { defaultPostOverlay } from "../../../stores/usePost.js";
-import { getMaxUploads } from "../../../hooks/useFeature.js";
-import { AuthContext } from "../../../context/AuthLocket.jsx";
-import PlanBadge from "../../../components/UI/PlanBadge/PlanBadge.jsx";
+import Hourglass from "@/components/ui/Loading/hourglass.jsx";
+import MediaSizeInfo from "@/components/ui/MediaSizeInfo/index.jsx";
+import { defaultPostOverlay } from "@/stores/usePost.js";
+import { getMaxUploads } from "@/hooks/useFeature.js";
+import { AuthContext } from "@/context/AuthLocket.jsx";
+import PlanBadge from "@/components/ui/PlanBadge/PlanBadge.jsx";
 import StorageUsageBar from "./StorageUsageBar.jsx";
 
 const PostMoments = () => {

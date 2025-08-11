@@ -1,5 +1,5 @@
 // src/hooks/useCamera.js
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 
 export const useCamera = () => {
   const videoRef = useRef(null);
@@ -18,16 +18,6 @@ export const useCamera = () => {
   const [cameraMode, setCameraMode] = useState("user");
   const [zoomLevel, setZoomLevel] = useState("1x"); // "0.5x" | "1x" | "3x"
   const [deviceId, setDeviceId] = useState(null); // deviceId của camera hiện tại
-
-  // Khởi tạo giá trị từ localStorage nếu có
-  const initialCameraHD = localStorage.getItem("iscameraHD") === "true";
-
-  const [iscameraHD, setIsCameraHD] = useState(initialCameraHD);
-
-  // Tự động lưu vào localStorage khi thay đổi
-  useEffect(() => {
-    localStorage.removeItem("iscameraHD", iscameraHD);
-  }, [iscameraHD]);
 
   const IMAGE_SIZE_PX = 1920;
   const VIDEO_RESOLUTION_PX = 1080;
@@ -56,8 +46,6 @@ export const useCamera = () => {
     setCameraActive,
     cameraMode,
     setCameraMode,
-    iscameraHD,
-    setIsCameraHD,
     IMAGE_SIZE_PX,
     VIDEO_RESOLUTION_PX,
     MAX_RECORD_TIME,

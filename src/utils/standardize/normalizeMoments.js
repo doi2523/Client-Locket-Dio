@@ -25,13 +25,12 @@ export function normalizeMoments(data) {
     // ID có thể là 'id' hoặc 'canonical_uid'
     const momentId = canonical_uid || id || null;
 
-    // Chuyển timestamp Firestore thành ISO string
-    const dateISO =
-      date && date._seconds
-        ? new Date(date._seconds * 1000).toISOString()
-        : typeof date === "string"
-        ? date
-        : null;
+    const firestoreDate =
+      date && date._seconds ? new Date(date._seconds * 1000) : null;
+
+    const dateVNString = firestoreDate
+      ? firestoreDate.toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })
+      : null;
 
     // Lấy captions từ overlays
     let captions = [];
@@ -45,7 +44,11 @@ export function normalizeMoments(data) {
     }
 
     // Nếu không có overlay nhưng có caption dạng chuỗi -> đẩy vào captions
-    if (captions.length === 0 && typeof caption === "string" && caption.trim() !== "") {
+    if (
+      captions.length === 0 &&
+      typeof caption === "string" &&
+      caption.trim() !== ""
+    ) {
       captions.push({
         text: caption,
         text_color: "#FFFFFF",
@@ -60,7 +63,7 @@ export function normalizeMoments(data) {
       image_url,
       video_url,
       thumbnail_url,
-      date: dateISO,
+      date: dateVNString,
       md5: md5 || null,
       sent_to_all: !!sent_to_all,
       show_personally: !!show_personally,
@@ -68,7 +71,6 @@ export function normalizeMoments(data) {
     };
   });
 }
-
 
 //   [
 //     {

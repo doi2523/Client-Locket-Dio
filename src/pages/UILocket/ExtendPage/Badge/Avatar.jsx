@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import LoadingRing from "../../../../components/UI/Loading/ring";
+import LoadingRing from "../../../../components/ui/Loading/ring";
 import { AuthContext } from "../../../../context/AuthLocket";
 
 const Avatar = () => {

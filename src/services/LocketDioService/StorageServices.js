@@ -1,6 +1,6 @@
-import { MEDIA_API_URL, STORAGE_API_URL } from "../../config/apiConfig";
-import { CLIENT_VERSION } from "../../constants/versionInfo";
-import api from "../../lib/axios";
+import { MEDIA_API_URL, STORAGE_API_URL } from "@/config/apiConfig";
+import { CLIENT_VERSION } from "@/constants/versionInfo";
+import api from "@/lib/axios";
 
 export const uploadFileAndGetInfoR2 = async (
   file,

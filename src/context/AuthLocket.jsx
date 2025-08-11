@@ -6,14 +6,14 @@ import React, {
   useRef,
 } from "react";
 import PropTypes from "prop-types";
-import * as utils from "../utils";
+import * as utils from "@/utils";
 import {
-  fetchUser,
   getListIdFriends,
   GetUserData,
   loadFriendDetails,
   updateUserInfo,
-} from "../services";
+  GetLastestMoment,
+} from "@/services";
 
 export const AuthContext = createContext();
 
@@ -39,6 +39,15 @@ export const AuthProvider = ({ children }) => {
 
   const [uploadStats, setUploadStats] = useState(() => {
     const saved = localStorage.getItem("uploadStats");
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") || "default"
+  );
+
+  const [streak, setStreak] = useState(() => {
+    const saved = localStorage.getItem("streak");
     return saved ? JSON.parse(saved) : null;
   });
 
@@ -110,6 +119,12 @@ export const AuthProvider = ({ children }) => {
 
         setUserPlan(userData);
         setUploadStats(userData?.upload_stats);
+
+        const data = await GetLastestMoment();
+        if (data?.streak) {
+          setStreak(data.streak);
+          localStorage.setItem("streak", JSON.stringify(data.streak));
+        }
       }
 
       await updateUserInfo(user); // Gọi sau khi fetchPlan hoàn tất
@@ -161,10 +176,6 @@ export const AuthProvider = ({ children }) => {
     hasFetchedUploadStats.current = false;
   }, [user?.uid]); // Chỉ reset khi user ID thay đổi
 
-  const [theme, setTheme] = useState(
-    localStorage.getItem("theme") || "default"
-  );
-
   // Cập nhật theme khi thay đổi
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -202,8 +213,19 @@ export const AuthProvider = ({ children }) => {
       resetAuthContext,
       uploadStats,
       setUploadStats,
+      streak,
+      setStreak,
     }),
-    [user, loading, friends, friendDetails, userPlan, authTokens, uploadStats]
+    [
+      user,
+      loading,
+      friends,
+      friendDetails,
+      userPlan,
+      authTokens,
+      uploadStats,
+      streak,
+    ]
   );
 
   return (

@@ -6,7 +6,7 @@ import {
 } from "../../../services";
 import { AuthContext } from "../../../context/AuthLocket";
 import { showError, showInfo, showSuccess } from "../../../components/Toast";
-import LoadingRing from "../../../components/UI/Loading/ring";
+import LoadingRing from "../../../components/ui/Loading/ring";
 import { useFeatureVisible } from "../../../hooks/useFeature";
 
 const SESSION_KEY = "invites_session";

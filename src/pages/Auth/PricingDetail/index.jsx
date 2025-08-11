@@ -5,7 +5,7 @@ import { AuthContext } from "../../../context/AuthLocket";
 import LoadingPage from "../../../components/pages/LoadingPage";
 import { API_URL } from "../../../utils";
 import * as services from "../../../services";
-import FeatureMarquee from "../../../components/UI/Marquee/FeatureMarquee";
+import FeatureMarquee from "../../../components/ui/Marquee/FeatureMarquee";
 
 const FEATURE_TOOLTIPS = {
   image_upload: "Cho phép tải lên hình ảnh cho bài viết",

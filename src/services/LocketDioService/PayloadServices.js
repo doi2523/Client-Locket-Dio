@@ -1,5 +1,5 @@
-import { showError } from "../../components/Toast";
-import { getToken } from "../../utils";
+import { showError } from "@/components/Toast";
+import { getToken } from "@/utils";
 import { uploadFileAndGetInfoR2 } from "./StorageServices";
 
 //Bản chính mới nhất
@@ -8,7 +8,8 @@ export const createRequestPayloadV5 = async (
   previewType,
   postOverlay,
   audience,
-  selectedRecipients
+  selectedRecipients,
+  isStreaktoday = false
 ) => {
   try {
     const { localId } = getToken() || {};
@@ -46,6 +47,7 @@ export const createRequestPayloadV5 = async (
       audience, // Gắn audience vào options luôn
       recipients: audience === "selected" ? selectedRecipients : [],
       music: postOverlay?.music || "",
+      isStreaktoday,
     };
 
     // Tạo payload cuối cùng
