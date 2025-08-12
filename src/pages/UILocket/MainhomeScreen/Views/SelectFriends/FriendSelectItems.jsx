@@ -12,7 +12,10 @@ export default function FriendSelectItems({ friend, isSelected, onToggle }) {
   return (
     <div
       onClick={() => onToggle(friend.uid)}
-      className="flex flex-col items-center cursor-pointer transition-opacity hover:opacity-80 active:opacity-60 snap-center shrink-0"
+      className={clsx(
+        "flex flex-col items-center cursor-pointer transition-opacity hover:opacity-80 active:opacity-60 snap-center shrink-0",
+        isSelected ? "opacity-100" : "opacity-60"
+      )}
     >
       <div
         className={clsx(
@@ -34,7 +37,7 @@ export default function FriendSelectItems({ friend, isSelected, onToggle }) {
         )}
       </div>
 
-      <span className="text-xs mt-1 text-center max-w-[4rem] font-semibold truncate text-base-content">
+      <span className="text-xs mt-1 text-center max-w-[4rem] font-semibold truncate text-base-content transition-opacity duration-300">
         {friend?.firstName} {friend?.lastName}
       </span>
     </div>

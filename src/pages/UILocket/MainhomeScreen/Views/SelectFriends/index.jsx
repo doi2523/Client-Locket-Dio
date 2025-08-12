@@ -48,7 +48,7 @@ const SelectFriendsList = () => {
   };
 
   const handleSelectPrivate = () => {
-    showWarning("Chưa hỗ trợ điều này...")
+    showWarning("Chưa hỗ trợ điều này...");
     // const { localId } = getToken() || {};
     // setAudience("private"); // Thay đổi audience thành "private"
     // setSelectedFriends([localId]); // Set selectedFriends là array chứa localId
@@ -95,7 +95,12 @@ const SelectFriendsList = () => {
         className="flex gap-3 overflow-x-auto pb-2 no-scrollbar scroll-smooth snap-x snap-mandatory px-[47vw]"
       >
         {/* Mục "Riêng tư" */}
-        <div className="flex flex-col items-center justify-center snap-center shrink-0">
+        <div
+          className={clsx(
+            "flex flex-col items-center justify-center snap-center shrink-0 transition-all duration-300",
+            isPrivateMode() ? "opacity-100" : "opacity-60"
+          )}
+        >
           <div
             onClick={handleSelectPrivate}
             className={clsx(
@@ -115,7 +120,12 @@ const SelectFriendsList = () => {
         </div>
 
         {/* Mục "Tất cả" */}
-        <div className="flex flex-col items-center justify-center snap-center shrink-0">
+        <div
+          className={clsx(
+            "flex flex-col items-center justify-center snap-center shrink-0 transition-all duration-300",
+            isSelectAll() ? "opacity-100" : "opacity-60"
+          )}
+        >
           <div
             onClick={handleSelectAll}
             className={clsx(
