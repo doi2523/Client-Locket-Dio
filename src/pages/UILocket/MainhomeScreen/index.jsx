@@ -21,7 +21,7 @@ const MainHomeScreen = () => {
   // Hai giao diện tạm giống nhau, bạn có thể sửa ở đây theo isFullview
   const renderFullview = () => (
     <div
-      className={`flex flex-col h-screen select-none overflow-hidden ${
+      className={`flex flex-col min-h-[100dvh] select-none overflow-hidden ${
         sendLoading === true
           ? "animate-slide-up"
           : sendLoading === false
