@@ -13,12 +13,12 @@ const FriendsContainer = lazy(() => import("./Views/FriendsContainer"));
 const MainHomeScreen = () => {
   const { navigation, camera, useloading, post } = useApp();
 
-  const { isHomeOpen, isProfileOpen, isBottomOpen, isPWA } = navigation;
+  const { isHomeOpen, isProfileOpen, isBottomOpen, isFullview } = navigation;
   const { sendLoading } = useloading;
   const { canvasRef } = camera;
   const { selectedFile, postOverlay } = post;
 
-  // Hai giao diện tạm giống nhau, bạn có thể sửa ở đây theo isPWA
+  // Hai giao diện tạm giống nhau, bạn có thể sửa ở đây theo isFullview
   const renderFullview = () => (
     <div
       className={`flex flex-col h-screen select-none overflow-hidden ${
@@ -80,7 +80,7 @@ const MainHomeScreen = () => {
             : "translate-x-0"
         }`}
       >
-        {isPWA ? renderFullview() : renderNormalView()}
+        {isFullview ? renderFullview() : renderNormalView()}
         {postOverlay.music && <MusicPlayer music={postOverlay.music} />}
       </div>
       <Suspense fallback={null}>

@@ -1,11 +1,10 @@
 import React, { lazy, useContext, useEffect } from "react";
 import { AuthContext } from "@/context/AuthLocket";
-import { ChevronRight, Link, Settings } from "lucide-react";
+import { ChevronRight, Link } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import BadgePlan from "../ExtendPage/Badge";
 import BottomStreak from "./BottomStreak";
-// import RecentPostGrid from "./Views/RecentPostGrid";
-const RecentPostGrid = lazy(() => import("./Views/RecentPostGrid"));
+const StreaksCalender = lazy(() => import("./Views/StreaksCalender"));
 import LoadingRing from "@/components/ui/Loading/ring";
 
 const LeftHomeScreen = () => {
@@ -24,45 +23,6 @@ const LeftHomeScreen = () => {
     document.body.classList.toggle("overflow-hidden", isProfileOpen);
     return () => document.body.classList.remove("overflow-hidden");
   }, [isProfileOpen]);
-
-  function convertDateToIOSFormat(date) {
-    const d = new Date(date);
-    const pad = (n) => n.toString().padStart(2, "0");
-
-    const hours = pad(d.getHours());
-    const minutes = pad(d.getMinutes());
-    const seconds = pad(d.getSeconds());
-    const day = pad(d.getDate());
-    const month = pad(d.getMonth() + 1);
-    const year = d.getFullYear();
-
-    return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
-  }
-
-  function updateUploadedMomentsDates() {
-    // Nếu đã cập nhật trước đó thì bỏ qua
-    if (localStorage.getItem("uploadedMomentsUpdated") === "true") {
-      return;
-    }
-
-    let moments = JSON.parse(localStorage.getItem("uploadedMoments") || "[]");
-
-    moments = moments.map((m) => {
-      // Nếu date không phải chuỗi iOS thì convert
-      if (!/^\d{2}:\d{2}:\d{2} \d{2}\/\d{1,2}\/\d{4}$/.test(m.date)) {
-        m.date = convertDateToIOSFormat(m.date);
-      }
-      return m;
-    });
-
-    localStorage.setItem("uploadedMoments", JSON.stringify(moments));
-    localStorage.setItem("uploadedMomentsUpdated", "true"); // đánh dấu đã update
-    console.log(`Đã cập nhật ${moments.length} moments`);
-  }
-
-  useEffect(() => {
-    updateUploadedMomentsDates();
-  }, []);
 
   return (
     <div
@@ -123,7 +83,7 @@ const LeftHomeScreen = () => {
 
       {/* Nội dung cuộn */}
       <div className="flex-1 overflow-y-auto px-4 py-6 bg-base-200">
-        <RecentPostGrid recentPosts={recentPosts} />
+        <StreaksCalender recentPosts={recentPosts} />
         <BottomStreak recentPosts={recentPosts} />
       </div>
     </div>

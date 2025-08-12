@@ -20,7 +20,7 @@ export const useNavigation = () => {
 
   // Lưu vào localStorage khi isFullview thay đổi
   useEffect(() => {
-    localStorage.removeItem("isFullview", isFullview);
+    localStorage.setItem("isFullview", isFullview);
     localStorage.setItem("isPWA", isPWA);
   }, [isFullview, isPWA]);
 
@@ -28,6 +28,7 @@ export const useNavigation = () => {
   useEffect(() => {
     const isPWA = checkIfRunningAsPWA();
     if (isPWA) {
+      setIsFullview(true);
       setIsPWA(true);
     }
   }, []);

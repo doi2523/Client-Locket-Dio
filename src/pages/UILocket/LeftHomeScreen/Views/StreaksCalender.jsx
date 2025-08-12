@@ -2,12 +2,50 @@ import { MdSlowMotionVideo } from "react-icons/md";
 import { useEffect, useMemo, useRef } from "react";
 import { useStreak } from "@/hooks/useStreak";
 
-// Parse date dạng "04:44:00 30/7/2025"
+// Parse date dạng "04:44:00, 30/7/2025"
+// Parse date an toàn, hỗ trợ nhiều định dạng
 function parseCustomDate(str) {
-  const [timePart, datePart] = str.split(" ");
-  const [day, month, year] = datePart.split("/").map(Number);
-  const [hour, minute, second] = timePart.split(":").map(Number);
-  return new Date(year, month - 1, day, hour, minute, second);
+  if (!str) return null;
+
+  // Nếu là Date object
+  if (str instanceof Date && !isNaN(str)) return str;
+
+  // Nếu là timestamp số
+  if (!isNaN(str) && String(str).length >= 10) {
+    const d = new Date(Number(str));
+    if (!isNaN(d)) return d;
+  }
+
+  // Xóa dấu phẩy và khoảng trắng dư
+  str = String(str).replace(",", "").trim();
+
+  // Thử parse mặc định của JS (hỗ trợ ISO 8601: 2025-07-30T04:44:00Z)
+  let d = new Date(str);
+  if (!isNaN(d)) return d;
+
+  // Regex: HH:mm:ss DD/MM/YYYY hoặc DD/MM/YYYY
+  let match;
+  const timeDate = /^(\d{1,2}):(\d{1,2}):(\d{1,2})\s+(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/;
+  const dateOnly = /^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/;
+  const timeOnly = /^(\d{1,2}):(\d{1,2}):(\d{1,2})$/;
+
+  if ((match = str.match(timeDate))) {
+    const [, hh, mm, ss, day, month, year] = match.map(Number);
+    return new Date(year, month - 1, day, hh, mm, ss);
+  }
+
+  if ((match = str.match(dateOnly))) {
+    const [, day, month, year] = match.map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  if ((match = str.match(timeOnly))) {
+    const [, hh, mm, ss] = match.map(Number);
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate(), hh, mm, ss);
+  }
+
+  return null; // Không parse được
 }
 
 // Tạo key tháng từ chuỗi date
@@ -237,7 +275,7 @@ const MonthCalendar = ({ monthKey, postsInMonth }) => {
   );
 };
 
-const RecentPostGrid = ({ recentPosts = [] }) => {
+const StreaksCalender = ({ recentPosts = [] }) => {
   const postsByMonth = useMemo(() => {
     const map = {};
     recentPosts.forEach((post) => {
@@ -288,4 +326,4 @@ const RecentPostGrid = ({ recentPosts = [] }) => {
   );
 };
 
-export default RecentPostGrid;
+export default StreaksCalender;
