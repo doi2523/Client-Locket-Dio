@@ -4,7 +4,7 @@ import ActionControls from "../ActionControls";
 import HeaderAfterCapture from "./Layout/HeaderAfterCapture";
 import HeaderBeforeCapture from "./Layout/HeaderBeforeCapture";
 import HistoryArrow from "./Layout/HistoryButton";
-import SelectFriendsList from "./Views/SelectFriendsList";
+import SelectFriendsList from "./Views/SelectFriends";
 import MediaPreview from "./Views/MediaDisplay";
 import { MusicPlayer } from "./Views/MusicPlayer";
 const ScreenCustomeStudio = lazy(() => import("./Views/CustomeStudio"));
