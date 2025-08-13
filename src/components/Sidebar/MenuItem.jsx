@@ -5,7 +5,7 @@ export const MenuItem = ({ to, icon: Icon, children, badge, onClick }) => (
   <li>
     <Link
       to={to}
-      className={`flex items-center px-3 py-3 rounded-lg transition ${
+      className={`flex items-center px-3 py-2.5 mb-1 rounded-lg transition ${
         location.pathname === to ? "bg-base-300" : "hover:bg-base-200"
       }`}
       onClick={onClick}

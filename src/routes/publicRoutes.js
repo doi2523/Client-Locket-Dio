@@ -24,19 +24,23 @@ const APP_NAME = "Locket Dio - Đăng ảnh & Video lên Locket";
 export const publicRoutes = [
   { path: "/", component: Home, title: `Trang Chủ | ${APP_NAME}` },
   { path: "/login", component: Login, title: `Đăng Nhập | ${APP_NAME}` },
+
   { path: "/about", component: AboutLocketDio, title: `Về Website Locket Dio | ${APP_NAME}` },
   { path: "/about-dio", component: AboutMe, title: `Về Dio | ${APP_NAME}` },
+  { path: "/download", component: AddToHomeScreenGuide, title: `Thêm ứng dụng vào màn hình chính | ${APP_NAME}` },
   { path: "/timeline", component: Timeline, title: `Dòng Thời Gian | ${APP_NAME}` },
   { path: "/docs", component: Docs, title: `Tài liệu | ${APP_NAME}` },
   // { path: "/locket", component: CameraCapture, title: `Locket Camera | ${APP_NAME}` },
-  { path: "/contact", component: Contact, title: `Liên hệ | ${APP_NAME}` },
+
   { path: "/privacy", component: PrivacyPolicy, title: `Chính sách riêng tư | ${APP_NAME}` },
   { path: "/pricing", component: PricingPage, title: `Đăng ký gói thành viên | ${APP_NAME}` },
   { path: "/locketdio-tools", component: ToolsLocket, title: `Công cụ mở rộng | ${APP_NAME}` },
+
   { path: "/settings", component: Settings, title: `Cài đặt | ${APP_NAME}` },
   { path: "/devpage", component: DevPage, title: `Dev Page | ${APP_NAME}` },
-  { path: "/download", component: AddToHomeScreenGuide, title: `Thêm ứng dụng vào màn hình chính | ${APP_NAME}` },
-  { path: "/incidents", component: ErrorReferencePage, title: `Trung tâm sự cố | ${APP_NAME}` },
-  { path: "/test", component: AuthHome, title: `Test | ${APP_NAME}` },
   { path: "/reference", component: ReferencePage, title: `API Docs | ${APP_NAME}` },
+  { path: "/incidents", component: ErrorReferencePage, title: `Trung tâm sự cố | ${APP_NAME}` },
+  { path: "/contact", component: Contact, title: `Liên hệ & Hỗ trợ | ${APP_NAME}` },
+
+  { path: "/test", component: AuthHome, title: `Test | ${APP_NAME}` },
 ];
