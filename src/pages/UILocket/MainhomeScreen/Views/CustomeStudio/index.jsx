@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import CaptionGifThemes from "./CaptionItems/CaptionGifThemes";
 import { useFeatureVisible } from "@/hooks/useFeature";
 import FeatureGate from "@/components/common/FeatureGate";
+import SavedCaptions from "./CaptionItems/SavedCaptions";
 
 const ScreenCustomeStudio = () => {
   const navigate = useNavigate();
@@ -118,16 +119,30 @@ const ScreenCustomeStudio = () => {
 
     setIsFilterOpen(false);
   };
-  const normalizedPresets = savedPosts.map((item) => ({
-    id: item.id,
-    caption: item.options.caption || "",
-    color_top: item.options.color_top || "",
-    color_bottom: item.options.color_bottom || "",
-    color_text: item.options.color_text || "",
-    icon: item.options.icon || "",
-    type: item.options.type || "background",
-    // Nếu bạn có thêm type, preset_id có thể thêm tương tự
-  }));
+
+  const [captions, setCaptions] = useState([]);
+
+  useEffect(() => {
+    // Lấy dữ liệu từ localStorage
+    const saved = JSON.parse(localStorage.getItem("Yourcaptions") || "[]");
+    setCaptions(saved);
+  }, []);
+
+  const handleSelectCaption = (caption) => {
+    // console.log("Chọn caption:", caption);
+    // Cập nhật postOverlay từ giá trị preset
+    setPostOverlay({
+      overlay_id: caption?.id || "standard",
+      color_top: caption.colortop || "",
+      color_bottom: caption.colorbottom || "",
+      text_color: caption.color || "#FFFFFF",
+      icon: caption?.icon_url || "",
+      caption: caption?.text || "",
+      type: caption?.type || "default",
+    });
+    setIsFilterOpen(false);
+    // Xử lý khi chọn caption
+  };
 
   return (
     <div
@@ -177,6 +192,11 @@ const ScreenCustomeStudio = () => {
             title="🎨 Suggest Theme"
             presets={captionThemes.background}
             onSelect={handleCustomeSelect}
+          />
+          <SavedCaptions
+            title="🎨 Caption đã lưu"
+            captions={captions}
+            onSelect={handleSelectCaption}
           />
           {/* Decorative by Locket */}
           <ThemesCustomes
