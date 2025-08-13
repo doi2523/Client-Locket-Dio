@@ -1,143 +1,143 @@
 import React from "react";
-import {
-  FaGithub,
-  FaEnvelope,
-  FaGlobe,
-} from "react-icons/fa";
+import { Mail, MapPin } from "lucide-react";
 
 export default function Contact() {
+  const communityLinks = [
+    {
+      name: "Discord",
+      icon: (
+        <img
+          src="https://img.icons8.com/?size=100&id=D2NqKl85S8Ye&format=png"
+          alt="Discord"
+          className="w-8 h-8"
+        />
+      ),
+      url: "https://discord.com/invite/47buy9nMGc",
+    },
+    {
+      name: "Telegram",
+      icon: (
+        <img
+          src="https://img.icons8.com/?size=100&id=oWiuH0jFiU0R&format=png"
+          alt="Telegram"
+          className="w-8 h-8"
+        />
+      ),
+      url: "https://t.me/ddevdio",
+    },
+    {
+      name: "Messenger",
+      icon: (
+        <img
+          src="https://cdn-icons-png.flaticon.com/128/5968/5968771.png"
+          alt="Messenger"
+          className="w-8 h-8"
+        />
+      ),
+      url: "https://m.me/cm/AbYPtgRiGe2fInEf",
+    },
+  ];
+
   return (
-    <section className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 flex items-center justify-center">
-      <div className="max-w-xl w-full bg-white shadow-2xl rounded-3xl p-4 text-center">
-        {/* SEO Heading */}
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-          Liên hệ với <span className="text-purple-600">Đào Văn Đôi (Dio)</span>
-        </h1>
-        <p className="text-gray-500 text-sm mb-6">
-          Tác giả dự án <strong>Locket Dio</strong> – Sáng tạo, đơn giản và hiện
-          đại.
-        </p>
-
-        {/* Avatar */}
-        <div className="mb-6">
-          <img
-            src="./images/avtdio.jpg"
-            alt="Ảnh đại diện Đào Văn Đôi"
-            className="w-28 h-28 rounded-full mx-auto object-cover border-4 border-purple-300 shadow-lg hover:scale-105 transition-transform duration-300"
-          />
-        </div>
-
-        {/* Thông tin cá nhân */}
-        <div className="mb-8 space-y-1">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Đào Văn Đôi (Dio)
-          </h2>
-          <p className="text-gray-600 text-sm">
-            Frontend & Backend Developer | Người sáng lập Locket Dio
+    <div className="min-h-screen bg-gradient-to-b from-base-200 to-base-300 py-10 px-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-10 animate-fadeIn">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-base-content drop-shadow-sm">
+            Liên hệ & Hỗ trợ
+          </h1>
+          <p className="mt-3 text-base-content/70 text-lg">
+            Kết nối với <span className="font-semibold">Đào Văn Đôi (Dio)</span>{" "}
+            - Tác giả <span className="font-semibold">Locket Dio</span>
           </p>
         </div>
 
-        {/* Các nút liên hệ */}
-        <div className="space-y-3 text-sm">
-          <a
-            href="mailto:doibncm2003@gmail.com"
-            className="flex items-center justify-center gap-2 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg shadow transition font-medium"
-          >
-            <FaEnvelope /> Gửi email
-          </a>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Profile */}
+          <div className="bg-base-100 w-full flex flex-col items-center justify-start p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 animate-slideUp">
+            <img
+              src="https://cdn.locket-dio.com/v1/images/avt/avtdio.webp"
+              alt="Đào Văn Đôi"
+              className="w-28 h-28 rounded-full object-cover border-4 border-base-300 mb-4 shadow-md hover:scale-105 transition duration-300"
+            />
+            <h2 className="text-xl font-bold">Đào Văn Đôi</h2>
+            <p className="mt-1 text-sm text-base-content/70">
+              Full-stack Developer
+            </p>
+          </div>
 
-          <a
-            href="https://github.com/doi2523"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-lg shadow transition font-medium"
-          >
-            <FaGithub /> GitHub
-          </a>
+          {/* Contact Info & Social */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Primary Contact */}
+            <div className="bg-base-100 p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 animate-slideUp delay-100">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Mail size={18} /> Liên hệ chính
+              </h3>
+              <a
+                href="mailto:doibncm2003@gmail.com"
+                className="btn btn-outline w-full justify-start gap-3 hover:scale-[1.02] transition"
+              >
+                <Mail size={18} /> doibncm2003@gmail.com
+              </a>
+            </div>
 
-          <a
-            href="https://locket-dio.space"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg shadow transition font-medium"
-          >
-            <FaGlobe /> Website Locket Dio
-          </a>
+            {/* Community Links */}
+            <div className="bg-base-100 p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 animate-slideUp delay-200">
+              <h3 className="text-lg font-semibold mb-4">Liên kết cộng đồng</h3>
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-4 text-center">
+                {communityLinks.map((link) => (
+                  <a
+                    key={link.name}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col items-center p-3 rounded-lg bg-base-200 hover:bg-base-300 transition transform hover:-translate-y-1 hover:scale-105 shadow-sm hover:shadow-md"
+                  >
+                    {link.icon}
+                    <span className="text-xs mt-2">{link.name}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Support Info */}
+            <div className="bg-base-100 p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 animate-slideUp delay-300">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <MapPin size={18} /> Thông tin hỗ trợ
+              </h3>
+              <ul className="text-sm text-base-content/70 space-y-1">
+                <li>• Thời gian hỗ trợ: 8h-20h</li>
+                <li>• Phản hồi: 2-8 giờ</li>
+                <li>• Ngôn ngữ: Tiếng Việt</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div className="mt-3 text-xs mb-2">hoặc các nền tảng khác</div>
-        {/* Mạng xã hội bổ sung */}
-        <div className="flex justify-center flex-wrap gap-4">
-          <a
-            href="https://www.facebook.com/daovandoi2003"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:scale-110 transition-transform"
-            title="Facebook"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=uLWV5A9vXIPu&format=png"
-              alt="Facebook"
-              className="w-8 h-8"
-            />
-          </a>
 
-          <a
-            href="https://www.instagram.com/_am.dio"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:scale-110 transition-transform"
-            title="Instagram"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=BrU2BBoRXiWq&format=png"
-              alt="Instagram"
-              className="w-8 h-8"
-            />
-          </a>
-
-          <a
-            href="https://discord.com/invite/47buy9nMGc"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:scale-110 transition-transform"
-            title="Discord"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=D2NqKl85S8Ye&format=png"
-              alt="Discord"
-              className="w-8 h-8"
-            />
-          </a>
-
-          <a
-            href="https://t.me/dio2523"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:scale-110 transition-transform"
-            title="Telegram"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=oWiuH0jFiU0R&format=png"
-              alt="Telegram"
-              className="w-8 h-8"
-            />
-          </a>
-
-          <a
-            href="https://zalo.me/0329254203"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:scale-110 transition-transform"
-            title="Zalo"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=0m71tmRjlxEe&format=png"
-              alt="Zalo"
-              className="w-8 h-8"
-            />
-          </a>
+        {/* Footer */}
+        <div className="text-center mt-10 text-sm text-base-content/60 animate-fadeIn">
+          © 2025 Locket Dio. Made with ❤️ by Đào Văn Đôi
         </div>
       </div>
-    </section>
+
+      {/* Tailwind Animations */}
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-fadeIn { animation: fadeIn 0.8s ease-out forwards; }
+          .animate-slideUp { animation: slideUp 0.8s ease-out forwards; }
+          .delay-100 { animation-delay: 0.1s; }
+          .delay-200 { animation-delay: 0.2s; }
+          .delay-300 { animation-delay: 0.3s; }
+        `}
+      </style>
+    </div>
   );
 }
