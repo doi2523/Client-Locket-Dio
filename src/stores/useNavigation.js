@@ -57,5 +57,6 @@ export const useNavigation = () => {
     setShowFlyingEffect,
     flyingEmojis,
     setFlyingEmojis,
+    isPWA, setIsPWA
   };
 };
