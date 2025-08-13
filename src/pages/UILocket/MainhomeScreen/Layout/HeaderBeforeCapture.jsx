@@ -16,7 +16,7 @@ const HeaderBeforeCapture = ({ selectedFile }) => {
 
   return (
     <div 
-      className={`navbar top-0 left-0 w-full px-4 py-2 flex items-center justify-between bg-base-100 z-50 relative transition-opacity duration-500 ${
+      className={`navbar top-0 left-0 w-full px-4 py-2 flex items-center justify-between z-50 relative transition-opacity duration-500 ${
         !selectedFile ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
     >
