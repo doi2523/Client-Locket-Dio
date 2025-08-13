@@ -9,7 +9,7 @@ import {
 import api from "../lib/axios";
 import { showError, showSuccess } from "../components/Toast";
 
-export function useMoments(userUid = null, initialLimit = 20) {
+export function useMoments(userUid = null, initialLimit = 50) {
   const [moments, setMoments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [nextPageToken, setNextPageToken] = useState(
