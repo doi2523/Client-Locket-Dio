@@ -47,7 +47,7 @@ const MainHomeScreen = () => {
 
   const renderNormalView = () => (
     <div
-      className={`flex h-full select-none flex-col items-center justify-start overflow-hidden ${
+      className={`flex min-h-[100dvh] h-full select-none flex-col items-center justify-between overflow-hidden ${
         sendLoading === true
           ? "animate-slide-up"
           : sendLoading === false
