@@ -51,6 +51,7 @@ export const API_URL = {
   //Get plan user
   GET_USER_PLANS: `${BASE_DB_API_URL}${LOCKET_PRO}/user-plans`,
   GET_DIO_PLANS: `${BASE_DB_API_URL}${LOCKET_PRO}/dio-plans`,
+  GET_COLLECTIONS: `${BASE_DB_API_URL}${LOCKET_PRO}/collections`,
 
   //API dữ liệu Cloudinary
   UPLOAD_IMAGE_TO_CLOUD: `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,

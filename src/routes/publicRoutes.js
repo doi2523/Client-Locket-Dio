@@ -8,6 +8,7 @@ const AboutLocketDio = React.lazy(() => import("../pages/Public/About"));
 const AboutMe = React.lazy(() => import("../pages/Auth/AboutMe"));
 const Timeline = React.lazy(() => import("../pages/Public/Timeline"));
 const Docs = React.lazy(() => import("../pages/Public/Docs"));
+const CollectionPage = React.lazy(() => import("@/pages/Public/CollectionPage"));
 const Contact = React.lazy(() => import("../pages/Public/Contact"));
 const PrivacyPolicy = React.lazy(() => import("../pages/Public/PrivacyPolicy"));
 const PricingPage = React.lazy(() => import("../pages/Public/Pricing"));
@@ -30,6 +31,7 @@ export const publicRoutes = [
   { path: "/download", component: AddToHomeScreenGuide, title: `Thêm ứng dụng vào màn hình chính | ${APP_NAME}` },
   { path: "/timeline", component: Timeline, title: `Dòng Thời Gian | ${APP_NAME}` },
   { path: "/docs", component: Docs, title: `Tài liệu | ${APP_NAME}` },
+  { path: "/collection", component: CollectionPage, title: `Thư viện phiên bản | ${APP_NAME}` },
   // { path: "/locket", component: CameraCapture, title: `Locket Camera | ${APP_NAME}` },
 
   { path: "/privacy", component: PrivacyPolicy, title: `Chính sách riêng tư | ${APP_NAME}` },

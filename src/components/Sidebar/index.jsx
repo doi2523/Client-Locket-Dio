@@ -19,6 +19,7 @@ import {
   Palette,
   UserRound,
   LifeBuoy,
+  Package,
 } from "lucide-react";
 import { showSuccess, showToast } from "../Toast";
 import * as ultils from "@/utils";
@@ -71,18 +72,9 @@ const Sidebar = () => {
     {
       title: "Tính năng",
       items: [
-        {
-          to: "/postmoments",
-          icon: Upload,
-          text: "Đăng ảnh, video",
-        },
+        { to: "/postmoments", icon: Upload, text: "Đăng ảnh, video" },
         { to: "/locket", icon: Smartphone, text: "Locket UI", badge: "Hot" },
-        {
-          to: "/manage",
-          icon: Palette,
-          text: "Quản lý Caption",
-          badge: "New",
-        },
+        { to: "/manage", icon: Palette, text: "Quản lý Caption", badge: "New"},
         { to: "/tools", icon: Wrench, text: "Công cụ Locket" },
         { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "New" },
         { to: "/profile", icon: UserRound, text: "Hồ sơ của bạn" },
@@ -108,6 +100,7 @@ const Sidebar = () => {
         { to: "/about", icon: Info, text: "Locket Dio" },
         { to: "/about-dio", icon: UserCircle, text: "Về Dio" },
         { to: "/timeline", icon: Clock, text: "Lịch sử Website" },
+        { to: "/collection", icon: Package, text: "Thư viện phiên bản" },
       ],
     },
     {
