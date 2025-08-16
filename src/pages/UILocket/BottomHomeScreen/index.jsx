@@ -95,7 +95,7 @@ const BottomHomeScreen = () => {
           </div>
           {typeof selectedMoment === "number" ||
           typeof selectedQueue === "number" ? (
-            <div className="absolute inset-0 flex flex-col justify-center items-center">
+            <div className="absolute w-full h-full inset-0 flex flex-col justify-center items-center">
               {typeof selectedMoment === "number" && (
                 <MomentViewer visibleCount={visibleCount} />
               )}

@@ -126,106 +126,95 @@ const MomentViewer = () => {
 
   return (
     <div
-      className={`flex flex-col justify-between items-center transition-all duration-300 ease-in-out bg-base-100 ${
+      className={`flex flex-col justify-center items-center w-full h-full gap-2 transition-all duration-300 ease-in-out ${
         isVisible && !isAnimating
-          ? "opacity-100"
-          : "opacity-0"
+          ? "opacity-100 scale-100"
+          : "opacity-0 scale-90 pointer-events-none"
       }`}
-      onKeyDown={handleKeyDown}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      tabIndex={0}
     >
-      {/* Viewer ở giữa */}
-      <div className="flex flex-col justify-center items-center w-full gap-2">
-        <div
-          className={`relative w-full max-w-md aspect-square bg-base-200 rounded-[64px] overflow-hidden transition-all duration-300 ease-in-out ${
-            isVisible && !isAnimating
-              ? "opacity-100 scale-100"
-              : "opacity-0 scale-90 pointer-events-none"
-          }`}
-          onClick={(e) => e.stopPropagation()}
+      <div
+        className={`relative w-full max-w-md aspect-square bg-base-200 rounded-[64px] overflow-hidden`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Nút đóng */}
+        <button
+          onClick={handleClose}
+          className="absolute flex justify-center items-center top-4 right-4 z-50 p-2 bg-black/40 rounded-full hover:bg-black/60"
         >
-          {/* Nút đóng */}
-          <button
-            onClick={handleClose}
-            className="absolute flex justify-center items-center top-4 right-4 z-50 p-2 bg-black/40 rounded-full hover:bg-black/60"
-          >
-            <X className="w-6 h-6 text-white" />
-          </button>
+          <X className="w-6 h-6 text-white" />
+        </button>
 
-          {/* Nội dung Moment */}
-          <div className="h-full w-full flex items-center justify-center relative bg-gradient-to-br from-base-300/20 to-base-100/20">
-            {isMediaLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-600 z-10">
-                <LoadingRing color="orange" />
-              </div>
-            )}
+        {/* Nội dung Moment */}
+        <div className="h-full w-full flex items-center justify-center relative bg-gradient-to-br from-base-300/20 to-base-100/20">
+          {isMediaLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-600 z-10">
+              <LoadingRing color="orange" />
+            </div>
+          )}
 
-            {currentMoment?.video_url ? (
-              <video
-                src={currentMoment.video_url}
-                className="max-h-full max-w-full object-contain rounded-2xl"
-                autoPlay
-                muted
-                loop
-                playsInline
-                onLoadedData={() => setIsMediaLoading(false)}
-              />
-            ) : (
-              <img
-                src={currentMoment?.thumbnail_url || currentMoment?.image_url}
-                alt={currentMoment?.caption || "Moment"}
-                className="max-h-full max-w-full object-contain rounded-2xl"
-                onLoad={() => setIsMediaLoading(false)}
-              />
-            )}
+          {currentMoment?.video_url ? (
+            <video
+              src={currentMoment.video_url}
+              className="max-h-full max-w-full object-contain rounded-2xl"
+              autoPlay
+              muted
+              loop
+              playsInline
+              onLoadedData={() => setIsMediaLoading(false)}
+            />
+          ) : (
+            <img
+              src={currentMoment?.thumbnail_url || currentMoment?.image_url}
+              alt={currentMoment?.caption || "Moment"}
+              className="w-full h-full object-cover rounded-2xl"
+              onLoad={() => setIsMediaLoading(false)}
+            />
+          )}
 
-            {/* Caption */}
-            {currentMoment?.caption && (
-              <div className="absolute max-w-[80%] bottom-4 w-fit bg-black/60 backdrop-blur-sm rounded-3xl px-5 py-2">
-                <p className="text-white text-md font-bold">
-                  {currentMoment.caption}
-                </p>
-              </div>
-            )}
-          </div>
+          {/* Caption */}
+          {currentMoment?.caption && (
+            <div className="absolute max-w-[80%] bottom-4 w-fit bg-black/60 backdrop-blur-sm rounded-3xl px-5 py-2">
+              <p className="text-white text-md font-bold">
+                {currentMoment.caption}
+              </p>
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-2 text-md text-muted-foreground">
-          {(() => {
-            const user = getUserFromFriendDetails(currentMoment?.user);
+      </div>
+      <div className="flex items-center gap-2 text-md text-muted-foreground">
+        {(() => {
+          const user = getUserFromFriendDetails(currentMoment?.user);
 
-            if (!user)
-              return (
-                <div className="flex items-center gap-1">
-                  <img
-                    src={me?.profilePicture || "./prvlocket.png"}
-                    alt={me?.fullName}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <span className="truncate max-w-[80px]">Bạn</span>
-                  <span className="mx-1">·</span>
-                </div>
-              );
-            const fullName = `${user.firstName} ${user.lastName || ""}`.trim();
-            const shortName =
-              fullName.length > 10 ? fullName.slice(0, 10) + "…" : fullName;
-
+          if (!user)
             return (
               <div className="flex items-center gap-1">
                 <img
-                  src={user.profilePic}
-                  alt={fullName}
+                  src={me?.profilePicture || "./prvlocket.png"}
+                  alt={me?.fullName}
                   className="w-10 h-10 rounded-full object-cover"
                 />
-                <span className="truncate max-w-[80px]">{shortName}</span>
-                <span className="">·</span>
+                <span className="truncate max-w-[80px]">Bạn</span>
+                <span className="mx-1">·</span>
               </div>
             );
-          })()}
+          const fullName = `${user.firstName} ${user.lastName || ""}`.trim();
+          const shortName =
+            fullName.length > 10 ? fullName.slice(0, 10) + "…" : fullName;
 
-          <div>{formatMomentTime(currentMoment?.date)}</div>
-        </div>
+          return (
+            <div className="flex items-center gap-1">
+              <img
+                src={user.profilePic}
+                alt={fullName}
+                className="w-10 h-10 rounded-full object-cover"
+              />
+              <span className="truncate max-w-[80px]">{shortName}</span>
+              <span className="">·</span>
+            </div>
+          );
+        })()}
+
+        <div>{formatMomentTime(currentMoment?.date)}</div>
       </div>
     </div>
   );
