@@ -3,7 +3,7 @@ import InputForMoment from "./InputForMoment";
 import { useApp } from "@/context/AppContext";
 import { showWarning, showSuccess } from "@/components/Toast";
 
-const BottomMenu = ({ onClick }) => {
+const BottomMenu = () => {
   const { navigation, post } = useApp();
   const { isBottomOpen, setIsBottomOpen } = navigation;
   const {
@@ -20,6 +20,12 @@ const BottomMenu = ({ onClick }) => {
     setSelectedMoment(null);
     setSelectedQueue(null);
     setIsBottomOpen(false);
+  };
+  const handleClose = () => {
+    setTimeout(() => {
+      setSelectedMoment(null);
+      setSelectedQueue(null);
+    }, 300);
   };
 
   const handleDelete = () => {
@@ -54,7 +60,7 @@ const BottomMenu = ({ onClick }) => {
           {selectedMoment !== null && (
             <button
               className="p-2 text-base-content tooltip tooltip-right cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
-              onClick={onClick}
+              onClick={handleClose}
               data-tip="Bấm để xem danh sách lưới"
             >
               <LayoutGrid size={28} />

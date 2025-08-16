@@ -1,10 +1,12 @@
 import React from "react";
-import { useApp } from "../../../../../context/AppContext";
-import * as constant from "../../../../../constants";
+import { useApp } from "@/context/AppContext";
+import { getVideoRecordLimit } from "@/hooks/useFeature";
 
 const BorderProgress = () => {
   const { camera } = useApp();
   const { isHolding, setIsHolding } = camera;
+  const MAX_RECORD_TIME = getVideoRecordLimit();
+
   if (!isHolding) return null;
 
   return (
@@ -50,7 +52,7 @@ const BorderProgress = () => {
           strokeDashoffset="400"
           style={{
             animation: isHolding
-              ? `pathProgress ${constant.MAX_RECORD_TIME}s linear forwards`
+              ? `pathProgress ${MAX_RECORD_TIME}s linear forwards`
               : "none",
           }}
         />

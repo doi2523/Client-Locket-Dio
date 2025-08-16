@@ -18,11 +18,20 @@ import MomentViewer from "./MomentsView/MomentViewer";
 import QueueViewer from "./MomentsView/QueueViewer";
 import EmojiPicker from "./Modal/EmojiStudio";
 import FlyingEmojiEffect from "./Modal/FlyingEmojiEffect";
+import BottomMenu from "./Layout/BottomMenu";
+import { useMoments } from "@/hooks/useMoments";
 
 const BottomHomeScreen = () => {
   const { navigation, post } = useApp();
-  const { isBottomOpen, setIsBottomOpen, showFlyingEffect, flyingEmojis } =
-    navigation;
+  const {
+    isHomeOpen,
+    isBottomOpen,
+    setIsBottomOpen,
+    showFlyingEffect,
+    flyingEmojis,
+    setIsHomeOpen,
+    isProfileOpen,
+  } = navigation;
   const {
     recentPosts,
     setRecentPosts,
@@ -32,33 +41,23 @@ const BottomHomeScreen = () => {
     setSelectedMoment,
     selectedQueue,
     setSelectedQueue,
+    selectedFriendUid,
   } = post;
 
   // Chỉ giữ lại các state thực sự cần thiết
   const [visibleCount, setVisibleCount] = useState(INITIAL_MOMENTS_VISIBLE);
-  const [isClosing, setIsClosing] = useState(false);
   const [loadedItems, setLoadedItems] = useState([]);
   const [selectItems, setselectItems] = useState(null);
 
   useEffect(() => {
-    if (isBottomOpen) {
-      const localData = JSON.parse(
-        localStorage.getItem("uploadedMoments") || "[]"
-      ).reverse();
-      setRecentPosts(localData);
-      setVisibleCount(INITIAL_MOMENTS_VISIBLE);
-    }
-  }, [isBottomOpen, setRecentPosts]);
+    setVisibleCount(INITIAL_MOMENTS_VISIBLE);
+  }, [isBottomOpen, isProfileOpen, isHomeOpen]);
 
   const handleReturnHome = () => {
-    setIsClosing(true);
     setSelectedMoment(null);
     setSelectedQueue(null);
-    setTimeout(() => {
-      setIsBottomOpen(false);
-      setVisibleCount(INITIAL_MOMENTS_VISIBLE);
-      setIsClosing(false);
-    }, 0);
+    setIsBottomOpen(false);
+    setVisibleCount(INITIAL_MOMENTS_VISIBLE);
   };
 
   // Tính toán selectedAnimate dựa trên selectedMoment và selectedQueue
@@ -77,11 +76,11 @@ const BottomHomeScreen = () => {
 
   return (
     <div
-      className={`fixed inset-0 flex flex-col transition-all duration-500 z-50 bg-base-100 overflow-hidden ${
-        isBottomOpen
-          ? "translate-y-0 opacity-100"
-          : "translate-y-full opacity-0"
-      }`}
+      className={`fixed inset-0 flex flex-col transition-all duration-500 z-50 bg-base-100 overflow-hidden
+    ${isBottomOpen ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"}
+    ${isHomeOpen ? "-translate-x-full opacity-100" : ""}
+    ${isProfileOpen ? "translate-x-full opacity-100" : ""}
+  `}
     >
       <EmojiPicker />
       {/* Header */}
@@ -90,13 +89,24 @@ const BottomHomeScreen = () => {
 
       {/* Main content area */}
       <div className="flex-1 overflow-hidden relative">
-        <div className={`overflow-auto h-full`}>
-          <div className="sticky top-0 z-50">
+        <div className="h-full overflow-auto">
+          <div className="sticky w-full top-0 z-60">
             <HeaderHistory />
           </div>
+          {typeof selectedMoment === "number" ||
+          typeof selectedQueue === "number" ? (
+            <div className="absolute inset-0 flex flex-col justify-center items-center">
+              {typeof selectedMoment === "number" && (
+                <MomentViewer visibleCount={visibleCount} />
+              )}
+              {typeof selectedQueue === "number" && <QueueViewer />}
+            </div>
+          ) : null}
           <div
             className={`transition-all duration-500 ${
-              selectedAnimate ? "opacity-0 scale-90" : "opacity-100 scale-100"
+              selectedAnimate
+                ? "opacity-0 scale-90 pointer-events-none select-none"
+                : "opacity-100 scale-100"
             }`}
           >
             <UploadingQueue
@@ -107,21 +117,11 @@ const BottomHomeScreen = () => {
             />
             <MomentsGrid visibleCount={visibleCount} />
           </div>
-
-          {typeof selectedMoment === "number" ||
-          typeof selectedQueue === "number" ? (
-            <div className="absolute inset-0 z-20">
-              {typeof selectedMoment === "number" && (
-                <MomentViewer visibleCount={visibleCount} />
-              )}
-              {typeof selectedQueue === "number" && <QueueViewer />}
-            </div>
-          ) : null}
         </div>
       </div>
       {/* Bottom Button */}
-      {selectedMoment == null && selectedQueue == null && (
-        <div className="w-full fixed bottom-0 px-5 py-5 text-base-content z-30">
+      {selectedMoment == null && selectedQueue == null ? (
+        <div className="w-full fixed bottom-0 px-5 py-5 text-base-content z-60">
           <div className="grid grid-cols-3 items-center">
             {/* Left: Close viewer button */}
             <div className="flex justify-start"></div>
@@ -148,6 +148,8 @@ const BottomHomeScreen = () => {
             </div>
           </div>
         </div>
+      ) : (
+        <BottomMenu />
       )}
     </div>
   );

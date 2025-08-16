@@ -1,10 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { useApp } from "@/context/AppContext";
-import { getAllMoments, getMomentsByUser } from "@/cache/momentDB";
 import { X } from "lucide-react";
 import LoadingRing from "@/components/ui/Loading/ring";
 import { AuthContext } from "@/context/AuthLocket";
-import BottomMenu from "../Layout/BottomMenu";
+import { useMoments } from "@/hooks/useMoments";
 
 const MomentViewer = () => {
   const { user: me } = useContext(AuthContext);
@@ -15,29 +14,7 @@ const MomentViewer = () => {
     selectedMomentId,
     selectedFriendUid,
   } = post;
-
-  const [moments, setMoments] = useState([]);
-
-  const [loading, setLoading] = useState(true); // thêm state loading
-
-  useEffect(() => {
-    const fetchMoments = async () => {
-      setLoading(true);
-      if (selectedFriendUid !== null) {
-        setLoading(true);
-        const data = await getMomentsByUser(selectedFriendUid);
-        const sorted = data.sort((a, b) => new Date(b.date) - new Date(a.date));
-        setMoments(sorted);
-        setLoading(false);
-        return;
-      }
-      const data = await getAllMoments();
-      const sorted = data.sort((a, b) => new Date(b.date) - new Date(a.date));
-      setMoments(sorted);
-      setLoading(false);
-    };
-    fetchMoments();
-  }, [selectedMomentId]);
+  const { moments } = useMoments(selectedFriendUid);
 
   // Hiện tại có moment không?
   const hasValidMoment =
@@ -145,14 +122,14 @@ const MomentViewer = () => {
 
   const [isMediaLoading, setIsMediaLoading] = useState(true);
 
-  if (!loading && !hasValidMoment && !isAnimating) return null;
+  if (!hasValidMoment && !isAnimating) return null;
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col justify-between items-center transition-all duration-300 ease-in-out bg-base-100 ${
+      className={`flex flex-col justify-between items-center transition-all duration-300 ease-in-out bg-base-100 ${
         isVisible && !isAnimating
           ? "opacity-100"
-          : "opacity-0 pointer-events-none"
+          : "opacity-0"
       }`}
       onKeyDown={handleKeyDown}
       onTouchStart={handleTouchStart}
@@ -160,7 +137,7 @@ const MomentViewer = () => {
       tabIndex={0}
     >
       {/* Viewer ở giữa */}
-      <div className="flex-1 flex flex-col justify-center items-center w-full gap-2">
+      <div className="flex flex-col justify-center items-center w-full gap-2">
         <div
           className={`relative w-full max-w-md aspect-square bg-base-200 rounded-[64px] overflow-hidden transition-all duration-300 ease-in-out ${
             isVisible && !isAnimating
@@ -206,8 +183,8 @@ const MomentViewer = () => {
 
             {/* Caption */}
             {currentMoment?.caption && (
-              <div className="absolute bottom-4 w-fit bg-black/60 backdrop-blur-sm rounded-2xl px-4 py-2">
-                <p className="text-white text-sm font-medium">
+              <div className="absolute max-w-[80%] bottom-4 w-fit bg-black/60 backdrop-blur-sm rounded-3xl px-5 py-2">
+                <p className="text-white text-md font-bold">
                   {currentMoment.caption}
                 </p>
               </div>
@@ -250,9 +227,6 @@ const MomentViewer = () => {
           <div>{formatMomentTime(currentMoment?.date)}</div>
         </div>
       </div>
-
-      {/* Bottom menu luôn cố định dưới cùng */}
-      <BottomMenu onClick={handleClose} />
     </div>
   );
 };

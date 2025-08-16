@@ -61,6 +61,18 @@ export const getMomentsByUser = async (userId) => {
 export const clearMoments = async () => {
   await momentDB.moments.clear();
 };
+
+// Lấy moment theo id
+export const getMomentById = async (id) => {
+  try {
+    const moment = await momentDB.moments.get(id);
+    return moment || null; // trả về null nếu không tìm thấy
+  } catch (err) {
+    console.error("❌ Lỗi khi lấy moment theo id:", err);
+    return null;
+  }
+};
+
 //Lấy 10 moment mới nhất
 export const getLatestMoments = async (limit = 10) => {
   return await momentDB.moments

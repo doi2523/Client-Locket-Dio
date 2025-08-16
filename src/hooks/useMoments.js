@@ -5,9 +5,9 @@ import {
   clearMoments,
   getAllMoments,
   getMomentsByUser,
-} from "../cache/momentDB";
-import api from "../lib/axios";
-import { showError, showSuccess } from "../components/Toast";
+} from "@/cache/momentDB";
+import api from "@/lib/axios";
+import { showError, showSuccess } from "@/components/Toast";
 
 export function useMoments(userUid = null, initialLimit = 50) {
   const [moments, setMoments] = useState([]);

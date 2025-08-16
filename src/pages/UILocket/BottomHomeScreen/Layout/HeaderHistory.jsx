@@ -3,7 +3,6 @@ import { useContext, useState } from "react";
 import { AuthContext } from "@/context/AuthLocket";
 import { HiUsers } from "react-icons/hi2";
 import { useApp } from "@/context/AppContext";
-import { showWarning } from "@/components/Toast";
 import Avatar from "../../ExtendPage/Badge/Avatar";
 
 const HeaderHistory = () => {
@@ -14,6 +13,7 @@ const HeaderHistory = () => {
     setSelectedMoment,
     setSelectedQueue,
   } = useApp().post;
+  const { setIsHomeOpen, setIsProfileOpen } = useApp().navigation;
   const [isOpen, setIsOpen] = useState(false); // Điều khiển animation
   const [isVisible, setIsVisible] = useState(false); // Điều khiển mount/unmount
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,15 +49,14 @@ const HeaderHistory = () => {
     setTimeout(() => setIsVisible(false), 500);
   };
 
-  const Click = () => {
-    showWarning("Chưa hỗ trợ điều này!");
-  };
-
   return (
-    <div className="w-full px-4 py-2 text-base-content z-50 top-0 sticky">
-      <div className="grid grid-cols-3 items-center">
+    <div className="px-4 py-2 text-base-content">
+      <div className="flex flex-row justify-between w-full items-center">
         {/* Trái: Badge */}
-        <div className="flex justify-start items-center">
+        <div
+          className="flex justify-start items-center"
+          onClick={() => setIsProfileOpen(true)}
+        >
           <Avatar />
         </div>
 
@@ -80,7 +79,7 @@ const HeaderHistory = () => {
         {/* Phải: Tin nhắn */}
         <div className="flex justify-end items-center">
           <button
-            onClick={Click}
+            onClick={() => setIsHomeOpen(true)}
             className="rounded-full p-2 backdrop-blur-2xl relative"
           >
             <MessageCircle size={30} />

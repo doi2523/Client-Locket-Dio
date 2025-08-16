@@ -1,4 +1,4 @@
-import api from "../../lib/axios";
+import api from "@/lib/axios";
 
 export const SendReactMoment = async (emoji, selectedMomentId, power) => {
   try {
@@ -10,7 +10,6 @@ export const SendReactMoment = async (emoji, selectedMomentId, power) => {
       },
     });
     const moments = res.data.data;
-    console.log("✅ React Done, moments:", moments);
     return moments;
   } catch (err) {
     console.warn("❌ React Failed", err);
@@ -24,5 +23,35 @@ export const GetLastestMoment = async () => {
     return moments;
   } catch (err) {
     console.warn("❌ React Failed", err);
+  }
+};
+
+export const SendMessageMoment = async (message, selectedMomentId, uid) => {
+  try {
+    const res = await api.post("/locket/sendMessageV2", {
+      MessageInfo: {
+        message: message || "💛",
+        moment_id: selectedMomentId,
+        receiver_uid: uid,
+      },
+    });
+    const moments = res.data.data;
+    return moments;
+  } catch (err) {
+    console.warn("❌ Failed", err);
+  }
+};
+
+export const DeleteMoment = async (selectedMomentId) => {
+  try {
+    const res = await api.post("/locket/deleteMomentV2", {
+      MomentInfo: {
+        moment_id: selectedMomentId,
+      },
+    });
+    const moments = res.data.data;
+    return moments;
+  } catch (err) {
+    console.warn("❌ Failed", err);
   }
 };

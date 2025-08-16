@@ -3,6 +3,7 @@ import { useApp } from "@/context/AppContext";
 import { RefreshCcw } from "lucide-react";
 import UploadFile from "./UploadFile";
 import { showError } from "@/components/Toast";
+import { getVideoRecordLimit } from "@/hooks/useFeature";
 
 const CameraButton = () => {
   const { camera, post, useloading } = useApp();
@@ -26,7 +27,6 @@ const CameraButton = () => {
     setLoading,
     IMAGE_SIZE_PX,
     VIDEO_RESOLUTION_PX,
-    MAX_RECORD_TIME,
     setDeviceId,
     setZoomLevel,
   } = camera;
@@ -39,6 +39,8 @@ const CameraButton = () => {
   const intervalRef = useRef(null);
   const isTryingToRecordRef = useRef(false);
   const isRecordingRef = useRef(false);
+
+  const MAX_RECORD_TIME = getVideoRecordLimit();
 
   // Function để kiểm tra môi trường PWA
   const isPWA = () => {

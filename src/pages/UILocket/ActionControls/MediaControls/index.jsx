@@ -1,5 +1,4 @@
 import { X, Sparkles } from "lucide-react";
-import * as utils from "@/utils/index.js";
 import * as services from "@/services";
 import { useApp } from "@/context/AppContext.jsx";
 import { useCallback, useState } from "react";
