@@ -20,7 +20,7 @@ const manifestForPlugIn = {
   // ✅ Tự kiểm tra và cập nhật SW khi có bản mới
   registerType: "autoUpdate",
 
-  includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.png"],
+  includeAssets: ["favicon.ico", "apple-touch-icon.png", "maskable-icon-512x512.png"],
 
   manifest: {
     name: "Locket Dio",
@@ -50,7 +50,7 @@ const manifestForPlugIn = {
         purpose: "any",
       },
       {
-        src: "/maskable_icon.png",
+        src: "/maskable-icon-512x512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "any maskable",
