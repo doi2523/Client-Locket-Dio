@@ -3,7 +3,7 @@ import React from "react";
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
 // import CameraCapture from "@/pages/UILocket";
-
+const DonatePage = React.lazy(() => import("@/pages/Public/HistoryDonate"));
 const AboutLocketDio = React.lazy(() => import("../pages/Public/About"));
 const AboutMe = React.lazy(() => import("../pages/Auth/AboutMe"));
 const Timeline = React.lazy(() => import("../pages/Public/Timeline"));
@@ -30,7 +30,9 @@ export const publicRoutes = [
   { path: "/about-dio", component: AboutMe, title: `Về Dio | ${APP_NAME}` },
   { path: "/download", component: AddToHomeScreenGuide, title: `Thêm ứng dụng vào màn hình chính | ${APP_NAME}` },
   { path: "/timeline", component: Timeline, title: `Dòng Thời Gian | ${APP_NAME}` },
+
   { path: "/docs", component: Docs, title: `Tài liệu | ${APP_NAME}` },
+  { path: "/sponsors", component: DonatePage, title: `Ủng hộ dự án | ${APP_NAME}` },
   { path: "/collection", component: CollectionPage, title: `Thư viện phiên bản | ${APP_NAME}` },
   // { path: "/locket", component: CameraCapture, title: `Locket Camera | ${APP_NAME}` },
 

@@ -4,6 +4,7 @@ import React from "react";
 
 const AuthHome = React.lazy(() => import("../pages/Auth/Home"));
 const Profile = React.lazy(() => import("../pages/Auth/Profile"));
+const DonatePage = React.lazy(() => import("@/pages/Public/HistoryDonate"));
 const PostMoments = React.lazy(() => import("../pages/Auth/PostMoments"));
 const AboutMe = React.lazy(() => import("../pages/Auth/AboutMe"));
 const Docs = React.lazy(() => import("../pages/Public/Docs"));
@@ -26,6 +27,7 @@ export const authRoutes = [
   { path: "/home", component: AuthHome, title: `Trang chủ | ${APP_NAME}` },
   { path: "/aboutdio", component: AboutMe, title: `Về Dio | ${APP_NAME}` },
   { path: "/timeline", component: Timeline, title: `Dòng Thời Gian | ${APP_NAME}` },
+  { path: "/sponsors", component: DonatePage, title: `Ủng hộ dự án | ${APP_NAME}` },
 
   { path: "/download", component: AddToHomeScreenGuide, title: `Thêm ứng dụng vào màn hình chính | ${APP_NAME}` },
 

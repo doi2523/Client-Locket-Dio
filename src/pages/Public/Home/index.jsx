@@ -1,9 +1,11 @@
-import { useState } from "react";
+import React, { Suspense, useState } from "react";
 import "./styles.css";
 import { Link } from "react-router-dom";
 import NotificationPrompt from "@/components/ui/NotificationPrompt";
 import { Download, UserPlus } from "lucide-react";
-import FeatureCardMarquee from "@/components/ui/Marquee/FeatureCardMarquee";
+const FeatureCardMarquee = React.lazy(() =>
+  import("@/components/ui/Marquee/FeatureCardMarquee")
+);
 import StepsSection from "./StepsSection";
 
 const Home = () => {
@@ -97,12 +99,13 @@ const Home = () => {
               khoảnh khắc đáng nhớ.
             </p>
           </div>
-          <FeatureCardMarquee />
+          <Suspense fallback={null}>
+            <FeatureCardMarquee />
+          </Suspense>
         </div>
       </section>
 
-      <StepsSection/>
-
+      <StepsSection />
 
       {/* Stats Section */}
       <section className="pb-10 px-4">

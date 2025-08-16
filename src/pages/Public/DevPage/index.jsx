@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Camera, Cloud, Copy, Monitor, Thermometer } from "lucide-react";
-import { useLocationWeather } from "../../../utils";
+import { useLocationWeather } from "@/utils";
 
 const DevPage = () => {
   const [devices, setDevices] = useState([]);
@@ -90,11 +90,11 @@ const DevPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-base-100 p-4">
+    <div className="min-h-screen bg-base-200 p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
+          <h1 className="text-4xl font-bold text-base-content mb-2">
             <Monitor className="inline-block mr-3 text-blue-600" size={40} />
             DevPage
           </h1>
@@ -102,7 +102,7 @@ const DevPage = () => {
         </div>
 
         {/* Tabs */}
-        <div className="bg-base-200 rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-base-100 rounded-xl shadow-lg overflow-hidden">
           <div className="border-b border-gray-200">
             <div className="flex">
               {tabs.map((tab) => {
@@ -153,7 +153,7 @@ const DevPage = () => {
                 {/* Camera Selection */}
                 {videoDevices.length > 0 && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-base-content mb-2">
                       Select Camera:
                     </label>
                     <select
@@ -171,9 +171,9 @@ const DevPage = () => {
                 )}
 
                 {/* Device Info */}
-                <div className="bg-gray-50 rounded-lg p-4">
+                <div className="bg-base-300 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-gray-800">
+                    <h3 className="text-lg font-semibold text-base-content">
                       Device Information
                     </h3>
                     <button
@@ -190,7 +190,7 @@ const DevPage = () => {
                     </button>
                   </div>
                   <div className="bg-base-200 rounded-md p-3 max-h-64 overflow-auto">
-                    <pre className="text-sm text-gray-700">
+                    <pre className="text-sm text-base-content">
                       {JSON.stringify(devices, null, 2)}
                     </pre>
                   </div>
@@ -202,43 +202,55 @@ const DevPage = () => {
               <div className="space-y-6">
                 {/* Weather Display */}
                 <div className="bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg p-6 text-white">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center mb-2">
-                        <img
-                          src={`https:${weather.icon}`}
-                          alt={weather.condition}
-                          className="w-16 h-16 mr-4"
-                        />
-                        <div>
-                          <h2 className="text-3xl font-bold">
-                            {weather.temp_c}°C
-                          </h2>
-                          <p className="text-blue-100">{weather.condition}</p>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 mt-4 text-base-content">
-                        <div className="bg-base-200 bg-opacity-20 rounded-lg p-3">
-                          <div className="flex items-center">
-                            <Thermometer size={20} className="mr-2" />
-                            <span className="text-sm">Temperature</span>
+                  {weather && location ? (
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center mb-2">
+                          <img
+                            src={`https:${weather.icon}`}
+                            alt={weather.condition}
+                            className="w-16 h-16 mr-4"
+                          />
+                          <div>
+                            <h2 className="text-3xl font-bold">
+                              {weather.temp_c}°C
+                            </h2>
+                            <p className="text-blue-100">{weather.condition}</p>
                           </div>
-                          <p className="text-xl font-semibold">
-                            {weather.temperature}°F
-                          </p>
                         </div>
-                        <div className="bg-base-300 bg-opacity-20 rounded-lg p-3">
-                          <div className="flex items-center">
-                            <Cloud size={20} className="mr-2" />
-                            <span className="text-sm">Cloud Cover</span>
+                        <div className="grid grid-cols-2 gap-4 mt-4 text-base-content">
+                          <div className="bg-base-200 bg-opacity-20 rounded-lg p-3">
+                            <div className="flex items-center">
+                              <Thermometer size={20} className="mr-2" />
+                              <span className="text-sm">Temperature</span>
+                            </div>
+                            <p className="text-xl font-semibold">
+                              {weather.temperature}°F
+                            </p>
                           </div>
-                          <p className="text-xl font-semibold">
-                            {Math.round(weather.cloud_cover * 100)}%
-                          </p>
+                          <div className="bg-base-300 bg-opacity-20 rounded-lg p-3">
+                            <div className="flex items-center">
+                              <Cloud size={20} className="mr-2" />
+                              <span className="text-sm">Cloud Cover</span>
+                            </div>
+                            <p className="text-xl font-semibold">
+                              {Math.round(weather.cloud_cover * 100)}%
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-20">
+                      <Cloud
+                        size={48}
+                        className="mb-4 animate-pulse text-white/70"
+                      />
+                      <p className="text-white/80 text-lg">
+                        Loading weather data...
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Weather JSON Data */}
@@ -250,7 +262,7 @@ const DevPage = () => {
                     <button
                       onClick={() =>
                         copyToClipboard(
-                          JSON.stringify(weather, null, 2),
+                          JSON.stringify(weather || {}, null, 2),
                           "Weather data"
                         )
                       }
@@ -262,7 +274,11 @@ const DevPage = () => {
                   </div>
                   <div className="bg-white rounded-md p-3 max-h-64 overflow-auto">
                     <pre className="text-sm text-gray-700">
-                      {JSON.stringify(weather, null, 2)}
+                      {JSON.stringify(
+                        weather || { message: "No data yet" },
+                        null,
+                        2
+                      )}
                     </pre>
                   </div>
                 </div>

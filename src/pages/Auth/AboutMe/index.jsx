@@ -76,8 +76,9 @@ const AboutMe = () => {
               <img src="/svg/daisyui.svg" className="w-8 h-8" /> DaisyUi
             </div>
           </div>
-          <ImageMarquee />
         </div>
+
+        <ImageMarquee />
 
         {/* Contact */}
         <div className="text-center">
@@ -138,29 +139,6 @@ const AboutMe = () => {
             </a>
           </div>
         </div>
-        {/* Phần Donate */}
-      </div>
-      <div className="relative mb-10 text-center px-3 mt-6">
-        {/* Phần Donate */}
-        <h3 className="flex justify-center items-center text-2xl font-semibold mb-4 gap-2">
-          <Coffee /> Give me a coffee
-        </h3>
-        <div className="flex flex-col items-center">
-          {/* Hình ảnh vuông */}
-          <img
-            src="https://cdn.locket-dio.space/v1/images/qr/donate.jpg" // Thay bằng link ảnh của bạn
-            alt="Donate"
-            className="w-37 h-37 object-cover mb-4 rounded-lg shadow-xl"
-          />
-          {/* Thông tin tài khoản */}
-          <p className="text-lg font-medium">STK: 66222222222266</p>
-          <p className="text-lg font-medium">CTK: DAO VAN DOI - MBBANK</p>
-          <p className="my-4 text-sm">
-            Mọi đóng góp đều giúp mình cải thiện dịch vụ và duy trì trang web.
-            Cảm ơn sự ủng hộ của bạn!
-          </p>
-        </div>
-        <DonateHistory />
       </div>
     </>
   );

@@ -76,7 +76,7 @@ const NotificationPrompt = () => {
   return (
     <div className="fixed bottom-5 right-5 z-50 max-w-sm w-[90%] sm:w-auto p-4 bg-white rounded-xl shadow-xl border border-gray-200 animate-fade-in text-sm text-gray-800 flex items-start gap-3">
       <img
-        src="/icon-192x192.png"
+        src="/apple-touch-icon.png"
         alt="Notification"
         className="w-12 h-12 object-contain"
       />

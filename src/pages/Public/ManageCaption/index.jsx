@@ -6,6 +6,10 @@ export default function ManageCaption() {
   const [captionId, setCaptionId] = useState("");
   const [captions, setCaptions] = useState([]);
 
+  // Regex UUID v4
+  const uuidV4Regex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
   // Load captions từ localStorage khi component mount
   useEffect(() => {
     const storedCaptions = localStorage.getItem("Yourcaptions");
@@ -21,6 +25,12 @@ export default function ManageCaption() {
   const handleSubmit = async () => {
     if (!captionId.trim()) {
       alert("Vui lòng nhập ID");
+      return;
+    }
+
+    // ✅ Validate UUID v4
+    if (!uuidV4Regex.test(captionId.trim())) {
+      showError("ID không hợp lệ. Vui lòng nhập hợp lệ.");
       return;
     }
 
@@ -152,13 +162,13 @@ export default function ManageCaption() {
                   color: preset.color_text || "#fff",
                 }}
               >
-                <span className="text-base flex items-center gap-2">
+                <span className="text-xl flex items-center gap-2">
                   {preset.type === "image_icon" ||
                   preset.type === "image_gif" ? (
                     <img
                       src={preset.icon_url}
                       alt="icon"
-                      className="w-5 h-5 rounded-full object-cover"
+                      className="w-7 h-7 rounded-md object-cover"
                     />
                   ) : (
                     <>{preset.icon_url}</>

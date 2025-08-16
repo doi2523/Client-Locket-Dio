@@ -1,14 +1,9 @@
 import Marquee from "react-fast-marquee";
+import { Camera, Type, Share2, AppWindow, Bell, Calendar } from "lucide-react";
 
 const FEATURES = [
   {
-    icon: (
-      <img
-        src="https://cdn.locket-dio.com/v1/gif/videocam.gif"
-        alt="videocam"
-        className="w-8 h-8 object-contain"
-      />
-    ),
+    icon: <Camera className="w-7 h-7" />,
     title: "Chụp & Quay video",
     description:
       "Ghi lại khoảnh khắc trực tiếp ngay trên trình duyệt một cách dễ dàng và nhanh chóng, không cần cài đặt ứng dụng phức tạp.",
@@ -18,13 +13,7 @@ const FEATURES = [
     iconTo: "to-blue-600",
   },
   {
-    icon: (
-      <img
-        src="https://cdn.locket-dio.com/v1/gif/celebration.gif"
-        alt="celebration"
-        className="w-8 h-8 object-contain"
-      />
-    ),
+    icon: <Type className="w-7 h-7" />,
     title: "Caption sáng tạo",
     description:
       "Thêm caption cá nhân hóa đầy cảm xúc và phong cách độc đáo. Tạo dấu ấn riêng biệt với mỗi khoảnh khắc đáng nhớ của bạn.",
@@ -34,13 +23,7 @@ const FEATURES = [
     iconTo: "to-purple-600",
   },
   {
-    icon: (
-      <img
-        src="https://cdn.locket-dio.com/v1/gif/bolt.gif"
-        alt="bolt"
-        className="w-8 h-8 object-contain"
-      />
-    ),
+    icon: <Share2 className="w-7 h-7" />,
     title: "Chia sẻ dễ dàng",
     description:
       "Chia sẻ khoảnh khắc tức thì với bạn bè chỉ bằng một cú click đơn giản, không cần tải về hay qua nhiều bước phức tạp.",
@@ -50,13 +33,7 @@ const FEATURES = [
     iconTo: "to-pink-600",
   },
   {
-    icon: (
-      <img
-        src="https://cdn.locket-dio.com/v1/gif/category.gif"
-        alt="category"
-        className="w-8 h-8 object-contain"
-      />
-    ),
+    icon: <AppWindow className="w-7 h-7" />,
     title: "WebApp tiện lợi",
     description:
       "Truy cập mọi tính năng trực tiếp từ trình duyệt như một ứng dụng cài đặt, hỗ trợ PWA để hoạt động mượt mà ngay cả khi offline.",
@@ -65,15 +42,8 @@ const FEATURES = [
     iconFrom: "from-green-500",
     iconTo: "to-green-600",
   },
-
   {
-    icon: (
-      <img
-        src="https://cdn.locket-dio.com/v1/gif/notification.gif"
-        alt="notification"
-        className="w-8 h-8 object-contain"
-      />
-    ),
+    icon: <Bell className="w-7 h-7" />,
     title: "Thông báo thông minh",
     description:
       "Thông báo khi có moment mới hoặc khi bạn cần biết, tính năng mới, celebrate mới.",
@@ -83,13 +53,7 @@ const FEATURES = [
     iconTo: "to-orange-600",
   },
   {
-    icon: (
-      <img
-        src="https://cdn.locket-dio.com/v1/gif/calendar.gif"
-        alt="calendar"
-        className="w-8 h-8 object-contain"
-      />
-    ),
+    icon: <Calendar className="w-7 h-7" />,
     title: "Xem lại moment",
     description:
       "Dễ dàng xem lại và sắp xếp những moment đã gửi trước đây, không bỏ lỡ kỷ niệm nào.",
@@ -123,7 +87,7 @@ const FeatureCardMarquee = () => {
             <div
               className={`w-12 h-12 bg-gradient-to-br ${feature.iconFrom} ${feature.iconTo} rounded-2xl flex items-center drop-shadow-md justify-center mb-4`}
             >
-              <span className="text-xl">{feature.icon}</span>
+              <span className="text-xl text-white">{feature.icon}</span>
             </div>
             <h3 className="text-lg text-left font-bold text-base-content mb-2 leading-tight">
               {feature.title}

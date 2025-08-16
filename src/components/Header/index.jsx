@@ -16,7 +16,7 @@ const Header = () => {
             Locket Dio
           </span>
           <img
-            src="/icons8-heart-100.png"
+            src="/images/locket-dio.png"
             alt="Locket icon"
             className="w-7 h-7 object-contain -ml-1 disable-select"
             draggable="false"

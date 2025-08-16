@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { API_URL } from "../../../utils";
+import { API_URL } from "@/utils";
 
 export default function Timeline() {
   const [timelineData, setTimelineData] = useState([]);
@@ -47,10 +47,12 @@ export default function Timeline() {
   }, []);
 
   // 👉 UI loading/error/no data
-  if (loading) {
+  if (loading || !timelineData.length) {
     return (
       <div className="w-full md:w-[90%] max-w-2xl mx-auto p-6">
-        <h1 className="text-3xl font-bold text-center mb-8">Lịch sử cập nhật</h1>
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Lịch sử cập nhật
+        </h1>
         <ul className="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
           {[...Array(7)].map((_, index) => (
             <li key={index}>
@@ -58,7 +60,11 @@ export default function Timeline() {
               <div className="timeline-middle">
                 <div className="skeleton h-5 w-5 rounded-full bg-gray-300"></div>
               </div>
-              <div className={`timeline-${index % 2 === 0 ? "start" : "end"} mb-10 md:text-${index % 2 === 0 ? "end" : "start"}`}>
+              <div
+                className={`timeline-${
+                  index % 2 === 0 ? "start" : "end"
+                } mb-10 md:text-${index % 2 === 0 ? "end" : "start"}`}
+              >
                 <div className="skeleton h-4 w-24 mb-2 bg-gray-300"></div>
                 <div className="skeleton h-6 w-40 mb-2 bg-gray-300"></div>
                 <div className="skeleton h-4 w-full bg-gray-300"></div>
@@ -70,9 +76,9 @@ export default function Timeline() {
       </div>
     );
   }
-  
-  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
-  if (!timelineData.length) return <div className="text-center mt-10">Không có dữ liệu lịch sử.</div>;
+
+  // if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
+  // if (!timelineData.length) return <div className="text-center mt-10">Không có dữ liệu lịch sử.</div>;
 
   return (
     <div className="w-full md:w-[90%] max-w-2xl mx-auto p-6">
@@ -82,7 +88,12 @@ export default function Timeline() {
           <li key={update.id || index}>
             {index !== 0 && <hr />}
             <div className="timeline-middle">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
                 <path
                   fillRule="evenodd"
                   d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
@@ -90,7 +101,11 @@ export default function Timeline() {
                 />
               </svg>
             </div>
-            <div className={`timeline-${index % 2 === 0 ? "start" : "end"} mb-10 md:text-${index % 2 === 0 ? "end" : "start"}`}>
+            <div
+              className={`timeline-${
+                index % 2 === 0 ? "start" : "end"
+              } mb-10 md:text-${index % 2 === 0 ? "end" : "start"}`}
+            >
               <time className="font-mono italic">{update.date}</time>
               <div className="text-lg font-black">{update.title}</div>
               <p className="whitespace-pre-line">{update.description}</p>

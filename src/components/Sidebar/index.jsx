@@ -20,6 +20,8 @@ import {
   UserRound,
   LifeBuoy,
   Package,
+  SquareArrowOutUpRight,
+  Heart,
 } from "lucide-react";
 import { showSuccess, showToast } from "../Toast";
 import * as ultils from "@/utils";
@@ -67,6 +69,7 @@ const Sidebar = () => {
         { to: "/home", icon: Home, text: "Trang chủ" },
         { to: "/aboutdio", icon: Briefcase, text: "Giới thiệu" },
         { to: "/timeline", icon: Clock, text: "Lịch sử Website" },
+        { to: "/download", icon: SquareArrowOutUpRight, text: "Cài đặt WebApp" },
       ],
     },
     {
@@ -100,13 +103,15 @@ const Sidebar = () => {
         { to: "/about", icon: Info, text: "Locket Dio" },
         { to: "/about-dio", icon: UserCircle, text: "Về Dio" },
         { to: "/timeline", icon: Clock, text: "Lịch sử Website" },
-        { to: "/collection", icon: Package, text: "Thư viện phiên bản" },
+        { to: "/download", icon: SquareArrowOutUpRight, text: "Cài đặt WebApp" },
       ],
     },
     {
       title: "Tài nguyên",
       items: [
         { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "New" },
+        { to: "/collection", icon: Package, text: "Thư viện phiên bản" },
+        { to: "/sponsors", icon: Heart, text: "Ủng hộ dự án" },
         { to: "/docs", icon: BookText, text: "Tài liệu" },
       ],
     },

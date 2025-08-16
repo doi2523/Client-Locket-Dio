@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   Search,
   AlertTriangle,
@@ -23,7 +23,6 @@ const ErrorReferencePage = () => {
       category: "Kết nối mạng",
       severity: "Cao",
       tags: ["mạng", "máy chủ", "tải lỗi"],
-      language: "JavaScript",
       errorImage:
         "https://firebasestorage.googleapis.com/v0/b/webdio-20ca8.appspot.com/o/images%2FLocket%2FIMG_8968.PNG?alt=media&token=652291d1-6483-4aec-ac97-3f325d3cdcb0",
       solution: [
@@ -55,7 +54,6 @@ const ErrorReferencePage = () => {
       category: "Đường dẫn lỗi",
       severity: "Trung bình",
       tags: ["liên kết", "404", "không tìm thấy"],
-      language: "HTTP",
       errorImage:
         "https://firebasestorage.googleapis.com/v0/b/webdio-20ca8.appspot.com/o/images%2FLocket%2FIMG_8968.PNG?alt=media&token=652291d1-6483-4aec-ac97-3f325d3cdcb0",
       solution: [
@@ -78,214 +76,232 @@ const ErrorReferencePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSeverity, setSelectedSeverity] = useState("");
-  const [showSolution, setShowSolution] = useState({});
-  const [copiedCode, setCopiedCode] = useState("");
+  const [expandedSolutions, setExpandedSolutions] = useState(new Set());
+  const [copiedId, setCopiedId] = useState(null);
   const [modalImage, setModalImage] = useState(null);
 
-  const categories = [...new Set(errorData.map((item) => item.category))];
-  const severities = [...new Set(errorData.map((item) => item.severity))];
+  // Memoize categories and severities
+  const { categories, severities } = useMemo(
+    () => ({
+      categories: [...new Set(errorData.map((item) => item.category))],
+      severities: [...new Set(errorData.map((item) => item.severity))],
+    }),
+    [errorData]
+  );
 
+  // Memoize filtered data
   const filteredData = useMemo(() => {
+    const searchLower = searchTerm.toLowerCase();
+
     return errorData
       .filter((item) => {
-        const matchesSearch =
-          item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.errorCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.errorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.tags.some((tag) =>
-            tag.toLowerCase().includes(searchTerm.toLowerCase())
-          );
+        // Optimize search by checking short-circuit conditions first
+        if (selectedCategory && item.category !== selectedCategory)
+          return false;
+        if (selectedSeverity && item.severity !== selectedSeverity)
+          return false;
 
-        const matchesCategory =
-          !selectedCategory || item.category === selectedCategory;
-        const matchesSeverity =
-          !selectedSeverity || item.severity === selectedSeverity;
+        if (!searchTerm) return true;
 
-        return matchesSearch && matchesCategory && matchesSeverity;
+        return (
+          item.title.toLowerCase().includes(searchLower) ||
+          item.description.toLowerCase().includes(searchLower) ||
+          item.errorCode.toLowerCase().includes(searchLower) ||
+          item.errorName.toLowerCase().includes(searchLower) ||
+          item.tags.some((tag) => tag.toLowerCase().includes(searchLower))
+        );
       })
       .sort((a, b) => b.views - a.views);
   }, [errorData, searchTerm, selectedCategory, selectedSeverity]);
 
-  const toggleSolution = (id) => {
-    setShowSolution((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
+  // Optimize callbacks
+  const toggleSolution = useCallback((id) => {
+    setExpandedSolutions((prev) => {
+      const newSet = new Set(prev);
+      newSet.has(id) ? newSet.delete(id) : newSet.add(id);
+      return newSet;
+    });
+  }, []);
 
-  const copyToClipboard = (solution, id) => {
-    navigator.clipboard.writeText(solution.join("\n"));
-    setCopiedCode(id);
-    setTimeout(() => setCopiedCode(""), 2000);
-  };
+  const copyToClipboard = useCallback(async (solution, id) => {
+    try {
+      await navigator.clipboard.writeText(solution.join("\n"));
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  }, []);
 
-  const openImageModal = (imageUrl, errorCode, errorName, description) => {
-    setModalImage({ url: imageUrl, errorCode, errorName, description });
-  };
+  const openImageModal = useCallback(
+    (imageUrl, errorCode, errorName, description) => {
+      setModalImage({ url: imageUrl, errorCode, errorName, description });
+    },
+    []
+  );
 
-  const closeImageModal = () => {
+  const closeImageModal = useCallback(() => {
     setModalImage(null);
-  };
+  }, []);
 
-  const getSeverityColor = (severity) => {
-    switch (severity.toLowerCase()) {
-      case "thấp":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "trung bình":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "cao":
-        return "bg-red-100 text-red-800 border-red-200";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+  // Optimize severity config
+  const severityConfig = useMemo(
+    () => ({
+      thấp: { class: "badge-success", icon: CheckCircle },
+      "trung bình": { class: "badge-warning", icon: AlertTriangle },
+      cao: { class: "badge-error", icon: Bug },
+    }),
+    []
+  );
 
-  const getSeverityIcon = (severity) => {
-    switch (severity.toLowerCase()) {
-      case "thấp":
-        return <CheckCircle className="w-4 h-4 md:w-5 md:h-5" />;
-      case "trung bình":
-        return <AlertTriangle className="w-4 h-4 md:w-5 md:h-5" />;
-      case "cao":
-        return <Bug className="w-4 h-4 md:w-5 md:h-5" />;
-      default:
-        return <AlertTriangle className="w-4 h-4 md:w-5 md:h-5" />;
-    }
-  };
+  const getSeverityData = useCallback(
+    (severity) => {
+      const config = severityConfig[severity.toLowerCase()];
+      return config || { class: "badge", icon: AlertTriangle };
+    },
+    [severityConfig]
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 md:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-            Tìm và Sửa Lỗi Nhanh Chóng
+    <div className="min-h-screen bg-base-200 px-4 py-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header - Simplified */}
+        <header className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-base-content mb-2">
+            Tra Cứu & Sửa Lỗi
           </h1>
-          <p className="text-gray-600 text-base sm:text-lg">
+          <p className="text-gray-600">
             Nhập mã lỗi hoặc mô tả để tìm cách khắc phục
           </p>
-        </div>
+        </header>
 
-        {/* Search and Filter Bar */}
-        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-8">
-          <div className="flex flex-col gap-4">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Nhập mã lỗi hoặc mô tả (VD: 500, không tải ảnh)"
-                className="w-full pl-10 pr-4 py-2 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 text-base sm:text-lg"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+        {/* Search & Filter - Optimized */}
+        <div className="bg-base rounded-lg shadow p-4 mb-6">
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Nhập mã lỗi hoặc mô tả (VD: 500, không tải ảnh)"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <select
-                className="w-full sm:w-1/2 px-4 py-2 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 text-base sm:text-lg"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                <option value="">Tất cả danh mục</option>
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+            <select
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="">Tất cả danh mục</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
 
-              <select
-                className="w-full sm:w-1/2 px-4 py-2 sm:py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 text-base sm:text-lg"
-                value={selectedSeverity}
-                onChange={(e) => setSelectedSeverity(e.target.value)}
-              >
-                <option value="">Tất cả mức độ</option>
-                {severities.map((severity) => (
-                  <option key={severity} value={severity}>
-                    {severity}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <select
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={selectedSeverity}
+              onChange={(e) => setSelectedSeverity(e.target.value)}
+            >
+              <option value="">Tất cả mức độ</option>
+              {severities.map((severity) => (
+                <option key={severity} value={severity}>
+                  {severity}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            <div className="text-sm text-gray-500">
-              Tìm thấy {filteredData.length} kết quả
-            </div>
+          <div className="text-sm text-gray-600">
+            {filteredData.length} kết quả
           </div>
         </div>
 
-        {/* Error Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {filteredData.map((error) => (
-            <div
-              key={error.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-            >
-              <div className="p-4 sm:p-6">
-                <div className="flex flex-col sm:flex-row items-start justify-between mb-4">
-                  <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-0">
-                    <div
-                      className={`flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full border ${getSeverityColor(
-                        error.severity
-                      )}`}
+        {/* Error Cards - Optimized */}
+        <div className="space-y-4 space-x-4 grid md:grid-cols-2">
+          {filteredData.map((error) => {
+            const severityData = getSeverityData(error.severity);
+            const SeverityIcon = severityData.icon;
+            const isExpanded = expandedSolutions.has(error.id);
+
+            const severityClass =
+              error.severity === "Cao"
+                ? "bg-red-100 text-red-800"
+                : error.severity === "Trung bình"
+                ? "bg-yellow-100 text-yellow-800"
+                : "bg-green-100 text-green-800";
+
+            return (
+              <div
+                key={error.id}
+                className="bg-base-100 rounded-lg shadow-lg p-4"
+              >
+                {/* Header */}
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${severityClass}`}
                     >
-                      {getSeverityIcon(error.severity)}
-                      <span className="text-sm font-medium">
-                        {error.severity}
-                      </span>
-                    </div>
-                    <span className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                      <SeverityIcon className="w-3 h-3" />
+                      {error.severity}
+                    </span>
+                    <span className="px-2 py-1 bg-base-300 text-base-content rounded-full text-xs">
                       {error.category}
                     </span>
                   </div>
-                  <div className="text-right text-sm text-gray-500">
+
+                  <div className="text-xs text-gray-500 text-right">
                     <div>{error.views} lượt xem</div>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Lightbulb className="w-4 h-4" />
-                      {error.helpful}% hữu ích
+                    <div className="flex items-center gap-1">
+                      <Lightbulb className="w-3 h-3" />
+                      {error.helpful}%
                     </div>
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                    <span className="text-xl sm:text-2xl font-bold text-red-600 bg-red-50 px-2 sm:px-3 py-1 rounded-lg border border-red-200">
+                {/* Title & Description */}
+                <div className="mb-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="px-2 py-1 bg-red-500 text-white rounded text-xs font-mono">
                       {error.errorCode}
                     </span>
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
+                    <h3 className="text-lg font-semibold text-base-content">
                       {error.title}
                     </h3>
                   </div>
-                  <p className="text-gray-600 text-sm sm:text-base">
+                  <p className="text-gray-600 text-sm leading-relaxed">
                     {error.description}
                   </p>
                 </div>
 
-                <div className="flex flex-wrap gap-2 mb-4">
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-3">
                   {error.tags.map((tag, idx) => (
                     <span
                       key={idx}
-                      className="bg-blue-50 text-blue-600 text-xs sm:text-sm px-2 py-1 rounded-full"
+                      className="px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs"
                     >
                       #{tag}
                     </span>
                   ))}
                 </div>
-              </div>
 
-              <div className="px-4 sm:px-6 py-4 bg-gray-50">
-                <div className="flex items-center gap-2 mb-3">
-                  <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
-                  <span className="font-medium text-gray-800 text-sm sm:text-base">
-                    Hình ảnh lỗi
-                  </span>
-                </div>
-                <div className="relative">
+                {/* Image - Optimized */}
+                <div className="mb-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Eye className="w-4 h-4 text-gray-500" />
+                    <span className="font-medium text-sm text-base-content">
+                      Hình ảnh lỗi
+                    </span>
+                  </div>
                   <img
                     src={error.errorImage}
-                    alt={`Lỗi ${error.errorCode}: ${error.errorName}`}
-                    className="w-full h-40 sm:h-48 object-cover rounded-lg border border-gray-200 cursor-pointer"
+                    alt={`Lỗi ${error.errorCode}`}
+                    className="w-full h-32 object-cover rounded cursor-pointer border border-gray-200 hover:border-blue-400 transition-colors"
                     onClick={() =>
                       openImageModal(
                         error.errorImage,
@@ -294,80 +310,86 @@ const ErrorReferencePage = () => {
                         error.description
                       )
                     }
+                    loading="lazy"
                   />
                 </div>
-              </div>
 
-              <div className="px-4 sm:px-6 py-4">
+                {/* Solution Toggle */}
                 <button
                   onClick={() => toggleSolution(error.id)}
-                  className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium text-sm sm:text-base mb-3"
+                  className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-3 text-sm font-medium"
                 >
-                  <Lightbulb className="w-4 h-4 sm:w-5 sm:h-5" />
-                  {showSolution[error.id] ? "Ẩn cách sửa" : "Xem cách sửa"}
+                  <Lightbulb className="w-4 h-4" />
+                  {isExpanded ? "Ẩn cách sửa" : "Xem cách sửa"}
                 </button>
 
-                {showSolution[error.id] && (
-                  <div className="space-y-4">
+                {/* Solution Details - Optimized */}
+                {isExpanded && (
+                  <div className="space-y-3 bg-gray-50 p-3 rounded">
+                    {/* Solution Steps */}
                     <div className="relative">
                       <button
                         onClick={() =>
-                          copyToClipboard(error.solution, `solution-${error.id}`)
+                          copyToClipboard(error.solution, error.id)
                         }
-                        className="absolute top-2 right-2 p-2 rounded hover:bg-gray-100"
+                        className="absolute top-2 right-2 p-1 text-gray-500 hover:text-base-content hover:bg-gray-200 rounded"
                       >
-                        {copiedCode === `solution-${error.id}` ? (
-                          <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+                        {copiedId === error.id ? (
+                          <Check className="w-4 h-4 text-green-600" />
                         ) : (
-                          <Copy className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                          <Copy className="w-4 h-4" />
                         )}
                       </button>
-                      <div className="bg-gray-50 p-4 rounded-lg text-gray-700 text-sm sm:text-base">
-                        <h4 className="font-semibold text-gray-800 mb-2">
-                          Các bước khắc phục:
+                      <h4 className="font-semibold mb-2 text-base-content">
+                        Các bước khắc phục:
+                      </h4>
+                      <ol className="list-decimal list-inside space-y-1 pr-8">
+                        {error.solution.map((step, idx) => (
+                          <li key={idx} className="text-sm text-base-content">
+                            {step}
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+
+                    {/* Causes & Preventions - Grid layout for better space usage */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <h4 className="font-semibold mb-1 text-sm text-base-content">
+                          Nguyên nhân:
                         </h4>
-                        <ol className="list-decimal list-inside space-y-2">
-                          {error.solution.map((step, idx) => (
-                            <li key={idx}>{step}</li>
+                        <ul className="list-disc list-inside space-y-1 text-xs text-gray-600">
+                          {error.causes.map((cause, idx) => (
+                            <li key={idx}>{cause}</li>
                           ))}
-                        </ol>
+                        </ul>
+                      </div>
+
+                      <div>
+                        <h4 className="font-semibold mb-1 text-sm text-base-content">
+                          Cách tránh:
+                        </h4>
+                        <ul className="list-disc list-inside space-y-1 text-xs text-gray-600">
+                          {error.preventions.map((prevention, idx) => (
+                            <li key={idx}>{prevention}</li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
 
-                    <div>
-                      <h4 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
-                        Nguyên nhân có thể:
-                      </h4>
-                      <ul className="list-disc list-inside text-gray-600 text-sm sm:text-base space-y-1">
-                        {error.causes.map((cause, idx) => (
-                          <li key={idx}>{cause}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h4 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
-                        Cách tránh lỗi:
-                      </h4>
-                      <ul className="list-disc list-inside text-gray-600 text-sm sm:text-base space-y-1">
-                        {error.preventions.map((prevention, idx) => (
-                          <li key={idx}>{prevention}</li>
-                        ))}
-                      </ul>
-                    </div>
-
+                    {/* Related Errors */}
                     {error.relatedErrors.length > 0 && (
                       <div>
-                        <h4 className="font-semibold text-gray-800 mb-2 text-sm sm:text-base">
+                        <h4 className="font-semibold mb-1 text-sm text-base-content">
                           Lỗi tương tự:
                         </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {error.relatedErrors.map((relatedError, idx) => (
+                        <div className="flex flex-wrap gap-1">
+                          {error.relatedErrors.map((rel, idx) => (
                             <span
                               key={idx}
-                              className="bg-orange-50 text-orange-600 text-xs sm:text-sm px-2 py-1 rounded"
+                              className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs"
                             >
-                              {relatedError}
+                              {rel}
                             </span>
                           ))}
                         </div>
@@ -375,82 +397,64 @@ const ErrorReferencePage = () => {
                     )}
                   </div>
                 )}
-              </div>
 
-              <div className="px-4 sm:px-6 py-4 bg-gray-50">
-                <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500">
+                {/* Footer - Simplified */}
+                <div className="flex justify-between items-center text-xs text-gray-500 mt-3 pt-3 border-t border-gray-200">
                   <span>
-                    Cập nhật: {new Date(error.dateAdded).toLocaleDateString("vi-VN")}
+                    {new Date(error.dateAdded).toLocaleDateString("vi-VN")}
                   </span>
-                  <div className="flex gap-4 mt-2 sm:mt-0">
-                    <button className="hover:text-blue-600">👍 Hữu ích</button>
-                    <button className="hover:text-red-600">👎 Không hữu ích</button>
+                  <div className="flex gap-2">
+                    <button className="px-2 py-1 hover:bg-base-300 rounded">
+                      👍
+                    </button>
+                    <button className="px-2 py-1 hover:bg-base-300 rounded">
+                      👎
+                    </button>
                   </div>
                 </div>
               </div>
+            );
+          })}
+
+          {/* Empty State - Simplified */}
+          {filteredData.length === 0 && (
+            <div className="text-center py-12 text-gray-500">
+              <div className="text-4xl mb-3">🤔</div>
+              <h3 className="text-lg font-semibold mb-2">
+                Không tìm thấy lỗi nào
+              </h3>
+              <p className="text-sm">Thử thay đổi từ khóa hoặc bộ lọc</p>
             </div>
-          ))}
+          )}
         </div>
 
-        {/* No Results */}
-        {filteredData.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 text-5xl sm:text-6xl mb-4">🤔</div>
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
-              Không tìm thấy lỗi nào
-            </h3>
-            <p className="text-gray-600 text-sm sm:text-base mb-4">
-              Vui lòng thử:
-            </p>
-            <ul className="list-disc list-inside text-gray-600 text-sm sm:text-base mx-auto max-w-md">
-              <li>Thay đổi từ khóa tìm kiếm (VD: mã lỗi, mô tả ngắn)</li>
-              <li>Bỏ bớt bộ lọc danh mục hoặc mức độ</li>
-              <li>Liên hệ hỗ trợ nếu cần giúp ngay</li>
-            </ul>
-          </div>
-        )}
-
-        {/* Image Modal */}
+        {/* Image Modal - Optimized */}
         {modalImage && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 sm:p-6">
-            <div className="relative w-full max-w-3xl max-h-[90vh]">
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+            <div className="relative w-full max-w-2xl max-h-screen-90">
               <button
                 onClick={closeImageModal}
-                className="absolute -top-8 right-0 text-white hover:text-gray-300 transition-colors"
+                className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors"
               >
-                <X className="w-6 h-6 sm:w-8 sm:h-8" />
+                <X className="w-6 h-6" />
               </button>
-
-              <div className="bg-white rounded-lg overflow-hidden shadow-2xl">
-                <div className="p-4 sm:p-6 bg-gray-50">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-lg sm:text-xl font-bold text-red-600 bg-red-50 px-2 sm:px-3 py-1 rounded-lg border border-red-200">
+              <div className="bg-base rounded-lg overflow-hidden">
+                <div className="p-3 bg-base-300 border-b">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-1 bg-red-500 text-white rounded text-xs font-mono">
                       {modalImage.errorCode}
                     </span>
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-800">
+                    <h3 className="font-semibold text-base-content">
                       {modalImage.errorName}
                     </h3>
                   </div>
-                  <p className="text-gray-600 text-sm sm:text-base">
-                    {modalImage.description}
-                  </p>
                 </div>
-
-                <div className="p-4 sm:p-6">
+                <div className="p-4">
                   <img
                     src={modalImage.url}
-                    alt={`Lỗi ${modalImage.errorCode}: ${modalImage.errorName}`}
-                    className="w-full max-h-[60vh] sm:max-h-[70vh] object-contain mx-auto"
+                    alt={`${modalImage.errorCode} ${modalImage.errorName}`}
+                    className="w-full max-h-96 object-contain mx-auto"
                   />
-                </div>
-
-                <div className="p-4 sm:p-6 bg-gray-50 text-center">
-                  <button
-                    onClick={closeImageModal}
-                    className="px-4 sm:px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm sm:text-base"
-                  >
-                    Đóng
-                  </button>
                 </div>
               </div>
             </div>
