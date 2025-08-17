@@ -1,6 +1,6 @@
 import axios from "axios";
-import * as utils from "../../utils";
-import api from "../../lib/axios";
+import * as utils from "@/utils";
+import api from "@/lib/axios";
 
 export const uploadMedia = async (formData, setUploadProgress) => {
   let timeOutId;

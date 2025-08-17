@@ -2,6 +2,13 @@ import { showError } from "@/components/Toast";
 import { getToken } from "@/utils";
 import { uploadFileAndGetInfoR2 } from "./StorageServices";
 
+// Hàm con xác định recipients
+const determineRecipients = (audience, selectedRecipients, localId) => {
+  if (audience === "selected") return selectedRecipients || [];
+  if (audience === "private") return localId ? [localId] : [];
+  // Trường hợp public hoặc khác trả về mảng rỗng
+  return [];
+};
 //Bản chính mới nhất
 export const createRequestPayloadV5 = async (
   selectedFile,
@@ -45,7 +52,7 @@ export const createRequestPayloadV5 = async (
       color_top: postOverlay.color_top,
       color_bottom: postOverlay.color_bottom,
       audience, // Gắn audience vào options luôn
-      recipients: audience === "selected" ? selectedRecipients : [],
+      recipients: determineRecipients(audience, selectedRecipients, localId),
       music: postOverlay?.music || "",
       isStreaktoday,
     };

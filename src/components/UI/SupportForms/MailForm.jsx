@@ -11,7 +11,7 @@ const MailForm = ({ defaultEmail = "doibncm2003@gmail.com" }) => {
   };
 
   return (
-    <div className="w-full max-w-3xl">
+    <div className="w-full mt-2">
       {/* Tiêu đề */}
       <h1 className="font-lovehouse text-center text-3xl font-semibold">Send Email</h1>
 

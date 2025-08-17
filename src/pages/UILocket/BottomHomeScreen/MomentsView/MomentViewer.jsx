@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import LoadingRing from "@/components/ui/Loading/ring";
 import { AuthContext } from "@/context/AuthLocket";
 import { useMoments } from "@/hooks/useMoments";
+import { formatTimeAgo } from "@/utils";
 
 const MomentViewer = () => {
   const { user: me } = useContext(AuthContext);
@@ -43,35 +44,6 @@ const MomentViewer = () => {
     }, 300);
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
-      if (selectedMoment > 0) setSelectedMoment(selectedMoment - 1);
-    } else if (e.key === "ArrowDown" || e.key === "ArrowRight") {
-      if (selectedMoment < moments.length - 1)
-        setSelectedMoment(selectedMoment + 1);
-    } else if (e.key === "Escape") {
-      handleClose();
-    }
-  };
-
-  // Swipe detection
-  let touchStartY = null;
-  const handleTouchStart = (e) => {
-    touchStartY = e.touches[0].clientY;
-  };
-  const handleTouchEnd = (e) => {
-    const touchEndY = e.changedTouches[0].clientY;
-    if (!touchStartY) return;
-    const diff = touchStartY - touchEndY;
-
-    if (diff > 50 && selectedMoment < moments.length - 1) {
-      setSelectedMoment(selectedMoment + 1);
-    } else if (diff < -50 && selectedMoment > 0) {
-      setSelectedMoment(selectedMoment - 1);
-    }
-    touchStartY = null;
-  };
-
   // Khóa cuộn khi mở modal
   useEffect(() => {
     const shouldLock = hasValidMoment || isAnimating;
@@ -86,25 +58,6 @@ const MomentViewer = () => {
     };
   }, [hasValidMoment, isAnimating]);
 
-  const formatMomentTime = (isoString) => {
-    if (!isoString) return "";
-
-    const date = new Date(isoString);
-    const now = new Date();
-
-    const diffMs = now - date;
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-
-    if (diffHours < 24) {
-      return `${diffHours || 1}h`;
-    }
-
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // tháng bắt đầu từ 0
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  };
   const getUserFromFriendDetails = (uid) => {
     if (!uid) return null;
 
@@ -133,7 +86,7 @@ const MomentViewer = () => {
       }`}
     >
       <div
-        className={`relative w-full max-w-md aspect-square bg-base-200 rounded-[64px] overflow-hidden`}
+        className="relative w-full max-w-md aspect-square bg-base-200 rounded-[64px] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Nút đóng */}
@@ -152,9 +105,9 @@ const MomentViewer = () => {
             </div>
           )}
 
-          {currentMoment?.video_url ? (
+          {currentMoment?.videoUrl ? (
             <video
-              src={currentMoment.video_url}
+              src={currentMoment.videoUrl}
               className="max-h-full max-w-full object-contain rounded-2xl"
               autoPlay
               muted
@@ -164,7 +117,7 @@ const MomentViewer = () => {
             />
           ) : (
             <img
-              src={currentMoment?.thumbnail_url || currentMoment?.image_url}
+              src={currentMoment?.thumbnailUrl}
               alt={currentMoment?.caption || "Moment"}
               className="w-full h-full object-cover rounded-2xl"
               onLoad={() => setIsMediaLoading(false)}
@@ -173,14 +126,39 @@ const MomentViewer = () => {
 
           {/* Caption */}
           {currentMoment?.caption && (
-            <div className="absolute max-w-[80%] bottom-4 w-fit bg-black/60 backdrop-blur-sm rounded-3xl px-5 py-2">
-              <p className="text-white text-md font-bold">
-                {currentMoment.caption}
-              </p>
+            <div
+              className="absolute max-w-[80%] bottom-4 w-fit backdrop-blur-sm rounded-3xl px-5 py-2"
+              style={{
+                background: currentMoment?.overlays?.background?.colors?.length
+                  ? `linear-gradient(to bottom, ${currentMoment.overlays.background.colors.join(
+                      ", "
+                    )})`
+                  : "rgba(0,0,0,0.6)", // fallback khi không có màu
+                color: currentMoment?.overlays?.textColor || "#fff",
+              }}
+            >
+              <div className="flex items-center gap-2 flex-row text-md font-bold">
+                {/* Icon overlay nếu có */}
+                {currentMoment?.overlays?.icon &&
+                  (currentMoment.overlays.icon.type === "emoji" ? (
+                    <span className="text-lg">
+                      {currentMoment.overlays.icon.data}
+                    </span>
+                  ) : (
+                    <img
+                      src={currentMoment.overlays.icon.data}
+                      alt="icon"
+                      className="w-6 h-6 object-contain"
+                    />
+                  ))}
+                <span>{currentMoment.caption}</span>
+              </div>
             </div>
           )}
         </div>
       </div>
+
+      {/* Info user + date */}
       <div className="flex items-center gap-2 text-md text-muted-foreground">
         {(() => {
           const user = getUserFromFriendDetails(currentMoment?.user);
@@ -197,6 +175,7 @@ const MomentViewer = () => {
                 <span className="mx-1">·</span>
               </div>
             );
+
           const fullName = `${user.firstName} ${user.lastName || ""}`.trim();
           const shortName =
             fullName.length > 10 ? fullName.slice(0, 10) + "…" : fullName;
@@ -214,7 +193,7 @@ const MomentViewer = () => {
           );
         })()}
 
-        <div>{formatMomentTime(currentMoment?.date)}</div>
+        <div>{formatTimeAgo(currentMoment?.date)}</div>
       </div>
     </div>
   );

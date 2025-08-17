@@ -70,6 +70,7 @@ const Sidebar = () => {
         { to: "/aboutdio", icon: Briefcase, text: "Giới thiệu" },
         { to: "/timeline", icon: Clock, text: "Lịch sử Website" },
         { to: "/download", icon: SquareArrowOutUpRight, text: "Cài đặt WebApp" },
+        { to: "/sponsors", icon: Heart, text: "Ủng hộ dự án" },
       ],
     },
     {

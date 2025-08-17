@@ -10,8 +10,7 @@ import { showWarning } from "@/components/Toast";
 const SelectFriendsList = () => {
   const { userPlan, friendDetails } = useContext(AuthContext);
   const { post } = useApp();
-  const { audience, setAudience, selectedRecipients, setSelectedRecipients } =
-    post;
+  const { audience, setAudience, setSelectedRecipients } = post;
 
   const [selectedFriends, setSelectedFriends] = useState([]);
 

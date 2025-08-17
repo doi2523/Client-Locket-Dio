@@ -199,7 +199,7 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
               )}
 
               <img
-                src={item.thumbnail_url || item.image_url}
+                src={item.thumbnail_url || item.image_url || item.thumbnailUrl}
                 alt={item.caption || "Image"}
                 className={`object-cover w-full h-full rounded-2xl transition-all duration-300 ${
                   isLoaded ? "opacity-100" : "opacity-0"
@@ -208,11 +208,12 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
                 loading="lazy"
               />
 
-              {item.video_url && (
-                <div className="absolute top-2 right-2 bg-primary/30 rounded-full z-20">
-                  <MdSlowMotionVideo className="text-white" />
-                </div>
-              )}
+              {item.video_url ||
+                (item.videoUrl && (
+                  <div className="absolute top-2 right-2 bg-primary/30 rounded-full z-20">
+                    <MdSlowMotionVideo className="text-white" />
+                  </div>
+                ))}
 
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 rounded-2xl z-20" />
             </div>

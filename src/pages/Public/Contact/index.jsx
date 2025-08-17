@@ -1,5 +1,6 @@
 import React from "react";
 import { Mail, MapPin } from "lucide-react";
+import MailForm from "@/components/ui/SupportForms/MailForm";
 
 export default function Contact() {
   const communityLinks = [
@@ -113,6 +114,7 @@ export default function Contact() {
             </div>
           </div>
         </div>
+        <MailForm />
 
         {/* Footer */}
         <div className="text-center mt-10 text-sm text-base-content/60 animate-fadeIn">

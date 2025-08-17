@@ -43,6 +43,27 @@ export const fetchUser = async (user_uid) => {
     }
   );
 };
+
+export const fetchUserV2 = async (user_uid) => {
+  // Đợi lấy token & uid
+  const { idToken } = utils.getToken() || {};
+
+  const res = await axios.post(
+    "https://api.locketcamera.com/fetchUserV2",
+    {
+      data: {
+        user_uid,
+      },
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return res?.data?.result?.data;
+};
 //Tích hợp 2 hàm getListfirend và fetchuser cho thuận tiện việc lấy dữ liệu
 export const refreshFriends = async () => {
   try {
