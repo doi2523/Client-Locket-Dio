@@ -1,3 +1,5 @@
+import { replaceFirebaseWithCDN } from "../replace/replaceFirebaseWithCDN";
+
 export const normalizeFriendData = (response) => {
   if (!response || response.result?.status !== 200 || !response.result?.data) {
     return null;
@@ -10,7 +12,7 @@ export const normalizeFriendData = (response) => {
     firstName: data.first_name || "",
     lastName: data.last_name || "",
     username: data.username || "",
-    profilePic: data.profile_picture_url || "",
+    profilePic: replaceFirebaseWithCDN(data.profile_picture_url),
     badge: data.badge || null,
     isTemp: data.temp || false,
     isCelebrity: data.celebrity || false,
