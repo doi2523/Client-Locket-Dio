@@ -1,12 +1,10 @@
-import React, { Suspense, useState } from "react";
-import "./styles.css";
-import { Link } from "react-router-dom";
-import NotificationPrompt from "@/components/ui/NotificationPrompt";
+import { lazy, Suspense, useState } from "react";
 import { Download, UserPlus } from "lucide-react";
-const FeatureCardMarquee = React.lazy(() =>
-  import("@/components/ui/Marquee/FeatureCardMarquee")
-);
-import StepsSection from "./StepsSection";
+import { Link } from "react-router-dom";
+import "./styles.css";
+const NotificationPrompt = lazy(() => import("@/components/ui/NotificationPrompt"));
+const FeatureCardMarquee = lazy(() => import("@/components/ui/Marquee/FeatureCardMarquee"));
+const StepsSection = lazy(() => import("./StepsSection"));
 
 const Home = () => {
   const [loaded, setLoaded] = useState(false);
@@ -39,7 +37,7 @@ const Home = () => {
               </span>
             </h2>
 
-            <p className="text-white/90 text-base md:text-lg max-w-xl leading-relaxed">
+            <p className="text-white/90 text-base md:text-lg leading-relaxed">
               Trải nghiệm "Locket Camera" ngay trên trình duyệt! Ghi lại khoảnh
               khắc, thêm caption cực chất và chia sẻ tức thì chỉ với vài thao
               tác đơn giản. Hoặc thêm ứng dụng vào màn hình chính của bạn.
@@ -74,7 +72,7 @@ const Home = () => {
           <div className="flex justify-center animate-fade-in-up animation-delay-500 md:pl-6 no-select">
             <div className="relative transform hover:scale-105 transition-transform duration-500 pt-6.5">
               <img
-                src="https://cdn.locket-dio.space/v1/images/double-phone-view-locketdio.webp"
+                src="https://cdn.locket-dio.com/v1/images/double-phone-view-locketdio.webp"
                 alt="Locket Dio WebApp Preview"
                 onLoad={() => setLoaded(true)}
                 className={`
@@ -94,7 +92,7 @@ const Home = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Tính năng nổi bật
             </h2>
-            <p className="text-lg text-base-content/80 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
               Khám phá những tính năng tuyệt vời giúp bạn tạo ra và chia sẻ
               khoảnh khắc đáng nhớ.
             </p>
@@ -105,7 +103,9 @@ const Home = () => {
         </div>
       </section>
 
-      <StepsSection />
+      <Suspense fallback={null}>
+        <StepsSection />{" "}
+      </Suspense>
 
       {/* Stats Section */}
       <section className="pb-10 px-4">

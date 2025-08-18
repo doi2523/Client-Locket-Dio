@@ -73,28 +73,6 @@
   font-family: 'SF Compact Rounded Black', sans-serif;
 } */
 
-.notch-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: env(safe-area-inset-top, 30px); /* Xử lý tai thỏ trên iOS */
-  background-color: var(--theme-color);
-  z-index: 9999;
-  pointer-events: none; /* Đảm bảo không ảnh hưởng đến thao tác người dùng */
-}
-
-@keyframes zoomIn {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
 @keyframes slideUp {
   from {
     transform: translateY(20px);
@@ -128,10 +106,6 @@
   to {
     height: 100%;
   }
-}
-
-.animate-zoomIn {
-  animation: zoomIn 0.5s ease-out forwards;
 }
 .animate-slideUp {
   animation: slideUp 0.5s ease-out forwards;
@@ -237,30 +211,6 @@
   animation: border-run 2s linear infinite;
 }
 
-/* styles.css */
-/* .gradient-text-v2 {
-  font-family: "LoveHouse", sans-serif;
-  background: linear-gradient(45deg, #ff0000, #1a53ff, #ea01ff, #fcfc00);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  background-size: 300% 300%;
-  animation: gradient 3s ease infinite;
-  display: inline-block;
-}
-
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-} */
 /* Animation send new moments */
 @layer utilities {
   .animate-slide-up {

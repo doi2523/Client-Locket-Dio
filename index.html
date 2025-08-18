@@ -3,11 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Locket Dio - Đăng ảnh & Video lên Locket</title>
     <!-- PWA Manifest -->
     <!-- <link rel="manifest" href="/manifest.json" /> -->
     <meta name="theme-color" content="#ffffff" />
-    <meta name="apple-mobile-web-app-title" content="Locket Dio" />
-
     <meta name="description" content="Locket Dio giúp bạn đăng ảnh và video lên Locket nhanh chóng ngay từ trình duyệt, hỗ trợ chụp/quay trực tiếp, thêm caption đầy màu sắc và chia sẻ khoảnh khắc dễ dàng." />
 
     <!-- iOS Support -->
@@ -36,17 +35,19 @@
 
     <link rel="dns-prefetch" href="https://cdn.locket-dio.com" />
     <link rel="preconnect" href="https://cdn.locket-dio.com" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
-
-    <!-- <link rel="canonical" href="https://locket-dio.com" /> -->
+    <link rel="canonical" href="https://locket-dio.com" />
     <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link href="/tailwind.css" rel="stylesheet" />
-
-    <title>Locket Dio - Đăng ảnh & Video lên Locket</title>
+    <link href="./tailwind.css" rel="stylesheet" />
 
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-7596Z1M8BB"></script>
@@ -56,10 +57,7 @@
       gtag('js', new Date());
       gtag('config', 'G-7596Z1M8BB');
     </script>
-
-    <!-- Google Ads -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3548911498019703"
-      crossorigin="anonymous"></script>
+    
   </head>
   <body>
     <div id="root"></div>

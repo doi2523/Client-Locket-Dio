@@ -121,25 +121,6 @@ export default function Contact() {
           © 2025 Locket Dio. Made with ❤️ by Đào Văn Đôi
         </div>
       </div>
-
-      {/* Tailwind Animations */}
-      <style>
-        {`
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          .animate-fadeIn { animation: fadeIn 0.8s ease-out forwards; }
-          .animate-slideUp { animation: slideUp 0.8s ease-out forwards; }
-          .delay-100 { animation-delay: 0.1s; }
-          .delay-200 { animation-delay: 0.2s; }
-          .delay-300 { animation-delay: 0.3s; }
-        `}
-      </style>
     </div>
   );
 }

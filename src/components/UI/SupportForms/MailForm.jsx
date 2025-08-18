@@ -6,18 +6,19 @@ const MailForm = ({ defaultEmail = "doibncm2003@gmail.com" }) => {
   const [body, setBody] = useState("");
 
   const handleSendEmail = () => {
-    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
     window.location.href = mailtoLink;
   };
 
   return (
     <div className="w-full mt-2">
-      {/* Tiêu đề */}
-      <h1 className="font-lovehouse text-center text-3xl font-semibold">Send Email</h1>
-
       {/* Form Gửi Email */}
-      <fieldset className="p-4 border rounded-lg shadow-lg w-full">
-        <legend className="font-semibold text-lg">📧 Gửi góp ý cho Locket Dio</legend>
+      <fieldset className="p-4 border rounded-lg shadow-lg w-full bg-base-100">
+        <legend className="font-semibold text-lg">
+          📧 Gửi góp ý cho Locket Dio
+        </legend>
 
         {/* Email (readonly text) */}
         <p className="">

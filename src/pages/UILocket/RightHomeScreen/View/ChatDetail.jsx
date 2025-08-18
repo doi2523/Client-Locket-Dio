@@ -3,7 +3,7 @@ import ChatDetailHeader from "../Layout/HeaderChatDetail";
 const ChatDetail = ({ selectedChat, setSelectedChat }) => {
   return (
     <div
-      className={`absolute inset-0 z-60 flex flex-col transition-transform duration-500 bg-base-100 
+      className={`fixed inset-0 z-60 flex flex-col transition-transform duration-500 bg-base-100 
         ${selectedChat ? "translate-x-0" : "translate-x-full"}`}
     >
       {/* Header - sticky */}
