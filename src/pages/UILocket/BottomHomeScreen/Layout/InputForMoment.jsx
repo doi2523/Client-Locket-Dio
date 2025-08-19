@@ -1,11 +1,14 @@
-import { useState, useEffect, useRef } from "react";
-import { ArrowUp, SmilePlus } from "lucide-react";
+import { useState, useEffect, useRef, useContext } from "react";
+import { ArrowUp, MoonStar, SmilePlus } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { SendMessageMoment, SendReactMoment } from "@/services";
 import { showError, showSuccess } from "@/components/Toast";
 import { getMomentById } from "@/cache/momentDB";
+import { AuthContext } from "@/context/AuthLocket";
 
-const InputForMoment = ({ uid }) => {
+const InputForMoment = () => {
+  const { user } = useContext(AuthContext); // 👈 lấy user hiện tại
+  const localId = user?.localId || null; // 👈 localId của người dùng hiện tại
   const {
     reactionInfo,
     setReactionInfo,
@@ -27,6 +30,8 @@ const InputForMoment = ({ uid }) => {
   const holdInterval = useRef(null);
   const wrapperRef = useRef(null);
   const inputRef = useRef(null);
+
+  const [momentUser, setMomentUser] = useState(null); // 👈 lưu userId của moment
 
   const sendReact = async (emoji, power = 0) => {
     console.log("React:", emoji, "Power:", power);
@@ -93,6 +98,7 @@ const InputForMoment = ({ uid }) => {
     const fetchMomentAndUser = async () => {
       try {
         const moment = await getMomentById(selectedMomentId);
+        setMomentUser(moment.user);
         const data = await getUserFromFriendDetails(moment.user);
         setUserDetail(data);
       } catch (err) {
@@ -138,74 +144,96 @@ const InputForMoment = ({ uid }) => {
     }
   }, [showFullInput]);
 
+  const fullName = `${userDetail?.firstName || ""} ${
+    userDetail?.lastName || ""
+  }`.trim();
+  const shortName =
+    fullName.length > 10 ? fullName.slice(0, 10) + "…" : fullName;
+
   return (
     <>
-      {/* ✅ Input hiện khi gõ */}
-      {showFullInput && (
-        <div ref={wrapperRef} className="z-50 w-full">
-          <div className="relative w-full">
-            <div className="flex w-full items-center gap-3 px-4 py-2.5 bg-base-200 rounded-3xl shadow-md">
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder="Nhập tin nhắn..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="flex-1 bg-transparent focus:outline-none font-semibold pl-1"
-              />
-              <button
-                onClick={handleSend}
-                className="btn absolute right-3 p-1 btn-sm bg-base-300 btn-circle flex justify-center items-center"
-              >
-                <ArrowUp className="text-base-content w-6 h-6" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ✅ Khung rút gọn */}
-      {!showFullInput && (
+      {localId && momentUser && localId === momentUser ? (
         <div className="w-full">
           <div className="relative w-full">
-            <div
-              className="flex items-center w-full px-4 py-2.5 rounded-3xl bg-base-200 shadow-md cursor-text"
-              onClick={() => setShowFullInput(true)}
-            >
-              <span className="flex-1 text-md text-base-content/60 font-semibold pl-1">
-                Gửi tin nhắn đến {userDetail?.firstName} {userDetail?.lastName}
-                ...
+            <div className="flex flex-row justify-center w-full items-center gap-2 px-4 py-3.5 bg-base-200 rounded-3xl shadow-md">
+              <div className="">
+                <MoonStar className="text-base-content w-6 h-6" />
+              </div>
+              <span className="flex-1 text-base-content font-semibold pl-1">
+                Hoạt động
               </span>
-            </div>
-
-            {/* ✅ Icon cảm xúc */}
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-4 pointer-events-auto px-2">
-              {["🤣", "💛", "👍"].map((emoji) => (
-                <button
-                  key={emoji}
-                  title={emoji}
-                  onMouseDown={() => handleHoldStart(emoji)}
-                  onMouseUp={() => handleHoldEnd(emoji)}
-                  onMouseLeave={() => handleHoldEnd(emoji)}
-                  onTouchStart={() => handleHoldStart(emoji)}
-                  onTouchEnd={() => handleHoldEnd(emoji)}
-                  className={`cursor-pointer select-none text-2xl transition-transform ${
-                    holdingEmoji === emoji ? "shake" : ""
-                  }`}
-                >
-                  <span>{emoji}</span>
-                </button>
-              ))}
-              <button
-                type="button"
-                className="cursor-pointer relative"
-                onClick={() => setShowEmojiPicker((prev) => !prev)}
-              >
-                <SmilePlus className="w-6 h-6" />
-              </button>
             </div>
           </div>
         </div>
+      ) : (
+        <>
+          {/* ✅ Input hiện khi gõ */}
+          {showFullInput && (
+            <div ref={wrapperRef} className="z-50 w-full">
+              <div className="relative w-full">
+                <div className="flex w-full items-center gap-3 px-4 py-3.5 bg-base-200 rounded-3xl shadow-md">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    placeholder={`Trả lời ${shortName}`}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="flex-1 bg-transparent focus:outline-none font-semibold pl-1"
+                  />
+                  <button
+                    onClick={handleSend}
+                    className="btn absolute right-3 p-1 btn-sm bg-base-300 btn-circle flex justify-center items-center"
+                  >
+                    <ArrowUp className="text-base-content w-7 h-7" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ✅ Khung rút gọn */}
+          {!showFullInput && (
+            <div className="w-full">
+              <div className="relative w-full">
+                <div
+                  className="flex items-center w-full px-4 py-3.5 rounded-3xl bg-base-200 shadow-md cursor-text"
+                  onClick={() => setShowFullInput(true)}
+                >
+                  <span className="flex-1 text-md text-base-content/60 font-semibold pl-1">
+                    Gửi tin nhắn...
+                  </span>
+                </div>
+
+                {/* ✅ Icon cảm xúc */}
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-4 pointer-events-auto px-2">
+                  {["🤣", "💛", "💩"].map((emoji) => (
+                    <button
+                      key={emoji}
+                      title={emoji}
+                      onMouseDown={() => handleHoldStart(emoji)}
+                      onMouseUp={() => handleHoldEnd(emoji)}
+                      onMouseLeave={() => handleHoldEnd(emoji)}
+                      onTouchStart={() => handleHoldStart(emoji)}
+                      onTouchEnd={() => handleHoldEnd(emoji)}
+                      className={`cursor-pointer select-none text-3xl transition-transform ${
+                        holdingEmoji === emoji ? "shake" : ""
+                      }`}
+                    >
+                      <span>{emoji}</span>
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    className="cursor-pointer relative"
+                    onClick={() => setShowEmojiPicker((prev) => !prev)}
+                  >
+                    <SmilePlus className="w-8 h-8" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </>
   );

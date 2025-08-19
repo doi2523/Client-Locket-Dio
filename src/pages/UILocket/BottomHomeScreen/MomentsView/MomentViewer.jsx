@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import LoadingRing from "@/components/ui/Loading/ring";
 import { AuthContext } from "@/context/AuthLocket";
 import { useMoments } from "@/hooks/useMoments";
-import { formatTimeAgo } from "@/utils";
+import UserInfo from "../Layout/UserInfoView";
 
 const MomentViewer = () => {
   const { user: me } = useContext(AuthContext);
@@ -86,7 +86,7 @@ const MomentViewer = () => {
       }`}
     >
       <div
-        className="relative w-full max-w-md aspect-square bg-base-200 rounded-[64px] overflow-hidden"
+        className="relative w-full sm:max-w-sm max-w-md aspect-square bg-base-200 rounded-[64px] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Nút đóng */}
@@ -127,7 +127,7 @@ const MomentViewer = () => {
           {/* Caption */}
           {currentMoment?.caption && (
             <div
-              className="absolute max-w-[80%] bottom-4 w-fit backdrop-blur-sm rounded-3xl px-5 py-2"
+              className="absolute max-w-[80%] bottom-4 w-fit backdrop-blur-sm rounded-3xl px-2.5 py-2"
               style={{
                 background: currentMoment?.overlays?.background?.colors?.length
                   ? `linear-gradient(to bottom, ${currentMoment.overlays.background.colors.join(
@@ -159,42 +159,11 @@ const MomentViewer = () => {
       </div>
 
       {/* Info user + date */}
-      <div className="flex items-center gap-2 text-md text-muted-foreground">
-        {(() => {
-          const user = getUserFromFriendDetails(currentMoment?.user);
-
-          if (!user)
-            return (
-              <div className="flex items-center gap-1">
-                <img
-                  src={me?.profilePicture || "./prvlocket.png"}
-                  alt={me?.fullName}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-                <span className="truncate max-w-[80px]">Bạn</span>
-                <span className="mx-1">·</span>
-              </div>
-            );
-
-          const fullName = `${user.firstName} ${user.lastName || ""}`.trim();
-          const shortName =
-            fullName.length > 10 ? fullName.slice(0, 10) + "…" : fullName;
-
-          return (
-            <div className="flex items-center gap-1">
-              <img
-                src={user.profilePic}
-                alt={fullName}
-                className="w-10 h-10 rounded-full object-cover"
-              />
-              <span className="truncate max-w-[80px]">{shortName}</span>
-              <span className="">·</span>
-            </div>
-          );
-        })()}
-
-        <div>{formatTimeAgo(currentMoment?.date)}</div>
-      </div>
+      <UserInfo
+        user={getUserFromFriendDetails(currentMoment?.user)}
+        me={me}
+        date={currentMoment?.date}
+      />
     </div>
   );
 };

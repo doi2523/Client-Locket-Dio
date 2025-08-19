@@ -22,10 +22,8 @@ const BottomMenu = () => {
     setIsBottomOpen(false);
   };
   const handleClose = () => {
-    setTimeout(() => {
-      setSelectedMoment(null);
-      setSelectedQueue(null);
-    }, 300);
+    setSelectedMoment(null);
+    setSelectedQueue(null);
   };
 
   const handleDelete = () => {
@@ -59,9 +57,8 @@ const BottomMenu = () => {
         <div className="flex justify-start">
           {selectedMoment !== null && (
             <button
-              className="p-2 text-base-content tooltip tooltip-right cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
+              className="p-2 text-base-content cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
               onClick={handleClose}
-              data-tip="Bấm để xem danh sách lưới"
             >
               <LayoutGrid size={28} />
             </button>
@@ -69,7 +66,7 @@ const BottomMenu = () => {
         </div>
 
         {/* Center: Home button */}
-        <div className="flex justify-center scale-75">
+        <div className="flex justify-center scale-75 sm:scale-65">
           <button
             onClick={handleReturnHome}
             className="relative flex items-center justify-center w-20 h-20"
@@ -84,7 +81,6 @@ const BottomMenu = () => {
           <button
             onClick={handleDelete}
             className="p-2 backdrop-blur-xs bg-base-100/30 text-base-content tooltip-left tooltip cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
-            data-tip="Bấm để xoá ảnh"
           >
             <Trash2 size={28} />
           </button>

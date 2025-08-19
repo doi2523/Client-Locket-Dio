@@ -76,7 +76,7 @@ const BottomHomeScreen = () => {
 
   return (
     <div
-      className={`fixed inset-0 flex flex-col transition-all duration-500 z-50 bg-base-100 overflow-hidden
+      className={`fixed inset-0 flex flex-col transition-all duration-500 z-50 overflow-hidden
     ${isBottomOpen ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"}
     ${isHomeOpen ? "-translate-x-full opacity-100" : ""}
     ${isProfileOpen ? "translate-x-full opacity-100" : ""}
@@ -86,29 +86,33 @@ const BottomHomeScreen = () => {
       {/* Header */}
 
       <FlyingEmojiEffect emoji={flyingEmojis} show={showFlyingEffect} />
-
+      {selectedMoment == null && selectedQueue == null ? (
+        <div className="absolute w-full top-0 z-60">
+          <HeaderHistory />
+        </div>
+      ) : (
+        <div className="w-full top-0 z-60">
+          <HeaderHistory />
+        </div>
+      )}
       {/* Main content area */}
       <div className="flex-1 overflow-hidden relative">
         <div className="h-full overflow-auto">
-          <div className="sticky w-full top-0 z-60">
-            <HeaderHistory />
-          </div>
           {typeof selectedMoment === "number" ||
           typeof selectedQueue === "number" ? (
             <div className="absolute w-full h-full inset-0 flex flex-col justify-center items-center">
-              {typeof selectedMoment === "number" && (
-                <MomentViewer visibleCount={visibleCount} />
-              )}
+              {typeof selectedMoment === "number" && <MomentViewer />}
               {typeof selectedQueue === "number" && <QueueViewer />}
             </div>
           ) : null}
           <div
-            className={`transition-all duration-500 ${
+            className={`transition-all duration-300 ease-in ${
               selectedAnimate
-                ? "opacity-0 scale-90 pointer-events-none select-none"
-                : "opacity-100 scale-100"
+                ? "opacity-0 pointer-events-none select-none"
+                : "opacity-100"
             }`}
           >
+            <div className="h-16"></div>
             <UploadingQueue
               payloads={uploadPayloads}
               setuploadPayloads={setuploadPayloads}
@@ -127,7 +131,7 @@ const BottomHomeScreen = () => {
             <div className="flex justify-start"></div>
 
             {/* Center: Home button */}
-            <div className="flex justify-center scale-75">
+            <div className="flex justify-center scale-75 sm:scale-65">
               <button
                 onClick={handleReturnHome}
                 className="relative flex items-center justify-center w-20 h-20"
