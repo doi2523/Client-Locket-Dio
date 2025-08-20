@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
-import LoadingRing from "../../../../components/ui/Loading/ring";
-import { AuthContext } from "../../../../context/AuthLocket";
+import LoadingRing from "@/components/ui/Loading/ring";
+import { AuthContext } from "@/context/AuthLocket";
 
 const Avatar = () => {
   const { user } = useContext(AuthContext);
@@ -8,7 +8,7 @@ const Avatar = () => {
 
   return (
     <div
-      className={`relative w-10 h-10 rounded-full shadow-md flex justify-center items-center backdrop-blur-md`}
+      className={`w-10 h-10 rounded-full shadow-md flex justify-center items-center backdrop-blur-md`}
     >
       {!imageLoaded && (
         <div className="absolute inset-0 flex items-center justify-center">

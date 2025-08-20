@@ -16,6 +16,20 @@ export const SendReactMoment = async (emoji, selectedMomentId, power) => {
   }
 };
 
+export const GetInfoMoment = async (idMoment) => {
+  try {
+    const res = await api.post("/locket/getInfoMomentV2", {
+      pageToken: null,
+      idMoment,
+      limit: null,
+    });
+    const moments = res.data.data;
+    return moments;
+  } catch (err) {
+    console.warn("❌ React Failed", err);
+  }
+};
+
 export const GetLastestMoment = async () => {
   try {
     const res = await api.get("/locket/getLatestMomentV2");
