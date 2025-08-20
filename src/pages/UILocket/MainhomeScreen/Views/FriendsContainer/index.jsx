@@ -339,13 +339,22 @@ const FriendsContainer = () => {
                     Không có bạn bè để hiển thị
                   </p>
                 )}
-                {visibleFriends.map((friend) => (
-                  <FriendItem
-                    key={friend.uid}
-                    friend={friend}
-                    onDelete={handleDeleteFriend}
-                  />
-                ))}
+
+                {visibleFriends
+                  .slice() // tạo bản copy để không mutate mảng gốc
+                  .sort((a, b) => {
+                    // Celeb lên trước
+                    if (a.isCelebrity === b.isCelebrity) return 0;
+                    return a.isCelebrity ? -1 : 1;
+                  })
+                  .map((friend) => (
+                    <FriendItem
+                      key={friend.uid}
+                      friend={friend}
+                      onDelete={handleDeleteFriend}
+                    />
+                  ))}
+
                 {filteredFriends.length > 3 && (
                   <div className="flex items-center gap-4 mt-4">
                     <hr className="flex-grow border-t border-base-content" />
