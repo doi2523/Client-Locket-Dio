@@ -283,7 +283,7 @@ const InputForMoment = () => {
                               đã reaction {item?.reaction?.emoji} {formatTimeAgo(item?.reaction?.createdAt)} | {item?.reaction?.createdAt}
                             </span>
                           ) : (
-                            <span className="text-sm">✨ đã xem {formatTimeAgo(item?.views?.viewedAt)} {item?.views?.viewedAt}</span>
+                            <span className="text-sm">✨ đã xem {formatTimeAgo(item?.viewedAt)} | {item?.viewedAt}</span>
                           )}
                         </div>
                       </li>
