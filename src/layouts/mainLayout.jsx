@@ -5,9 +5,8 @@ import Footer from "@/components/Footer";
 // const Sidebar = lazy(() => import("@/components/Sidebar"));
 import LoadingPage from "../components/pages/LoadingPage";
 import Sidebar from "@/components/Sidebar";
-const CropImageStudio = lazy(() =>
-  import("@/components/common/CropImageStudio.jsx")
-);
+import ContactSupportButton from "@/components/ui/ContactSupportButton";
+const CropImageStudio = lazy(() => import("@/components/common/CropImageStudio.jsx"));
 
 const DefaultLayout = ({ children }) => {
   const location = useLocation();
@@ -38,6 +37,7 @@ const DefaultLayout = ({ children }) => {
         <CropImageStudio />
       </Suspense>
       <Sidebar />
+      <ContactSupportButton/>
     </div>
   );
 };

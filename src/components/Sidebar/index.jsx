@@ -32,6 +32,7 @@ import { clearMoments } from "@/cache/momentDB";
 import { MenuItem } from "./MenuItem";
 import { AuthButton } from "./AuthButton";
 import ThemeToggle from "./ThemeToggle";
+import PlanBadge from "../ui/PlanBadge/PlanBadge";
 
 const Sidebar = () => {
   const { user, resetAuthContext } = useContext(AuthContext);
@@ -69,16 +70,21 @@ const Sidebar = () => {
         { to: "/home", icon: Home, text: "Trang chủ" },
         { to: "/aboutdio", icon: Briefcase, text: "Giới thiệu" },
         { to: "/timeline", icon: Clock, text: "Lịch sử Website" },
-        { to: "/download", icon: SquareArrowOutUpRight, text: "Cài đặt WebApp" },
+        {
+          to: "/download",
+          icon: SquareArrowOutUpRight,
+          text: "Cài đặt WebApp",
+        },
         { to: "/sponsors", icon: Heart, text: "Ủng hộ dự án" },
       ],
     },
     {
       title: "Tính năng",
+      badge: <PlanBadge />,
       items: [
         { to: "/postmoments", icon: Upload, text: "Đăng ảnh, video" },
         { to: "/locket", icon: Smartphone, text: "Locket UI", badge: "Hot" },
-        { to: "/manage", icon: Palette, text: "Quản lý Caption", badge: "New"},
+        { to: "/manage", icon: Palette, text: "Quản lý Caption", badge: "New" },
         { to: "/tools", icon: Wrench, text: "Công cụ Locket" },
         { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "New" },
         { to: "/profile", icon: UserRound, text: "Hồ sơ của bạn" },
@@ -104,7 +110,11 @@ const Sidebar = () => {
         { to: "/about", icon: Info, text: "Locket Dio" },
         { to: "/about-dio", icon: UserCircle, text: "Về Dio" },
         { to: "/timeline", icon: Clock, text: "Lịch sử Website" },
-        { to: "/download", icon: SquareArrowOutUpRight, text: "Cài đặt WebApp" },
+        {
+          to: "/download",
+          icon: SquareArrowOutUpRight,
+          text: "Cài đặt WebApp",
+        },
       ],
     },
     {
@@ -171,7 +181,10 @@ const Sidebar = () => {
           <ul className="menu text-base-content w-full py-2 text-md font-semibold">
             {menuSections.map((section) => (
               <li key={section.title}>
-                <h2 className="menu-title">{section.title}</h2>
+                <h2 className="menu-title flex items-center justify-between">
+                  <span>{section.title}</span>
+                  {section.badge && <div>{section.badge}</div>}
+                </h2>
                 <ul>
                   {section.items.map((item) => (
                     <MenuItem
