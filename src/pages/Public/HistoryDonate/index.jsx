@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Heart, Gift, CreditCard, Coffee, UsersRound } from "lucide-react";
 import axios from "axios";
 import { API_URL } from "@/utils";
+import { Link } from "react-router-dom";
 
 const DonatePage = () => {
   const [donations, setDonations] = useState([]);
@@ -31,7 +32,7 @@ const DonatePage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-base-200 py-8 px-4">
+    <div className="min-h-screen bg-base-200 py-6 px-4">
       <div className="max-w-5xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center mb-6">
@@ -43,8 +44,13 @@ const DonatePage = () => {
             <Heart className="w-6 h-6 text-error animate-pulse" />
           </div>
           <p className="text-secondary text-sm md:text-base max-w-lg mx-auto">
-            Mọi đóng góp giúp duy trì và cải thiện website. Cảm ơn sự ủng hộ của
-            bạn! Dù chỉ là một số tiền nhỏ nhưng là sự đóng góp lớn đối với mình.
+            Mọi đóng góp giúp duy trì và cải thiện website. Dù chỉ là một số
+            tiền nhỏ nhưng là sự đóng góp lớn đối với mình. Bạn cũng có thể ủng
+            hộ bằng cách{" "}
+            <Link to="/pricing" className="underline font-medium text-primary">
+              mua gói thành viên
+            </Link>{" "}
+            ❤️‍🔥. Cảm ơn sự ủng hộ của bạn!
           </p>
         </div>
 
@@ -109,8 +115,8 @@ const DonatePage = () => {
                 CTK: <span className="font-semibold">MOMO_DAO VAN DOI</span>
               </div>
             </div>
-            <p className="mt-4 text-base-content text-sm text-center">
-              Mỗi đóng góp là động lực để mình tiếp tục phát triển website ☕
+            <p className="mt-4 text-base-content text-sm text-left">
+              Mỗi đóng góp là động lực để mình tiếp tục phát triển và duy trì website ☕.
             </p>
           </div>
 
