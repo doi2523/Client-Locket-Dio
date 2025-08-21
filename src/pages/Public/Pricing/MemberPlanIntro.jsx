@@ -54,7 +54,7 @@ export default function MemberPlanIntro() {
                 <td className="text-left p-4 font-medium">
                   Số lần đăng ảnh/video mỗi ngày
                 </td>
-                <td>Không giới hạn</td>
+                <td>Giới hạn</td>
                 <td className="text-green-600 font-semibold">Không giới hạn</td>
               </tr>
               <tr>

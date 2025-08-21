@@ -7,6 +7,8 @@ import { useApp } from "@/context/AppContext";
 import { MAX_MOMENTS_DISPLAY_LIMIT } from "@/constants";
 import LoadingRing from "@/components/ui/Loading/ring";
 
+const DUPLICATE_THRESHOLD = 3; // nếu gặp trùng nhiều lần liên tiếp thì stop
+
 const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
   const { post } = useApp();
   const {
@@ -29,6 +31,8 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
   const [loadedItems, setLoadedItems] = useState([]);
   const [visibleCount, setVisibleCount] = useState(initialVisibleCount);
   const [isAutoLoading, setIsAutoLoading] = useState(false);
+  const [duplicateCount, setDuplicateCount] = useState(0);
+  const [stopFetching, setStopFetching] = useState(false);
 
   // Ref để theo dõi phần tử cuối cùng
   const lastElementRef = useRef(null);
@@ -36,6 +40,8 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
 
   useEffect(() => {
     setVisibleCount(initialVisibleCount); // reset mỗi khi đổi bạn bè
+    setDuplicateCount(0);
+    setStopFetching(false);
   }, [selectedFriendUid]);
 
   // Hàm tự động tải thêm từ API
@@ -43,6 +49,7 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
     if (
       loading ||
       isAutoLoading ||
+      stopFetching ||
       !nextPageToken ||
       moments.length >= MAX_MOMENTS_DISPLAY_LIMIT
     ) {
@@ -51,19 +58,39 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
 
     setIsAutoLoading(true);
     try {
-      await fetchFromAPI();
+      const beforeIds = new Set(moments.map((m) => m.id));
+      const result = await fetchFromAPI();
+      if (result?.data?.length) {
+        const newItems = result.data.filter((m) => !beforeIds.has(m.id));
+        if (newItems.length === 0) {
+          setDuplicateCount((prev) => prev + 1);
+          if (duplicateCount + 1 >= DUPLICATE_THRESHOLD) {
+            console.warn("Too many duplicates, stop fetching for this user.");
+            setStopFetching(true);
+          }
+        } else {
+          setDuplicateCount(0); // reset nếu có bài mới
+        }
+      }
     } catch (error) {
       console.error("Auto load failed:", error);
     } finally {
       setIsAutoLoading(false);
     }
-  }, [loading, isAutoLoading, nextPageToken, moments.length, fetchFromAPI]);
+  }, [
+    loading,
+    isAutoLoading,
+    stopFetching,
+    nextPageToken,
+    moments,
+    fetchFromAPI,
+    duplicateCount,
+  ]);
 
   // Intersection Observer để theo dõi khi cuộn gần cuối
   useEffect(() => {
     if (!lastElementRef.current) return;
 
-    // Cleanup observer cũ
     if (observerRef.current) {
       observerRef.current.disconnect();
     }
@@ -72,9 +99,7 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
       (entries) => {
         const lastEntry = entries[0];
         if (lastEntry.isIntersecting) {
-          // Khi phần tử gần cuối xuất hiện trong viewport
           if (visibleCount < moments.length) {
-            // Nếu còn items đã tải để hiển thị, tăng visibleCount
             setVisibleCount((prev) =>
               Math.min(prev + initialVisibleCount, moments.length)
             );
@@ -82,13 +107,11 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
             nextPageToken &&
             moments.length < MAX_MOMENTS_DISPLAY_LIMIT
           ) {
-            // Nếu đã hiển thị hết và còn có thể tải thêm từ API
             autoLoadMore();
           }
         }
       },
       {
-        // Trigger khi phần tử cách viewport 200px
         rootMargin: "200px",
         threshold: 0,
       }
@@ -109,7 +132,6 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
     initialVisibleCount,
   ]);
 
-  // Cleanup observer khi unmount
   useEffect(() => {
     return () => {
       if (observerRef.current) {
@@ -148,7 +170,7 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
   const visibleMoments = moments.slice(0, visibleCount);
   const hasMoreToShow = visibleCount < moments.length;
   const canLoadMoreFromAPI =
-    nextPageToken && moments.length < MAX_MOMENTS_DISPLAY_LIMIT;
+    nextPageToken && moments.length < MAX_MOMENTS_DISPLAY_LIMIT && !stopFetching;
 
   return (
     <>
@@ -220,7 +242,6 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
           );
         })}
 
-        {/* Loading indicator khi đang tự động tải */}
         {(isAutoLoading || loading) && canLoadMoreFromAPI && (
           <div className="aspect-square overflow-hidden bg-base-300 rounded-2xl relative group flex items-center justify-center border-2 border-dashed border-gray-400 opacity-50">
             <div className="text-center">
@@ -232,7 +253,6 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
           </div>
         )}
 
-        {/* Manual load more button (backup) */}
         {hasMoreToShow && !isAutoLoading && (
           <div
             onClick={handleLoadMore}
@@ -249,7 +269,12 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
         )}
       </div>
 
-      {/* Debug info */}
+      {stopFetching && (
+        <div className="text-warning text-xs mt-2 px-4">
+          ⚠️ Nội dung trùng lặp quá nhiều, đã dừng tải thêm cho user này.
+        </div>
+      )}
+
       {process.env.NODE_ENV === "development" && (
         <div className="mt-4 text-xs text-base-content/50 space-y-1">
           <div>
@@ -258,9 +283,8 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
           <div>Giới hạn tối đa: {MAX_MOMENTS_DISPLAY_LIMIT}</div>
           <div>Có thể tải thêm: {canLoadMoreFromAPI ? "Có" : "Không"}</div>
           <div>Đang auto load: {isAutoLoading ? "Có" : "Không"}</div>
-          {moments.length >= MAX_MOMENTS_DISPLAY_LIMIT && (
-            <div className="text-warning">⚠️ Đã đạt giới hạn tối đa</div>
-          )}
+          <div>Số lần duplicate liên tiếp: {duplicateCount}</div>
+          {stopFetching && <div className="text-error">🚫 Đã stop fetching</div>}
         </div>
       )}
     </>

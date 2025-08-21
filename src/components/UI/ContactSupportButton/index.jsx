@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
 import { MessageCircle, X, Handshake } from "lucide-react";
-import { useFeatureVisible } from "@/hooks/useFeature";
+// import { useFeatureVisible } from "@/hooks/useFeature";
 import { API_URL } from "@/utils";
 
 const ContactSupportButton = () => {
-  const isSupportVisible = useFeatureVisible("hidden_support");
+  // const isSupportVisible = useFeatureVisible("hidden_support");
   const [showModal, setShowModal] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (isSupportVisible === false) {
-      const timer = setTimeout(() => {
-        setShowModal(true);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [isSupportVisible]);
+  // useEffect(() => {
+  //   if (isSupportVisible === false) {
+  //     const timer = setTimeout(() => {
+  //       setShowModal(true);
+  //     }, 2000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [isSupportVisible]);
 
   // ✅ Gọi API contacts
   useEffect(() => {
@@ -72,16 +72,16 @@ const ContactSupportButton = () => {
     <>
       {/* Floating Contact Button */}
       <div className="fixed bottom-6 right-6 z-50">
-        <div className="relative bounce-y">
+        <div className="relative">
           <button
             onClick={() => setShowModal(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3.5 shadow-lg transition-transform duration-200 hover:scale-110"
+            className="flex items-center justify-center border border-amber-400 w-12 h-12 bg-base-300 backdrop-blur-sm text-base-content rounded-full shadow-lg transition-transform duration-200 hover:scale-110"
           >
             <MessageCircle className="w-6 h-6" />
           </button>
 
           {/* Badge đỏ hiển thị số tin nhắn */}
-          <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full px-1.5 py-0.5 shadow">
+          <span className="absolute no-select -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1 py-0.5 leading-none ring-2 ring-white">
             3
           </span>
         </div>
@@ -210,7 +210,7 @@ const ContactSupportButton = () => {
                     onClick={handleZaloCommunity}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors"
                   >
-                    🌐 Tham gia cộng đồng Zalo
+                    🌐 Tham gia cộng đồng Dio X Onion
                   </button>
                 </div>
               </>

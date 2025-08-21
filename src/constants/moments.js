@@ -2,4 +2,4 @@
 export const INITIAL_MOMENTS_VISIBLE = 50;
 
 // Số lượng moments tối đa được phép hiển thị trên client (để tránh quá tải giao diện/trình duyệt)
-export const MAX_MOMENTS_DISPLAY_LIMIT = 1000;
+export const MAX_MOMENTS_DISPLAY_LIMIT = 5000;

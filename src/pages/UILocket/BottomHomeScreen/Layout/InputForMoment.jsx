@@ -6,6 +6,7 @@ import { showError, showSuccess } from "@/components/Toast";
 import { getMomentById } from "@/cache/momentDB";
 import { AuthContext } from "@/context/AuthLocket";
 import LoadingRing from "@/components/ui/Loading/ring";
+import { formatTimeAgo } from "@/utils";
 
 const LoadingActivityItem = () => (
   <li className="flex items-center gap-3 animate-pulse">
@@ -279,10 +280,10 @@ const InputForMoment = () => {
                           </span>
                           {item.reaction ? (
                             <span className="text-sm">
-                              đã reaction {item?.reaction?.emoji}
+                              đã reaction {item?.reaction?.emoji} {formatTimeAgo(item?.reaction?.createdAt)} | {item?.reaction?.createdAt}
                             </span>
                           ) : (
-                            <span className="text-sm">✨ đã xem</span>
+                            <span className="text-sm">✨ đã xem {formatTimeAgo(item?.views?.viewedAt)} {item?.views?.viewedAt}</span>
                           )}
                         </div>
                       </li>

@@ -7,7 +7,7 @@ momentDB.version(1).stores({
   moments: "id, user, date", // id là primary key
 });
 //Nhập dữ liệu mảng vào indexdb
-const MAX_MOMENTS_CACHE = 1000; // Giới hạn cache tối đa
+const MAX_MOMENTS_CACHE = 10000; // Giới hạn cache tối đa
 
 export const bulkAddMoments = async (moments) => {
   try {

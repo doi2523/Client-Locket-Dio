@@ -2,11 +2,11 @@ import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-// const Sidebar = lazy(() => import("@/components/Sidebar"));
 import LoadingPage from "../components/pages/LoadingPage";
 import Sidebar from "@/components/Sidebar";
-import ContactSupportButton from "@/components/ui/ContactSupportButton";
-const CropImageStudio = lazy(() => import("@/components/common/CropImageStudio.jsx"));
+const ContactSupportButton = lazy(() => import("@/components/ui/ContactSupportButton"));
+const CropImageStudio = lazy(() => import("@/components/common/CropImageStudio"));
+const FloatingNotification = lazy(() => import("@/components/ui/FloatingNotification"));
 
 const DefaultLayout = ({ children }) => {
   const location = useLocation();
@@ -35,9 +35,10 @@ const DefaultLayout = ({ children }) => {
       <Footer />
       <Suspense fallback={null}>
         <CropImageStudio />
+        <FloatingNotification/>
+        <ContactSupportButton/>
       </Suspense>
       <Sidebar />
-      <ContactSupportButton/>
     </div>
   );
 };
