@@ -24,16 +24,8 @@ const Home = () => {
               </span>
             </h1>
             <h2 className="text-5xl inline-block no-select md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight -mb-3">
-              <span className="wave-effect inline-block no-select">
-                {"Locket Camera".split("").map((char, i) => (
-                  <span
-                    key={i}
-                    className="gradient-text-v2"
-                    style={{ animationDelay: `${i * 0.1}s` }}
-                  >
-                    {char === " " ? "\u00A0" : char}
-                  </span>
-                ))}
+              <span className="no-select font-lovehouse text-white">
+                Locket Camera
               </span>
             </h2>
 
