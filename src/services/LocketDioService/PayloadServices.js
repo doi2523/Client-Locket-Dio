@@ -1,6 +1,7 @@
 import { showError } from "@/components/Toast";
 import { getToken } from "@/utils";
 import { uploadFileAndGetInfoR2 } from "./StorageServices";
+import { getStreakToday } from "@/utils/moment/streak";
 
 // Hàm con xác định recipients
 const determineRecipients = (audience, selectedRecipients, localId) => {
@@ -16,10 +17,10 @@ export const createRequestPayloadV5 = async (
   postOverlay,
   audience,
   selectedRecipients,
-  isStreaktoday = false
 ) => {
   try {
     const { localId } = getToken() || {};
+    const isStreakToday = getStreakToday();
 
     if (!localId) {
       showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
@@ -54,7 +55,7 @@ export const createRequestPayloadV5 = async (
       audience, // Gắn audience vào options luôn
       recipients: determineRecipients(audience, selectedRecipients, localId),
       music: postOverlay?.music || "",
-      isStreaktoday,
+      isStreaktoday: isStreakToday, //False khi chưa có đăng chuỗi ngày hôm nay
     };
 
     // Tạo payload cuối cùng

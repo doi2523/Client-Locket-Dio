@@ -6,7 +6,6 @@ import { showError, showInfo, showSuccess } from "@/components/Toast/index.jsx";
 import { defaultPostOverlay } from "@/stores/usePost.js";
 import UploadStatusIcon from "./UploadStatusIcon.jsx";
 import { getMaxUploads } from "@/hooks/useFeature.js";
-import { useStreakToDay } from "@/hooks/useStreak.js";
 import { useUploadQueue } from "@/hooks/useUploadQueue.js";
 
 const MediaControls = () => {
@@ -36,7 +35,6 @@ const MediaControls = () => {
 
   //Nhap hooks
   const { storage_limit_mb } = getMaxUploads();
-  const isStreaktoday = useStreakToDay();
   const { handleQueueUpload, isProcessingQueue } = useUploadQueue();
 
   // State để quản lý hiệu ứng loading và success
@@ -93,7 +91,6 @@ const MediaControls = () => {
         postOverlay,
         audience,
         selectedRecipients,
-        isStreaktoday
       );
 
       if (!payload) {
