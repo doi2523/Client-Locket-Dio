@@ -7,6 +7,7 @@ import LoadingRing from "@/components/ui/Loading/ring";
 import StatusServer from "@/components/ui/StatusServer";
 import { useApp } from "@/context/AppContext";
 import Turnstile from "react-turnstile";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const { setUser, setAuthTokens } = useContext(AuthContext);
@@ -105,7 +106,7 @@ const Login = () => {
 
   return (
     <>
-      <div className="flex items-center justify-center h-screen bg-base-200 px-6">
+      <div className="flex items-center justify-center h-[84vh] bg-base-200 px-6">
         <div className="w-full max-w-md p-6 shadow-lg rounded-xl bg-opacity-50 backdrop-blur-3xl bg-base-100 border-base-300 text-base-content">
           <h1 className="text-3xl font-bold text-center">Đăng Nhập Locket</h1>
           <form onSubmit={handleLogin} className="space-y-4">
@@ -175,20 +176,30 @@ const Login = () => {
                 </button>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <input
-                id="rememberMe"
-                type="checkbox"
-                className="checkbox checkbox-primary checkbox-sm"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-              />
-              <label
-                htmlFor="rememberMe"
-                className="cursor-pointer select-none text-sm"
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <input
+                  id="rememberMe"
+                  type="checkbox"
+                  className="checkbox checkbox-primary checkbox-sm"
+                  checked={rememberMe}
+                  onChange={() => setRememberMe(!rememberMe)}
+                />
+                <label
+                  htmlFor="rememberMe"
+                  className="cursor-pointer select-none text-sm"
+                >
+                  Ghi nhớ đăng nhập
+                </label>
+              </div>
+
+              {/* ✅ Thêm link Quên mật khẩu */}
+              <Link
+                to={"/forgot-password"}
+                className="text-sm text-blue-500 hover:underline"
               >
-                Ghi nhớ đăng nhập
-              </label>
+                Quên mật khẩu?
+              </Link>
             </div>
 
             <button

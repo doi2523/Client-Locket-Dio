@@ -36,6 +36,7 @@ export const API_URL = {
   GET_WEATHER_URL: `${BASE_API_URL}/api/weather`,
   GET_WEATHER_URL_V2: `${BASE_API_URL}/api/weatherV2`,
   ME_URL: `${BASE_API_URL}/api/me`,
+  FORGOT_PASSWORD_URL: `${BASE_API_URL}${LOCKET_URL}/resetPassword`,
 
   //API lấy dữ liệu từ máy chủ
   GET_LASTEST_URL: `${BASE_API_URL}${LOCKET_PRO}/getmoment`,

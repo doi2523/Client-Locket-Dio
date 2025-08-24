@@ -3,6 +3,7 @@ import React from "react";
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
 // import CameraCapture from "@/pages/UILocket";
+const ForgotPassword = React.lazy(() => import("@/pages/Public/ForgotPassword"));
 const DonatePage = React.lazy(() => import("@/pages/Public/HistoryDonate"));
 const AboutLocketDio = React.lazy(() => import("../pages/Public/About"));
 const AboutMe = React.lazy(() => import("../pages/Auth/AboutMe"));
@@ -46,5 +47,5 @@ export const publicRoutes = [
   { path: "/incidents", component: ErrorReferencePage, title: `Trung tâm sự cố | ${APP_NAME}` },
   { path: "/contact", component: Contact, title: `Liên hệ & Hỗ trợ | ${APP_NAME}` },
 
-  { path: "/test", component: AuthHome, title: `Test | ${APP_NAME}` },
+  { path: "/forgot-password", component: ForgotPassword, title: `Khôi phục mật khẩu | ${APP_NAME}` },
 ];

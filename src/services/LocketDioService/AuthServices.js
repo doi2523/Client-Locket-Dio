@@ -76,6 +76,35 @@ export const refreshIdToken = async (refreshToken) => {
     );
   }
 };
+
+export const forgotPassword = async (email) => {
+  try {
+    const res = await axios.post(
+      utils.API_URL.FORGOT_PASSWORD_URL,
+      { email },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    if (error.response?.data?.error) {
+      // Lỗi từ API (có message cụ thể)
+      throw new Error(error.response.data.error.message || "Yêu cầu thất bại!");
+    } else if (error.response?.data?.message) {
+      // Một số API trả về `message`
+      throw new Error(error.response.data.message);
+    } else {
+      console.error("❌ Network Error:", error.message);
+      throw new Error(
+        "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút."
+      );
+    }
+  }
+};
 //Logout
 export const logout = async () => {
   try {
