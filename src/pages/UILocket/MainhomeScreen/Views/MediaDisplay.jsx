@@ -230,6 +230,9 @@ const MediaPreview = ({ capturedMedia }) => {
             </Suspense>
           </div>
         )}
+        <div className="absolute inset-0 z-50 pointer-events-none">
+          <img src="/bg-flag-vietnam.png" alt="" />
+        </div>
 
         <div className="absolute inset-0 z-50 pointer-events-none">
           <BorderProgress />

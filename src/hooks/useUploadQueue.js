@@ -1,11 +1,13 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useContext, useRef } from "react";
 import { showError, showSuccess } from "@/components/Toast";
 import { PostMoments } from "@/services";
 import * as utils from "@/utils";
 import { useApp } from "@/context/AppContext";
+import { AuthContext } from "@/context/AuthLocket";
 
 export const useUploadQueue = () => {
   const { setRecentPosts, setuploadPayloads } = useApp().post;
+  const { fetchStreak } = useContext(AuthContext);
   const isProcessingQueueRef = useRef(false);
 
   const handleQueueUpload = useCallback(async () => {
@@ -56,6 +58,8 @@ export const useUploadQueue = () => {
           );
 
           console.log(`✅ Upload thành công bài ${i + 1}`);
+          //Gọi hàm fetchStreak để làm mới chuỗi
+          await fetchStreak();
         } catch (error) {
           const errorMessage =
             error?.response?.data?.message ||

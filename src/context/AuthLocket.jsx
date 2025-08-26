@@ -119,12 +119,7 @@ export const AuthProvider = ({ children }) => {
 
         setUserPlan(userData);
         setUploadStats(userData?.upload_stats);
-
-        const data = await GetLastestMoment();
-        if (data?.streak) {
-          setStreak(data.streak);
-          localStorage.setItem("streak", JSON.stringify(data.streak));
-        }
+        fetchStreak();
       }
 
       await updateUserInfo(user); // Gọi sau khi fetchPlan hoàn tất
@@ -132,6 +127,18 @@ export const AuthProvider = ({ children }) => {
 
     init();
   }, [user, authTokens?.idToken, authTokens?.localId]);
+
+  const fetchStreak = async () => {
+    try {
+      const data = await GetLastestMoment();
+      if (data?.streak) {
+        setStreak(data.streak);
+        localStorage.setItem("streak", JSON.stringify(data.streak));
+      }
+    } catch (error) {
+      console.error("Error fetching streak:", error);
+    }
+  };
 
   // Load friend details và cache thông minh
   useEffect(() => {
@@ -215,6 +222,7 @@ export const AuthProvider = ({ children }) => {
       setUploadStats,
       streak,
       setStreak,
+      fetchStreak,
     }),
     [
       user,
