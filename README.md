@@ -34,7 +34,6 @@
 - [📁 Cấu Trúc Dự Án](#-cấu-trúc-dự-án-tham-khảo)
 - [🔧 Tham Khảo API](#-tham-khảo-api)
 - [🤝 Đóng Góp](#-đóng-góp)
-- [📜 Giấy Phép](#-giấy-phép)
 - [👥 Tác Giả](#-tác-giả)
 - [🙏 Lời Cảm Ơn](#-lời-cảm-ơn)
 - [📞 Hỗ Trợ](#-hỗ-trợ)
@@ -178,12 +177,11 @@ VITE_BASE_API_URL_DB=http://localhost:3001
 # API thanh toán (PayOS hoặc cổng tùy chỉnh)
 VITE_PAYMENT_API_URL=http://localhost:5005
 
-# =========================
-# ☁️ Cấu Hình Cloudinary
-# =========================
+#API upload phương tiện lên cloud
+VITE_STORAGE_API_URL=https://storage.locket-dio.com
 
-# Tên Cloudinary cloud để tải media lên
-VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name_here
+#API host cdn các phương tiện đã tải lên
+VITE_MEDIA_API_URL=https://media.locket-dio.com
 
 # =========================
 # 🔔 Thông Báo Đẩy
@@ -191,54 +189,7 @@ VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name_here
 
 # VAPID public key cho web push notifications
 VITE_VAPID_PUBLIC_KEY=your_vapid_public_key_here
-
-# =========================
-# 🔥 Cấu Hình Firebase
-# =========================
-
-# Firebase API key
-VITE_FIREBASE_API_KEY=your_firebase_api_key_here
-
-# Auth domain (định dạng: your-app.firebaseapp.com)
-VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain_here
-
-# Firebase project ID
-VITE_FIREBASE_PROJECT_ID=your_firebase_project_id_here
-
-# Storage bucket cho files, hình ảnh, video
-VITE_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket_here
-
-# Messaging sender ID cho push notifications
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id_here
-
-# Firebase app ID
-VITE_FIREBASE_APP_ID=your_firebase_app_id_here
-
-# Measurement ID cho Google Analytics
-VITE_FIREBASE_MEASUREMENT_ID=your_firebase_measurement_id_here
 ```
-
-### 🔑 Lấy API Keys
-
-<details>
-<summary><strong>Thiết Lập Firebase</strong></summary>
-
-1. Truy cập [Firebase Console](https://console.firebase.google.com/)
-2. Tạo project mới hoặc chọn project hiện có
-3. Điều hướng đến Project Settings > General
-4. Copy các giá trị cấu hình vào file `.env` của bạn
-
-</details>
-
-<details>
-<summary><strong>Thiết Lập Cloudinary</strong></summary>
-
-1. Đăng ký tại [Cloudinary](https://cloudinary.com/)
-2. Truy cập Dashboard
-3. Copy Cloud Name của bạn vào `VITE_CLOUDINARY_CLOUD_NAME`
-
-</details>
-
 ---
 
 ## 🏗️ Công Nghệ
@@ -444,28 +395,6 @@ Khi báo cáo lỗi, vui lòng bao gồm:
 
 ---
 
-## 📜 Giấy Phép
-
-Dự án này được cấp phép theo Giấy phép MIT - xem file [LICENSE](LICENSE) để biết chi tiết.
-
-```
-Giấy Phép MIT
-
-Bản quyền (c) 2025 Locket Dio
-
-Được cấp phép miễn phí cho bất kỳ ai có được bản sao
-của phần mềm này và các file tài liệu liên quan (gọi là "Phần mềm"), để xử lý
-Phần mềm mà không bị hạn chế, bao gồm không giới hạn các quyền
-sử dụng, sao chép, sửa đổi, hợp nhất, xuất bản, phân phối, cấp phép con và/hoặc bán
-các bản sao của Phần mềm, và cho phép những người được cung cấp
-Phần mềm làm như vậy, với điều kiện sau:
-
-Thông báo bản quyền này và thông báo cho phép này phải được bao gồm trong tất cả
-các bản sao hoặc phần quan trọng của Phần mềm.
-```
-
----
-
 ## 👥 Tác Giả
 
 <div align="center">
@@ -489,8 +418,8 @@ các bản sao hoặc phần quan trọng của Phần mềm.
 
 - 🎨 **Cảm Hứng Thiết Kế** - Xu hướng thiết kế web hiện đại và mẫu trải nghiệm người dùng
 - 📚 **Cộng Đồng Open Source** - Cho những thư viện và công cụ tuyệt vời
-- 🔥 **Đội Ngũ Firebase** - Vì đã cung cấp dịch vụ backend xuất sắc
-- ☁️ **Cloudinary** - Cho giải pháp quản lý media đáng tin cậy
+- 🔥 **Đội Ngũ Firebase** - Vì đã cung cấp dịch vụ fontend xuất sắc
+- ☁️ **Clouflare** - Cho giải pháp quản lý media đáng tin cậy
 - 💡 **Cộng Đồng Locket Widget** - Vì cảm hứng và phản hồi
 - 🌟 **Contributors** - Mọi người đã đóng góp cho dự án này
 
@@ -508,9 +437,11 @@ các bản sao hoặc phần quan trọng của Phần mềm.
 
 ### ☕ Ủng Hộ Dự Án
 
-[![Buy Me A Coffee](https://img.shields.io/badge/☕_Mua_Cà_Phê-Ủng_Hộ_Phát_Triển-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/dio)
+[![Buy Me A Coffee](https://img.shields.io/badge/☕_Mua_Cà_Phê-Ủng_Hộ_Phát_Triển-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/dio2523)
 [![Donate](https://img.shields.io/badge/💝_Ủng_Hộ-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://locket-dio.com/donate)
-
+</div>
+<div align="center">
+  <img src="https://cdn.locket-dio.com/v1/images/qr/vcb_qr.jpg" width="250px" style="border-radius: 50%;">
 </div>
 
 ### 📧 Thông Tin Liên Hệ
