@@ -1,24 +1,14 @@
 import { useState, useEffect } from "react";
 import { MessageCircle, X, Handshake } from "lucide-react";
-// import { useFeatureVisible } from "@/hooks/useFeature";
 import { API_URL } from "@/utils";
 
 const ContactSupportButton = () => {
-  // const isSupportVisible = useFeatureVisible("hidden_support");
   const [showModal, setShowModal] = useState(false);
+  const [animate, setAnimate] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   if (isSupportVisible === false) {
-  //     const timer = setTimeout(() => {
-  //       setShowModal(true);
-  //     }, 2000);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [isSupportVisible]);
-
-  // ✅ Gọi API contacts
+  // ✅ Fetch contacts khi modal mở
   useEffect(() => {
     const fetchContacts = async () => {
       try {
@@ -33,9 +23,7 @@ const ContactSupportButton = () => {
       }
     };
 
-    if (showModal) {
-      fetchContacts();
-    }
+    if (showModal) fetchContacts();
   }, [showModal]);
 
   const handleZaloCall = () => {
@@ -56,52 +44,60 @@ const ContactSupportButton = () => {
     }
   };
 
-  // Lock scroll when modal open
+  // ✅ Mở modal với animation
+  const openModal = () => {
+    setShowModal(true);
+    setTimeout(() => setAnimate(true), 10);
+  };
+
+  // ✅ Đóng modal với delay để animation chạy
+  const closeModal = () => {
+    setAnimate(false);
+    setTimeout(() => setShowModal(false), 300);
+  };
+
+  // ✅ Lock scroll
   useEffect(() => {
-    if (showModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    document.body.style.overflow = showModal ? "hidden" : "";
+    return () => (document.body.style.overflow = "");
   }, [showModal]);
 
   return (
     <>
       {/* Floating Contact Button */}
-      <div className="">
-        <div className="relative">
-          <button
-            aria-label="Mở giao diện hỗ trợ"
-            onClick={() => setShowModal(true)}
-            className="flex items-center justify-center border border-amber-400 w-12 h-12 bg-base-300 backdrop-blur-sm text-base-content rounded-full shadow-lg transition-transform duration-200 hover:scale-110"
-          >
-            <MessageCircle className="w-6 h-6" />
-          </button>
+      <div className="relative">
+        <button
+          aria-label="Mở giao diện hỗ trợ"
+          onClick={openModal}
+          className="flex items-center justify-center border border-amber-400 w-12 h-12 bg-base-300 backdrop-blur-sm text-base-content rounded-full shadow-lg transition-transform duration-200 hover:scale-110"
+        >
+          <MessageCircle className="w-6 h-6" />
+        </button>
 
-          {/* Badge đỏ hiển thị số tin nhắn */}
-          <span className="absolute no-select -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1 py-0.5 leading-none ring-2 ring-white">
-            3
-          </span>
-        </div>
+        {/* Badge đỏ hiển thị số tin nhắn */}
+        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1 py-0.5 leading-none ring-2 ring-white">
+          3
+        </span>
       </div>
 
-      {/* Support Modal */}
+      {/* Modal */}
       {showModal && (
         <div
-          className="fixed inset-0 z-60 flex items-center justify-center bg-black/40 backdrop-blur-sm"
-          onClick={() => setShowModal(false)}
+          className={`fixed inset-0 z-[60] flex items-center justify-center bg-base-100/10 backdrop-blur-sm transition-opacity duration-300 ${
+            animate ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={closeModal}
         >
           <div
-            className="relative w-full max-w-md mx-4 bg-base-200 rounded-2xl shadow-xl"
+            className={`relative w-full max-w-md mx-4 bg-base-200 rounded-2xl shadow-xl transform transition-all duration-300 ${
+              animate ? "scale-100 translate-y-0" : "scale-90 translate-y-4"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div className="relative flex flex-col items-center p-5 border-b border-base-300">
               <button
-                onClick={() => setShowModal(false)}
+                onClick={closeModal}
                 className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-base-300"
               >
                 <X className="w-5 h-5 text-base-content" />
@@ -146,7 +142,6 @@ const ContactSupportButton = () => {
             {/* Content */}
             <div className="p-5">
               {loading ? (
-                // 🔹 Skeleton khi loading
                 <div className="space-y-4">
                   <div className="h-20 bg-gray-300 rounded-lg animate-pulse" />
                   <div className="h-16 bg-gray-300 rounded-lg animate-pulse" />
@@ -154,7 +149,6 @@ const ContactSupportButton = () => {
                 </div>
               ) : (
                 <>
-                  {/* Services */}
                   <div className="bg-base-100 rounded-lg p-4 mb-4">
                     <div className="text-sm text-base-content space-y-1">
                       <p>🔹 Dịch vụ MXH (FB, IG, TikTok)</p>
@@ -166,7 +160,6 @@ const ContactSupportButton = () => {
                     </div>
                   </div>
 
-                  {/* Contact Info */}
                   <div className="bg-base-100 rounded-lg p-4 mb-4">
                     <div className="flex items-center gap-3 mb-3">
                       <img
@@ -204,7 +197,6 @@ const ContactSupportButton = () => {
                     </div>
                   </div>
 
-                  {/* Community */}
                   <div className="text-center">
                     <button
                       onClick={handleZaloCommunity}

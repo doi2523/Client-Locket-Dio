@@ -3,7 +3,7 @@ import axios from "axios";
 import { Bell, X } from "lucide-react";
 import { API_URL } from "@/utils";
 
-const highlightWords = ["Server01", "Telegram"];
+const highlightWords = ["Server01", "Telegram", "Discord", "Messenger"];
 
 function parseMessage(text, highlightWords = []) {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -64,6 +64,7 @@ function parseMessage(text, highlightWords = []) {
 const FloatingNotification = () => {
   const [notifications, setNotifications] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [animate, setAnimate] = useState(false);
   const [isShaking, setIsShaking] = useState(true);
   const [showNewNotificationAlert, setShowNewNotificationAlert] =
     useState(false);
@@ -106,11 +107,22 @@ const FloatingNotification = () => {
     };
   }, [showModal]);
 
+  // Mở modal với animation
+  const openModal = () => {
+    setShowModal(true);
+    setTimeout(() => setAnimate(true), 10);
+  };
+
+  const closeModal = () => {
+    setAnimate(false);
+    setTimeout(() => setShowModal(false), 300);
+  };
+
   return (
     <>
       {/* Floating Notification Button */}
       <div className="relative">
-        {/* New Notification Alert - Chỉ hiện khi có thông báo mới */}
+        {/* New Notification Alert */}
         {showNewNotificationAlert && (
           <div className="absolute bg-green-500 text-white bottom-full right-0 mb-3 px-4 py-2 rounded-lg shadow-xl text-sm font-medium flex items-center gap-2 whitespace-nowrap">
             🔔 Có thông báo mới!
@@ -121,10 +133,9 @@ const FloatingNotification = () => {
           </div>
         )}
 
-        {/* Main notification button */}
         <button
           aria-label="Mở giao diện thông báo"
-          onClick={() => setShowModal(true)}
+          onClick={openModal}
           className="relative flex items-center justify-center w-12 h-12 rounded-full bg-base-300 border border-amber-400 text-base-content shadow-lg cursor-pointer"
         >
           <Bell
@@ -133,8 +144,6 @@ const FloatingNotification = () => {
               isShaking ? "shake-animation" : ""
             }`}
           />
-
-          {/* Notification badge */}
           {notifications.length > 0 && (
             <span className="absolute no-select -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1 py-0.5 leading-none ring-2 ring-white">
               {notifications.length}
@@ -146,13 +155,15 @@ const FloatingNotification = () => {
       {/* Modal */}
       {showModal && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4
-                   bg-base-100/10 backdrop-blur-[2px] bg-opacity-50"
-          onClick={() => setShowModal(false)}
+          className={`fixed inset-0 z-[60] flex items-center justify-center p-4 
+            bg-base-100/10 backdrop-blur-sm transition-opacity duration-300 
+            ${animate ? "opacity-100" : "opacity-0"}`}
+          onClick={closeModal}
         >
           <div
-            className="relative w-full max-w-lg mx-auto bg-base-100 
-                     rounded-2xl shadow-2xl overflow-hidden"
+            className={`relative w-full max-w-lg bg-base-100 rounded-2xl shadow-2xl overflow-hidden 
+              transform transition-all duration-300 
+              ${animate ? "scale-100 translate-y-0" : "scale-90 translate-y-4"}`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -164,7 +175,7 @@ const FloatingNotification = () => {
                 <h2 className="text-xl font-bold text-white">Thông báo</h2>
               </div>
               <button
-                onClick={() => setShowModal(false)}
+                onClick={closeModal}
                 className="p-2 rounded-full hover:bg-white/20 transition-colors duration-200 text-white hover:text-white/90"
               >
                 <X className="w-5 h-5" />
@@ -194,7 +205,6 @@ const FloatingNotification = () => {
                         index === 0 ? "bg-base-300" : ""
                       }`}
                     >
-                      {/* Title */}
                       {item.title && (
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="font-semibold text-base-content text-base leading-snug">
@@ -207,13 +217,9 @@ const FloatingNotification = () => {
                           )}
                         </div>
                       )}
-
-                      {/* Message */}
                       <div className="text-base-content text-sm leading-relaxed whitespace-pre-line mb-3">
                         {parseMessage(item.message, highlightWords)}
                       </div>
-
-                      {/* Time */}
                       <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-xs">
                         <svg
                           className="w-3 h-3"
