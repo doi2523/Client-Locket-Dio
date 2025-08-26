@@ -1,5 +1,5 @@
 // src/hooks/useCamera.js
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export const useCamera = () => {
   const videoRef = useRef(null);
@@ -22,6 +22,19 @@ export const useCamera = () => {
   const IMAGE_SIZE_PX = 1920;
   const VIDEO_RESOLUTION_PX = 1080;
   const MAX_RECORD_TIME = 10;
+
+  // ✅ Lấy từ localStorage hoặc mặc định frame đầu tiên
+  const [selectedFrame, setSelectedFrame] = useState(() => {
+    const saved = localStorage.getItem("selectedFrame");
+    return saved ? JSON.parse(saved) : frames[0];
+  });
+
+  // ✅ Lưu vào localStorage khi thay đổi
+  useEffect(() => {
+    if (selectedFrame) {
+      localStorage.setItem("selectedFrame", JSON.stringify(selectedFrame));
+    }
+  }, [selectedFrame]);
 
   return {
     videoRef,
@@ -49,7 +62,11 @@ export const useCamera = () => {
     IMAGE_SIZE_PX,
     VIDEO_RESOLUTION_PX,
     MAX_RECORD_TIME,
-    deviceId, setDeviceId,
-    zoomLevel, setZoomLevel
+    deviceId,
+    setDeviceId,
+    zoomLevel,
+    setZoomLevel,
+    selectedFrame,
+    setSelectedFrame,
   };
 };

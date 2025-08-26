@@ -1,5 +1,6 @@
-import { showWarning } from "../../../components/Toast";
-import { API_VERSION, CLIENT_VERSION } from "../../../constants/versionInfo";
+import { showWarning } from "@/components/Toast";
+import { API_VERSION, CLIENT_VERSION } from "@/constants/versionInfo";
+import { Wrench } from "lucide-react";
 
 export default function SettingsExtras() {
   const handleUpdate = () => {
@@ -46,9 +47,10 @@ export default function SettingsExtras() {
 
   return (
     <div>
-      <h2 className="text-3xl font-semibold font-lovehouse text-center mb-4 select-none">
-        Extensive settings
-      </h2>
+      <div className="flex items-center mb-4 text-base-content">
+        <Wrench className="w-5 h-5 mr-2" />
+        <h2 className="text-lg font-semibold">Extensive settings</h2>
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-4 justify-between">
         {/* Cập nhật & SW */}
@@ -64,12 +66,18 @@ export default function SettingsExtras() {
             >
               Tải lại phiên bản mới
             </button>
-            <div className="relative space-y-0.5 text-xs text-gray-700">
+            <div className="relative space-y-0.5 text-xs text-accent">
               <p>
-                Số phiên bản: <span className="font-mono underline font-semibold">{CLIENT_VERSION}</span>
+                Số phiên bản:{" "}
+                <span className="font-mono underline font-semibold">
+                  {CLIENT_VERSION}
+                </span>
               </p>
               <p>
-                API version: <span className="font-mono underline font-semibold">{API_VERSION}</span>
+                API version:{" "}
+                <span className="font-mono underline font-semibold">
+                  {API_VERSION}
+                </span>
               </p>
             </div>
             <button

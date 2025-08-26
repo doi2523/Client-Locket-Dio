@@ -1,9 +1,4 @@
-import React, {
-  lazy,
-  Suspense,
-  useEffect,
-  useRef,
-} from "react";
+import React, { lazy, Suspense, useEffect, useRef } from "react";
 
 import MediaSizeInfo from "@/components/ui/MediaSizeInfo";
 import BorderProgress from "./SquareProgress";
@@ -14,11 +9,7 @@ import { useApp } from "@/context/AppContext";
 
 const MediaPreview = ({ capturedMedia }) => {
   const { post, useloading, camera } = useApp();
-  const {
-    selectedFile,
-    preview,
-    isSizeMedia,
-  } = post;
+  const { selectedFile, preview, isSizeMedia } = post;
   const {
     streamRef,
     videoRef,
@@ -29,6 +20,7 @@ const MediaPreview = ({ capturedMedia }) => {
     setZoomLevel,
     deviceId,
     setDeviceId,
+    selectedFrame,
   } = camera;
   const { setSendLoading } = useloading;
 
@@ -59,10 +51,7 @@ const MediaPreview = ({ capturedMedia }) => {
         return;
       }
 
-      if (
-        streamRef.current &&
-        lastCameraMode.current !== cameraMode
-      ) {
+      if (streamRef.current && lastCameraMode.current !== cameraMode) {
         stopCamera();
       }
 
@@ -181,27 +170,42 @@ const MediaPreview = ({ capturedMedia }) => {
             className={`
               w-full h-full object-cover transition-all duration-500 ease-in-out
               ${cameraMode === "user" ? "scale-x-[-1]" : ""}
-              ${cameraActive ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}
+              ${
+                cameraActive
+                  ? "opacity-100 scale-100"
+                  : "opacity-0 scale-95 pointer-events-none"
+              }
             `}
           />
         )}
 
         {!preview && !selectedFile && (
-          <div className="absolute inset-0 top-7 px-7 z-30 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
-            <button
-              onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
-              className="pointer-events-auto w-7 h-7 p-1.5 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center"
-            >
-              <img src="/icons/bolt.fill.png" alt="" />
-            </button>
+          <>
+            <div className="absolute inset-0 top-7 px-7 z-30 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
+              <button
+                onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
+                className="pointer-events-auto w-7 h-7 p-1.5 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center"
+              >
+                <img src="/icons/bolt.fill.png" alt="Icon sấm sét" />
+              </button>
 
-            <button
-              onClick={handleCycleZoomCamera}
-              className="pointer-events-auto w-6 h-6 text-primary-content font-semibold rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
-            >
-              {zoomLevel}
-            </button>
-          </div>
+              <button
+                onClick={handleCycleZoomCamera}
+                className="pointer-events-auto w-6 h-6 text-primary-content font-semibold rounded-full bg-white/30 backdrop-blur-md p-3.5 flex items-center justify-center"
+              >
+                {zoomLevel}
+              </button>
+            </div>
+            {selectedFrame.imageSrc && (
+              <div className="absolute inset-0 z-20 pointer-events-none">
+                <img
+                  src={selectedFrame.imageSrc}
+                  alt="Khung viền camera"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+          </>
         )}
 
         {preview?.type === "video" && (
@@ -211,7 +215,9 @@ const MediaPreview = ({ capturedMedia }) => {
             loop
             muted
             playsInline
-            className={`w-full h-full object-cover ${preview ? "opacity-100" : "opacity-0"}`}
+            className={`w-full h-full object-cover ${
+              preview ? "opacity-100" : "opacity-0"
+            }`}
           />
         )}
 
@@ -219,7 +225,9 @@ const MediaPreview = ({ capturedMedia }) => {
           <img
             src={preview.data}
             alt="Preview"
-            className={`w-full h-full object-cover select-none transition-all duration-300 ${preview ? "opacity-100" : "opacity-0"}`}
+            className={`w-full h-full object-cover select-none transition-all duration-300 ${
+              preview ? "opacity-100" : "opacity-0"
+            }`}
           />
         )}
 
@@ -230,9 +238,6 @@ const MediaPreview = ({ capturedMedia }) => {
             </Suspense>
           </div>
         )}
-        <div className="absolute inset-0 z-50 pointer-events-none">
-          <img src="/bg-flag-vietnam.png" alt="" />
-        </div>
 
         <div className="absolute inset-0 z-50 pointer-events-none">
           <BorderProgress />

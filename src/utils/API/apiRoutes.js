@@ -44,6 +44,7 @@ export const API_URL = {
   GET_TIMELINE: `${BASE_DB_API_URL}${LOCKET_PRO}/timelines`,
   DONATE_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/donations`,
   NOTIFI_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/notification`,
+  GET_FRAMES_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/myframes`,
   USER_THEMES_POSTS_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/user-themes/posts`,
   POST_USER_THEMES_POSTS_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/user-themes/posts`,
   CAPTION_POSTS_URL: `${BASE_DB_API_URL}${LOCKET_PRO}/user-themes/caption-posts`,
