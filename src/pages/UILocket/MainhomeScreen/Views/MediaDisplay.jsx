@@ -196,7 +196,7 @@ const MediaPreview = ({ capturedMedia }) => {
                 {zoomLevel}
               </button>
             </div>
-            {selectedFrame.imageSrc && (
+            {selectedFrame?.imageSrc && (
               <div className="absolute inset-0 z-20 pointer-events-none">
                 <img
                   src={selectedFrame.imageSrc}
