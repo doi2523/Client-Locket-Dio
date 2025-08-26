@@ -20,6 +20,7 @@ const ManageCaption = React.lazy(() => import("@/pages/Public/ManageCaption"));
 const ErrorReferencePage = React.lazy(() => import("../pages/Public/ErrorReferencePage"));
 const Contact = React.lazy(() => import("../pages/Public/Contact"));
 const PrivacyPolicy = React.lazy(() => import("../pages/Public/PrivacyPolicy"));
+const BirthdayPage = React.lazy(() => import("../pages/Public/BirthdayPage"));
 
 const APP_NAME = "Locket Dio - Đăng ảnh & Video lên Locket";
 
@@ -47,4 +48,6 @@ export const authRoutes = [
   { path: "/incidents", component: ErrorReferencePage, title: `Trung tâm sự cố | ${APP_NAME}` },
   { path: "/privacy", component: PrivacyPolicy, title: `Chính sách bảo mật | ${APP_NAME}` },
   { path: "/docs", component: Docs, title: `Tài liệu | ${APP_NAME}` },
+
+  { path: "/happy-birthday", component: BirthdayPage, title: `Chúc mừng sinh nhật Dio | ${APP_NAME}` },
 ];
