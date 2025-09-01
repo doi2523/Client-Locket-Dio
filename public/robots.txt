@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://locket-dio.space/sitemap.xml
+Sitemap: https://locket-dio.com/sitemap.xml

@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-const MyBirthday = lazy(() => import("./MyBirthday"));
+// const MyBirthday = lazy(() => import("./MyBirthday"));
 const FloatingNotification = lazy(() => import("./Notification"));
 const ContactSupportButton = lazy(() => import("./ContactSupport"));
 
@@ -13,13 +13,13 @@ export default function FloatingActions() {
       >
         <FloatingNotification />
       </Suspense>
-      <Suspense
+      {/* <Suspense
         fallback={
           <div className="animate-pulse w-12 h-12 bg-base-300 rounded-full" />
         }
       >
         <MyBirthday />
-      </Suspense>
+      </Suspense> */}
 
       <Suspense
         fallback={
