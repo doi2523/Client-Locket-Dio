@@ -231,13 +231,16 @@ const MediaPreview = ({ capturedMedia }) => {
           />
         )}
 
-        {preview && selectedFile && (
-          <div className="absolute z-10 inset-x-0 bottom-0 px-4 pb-4 transition-all duration-500">
-            <Suspense fallback={null}>
-              <AutoResizeCaption />
-            </Suspense>
-          </div>
-        )}
+        <div
+          className={`absolute z-10 inset-x-0 bottom-0 px-4 pb-4 transform transition-all duration-300 
+          ${
+            preview && selectedFile ? "opacity-100" : "opacity-0 scale-95 pointer-events-none"
+          }`}
+        >
+          <Suspense fallback={null}>
+            <AutoResizeCaption />
+          </Suspense>
+        </div>
 
         <div className="absolute inset-0 z-50 pointer-events-none">
           <BorderProgress />
