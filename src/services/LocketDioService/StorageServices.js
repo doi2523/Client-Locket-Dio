@@ -13,7 +13,7 @@ export const uploadFileAndGetInfoR2 = async (
   const timestamp = Date.now();
   const extension = file.name.split(".").pop(); // jpg, mp4...
 
-  const fileName = `locketdio_${timestamp}_${localId}_cli${CLIENT_VERSION}_.${extension}`;
+  const fileName = `locketdio_${timestamp}_${localId}_cli${CLIENT_VERSION}.${extension}`;
 
   // === Định dạng thư mục: D-13-07-25 ===
   const now = new Date();
@@ -22,7 +22,7 @@ export const uploadFileAndGetInfoR2 = async (
   const year = String(now.getFullYear()).slice(-2);
   const folderName = `D-${day}-${month}-${year}`;
 
-  const filePath = `LocketCloud/${safeType}/${folderName}/${fileName}`; // => path trên R2
+  const filePath = `LocketCloud/${folderName}/${safeType}/${fileName}`; // => path trên R2
 
   // === Bước 1: Gọi BE để lấy Presigned URL
   const res = await api.post(`${STORAGE_API_URL}/api/presignedV2`, {

@@ -102,7 +102,7 @@ const CameraButton = () => {
       const ctx = canvas.getContext("2d");
 
       const side = Math.min(video.videoWidth, video.videoHeight);
-      const outputSize = VIDEO_RESOLUTION_PX;
+      const outputSize = VIDEO_RESOLUTION_PX; //1080
       canvas.width = outputSize;
       canvas.height = outputSize;
 
@@ -130,8 +130,11 @@ const CameraButton = () => {
       // Cấu hình recorder options với bitrate phù hợp cho PWA
       const recorderOptions = mimeType ? { mimeType } : {};
       if (isPWA() && mimeType) {
-        // Giảm bitrate cho PWA để tối ưu hiệu suất
-        recorderOptions.videoBitsPerSecond = 2500000; // 2.5 Mbps cho PWA
+        // Nâng bitrate cho PWA để tăng chất lượng
+        recorderOptions.videoBitsPerSecond = 5000000; // 5 Mbps
+      } else if (mimeType) {
+        // Web thường mạnh hơn => bitrate cao hơn
+        recorderOptions.videoBitsPerSecond = 8000000; // 8 Mbps
       }
 
       const recorder = new MediaRecorder(canvasStream, recorderOptions);
@@ -206,7 +209,7 @@ const CameraButton = () => {
 
       // Hàm vẽ mỗi frame vào canvas với FPS control cho PWA
       let lastFrameTime = 0;
-      const frameInterval = isPWA() ? 1000 / 45 : 0; // 45fps cho PWA, unlimited cho web
+      const frameInterval = isPWA() ? 1000 / 30 : 0; // 30fps cho PWA, unlimited cho web
 
       const drawFrame = (currentTime) => {
         if (video.paused || video.ended || recorder.state !== "recording") {

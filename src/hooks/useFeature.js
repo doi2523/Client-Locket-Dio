@@ -23,7 +23,7 @@ export const getVideoRecordLimit = () => {
   const { userPlan } = useContext(AuthContext);
 
   const limit =
-    userPlan?.plan_info?.feature_flags?.video_record_max_length ?? null;
+    userPlan?.plan_info?.feature_flags?.video_record_max_length ?? 10;
 
   return limit;
 };

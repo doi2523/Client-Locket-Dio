@@ -85,12 +85,17 @@ const LeftHomeScreen = () => {
       <div className="flex-1 overflow-y-auto px-4 py-6 bg-base-200">
         <p>
           Lưu ý: Chuỗi trên web là lấy từ trên máy chủ Locket nên sẽ hiển thị
-          nhanh hơn trên app ( trên app trong 5-10p sẽ cập nhật chuỗi). Nhưng để
-          chắc chắn có chuỗi cho ngày hôm đó mọi người phải check trong app cho
-          chắc chắn. Ví dụ: hôm qua chuỗi 9 đến hôm nay đăng phải là chuỗi 10
-          thì trên app cũng phải cũng hiển thị số 10 ở cùng vị trí ô
+          nhanh hơn trên app. Khi đăng ảnh/video trên web thành công thì chuỗi
+          sẽ nhảy lên 1 số là chuỗi sẽ được giữ.
         </p>
-        <p className="mb-5">Số Locket là số bài đăng trên web khác với thực tế</p>
+        <p>
+          Về phần hiển thị chuỗi ví dụ trên web hiển thị là 5 mà trên app không
+          có {'=>'} app bị lỗi chỉ cần đăng một ảnh/video trên app Locket thì chuỗi
+          sẽ tự động hiển thị lại số chuỗi tương ứng.
+        </p>
+        <p className="mb-5">
+          Số Locket là số bài đăng trên web khác với thực tế
+        </p>
         <StreaksCalender recentPosts={recentPosts} />
         <BottomStreak recentPosts={recentPosts} />
       </div>
