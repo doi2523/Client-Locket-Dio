@@ -211,7 +211,7 @@ const InputForMoment = () => {
               {/* Danh sách avatar xếp chồng */}
               <div className="absolute z-10 flex -space-x-3 right-5 flex-row justify-center items-center">
                 {isLoadingActivity ? (
-                  <LoadingRing size={28} />
+                  <LoadingRing size={28} stroke={2}/>
                 ) : (
                   activity
                     .slice(0, 6)
