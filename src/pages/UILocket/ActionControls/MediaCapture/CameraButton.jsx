@@ -107,7 +107,7 @@ const CameraButton = () => {
       canvas.height = outputSize;
 
       // Điều chỉnh FPS dựa trên môi trường
-      const targetFPS = isPWA() ? 30 : undefined; // PWA: 30fps, Web: tự động
+      const targetFPS = isPWA() ? 45 : undefined; // PWA: 45fps, Web: tự động
       const canvasStream = targetFPS
         ? canvas.captureStream(targetFPS)
         : canvas.captureStream();
@@ -209,7 +209,7 @@ const CameraButton = () => {
 
       // Hàm vẽ mỗi frame vào canvas với FPS control cho PWA
       let lastFrameTime = 0;
-      const frameInterval = isPWA() ? 1000 / 30 : 0; // 30fps cho PWA, unlimited cho web
+      const frameInterval = isPWA() ? 1000 / 45 : 0; // 45fps cho PWA, unlimited cho web
 
       const drawFrame = (currentTime) => {
         if (video.paused || video.ended || recorder.state !== "recording") {

@@ -68,7 +68,7 @@ const MediaPreview = ({ capturedMedia }) => {
           ...videoConstraints,
           width: { ideal: 1920 },
           height: { ideal: 1080 },
-          aspectRatio: 1 / 1,
+          // aspectRatio: 1 / 1,
         };
       }
 
