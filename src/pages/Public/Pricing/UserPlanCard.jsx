@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useApp } from "../../../context/AppContext";
-import PlanBadge from "../../../components/UI/PlanBadge/PlanBadge";
+import { useApp } from "@/context/AppContext";
+import PlanBadge from "@/components/UI/PlanBadge/PlanBadge";
 import { RefreshCw } from "lucide-react";
 
 // Optimized UserPlanCard Component with memoization

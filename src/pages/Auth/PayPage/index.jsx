@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../../context/AuthLocket";
-import LoadingPage from "../../../components/pages/LoadingPage";
+import { AuthContext } from "@/context/AuthLocket";
+import LoadingPage from "@/components/pages/LoadingPage";
 import { Copy, XCircle } from "lucide-react";
 import VietQRImage from "./QrCodeImage";
-import * as services from "../../../services";
-import { showSuccess } from "../../../components/Toast";
+import * as services from "@/services";
+import { showSuccess } from "@/components/Toast";
 
 export default function PayPage() {
   const { user } = useContext(AuthContext);

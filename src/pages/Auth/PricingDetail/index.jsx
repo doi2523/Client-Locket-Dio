@@ -1,22 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Check, X, Info } from "lucide-react";
-import { AuthContext } from "../../../context/AuthLocket";
-import LoadingPage from "../../../components/pages/LoadingPage";
-import { API_URL } from "../../../utils";
-import * as services from "../../../services";
-import FeatureMarquee from "../../../components/ui/Marquee/FeatureMarquee";
-
-const FEATURE_TOOLTIPS = {
-  image_upload: "Cho phép tải lên hình ảnh cho bài viết",
-  video_upload: "Cho phép tải lên video cho bài viết",
-  custom_caption: "Tùy chỉnh văn bản caption theo ý muốn",
-  unlimited_posts: "Không giới hạn số lượng bài viết",
-  priority_support: "Nhận hỗ trợ nhanh chóng từ đội ngũ CSKH",
-  remove_watermark: "Xóa logo hoặc watermark trên nội dung",
-  image_gif: "Thêm hiệu ứng GIF vào caption",
-  image_icon: "Thêm biểu tượng tùy chỉnh vào caption",
-};
+import { AuthContext } from "@/context/AuthLocket";
+import LoadingPage from "@/components/pages/LoadingPage";
+import { API_URL } from "@/utils";
+import * as services from "@/services";
+import FeatureMarquee from "@/components/ui/Marquee/FeatureMarquee";
 
 export default function PlanDetailPage() {
   const { user, userPlan } = useContext(AuthContext);

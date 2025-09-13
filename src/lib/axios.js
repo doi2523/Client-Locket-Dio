@@ -1,6 +1,7 @@
 import axios from "axios";
 import { API_URL, clearLocalData, removeToken, removeUser } from "../utils";
 import { showInfo } from "../components/Toast";
+import { CONFIG } from "@/config";
 
 // ==== Hàm parse JWT an toàn (base64url) ====
 function parseJwt(token) {
@@ -101,7 +102,7 @@ function handleLogout() {
 
 // ==== Khởi tạo axios instance ====
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BASE_API_URL || "/api",
+  baseURL: CONFIG.api.baseUrl,
   withCredentials: true,
 });
 

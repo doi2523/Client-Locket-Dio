@@ -1,5 +1,5 @@
 import { showWarning } from "@/components/Toast";
-import { API_VERSION, CLIENT_VERSION } from "@/constants/versionInfo";
+import { CONFIG } from "@/config/webConfig";
 import { Wrench } from "lucide-react";
 
 export default function SettingsExtras() {
@@ -70,13 +70,13 @@ export default function SettingsExtras() {
               <p>
                 Số phiên bản:{" "}
                 <span className="font-mono underline font-semibold">
-                  {CLIENT_VERSION}
+                  {CONFIG.app.clientVersion}
                 </span>
               </p>
               <p>
                 API version:{" "}
                 <span className="font-mono underline font-semibold">
-                  {API_VERSION}
+                  {CONFIG.app.apiVersion}
                 </span>
               </p>
             </div>

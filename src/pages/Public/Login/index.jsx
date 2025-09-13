@@ -1,5 +1,4 @@
 import { useState, useContext, useEffect } from "react";
-import { showError, showToast } from "@/components/Toast";
 import * as DioService from "@/services/LocketDioService";
 import { AuthContext } from "@/context/AuthLocket";
 import * as utils from "@/utils";
@@ -8,6 +7,12 @@ import StatusServer from "@/components/ui/StatusServer";
 import { useApp } from "@/context/AppContext";
 import Turnstile from "react-turnstile";
 import { Link } from "react-router-dom";
+import {
+  SonnerError,
+  SonnerInfo,
+  SonnerSuccess,
+} from "@/components/ui/SonnerToast";
+import { CONFIG } from "@/config";
 
 const Login = () => {
   const { setUser, setAuthTokens } = useContext(AuthContext);
@@ -33,11 +38,14 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!captchaToken) return alert("Vui lòng xác nhận bạn không phải robot");
+    if (CONFIG.keys.turnstileKey && !captchaToken) {
+      SonnerError("Vui lòng xác minh bạn không phải robot");
+      return;
+    }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      showToast("error", "Email không hợp lệ!");
+      SonnerError("Email không hợp lệ!");
       return;
     }
 
@@ -57,42 +65,45 @@ const Login = () => {
       setAuthTokens(utils.getToken());
       setUser(res.data);
 
-      showToast("success", "Đăng nhập thành công!");
+      SonnerSuccess(
+        "Đăng nhập thành công!",
+        `Xin chào ${res.data?.displayName || "người dùng"}!`
+      );
     } catch (error) {
       if (error.status) {
         const { status, message } = error;
         switch (status) {
           case 400:
-            showError("Tài khoản hoặc mật khẩu không đúng!");
+            SonnerError("Tài khoản hoặc mật khẩu không đúng!");
             break;
           case 401:
-            showError("Phiên đăng nhập đã hết. Vui lòng đăng nhập lại!");
+            SonnerError("Phiên đăng nhập đã hết. Vui lòng đăng nhập lại!");
             break;
           case 429:
-            showError(
+            SonnerError(
               "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 15 phút!"
             );
             setEmail("");
             setPassword("");
             break;
           case 403:
-            showError("Bạn không có quyền truy cập.");
+            SonnerError("Bạn không có quyền truy cập.");
             setEmail("");
             setPassword("");
             window.location.href = "/login";
             break;
           case 500:
-            showError("Lỗi hệ thống, vui lòng thử lại sau!");
+            SonnerError("Lỗi hệ thống, vui lòng thử lại sau!");
             break;
           default:
-            showError(message || "Đăng nhập thất bại!");
+            SonnerError(message || "Đăng nhập thất bại!");
             setEmail("");
             setPassword("");
         }
       } else {
-        showToast(
-          "error",
-          error.message || "Lỗi kết nối! Vui lòng kiểm tra lại mạng."
+        SonnerError(
+          "Lỗi kết nối!",
+          error.message || "Vui lòng kiểm tra lại mạng."
         );
       }
     } finally {
@@ -207,13 +218,17 @@ const Login = () => {
               className={`
     w-full btn btn-primary py-2 text-lg font-semibold rounded-lg transition flex items-center justify-center gap-2
     ${
-      isStatusServer !== true || !captchaToken
+      isStatusServer !== true ||
+      isLoginLoading ||
+      (CONFIG.keys.turnstileKey && !captchaToken)
         ? "bg-blue-400 cursor-not-allowed opacity-80"
         : ""
     }
   `}
               disabled={
-                isStatusServer !== true || isLoginLoading || !captchaToken
+                isStatusServer !== true ||
+                isLoginLoading ||
+                (CONFIG.keys.turnstileKey && !captchaToken)
               }
             >
               {isLoginLoading ? (
@@ -226,18 +241,17 @@ const Login = () => {
               )}
             </button>
 
-            <Turnstile
-              sitekey="0x4AAAAAABgqVepYlILrC753"
-              onVerify={(token) => setCaptchaToken(token)}
-              onExpire={() => {
-                setCaptchaToken(null);
-                showToast(
-                  "info",
-                  "Turnstile đã hết hạn. Vui lòng xác minh lại."
-                );
-              }}
-              className="mt-2"
-            />
+            {CONFIG.keys.turnstileKey && (
+              <Turnstile
+                sitekey={CONFIG.keys.turnstileKey}
+                onVerify={(token) => setCaptchaToken(token)}
+                onExpire={() => {
+                  setCaptchaToken(null);
+                  SonnerInfo("Turnstile đã hết hạn. Vui lòng xác minh lại.");
+                }}
+                className="mt-2"
+              />
+            )}
 
             <span className="text-xs">Vui lòng chờ Server02 khởi động.</span>
             <StatusServer />

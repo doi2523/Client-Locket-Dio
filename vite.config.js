@@ -64,10 +64,23 @@ export default defineConfig({
   server: {
     host: true,
   },
-  plugins: [tailwindcss(), react(), VitePWA(manifestForPlugIn)],
+  plugins: [tailwindcss(), react(), VitePWA(manifestForPlugIn), visualizer()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"), // alias @ trỏ vào thư mục src
     },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          ui: ["lucide-react", "sonner", "react-icons", "react-toastify", "react-fast-marquee"],
+          crop: ["react-easy-crop"],
+          vendor: ["axios", "zustand", "dexie"]
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1500, // tăng giới hạn warning, đỡ spam console
   },
 });

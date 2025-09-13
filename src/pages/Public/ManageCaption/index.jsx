@@ -1,5 +1,5 @@
 import { showError, showSuccess } from "@/components/Toast";
-import { BASE_DB_API_URL } from "@/config/apiConfig";
+import { CONFIG } from "@/config";
 import { useState, useEffect } from "react";
 
 export default function ManageCaption() {
@@ -35,7 +35,7 @@ export default function ManageCaption() {
     }
 
     try {
-      const apiUrl = `${BASE_DB_API_URL}/locketpro/cs/${encodeURIComponent(
+      const apiUrl = `${CONFIG.api.database}/locketpro/cs/${encodeURIComponent(
         captionId
       )}`;
       console.log("Gửi request tới:", apiUrl);

@@ -6,6 +6,7 @@ import { showInfo } from "@/components/Toast";
 import { getAvailableCameras } from "@/utils";
 const AutoResizeCaption = lazy(() => import("./CaptionViews"));
 import { useApp } from "@/context/AppContext";
+import { CONFIG } from "@/config";
 
 const MediaPreview = ({ capturedMedia }) => {
   const { post, useloading, camera } = useApp();
@@ -66,9 +67,7 @@ const MediaPreview = ({ capturedMedia }) => {
       if (!(isUser && isZoom05)) {
         videoConstraints = {
           ...videoConstraints,
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
-          // aspectRatio: 1 / 1,
+          ...CONFIG.app.camera.constraints.default,
         };
       }
 
@@ -234,7 +233,9 @@ const MediaPreview = ({ capturedMedia }) => {
         <div
           className={`absolute z-10 inset-x-0 bottom-0 px-4 pb-4 transform transition-all duration-300 
           ${
-            preview && selectedFile ? "opacity-100" : "opacity-0 scale-95 pointer-events-none"
+            preview && selectedFile
+              ? "opacity-100"
+              : "opacity-0 scale-95 pointer-events-none"
           }`}
         >
           <Suspense fallback={null}>

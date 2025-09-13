@@ -3,7 +3,6 @@ import { CalendarHeart } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { showInfo } from "@/components/Toast";
 import HeaderHistory from "./Layout/HeaderHistory";
-import { INITIAL_MOMENTS_VISIBLE } from "@/constants";
 
 // const UploadingQueue = lazy(() => import("./MomentsView/UploadingQueue"));
 // const MomentsGrid = lazy(() => import("./MomentsView/MomentsGrid"));
@@ -20,6 +19,7 @@ import EmojiPicker from "./Modal/EmojiStudio";
 import FlyingEmojiEffect from "./Modal/FlyingEmojiEffect";
 import BottomMenu from "./Layout/BottomMenu";
 import { useMoments } from "@/hooks/useMoments";
+import { MOMENTS_CONFIG } from "@/config/configAlias";
 
 const BottomHomeScreen = () => {
   const { navigation, post } = useApp();
@@ -45,19 +45,19 @@ const BottomHomeScreen = () => {
   } = post;
 
   // Chỉ giữ lại các state thực sự cần thiết
-  const [visibleCount, setVisibleCount] = useState(INITIAL_MOMENTS_VISIBLE);
+  const [visibleCount, setVisibleCount] = useState(MOMENTS_CONFIG.initialVisible);
   const [loadedItems, setLoadedItems] = useState([]);
   const [selectItems, setselectItems] = useState(null);
 
   useEffect(() => {
-    setVisibleCount(INITIAL_MOMENTS_VISIBLE);
+    setVisibleCount(MOMENTS_CONFIG.initialVisible);
   }, [isBottomOpen, isProfileOpen, isHomeOpen]);
 
   const handleReturnHome = () => {
     setSelectedMoment(null);
     setSelectedQueue(null);
     setIsBottomOpen(false);
-    setVisibleCount(INITIAL_MOMENTS_VISIBLE);
+    setVisibleCount(MOMENTS_CONFIG.initialVisible);
   };
 
   // Tính toán selectedAnimate dựa trên selectedMoment và selectedQueue

@@ -1,6 +1,7 @@
 import React from "react";
 import { Mail, MapPin } from "lucide-react";
 import MailForm from "@/components/ui/SupportForms/MailForm";
+import { COMMUNITY_CONFIG, CONTACT_CONFIG } from "@/config";
 
 export default function Contact() {
   const communityLinks = [
@@ -13,7 +14,7 @@ export default function Contact() {
           className="w-8 h-8"
         />
       ),
-      url: "https://discord.com/invite/47buy9nMGc",
+      url: COMMUNITY_CONFIG.discord,
     },
     {
       name: "Telegram",
@@ -24,7 +25,7 @@ export default function Contact() {
           className="w-8 h-8"
         />
       ),
-      url: "https://t.me/ddevdio",
+      url: COMMUNITY_CONFIG.telegram,
     },
     {
       name: "Messenger",
@@ -35,7 +36,7 @@ export default function Contact() {
           className="w-8 h-8"
         />
       ),
-      url: "https://m.me/cm/AbYPtgRiGe2fInEf",
+      url: COMMUNITY_CONFIG.messenger,
     },
   ];
 
@@ -75,10 +76,10 @@ export default function Contact() {
                 <Mail size={18} /> Liên hệ chính
               </h3>
               <a
-                href="mailto:doibncm2003@gmail.com"
+                href={`mailto:${CONTACT_CONFIG.supportEmail}`}
                 className="btn btn-outline w-full justify-start gap-3 hover:scale-[1.02] transition"
               >
-                <Mail size={18} /> doibncm2003@gmail.com
+                <Mail size={18} /> {CONTACT_CONFIG.supportEmail}
               </a>
             </div>
 

@@ -3,6 +3,7 @@ import { Heart, Gift, CreditCard, Coffee, UsersRound } from "lucide-react";
 import axios from "axios";
 import { API_URL } from "@/utils";
 import { Link } from "react-router-dom";
+import { SPONSORS_CONFIG } from "@/config";
 
 const DonatePage = () => {
   const [donations, setDonations] = useState([]);
@@ -99,20 +100,20 @@ const DonatePage = () => {
                 <Coffee className="w-5 h-5 text-amber-500" /> Give me a coffee
               </div>
               <img
-                src="https://cdn.locket-dio.com/v1/images/qr/momo-locket-dio.png"
+                src={SPONSORS_CONFIG.urlImg}
                 alt="QR Code Donate"
                 className="w-52 h-52 mx-auto rounded-lg shadow-sm"
               />
             </div>
             <div className="mt-4 space-y-2 text-sm text-base-content">
               <div className="p-3 border border-base-300 rounded">
-                NH: <span className="font-semibold">Bản Việt (BVBank)</span>
+                NH: <span className="font-semibold">{SPONSORS_CONFIG.bankName}</span>
               </div>
               <div className="p-3 border border-base-300 rounded">
-                STK: <span className="font-semibold">99MM25227MC0000247</span>
+                STK: <span className="font-semibold">{SPONSORS_CONFIG.accountNumber}</span>
               </div>
               <div className="p-3 border border-base-300 rounded">
-                CTK: <span className="font-semibold">MOMO_DAO VAN DOI</span>
+                CTK: <span className="font-semibold">{SPONSORS_CONFIG.accountName}</span>
               </div>
             </div>
             <p className="mt-4 text-base-content text-sm text-left">

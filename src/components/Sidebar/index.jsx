@@ -23,7 +23,6 @@ import {
   SquareArrowOutUpRight,
   Heart,
 } from "lucide-react";
-import { showSuccess, showToast } from "../Toast";
 import * as ultils from "@/utils";
 import { useApp } from "@/context/AppContext";
 import { AuthContext } from "@/context/AuthLocket";
@@ -33,6 +32,7 @@ import { MenuItem } from "./MenuItem";
 import { AuthButton } from "./AuthButton";
 import ThemeToggle from "./ThemeToggle";
 import PlanBadge from "../ui/PlanBadge/PlanBadge";
+import { SonnerError, SonnerSuccess } from "../ui/SonnerToast";
 
 const Sidebar = () => {
   const { user, resetAuthContext } = useContext(AuthContext);
@@ -54,10 +54,13 @@ const Sidebar = () => {
       ultils.clearAuthStorage();
       ultils.clearLocalData();
       await clearMoments();
-      showSuccess("Đăng xuất thành công!");
+      SonnerSuccess(
+        "Đăng xuất thành công!",
+        `Tạm biệt ${user?.displayName || "người dùng"}!`
+      );
       navigate("/login");
     } catch (error) {
-      showToast("error", "Đăng xuất thất bại!");
+      SonnerError("error", "Đăng xuất thất bại!");
       console.error("❌ Lỗi khi đăng xuất:", error);
     }
   };

@@ -4,6 +4,7 @@ import { RefreshCcw } from "lucide-react";
 import UploadFile from "./UploadFile";
 import { showError } from "@/components/Toast";
 import { getVideoRecordLimit } from "@/hooks/useFeature";
+import { CAMERA_CONFIG } from "@/config/configAlias";
 
 const CameraButton = () => {
   const { camera, post, useloading } = useApp();
@@ -25,8 +26,6 @@ const CameraButton = () => {
     cameraActive,
     setCameraActive,
     setLoading,
-    IMAGE_SIZE_PX,
-    VIDEO_RESOLUTION_PX,
     setDeviceId,
     setZoomLevel,
   } = camera;
@@ -102,7 +101,7 @@ const CameraButton = () => {
       const ctx = canvas.getContext("2d");
 
       const side = Math.min(video.videoWidth, video.videoHeight);
-      const outputSize = VIDEO_RESOLUTION_PX; //1080
+      const outputSize = CAMERA_CONFIG.videoResolutionPx;
       canvas.width = outputSize;
       canvas.height = outputSize;
 
@@ -298,8 +297,8 @@ const CameraButton = () => {
     if (!video || !canvas) return;
 
     const ctx = canvas.getContext("2d");
-    canvas.width = IMAGE_SIZE_PX;
-    canvas.height = IMAGE_SIZE_PX;
+    canvas.width = CAMERA_CONFIG.imageSizePx;
+    canvas.height = CAMERA_CONFIG.imageSizePx;
 
     let sx = 0,
       sy = 0,

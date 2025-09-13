@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL, urlBase64ToUint8Array } from "@/utils";
-import { showSuccess } from "../../Toast";
+import { SonnerSuccess } from "../SonnerToast";
+import { CONFIG } from "@/config/webConfig";
 
 const isRunningAsPWA = () => {
   try {
@@ -58,13 +59,11 @@ const NotificationPrompt = () => {
 
         const subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(
-            "BFINGTTNzXF-mOUKJEraD_RxdoEf51mL1e28NqA6LGL9zWP9lrhIQpdBhdG6_rNlBg5ji4b9y9TXbx8LI86s77w"
-          ),
+          applicationServerKey: urlBase64ToUint8Array(CONFIG.keys.vapidPublicKey),
         });
 
         await axios.post(API_URL.REGISTER_PUSH_URL, { subscription });
-        showSuccess("Bạn đã đăng ký nhận thông báo thành công!");
+        SonnerSuccess("Đăng ký thành công", "Bạn sẽ nhận được thông báo mới nhất từ Locket Dio.");
       }
     } catch (error) {
       console.error("Subscribe user error:", error);

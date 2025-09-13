@@ -1,14 +1,9 @@
-//const BASE_API_URL = "https://my-api-locket.vercel.app"; //http://localhost:5004
-//const BASE_API_URL = "http://localhost:5004";//https://my-api-locket-production.up.railway.app/
-//const BASE_API_URL = "https://my-api-locket-production.up.railway.app";//https://my-api-locket.onrender.com
-//const BASE_API_URL = "https://apilocket-diov2.onrender.com";
-// const BASE_API_URL = "https://api-locket-dio-v2.vercel.app";
+//api/apiRoutes.js
 
-const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
-const BASE_DB_API_URL = import.meta.env.VITE_BASE_API_URL_DB;
-const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-export const PAYMENT_API_URL = import.meta.env.VITE_PAYMENT_API_URL;
-// const BASE_API_URL = "https://apilocket-diov2-production.up.railway.app";
+import { CONFIG } from "@/config";
+
+const BASE_API_URL = CONFIG.api.baseUrl;
+const BASE_DB_API_URL = CONFIG.api.database;
 
 const LOCKET_URL = "/locket";
 const LOCKET_PRO = "/locketpro";
@@ -55,8 +50,4 @@ export const API_URL = {
   GET_DIO_PLANS: `${BASE_DB_API_URL}${LOCKET_PRO}/dio-plans`,
   GET_COLLABORATORS: `${BASE_DB_API_URL}${LOCKET_PRO}/collaborator`,
   GET_COLLECTIONS: `${BASE_DB_API_URL}${LOCKET_PRO}/collections`,
-
-  //API dữ liệu Cloudinary
-  UPLOAD_IMAGE_TO_CLOUD: `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-  UPLOAD_VIDEO_TO_CLOUD: `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,
 };

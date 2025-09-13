@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { ArrowUp, MoonStar, SmilePlus, X } from "lucide-react";
+import clsx from "clsx";
 import { useApp } from "@/context/AppContext";
 import { GetInfoMoment, SendMessageMoment, SendReactMoment } from "@/services";
-import { showError, showSuccess } from "@/components/Toast";
 import { getMomentById } from "@/cache/momentDB";
 import { AuthContext } from "@/context/AuthLocket";
 import LoadingRing from "@/components/ui/Loading/ring";
 import { formatTimeAgo } from "@/utils";
+import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 
 const LoadingActivityItem = () => (
   <li className="flex items-center gap-3 animate-pulse">
@@ -68,10 +69,10 @@ const InputForMoment = () => {
       setFlyingEmojis(emoji);
       setShowFlyingEffect(true);
       const res = await SendReactMoment(emoji, selectedMomentId, power);
-      showSuccess(`Gửi cảm xúc thành công!`);
+      SonnerSuccess(`Gửi cảm xúc thành công!`);
       setShowEmojiPicker(false);
     } catch (error) {
-      showError("Gửi cảm xúc thất bại!");
+      SonnerError("Gửi cảm xúc thất bại!");
       console.error("Lỗi khi gửi react:", error);
     } finally {
       setIsSendingReaction(false);
@@ -139,9 +140,9 @@ const InputForMoment = () => {
       await SendMessageMoment(message, moment.id, moment.user);
       setMessage("");
       setShowFullInput(false);
-      showSuccess("Gửi tin nhắn thành công!");
+      SonnerSuccess("Gửi tin nhắn thành công!");
     } catch (error) {
-      showError("Gửi tin nhắn thất bại!");
+      SonnerError("Gửi tin nhắn thất bại!");
       console.error("❌ Lỗi khi gửi message:", error);
     } finally {
       setIsSendingMessage(false);
@@ -211,7 +212,7 @@ const InputForMoment = () => {
               {/* Danh sách avatar xếp chồng */}
               <div className="absolute z-10 flex -space-x-3 right-5 flex-row justify-center items-center">
                 {isLoadingActivity ? (
-                  <LoadingRing size={28} stroke={3}/>
+                  <LoadingRing size={28} stroke={3} />
                 ) : (
                   activity
                     .slice(0, 6)
@@ -280,10 +281,15 @@ const InputForMoment = () => {
                           </span>
                           {item.reaction ? (
                             <span className="text-sm">
-                              đã reaction {item?.reaction?.emoji} {formatTimeAgo(item?.reaction?.createdAt)} | {item?.reaction?.createdAt}
+                              đã reaction {item?.reaction?.emoji}{" "}
+                              {formatTimeAgo(item?.reaction?.createdAt)} |{" "}
+                              {item?.reaction?.createdAt}
                             </span>
                           ) : (
-                            <span className="text-sm">✨ đã xem {formatTimeAgo(item?.viewedAt)} | {item?.viewedAt}</span>
+                            <span className="text-sm">
+                              ✨ đã xem {formatTimeAgo(item?.viewedAt)} |{" "}
+                              {item?.viewedAt}
+                            </span>
                           )}
                         </div>
                       </li>
@@ -311,12 +317,16 @@ const InputForMoment = () => {
                     placeholder={`Trả lời ${shortName}`}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    disabled={isSendingMessage}
+                    disabled={isSendingMessage || userDetail?.isCelebrity}
                     className="flex-1 bg-transparent focus:outline-none font-semibold pl-1 disabled:opacity-50"
                   />
                   <button
                     onClick={handleSend}
-                    disabled={isSendingMessage || !message.trim()}
+                    disabled={
+                      isSendingMessage ||
+                      !message.trim() ||
+                      userDetail?.isCelebrity
+                    }
                     className="btn absolute right-3 p-1 btn-sm bg-base-300 btn-circle flex justify-center items-center disabled:opacity-50"
                   >
                     {isSendingMessage ? (
@@ -335,8 +345,15 @@ const InputForMoment = () => {
             <div className="w-full">
               <div className="relative w-full">
                 <div
-                  className="flex items-center w-full px-4 py-3.5 rounded-3xl bg-base-200 shadow-md cursor-text"
-                  onClick={() => setShowFullInput(true)}
+                  className={clsx(
+                    "flex items-center w-full px-4 py-3.5 rounded-3xl bg-base-200 shadow-md",
+                    userDetail?.isCelebrity
+                      ? "cursor-not-allowed opacity-70"
+                      : "cursor-text"
+                  )}
+                  onClick={() => {
+                    if (!userDetail?.isCelebrity) setShowFullInput(true);
+                  }}
                 >
                   <span className="flex-1 text-md text-base-content/60 font-semibold pl-1">
                     Gửi tin nhắn...

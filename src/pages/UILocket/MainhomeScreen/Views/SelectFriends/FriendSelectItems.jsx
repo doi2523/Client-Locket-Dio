@@ -4,6 +4,9 @@ import clsx from "clsx";
 export default function FriendSelectItems({ friend, isSelected, onToggle }) {
   const [imgError, setImgError] = useState(false);
 
+  // Nếu là celebrity thì không hiển thị
+  if (friend?.isCelebrity) return null;
+
   // Lấy ký tự đầu của firstName + ký tự đầu của lastName
   const initials = (
     (friend?.firstName?.[0] || "") + (friend?.lastName?.[0] || "")

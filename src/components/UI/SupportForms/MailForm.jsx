@@ -1,7 +1,8 @@
+import { CONTACT_CONFIG } from "@/config";
 import React, { useState } from "react";
 
-const MailForm = ({ defaultEmail = "doibncm2003@gmail.com" }) => {
-  const [email] = useState(defaultEmail);
+const MailForm = () => {
+  const [email] = useState(CONTACT_CONFIG.supportEmail);
   const [subject] = useState("Góp ý về website Locket Dio");
   const [body, setBody] = useState("");
 

@@ -15,6 +15,7 @@ import ToastProvider from "./components/Toast";
 import getLayout from "./layouts";
 import LoadingPage from "./components/pages/LoadingPage";
 import NotFoundPage from "./components/pages/NotFoundPage";
+import { Toaster } from 'sonner';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <AppContent />
           </Router>
           <ToastProvider />
+          <Toaster />
         </AppProvider>
       </AuthProvider>
     </ThemeProvider>

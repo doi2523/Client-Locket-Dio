@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import ThemeSelector from "../../../components/Theme/ThemeSelector";
-import MockupiPhone from "../../../components/ui/MockupiPhone";
+import ThemeSelector from "@/components/Theme/ThemeSelector";
+import MockupiPhone from "@/components/ui/MockupiPhone";
 
 const AuthHome = () => {
-  const [iframeUrl] = useState("https://locket-dio.space");
 
   return (
     <div className="flex flex-col items-center justify-center py-6 bg-base-200 px-6">
@@ -24,18 +23,6 @@ const AuthHome = () => {
           </Link>
         </div>
         <div className="flex justify-center disable-select">
-          {/* <div className="mockup-browser border border-base-300 w-full">
-            <div className="mockup-browser-toolbar">
-              <div className="input p-1">{iframeUrl}</div>
-            </div>
-            <div className="h-80 w-full relative overflow-hidden select-none disable-select">
-              <iframe
-                src="https://locket-pro.vercel.app"
-                sandbox="allow-scripts allow-same-origin"
-                className="absolute  disable-select top-0 left-0 w-[125%] h-[125%] border-0 rounded-b-lg scale-[0.8] origin-top-left pointer-events-none"
-              ></iframe>
-            </div>
-          </div> */}
           <MockupiPhone/>
         </div>
       </div>

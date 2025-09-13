@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Cropper from "react-easy-crop";
-import { useApp } from "../../context/AppContext";
+import { useApp } from "@/context/AppContext";
 import { Scissors, X } from "lucide-react";
-import { getCroppedImg } from "../../utils";
+import { getCroppedImg } from "@/utils";
 
 const CropImageStudio = () => {
   const {

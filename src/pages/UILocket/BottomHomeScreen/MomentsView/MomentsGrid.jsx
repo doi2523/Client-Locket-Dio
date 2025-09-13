@@ -4,10 +4,8 @@ import { RefreshCw, Trash2 } from "lucide-react";
 import { useMoments } from "@/hooks/useMoments";
 import { showSuccess } from "@/components/Toast";
 import { useApp } from "@/context/AppContext";
-import { MAX_MOMENTS_DISPLAY_LIMIT } from "@/constants";
 import LoadingRing from "@/components/ui/Loading/ring";
-
-const DUPLICATE_THRESHOLD = 3; // nếu gặp trùng nhiều lần liên tiếp thì stop
+import { MOMENTS_CONFIG } from "@/config/configAlias";
 
 const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
   const { post } = useApp();
@@ -51,7 +49,7 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
       isAutoLoading ||
       stopFetching ||
       !nextPageToken ||
-      moments.length >= MAX_MOMENTS_DISPLAY_LIMIT
+      moments.length >= MOMENTS_CONFIG.maxDisplayLimit
     ) {
       return;
     }
@@ -64,7 +62,7 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
         const newItems = result.data.filter((m) => !beforeIds.has(m.id));
         if (newItems.length === 0) {
           setDuplicateCount((prev) => prev + 1);
-          if (duplicateCount + 1 >= DUPLICATE_THRESHOLD) {
+          if (duplicateCount + 1 >= MOMENTS_CONFIG.duplicateThreshold) {
             console.warn("Too many duplicates, stop fetching for this user.");
             setStopFetching(true);
           }
@@ -105,7 +103,7 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
             );
           } else if (
             nextPageToken &&
-            moments.length < MAX_MOMENTS_DISPLAY_LIMIT
+            moments.length < MOMENTS_CONFIG.maxDisplayLimit
           ) {
             autoLoadMore();
           }
@@ -170,7 +168,7 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
   const visibleMoments = moments.slice(0, visibleCount);
   const hasMoreToShow = visibleCount < moments.length;
   const canLoadMoreFromAPI =
-    nextPageToken && moments.length < MAX_MOMENTS_DISPLAY_LIMIT && !stopFetching;
+    nextPageToken && moments.length < MOMENTS_CONFIG.maxDisplayLimit && !stopFetching;
 
   return (
     <>
@@ -280,7 +278,7 @@ const MomentsGrid = ({ visibleCount: initialVisibleCount }) => {
           <div>
             Hiển thị: {visibleCount}/{moments.length}
           </div>
-          <div>Giới hạn tối đa: {MAX_MOMENTS_DISPLAY_LIMIT}</div>
+          <div>Giới hạn tối đa: {MOMENTS_CONFIG.maxDisplayLimit}</div>
           <div>Có thể tải thêm: {canLoadMoreFromAPI ? "Có" : "Không"}</div>
           <div>Đang auto load: {isAutoLoading ? "Có" : "Không"}</div>
           <div>Số lần duplicate liên tiếp: {duplicateCount}</div>

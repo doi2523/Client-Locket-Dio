@@ -1,10 +1,11 @@
+import { CONFIG } from "@/config";
 import React from "react";
 // import CameraCapture from "../pages/UILocket";
 // const CameraCapture = React.lazy(() => import("../pages/UILocket"));
 
 const AuthHome = React.lazy(() => import("../pages/Auth/Home"));
 const Profile = React.lazy(() => import("../pages/Auth/Profile"));
-const DonatePage = React.lazy(() => import("@/pages/Public/HistoryDonate"));
+const DonatePage = React.lazy(() => import("@/pages/Public/Sponsors"));
 const PostMoments = React.lazy(() => import("../pages/Auth/PostMoments"));
 const AboutMe = React.lazy(() => import("../pages/Auth/AboutMe"));
 const Docs = React.lazy(() => import("../pages/Public/Docs"));
@@ -22,7 +23,7 @@ const Contact = React.lazy(() => import("../pages/Public/Contact"));
 const PrivacyPolicy = React.lazy(() => import("../pages/Public/PrivacyPolicy"));
 const BirthdayPage = React.lazy(() => import("../pages/Public/BirthdayPage"));
 
-const APP_NAME = "Locket Dio - Đăng ảnh & Video lên Locket";
+const APP_NAME = CONFIG.app.fullName;
 
 export const authRoutes = [
   { path: "/home", component: AuthHome, title: `Trang chủ | ${APP_NAME}` },

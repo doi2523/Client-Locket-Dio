@@ -7,7 +7,7 @@ import {
   getMomentsByUser,
 } from "@/cache/momentDB";
 import api from "@/lib/axios";
-import { showError, showSuccess } from "@/components/Toast";
+import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 
 export function useMoments(userUid = null, initialLimit = 50) {
   const [moments, setMoments] = useState([]);
@@ -94,9 +94,12 @@ export function useMoments(userUid = null, initialLimit = 50) {
       if (newMoments.length > 0) {
         await bulkAddMoments(newMoments);
         await fetchFromCache();
-        showSuccess(`Đã làm mới ${newMoments.length} bài viết mới!`);
+        SonnerSuccess(
+          "Làm mới thành công!",
+          `Đã làm mới ${newMoments.length} bài viết mới!`
+        );
       } else {
-        showSuccess("Không có bài mới nào.");
+        SonnerSuccess("Không thấy gì cả","Chưa có bài mới nào.");
       }
 
       const now = new Date().toISOString();
@@ -105,7 +108,7 @@ export function useMoments(userUid = null, initialLimit = 50) {
       localStorage.setItem("nextPageToken", token || "");
     } catch (err) {
       console.error("❌ refreshLatest:", err);
-      showError("Đã xảy ra lỗi khi làm mới bài viết.");
+      SonnerError("Đã xảy ra lỗi khi làm mới bài viết.");
     } finally {
       setLoading(false);
     }

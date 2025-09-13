@@ -10,6 +10,7 @@ import SearchInput from "@/components/ui/Input/SearchInput";
 import { showError } from "@/components/Toast";
 import FriendFind from "./FriendFind";
 import IncomingFriendRequests from "./IncomingRequests";
+import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 
 const FriendsContainer = () => {
   const { user, friendDetails, setFriendDetails } = useContext(AuthContext);
@@ -123,15 +124,15 @@ const FriendsContainer = () => {
       const result = await refreshFriends();
 
       if (result) {
-        alert("✅ Đã làm mới danh sách bạn bè!");
+        SonnerSuccess("Cập nhật thành công","Đã làm mới danh sách bạn bè!");
         setFriendDetails(result?.friendDetails);
         setLastUpdated(result?.updatedAt);
       } else {
-        alert("⚠️ Không thể làm mới danh sách bạn bè.");
+        SonnerError("⚠️ Không thể làm mới danh sách bạn bè.");
       }
     } catch (error) {
       console.error("❌ Lỗi khi làm mới bạn bè:", error);
-      alert("❌ Có lỗi xảy ra khi làm mới danh sách.");
+      SonnerError("Có lỗi xảy ra khi làm mới danh sách.", error);
     } finally {
       setIsRefreshing(false); // Kết thúc loading
     }
@@ -150,13 +151,13 @@ const FriendsContainer = () => {
         const updatedFriends = friendDetails.filter((f) => f.uid !== uid);
         setFriendDetails(updatedFriends);
         localStorage.setItem("friendDetails", JSON.stringify(updatedFriends));
-        alert("✅ Đã xoá bạn thành công.");
+        SonnerSuccess("✅ Đã xoá bạn thành công.");
       } else {
-        alert("⚠️ Không thể xoá bạn (có thể đã bị xoá từ trước).");
+        SonnerError("⚠️ Không thể xoá bạn (có thể đã bị xoá từ trước).");
       }
     } catch (error) {
       console.error("❌ Lỗi khi xoá bạn:", error);
-      alert("❌ Có lỗi xảy ra khi xoá bạn.");
+      SonnerError("❌ Có lỗi xảy ra khi xoá bạn.");
     }
   };
 

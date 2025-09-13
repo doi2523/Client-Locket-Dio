@@ -1,4 +1,5 @@
 // src/pages/PrivacyPolicy.jsx
+import { CONTACT_CONFIG } from "@/config";
 import React from "react";
 
 const PrivacyPolicy = () => {
@@ -529,17 +530,17 @@ const PrivacyPolicy = () => {
       </p>
       <ul className="list-disc ml-6">
         <li className="mb-4">
-          <p>By email: doibncm2003@gmail.com</p>
+          <p>By email: {CONTACT_CONFIG.supportEmail}</p>
         </li>
         <li className="mb-4">
           <p>
             By visiting this page on our website:{" "}
             <a
-              href="https://locket-dio.space/contact"
+              href="https://locket-dio.com/contact"
               rel="external nofollow noopener"
               target="_blank"
             >
-              https://locket-dio.space/contact
+              https://locket-dio.com/contact
             </a>
           </p>
         </li>

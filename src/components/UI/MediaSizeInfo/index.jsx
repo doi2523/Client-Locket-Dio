@@ -1,7 +1,7 @@
 import React from "react";
 import { TbMoodCrazyHappy } from "react-icons/tb";
 import { RiEmotionHappyLine } from "react-icons/ri";
-import { useApp } from "../../../context/AppContext";
+import { useApp } from "@/context/AppContext";
 
 const MediaSizeInfo = () => {
   const { post } = useApp();

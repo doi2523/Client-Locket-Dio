@@ -1,5 +1,5 @@
 import React from "react";
-import { API_VERSION, CLIENT_VERSION } from "../../constants/versionInfo";
+import { CONFIG } from "@/config";
 
 const Footer = () => (
   <footer className="w-full bg-base-100 text-primary text-sm shadow-inner px-4 py-3">
@@ -9,11 +9,11 @@ const Footer = () => (
       </p>
       <p className="text-center md:text-right text-xs">
         <span className="cursor-pointer hover:text-blue-500 transition hover:underline">
-          Version {CLIENT_VERSION}
+          Version {CONFIG.app.clientVersion}
         </span>
         <span> • </span>
         <span className="cursor-pointer hover:text-blue-500 transition hover:underline">
-          API {API_VERSION}
+          API {CONFIG.app.apiVersion}
         </span>
         <span className="cursor-pointer ml-2 hidden sm:inline text-secondary hover:underline">
           • Read more

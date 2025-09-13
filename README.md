@@ -172,16 +172,10 @@ Tạo file `.env` trong thư mục gốc:
 VITE_BASE_API_URL=https://apilocket-diov2.onrender.com
 
 # API test cơ sở dữ liệu
-VITE_BASE_API_URL_DB=http://localhost:3001
-
-# API thanh toán (PayOS hoặc cổng tùy chỉnh)
-VITE_PAYMENT_API_URL=http://localhost:5005
+VITE_DATABASE_API_URL=https://server-admin-xi.vercel.app
 
 #API upload phương tiện lên cloud
 VITE_STORAGE_API_URL=https://storage.locket-dio.com
-
-#API host cdn các phương tiện đã tải lên
-VITE_MEDIA_API_URL=https://media.locket-dio.com
 
 # =========================
 # 🔔 Thông Báo Đẩy

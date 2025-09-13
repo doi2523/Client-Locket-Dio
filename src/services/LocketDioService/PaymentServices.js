@@ -1,10 +1,10 @@
 import axios from "axios";
-import { PAYMENT_API_URL } from "../../utils";
-import api from "../../lib/axios";
+import api from "@/lib/axios";
+import { CONFIG } from "@/config";
 
 export const CreateNewOrder = async (planId, price, coupon) => {
   try {
-    const res = await api.post(`${PAYMENT_API_URL}/api/orders`, {
+    const res = await api.post(`${CONFIG.api.payment}/api/orders`, {
       planId,
       price,
       coupon,
@@ -18,7 +18,7 @@ export const CreateNewOrder = async (planId, price, coupon) => {
 
 export const GetInfoOrder = async (orderId) => {
   try {
-    const res = await axios.post(`${PAYMENT_API_URL}/api/od`, {
+    const res = await axios.post(`${CONFIG.api.payment}/api/od`, {
       id: orderId,
     });
     const orderData = res?.data?.data;
@@ -31,7 +31,7 @@ export const GetInfoOrder = async (orderId) => {
 export const CancelToOrder = async (orderId, orderCode) => {
   try {
     const res = await axios.post(
-      `${PAYMENT_API_URL}/api/orders/cancel`,
+      `${CONFIG.api.payment}/api/orders/cancel`,
       {
         orderId,
         orderCode,

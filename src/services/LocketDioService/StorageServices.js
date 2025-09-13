@@ -1,5 +1,4 @@
-import { STORAGE_API_URL } from "@/config/apiConfig";
-import { CLIENT_VERSION } from "@/constants/versionInfo";
+import { CONFIG } from "@/config/webConfig";
 import api from "@/lib/axios";
 
 export const uploadFileAndGetInfoR2 = async (
@@ -13,10 +12,10 @@ export const uploadFileAndGetInfoR2 = async (
   const timestamp = Date.now();
   const extension = file.name.split(".").pop(); // jpg, mp4...
 
-  const fileName = `locketdio_${timestamp}_${localId}_cli${CLIENT_VERSION}.${extension}`;
+  const fileName = `locketdio_${timestamp}_${localId}_cli${CONFIG.app.clientVersion}.${extension}`;
 
   // === Bước 1: Gọi BE để lấy Presigned URL
-  const res = await api.post(`${STORAGE_API_URL}/api/presignedV3`, {
+  const res = await api.post(`${CONFIG.api.storage}/api/presignedV3`, {
     filename: fileName,
     contentType: file.type,
     type: safeType,

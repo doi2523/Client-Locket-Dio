@@ -1,8 +1,9 @@
+import { CONFIG } from "@/config";
 import CameraCapture from "../pages/UILocket";
 
 // const CameraCapture = React.lazy(() => import("../pages/UILocket"));
 
-const APP_NAME = "Locket Dio - Đăng ảnh & Video lên Locket";
+const APP_NAME = CONFIG.app.fullName;
 
 export const locketRoutes = [
   { path: "/locket", component: CameraCapture, title: `Locket Camera | ${APP_NAME}` },

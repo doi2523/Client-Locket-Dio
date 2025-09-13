@@ -10,7 +10,7 @@ import {
   FaNodeJs,
 } from "react-icons/fa";
 import { RiTailwindCssFill, RiVercelFill } from "react-icons/ri";
-import DonateHistory from "../../Public/HistoryDonate";
+import DonateHistory from "../../Public/Sponsors";
 
 const AboutMe = () => {
   return (

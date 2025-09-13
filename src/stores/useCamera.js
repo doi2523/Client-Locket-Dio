@@ -19,10 +19,6 @@ export const useCamera = () => {
   const [zoomLevel, setZoomLevel] = useState("1x"); // "0.5x" | "1x" | "3x"
   const [deviceId, setDeviceId] = useState(null); // deviceId của camera hiện tại
 
-  const IMAGE_SIZE_PX = 1920;
-  const VIDEO_RESOLUTION_PX = 1080;
-  const MAX_RECORD_TIME = 10;
-
   // ✅ Lấy từ localStorage hoặc mặc định frame đầu tiên
   const [selectedFrame, setSelectedFrame] = useState(() => {
     const saved = localStorage.getItem("selectedFrame");
@@ -59,9 +55,6 @@ export const useCamera = () => {
     setCameraActive,
     cameraMode,
     setCameraMode,
-    IMAGE_SIZE_PX,
-    VIDEO_RESOLUTION_PX,
-    MAX_RECORD_TIME,
     deviceId,
     setDeviceId,
     zoomLevel,
