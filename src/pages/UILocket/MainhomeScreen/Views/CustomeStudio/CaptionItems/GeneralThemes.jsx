@@ -127,6 +127,17 @@ export default function GeneralThemes({ title }) {
   };
   const handleClick = (id) => {
     switch (id) {
+      case "default":
+        handleCustomeSelect({
+          overlay_id: "standard",
+          color_top: "",
+          color_bottom: "",
+          text_color: "#FFFFFF",
+          icon: "",
+          caption: "",
+          type: "default",
+        });
+        break;
       case "music":
         setShowSpotifyForm(true);
         break;
@@ -170,6 +181,11 @@ export default function GeneralThemes({ title }) {
   };
 
   const buttons = [
+    {
+      id: "default",
+      icon: <span className="mr-1 font-semibold">Aa</span>,
+      label: "Văn bản",
+    },
     {
       id: "music",
       icon: <img src="./icons/music_icon.png" className="w-6 h-6 mr-2" />,

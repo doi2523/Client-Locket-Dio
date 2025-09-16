@@ -334,7 +334,7 @@ const ReviewOverlay = ({ postOverlay }) => {
   );
 };
 
-const DefaultOverlay = ({
+const CustomeOverlay = ({
   postOverlay,
   setPostOverlay,
   placeholder,
@@ -388,6 +388,66 @@ const DefaultOverlay = ({
         maxWidth: "90%",
         whiteSpace: shouldWrap ? "pre-wrap" : "nowrap",
         background: `linear-gradient(to bottom, ${postOverlay.color_top}, ${postOverlay.color_bottom})`,
+      }}
+      disabled={!isEditable}
+      wrap={shouldWrap ? "soft" : "off"}
+    />
+  );
+};
+
+const DefaultOverlay = ({
+  postOverlay,
+  setPostOverlay,
+  placeholder,
+  isEditable,
+  parentRef,
+}) => {
+  const textareaRef = useRef(null);
+  const combinedText = postOverlay.icon
+    ? `${postOverlay.icon} ${postOverlay.caption || ""}`.trim()
+    : postOverlay.caption || "";
+
+  const { width, shouldWrap } = useTextMeasurement(
+    combinedText,
+    textareaRef,
+    "default",
+    placeholder,
+    parentRef
+  );
+
+  useAutoResize([textareaRef]);
+
+  const handleChange = (e) => {
+    const inputValue = e.target.value;
+    const icon = postOverlay.icon || "";
+    const prefix = icon ? `${icon} ` : "";
+
+    if (inputValue.startsWith(prefix)) {
+      const newCaption = inputValue.slice(prefix.length);
+      setPostOverlay((prev) => ({
+        ...prev,
+        caption: newCaption,
+      }));
+    } else {
+      setPostOverlay((prev) => ({
+        ...prev,
+        caption: inputValue,
+      }));
+    }
+  };
+
+  return (
+    <textarea
+      ref={textareaRef}
+      value={combinedText}
+      onChange={handleChange}
+      placeholder={placeholder}
+      rows={1}
+      className="absolute z-10 text-white px-4 font-semibold duration-300 opacity-100 bottom-2 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl py-2 text-md outline-none resize-none overflow-hidden transition-all"
+      style={{
+        width: `${width}px`,
+        maxWidth: "90%",
+        whiteSpace: shouldWrap ? "pre-wrap" : "nowrap",
       }}
       disabled={!isEditable}
       wrap={shouldWrap ? "soft" : "off"}
@@ -454,8 +514,11 @@ const AutoResizeCaption = () => {
       case "review":
         return <ReviewOverlay postOverlay={postOverlay} />;
 
-      default:
+      case "default":
         return <DefaultOverlay {...commonProps} isEditable={isEditable} />;
+
+      default:
+        return <CustomeOverlay {...commonProps} isEditable={isEditable} />;
     }
   };
 
