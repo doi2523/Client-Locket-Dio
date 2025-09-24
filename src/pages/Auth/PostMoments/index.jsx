@@ -26,6 +26,11 @@ import { getMaxUploads } from "@/hooks/useFeature.js";
 import { AuthContext } from "@/context/AuthLocket.jsx";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge.jsx";
 import StorageUsageBar from "./StorageUsageBar.jsx";
+import { getPostedMoments, savePostedMoment } from "@/process/uploadQueue.js";
+import {
+  SonnerInfo,
+  SonnerSuccess,
+} from "@/components/ui/SonnerToast/index.jsx";
 
 const PostMoments = () => {
   const { post, useloading } = useApp();
@@ -105,10 +110,6 @@ const PostMoments = () => {
 
     try {
       setSendLoading(true);
-      showToast(
-        "info",
-        `Đang chuẩn bị ${preview.type === "video" ? "video" : "ảnh"} !`
-      );
       const payload = await services.createRequestPayloadV5(
         selectedFile,
         preview.type,
@@ -122,31 +123,21 @@ const PostMoments = () => {
       }
       // console.log("Payload:", payload);
 
-      showToast("info", `Đang tạo bài viết !`);
+      SonnerInfo("Đợi chút nhé", `Đang tạo bài viết !`);
       // Gọi API upload
       const response = await services.uploadMediaV2(payload);
 
-      // Lấy dữ liệu cũ
-      const savedResponses = JSON.parse(
-        localStorage.getItem("uploadedMoments") || "[]"
-      );
+      const normalizedNewData = utils.normalizeMoment(response?.data);
 
-      // Chuẩn hoá data mới (response.data là 1 object, normalizeMoments nhận mảng, nên bọc vào mảng)
-      const normalizedNewData = utils.normalizeMoments([response?.data]);
+      savePostedMoment(payload, normalizedNewData);
 
-      // Ghép dữ liệu cũ với dữ liệu mới đã chuẩn hoá
-      const updatedData = [...savedResponses, ...normalizedNewData];
-
-      // Lưu vào localStorage
-      localStorage.setItem("uploadedMoments", JSON.stringify(updatedData));
-
-      // Cập nhật state với dữ liệu đã chuẩn hoá
-      setRecentPosts(updatedData);
-
-      showToast(
-        "success",
+      SonnerSuccess(
+        "Đăng tải thành công!",
         `${preview.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
       );
+      // const savePosted = getPostedMoments();
+      // // Cập nhật state với dữ liệu đã chuẩn hoá
+      // setRecentPosts(savePosted);
 
       setPreview(null);
       setSelectedFile(null);

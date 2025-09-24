@@ -1,5 +1,5 @@
 import React from "react";
-import { Plus } from "lucide-react";
+import { Link, Plus, UserRoundCheck } from "lucide-react";
 import { SonnerSuccess } from "@/components/ui/SonnerToast";
 
 export default function CelebrateItem({ user, onAdd }) {
@@ -7,8 +7,7 @@ export default function CelebrateItem({ user, onAdd }) {
   const percent =
     user.celebrity_data?.max_friends && user.celebrity_data?.friend_count
       ? Math.min(
-          (user.celebrity_data.friend_count /
-            user.celebrity_data.max_friends) *
+          (user.celebrity_data.friend_count / user.celebrity_data.max_friends) *
             100,
           100
         )
@@ -18,13 +17,20 @@ export default function CelebrateItem({ user, onAdd }) {
     if (!user?.username) return;
     const url = `https://locket.cam/${user.username}`;
     navigator.clipboard.writeText(url);
-    SonnerSuccess("Đã sao chép URL profile!",` ${url}`);
+    SonnerSuccess("Đã sao chép URL profile!", ` ${url}`);
   };
+
+    // const handleCopyLink = () => {
+    // if (!user?.uid) return;
+    // const url = `https://locket.camera/links/${user.uid}`;
+    // navigator.clipboard.writeText(url);
+    // SonnerSuccess("Đã sao chép URL chia sẻ!", ` ${url}`);
+  // };
 
   return (
     <div
       key={user.uid}
-      className="flex flex-col gap-2 p-3 rounded-3xl border shadow-md bg-base-100 m-2"
+      className="flex flex-col gap-2 p-3 rounded-3xl shadow-md bg-base-100 m-2"
     >
       {/* Hàng trên: avatar + info + action */}
       <div className="flex items-center justify-between">
@@ -64,17 +70,24 @@ export default function CelebrateItem({ user, onAdd }) {
             >
               @{user.username || "Không có username"}
             </p>
+            {/* <p
+              className="flex flex-row items-center text-sm text-blue-500 underline cursor-pointer hover:text-blue-600 mt-1"
+              onClick={handleCopyLink}
+            >
+              <Link className="w-4 h-4 mr-1" /> Link chia sẻ
+            </p> */}
           </div>
         </div>
 
         {/* Bên phải: render theo friendship_status */}
         {user.friendship_status === "friends" ? (
-          <div className="text-base-content text-sm bg-accent px-2 py-1 rounded-2xl font-semibold">
-            Bạn bè
+          <div className="flex flex-row items-center gap-1 text-base-content bg-primary px-2 py-1 rounded-2xl">
+            <UserRoundCheck className="w-5 h-5" />
+            <span className="text-sm font-semibold">Bạn bè</span>
           </div>
         ) : user.friendship_status === "follower-waitlist" ? (
-          <div className="text-base-content text-sm bg-accent px-2 py-1 rounded-2xl font-semibold">
-            Chờ phản hồi
+          <div className="text-base-content text-sm bg-secondary px-2 py-1 rounded-2xl font-semibold">
+            Đang xếp hàng
           </div>
         ) : (
           <button
@@ -101,8 +114,7 @@ export default function CelebrateItem({ user, onAdd }) {
             />
           </div>
           <p className="text-xs text-gray-600 mt-1">
-            {user.celebrity_data.friend_count}/
-            {user.celebrity_data.max_friends}
+            {user.celebrity_data.friend_count}/{user.celebrity_data.max_friends}
           </p>
         </div>
       )}

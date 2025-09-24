@@ -1,9 +1,25 @@
+import { getFriendDetail } from "@/cache/friendsDB";
 import { formatTimeAgo } from "@/utils";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const UserInfo = ({ user, me, date }) => {
-  // Nếu không có user (nghĩa là chính mình)
-  if (!user) {
+  const [displayUser, setDisplayUser] = useState(user);
+
+  useEffect(() => {
+    if (!user || user === me.uid) return; // chính mình → bỏ qua DB
+
+    let mounted = true;
+    getFriendDetail(user).then((detail) => {
+      if (detail && mounted) setDisplayUser(detail);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [user, me.uid]);
+
+  // Nếu là chính mình
+  if (!user || user === me.uid) {
     return (
       <div className="flex items-center gap-2 text-md text-muted-foreground">
         <div className="flex items-center gap-2">
@@ -23,30 +39,29 @@ const UserInfo = ({ user, me, date }) => {
     );
   }
 
-  // Nếu có user
-  const fullName = `${user.firstName} ${user.lastName || ""}`.trim();
-  const shortName =
-    fullName.length > 15 ? fullName.slice(0, 15) + "…" : fullName;
+  const fullName = `${displayUser?.firstName ?? ""} ${
+    displayUser?.lastName ?? ""
+  }`.trim();
 
   return (
     <div className="flex items-center gap-2 text-md text-muted-foreground">
       <div className="flex items-center gap-1.5">
         <img
-          src={user.profilePic}
+          src={displayUser?.profilePic}
           alt={fullName}
           className="w-9 h-9 rounded-full object-cover"
         />
-        <span className="truncate max-w-[80px] text-base text-base-content font-semibold">
-          {user.firstName}
+        <span className="w-full text-base text-base-content font-semibold">
+          {displayUser?.firstName}
         </span>
       </div>
-      {user.badge === "locket_gold" ? (
+      {displayUser?.badge === "locket_gold" ? (
         <img
           src="https://cdn.locket-dio.com/v1/caption/caption-icon/locket_gold_badge.png"
           alt="Gold Badge"
           className="w-5 h-5"
         />
-      ) : user.isCelebrity ? (
+      ) : displayUser?.isCelebrity ? (
         <img
           src="https://cdn.locket-dio.com/v1/caption/caption-icon/celebrity_badge.png"
           alt="Celebrity"

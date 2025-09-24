@@ -6,6 +6,7 @@ import BadgePlan from "../ExtendPage/Badge";
 import BottomStreak from "./BottomStreak";
 const StreaksCalender = lazy(() => import("./Views/StreaksCalender"));
 import LoadingRing from "@/components/ui/Loading/ring";
+import { getPostedMoments } from "@/process/uploadQueue";
 
 const LeftHomeScreen = () => {
   const { user } = useContext(AuthContext);
@@ -17,12 +18,22 @@ const LeftHomeScreen = () => {
     setSettingTabOpen,
   } = navigation;
   const { imageLoaded, setImageLoaded } = useloading;
-  const { recentPosts } = post;
+  const { recentPosts, setRecentPosts } = post;
 
   useEffect(() => {
     document.body.classList.toggle("overflow-hidden", isProfileOpen);
     return () => document.body.classList.remove("overflow-hidden");
   }, [isProfileOpen]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // Lấy các post đã đăng
+      const posted = await getPostedMoments();
+      setRecentPosts(posted);
+    };
+
+    fetchData();
+  }, [isProfileOpen]); // chỉ chạy 1 lần khi component mount
 
   return (
     <div
@@ -90,8 +101,8 @@ const LeftHomeScreen = () => {
         </p>
         <p>
           Về phần hiển thị chuỗi ví dụ trên web hiển thị là 5 mà trên app không
-          có {'=>'} app bị lỗi chỉ cần đăng một ảnh/video trên app Locket thì chuỗi
-          sẽ tự động hiển thị lại số chuỗi tương ứng.
+          có {"=>"} app bị lỗi chỉ cần đăng một ảnh/video trên app Locket thì
+          chuỗi sẽ tự động hiển thị lại số chuỗi tương ứng.
         </p>
         <p className="mb-5">
           Số Locket là số bài đăng trên web khác với thực tế

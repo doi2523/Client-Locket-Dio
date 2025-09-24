@@ -4,10 +4,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import BadgePlan from "../ExtendPage/Badge";
 import { useMessages } from "@/hooks/useMessages";
-import { fetchUserV2 } from "@/services";
 import { formatTimeAgo } from "@/utils";
 import ChatDetail from "./View/ChatDetail";
-import { getUserFromFriendDetails } from "@/helpers/GetInfoUser/getInfoDetails";
+import { getFriendDetail } from "@/cache/friendsDB";
 
 const RightHomeScreen = () => {
   const { user } = useContext(AuthContext);
@@ -20,24 +19,37 @@ const RightHomeScreen = () => {
   const [friendsMap, setFriendsMap] = useState({});
 
   useEffect(() => {
-    // Lấy tất cả friendUid trong messages
-    const friendUids = messages
-      .map((msg) => msg.members?.find((m) => m !== user?.uid))
-      .filter(Boolean);
+    const loadFriends = async () => {
+      const friendUids = messages
+        .map((msg) => msg.members?.find((m) => m !== user?.uid))
+        .filter(Boolean);
 
-    // Lọc ra UID chưa fetch
-    const needFetch = friendUids.filter((uid) => !friendsMap[uid]);
+      const needFetch = friendUids.filter((uid) => !friendsMap[uid]);
 
-    if (needFetch.length === 0) return;
+      if (needFetch.length === 0) return;
 
-    needFetch.forEach(async (uid) => {
-      try {
-        const friend = await fetchUserV2(uid);
-        setFriendsMap((prev) => ({ ...prev, [uid]: friend }));
-      } catch (err) {
-        console.error("❌ fetchUser error:", err);
-      }
-    });
+      const results = await Promise.all(
+        needFetch.map(async (uid) => {
+          try {
+            return [uid, await getFriendDetail(uid)];
+          } catch (err) {
+            console.error("❌ getFriendDetail error:", err);
+            return [uid, null];
+          }
+        })
+      );
+
+      // Cập nhật 1 lần
+      setFriendsMap((prev) => {
+        const newMap = { ...prev };
+        results.forEach(([uid, friend]) => {
+          if (friend) newMap[uid] = friend;
+        });
+        return newMap;
+      });
+    };
+
+    loadFriends();
   }, [messages, user?.uid, friendsMap]);
 
   return (
@@ -67,17 +79,17 @@ ${
         <div className="flex-1 px-4 py-6 overflow-y-auto space-y-4">
           {loading && <p className="text-center">⏳ Đang tải...</p>}
 
-          {[...messages] // copy ra tránh mutate state gốc
+          {[...messages]
             .sort((a, b) => {
               const timeA = new Date(a.latestMessage?.createdAt || 0).getTime();
               const timeB = new Date(b.latestMessage?.createdAt || 0).getTime();
-              return timeB - timeA; // mới nhất trước
+              return timeB - timeA;
             })
             .map((msg) => {
               const friendUid = msg.members?.find((m) => m !== user?.uid);
               if (!friendUid) return null;
 
-              const friend = getUserFromFriendDetails(friendUid);
+              const friend = friendsMap[friendUid]; // ✅ lấy từ state, không await trong render
 
               return (
                 <div

@@ -3,16 +3,9 @@ import { AuthContext } from "@/context/AuthLocket";
 import LoadingRing from "@/components/ui/Loading/ring";
 
 export default function Profile() {
-  const { user, setUser } = useContext(AuthContext);
+  const { user, userPlan } = useContext(AuthContext);
   const [imageLoaded, setImageLoaded] = useState(false);
-  
-  // Convert timestamp thành ngày giờ đọc được
-  const formatDate = (timestamp) => {
-    if (!timestamp) return "Không có dữ liệu";
-    return new Date(parseInt(timestamp)).toLocaleDateString("vi-VN", {
-      timeZone: "Asia/Ho_Chi_Minh",
-    });
-  };
+
   const formatDateTime = (timestamp) => {
     if (!timestamp) return "Không có dữ liệu";
 
@@ -47,7 +40,6 @@ export default function Profile() {
 
     return date.toLocaleString("vi-VN", options);
   };
-  
 
   return (
     <div className="flex flex-col items-center min-h-screen w-full p-6">
@@ -60,8 +52,8 @@ export default function Profile() {
       </h1>
 
       {/* Thông tin cơ bản */}
-      <div className="flex flex-row items-center bg-base-100 border-base-300 text-base-content p-6 rounded-lg shadow-lg w-full max-w-2xl">
-        <div className="avatar relative w-24 h-24  disable-select">
+      <div className="flex flex-row items-center bg-base-100 border-base-300 text-base-content p-6 rounded-2xl shadow-lg w-full max-w-2xl">
+        <div className="avatar relative w-18 h-18  disable-select">
           <div className=" rounded-full shadow-md outline-4 outline-amber-400 flex justify-items-center">
             {!imageLoaded && (
               <div className="absolute inset-0 flex items-center justify-center">
@@ -95,8 +87,8 @@ export default function Profile() {
       </div>
 
       {/* Thông tin tài khoản chi tiết */}
-      <div className="mt-6 bg-base-100 border-base-300 text-base-content p-6 rounded-lg shadow-md w-full max-w-2xl">
-        <h2 className="text-xl font-semibold pb-2">Thông tin tài khoản:</h2>
+      <div className="mt-6 bg-base-100 border-base-300 text-base-content p-6 rounded-2xl shadow-md w-full max-w-2xl">
+        <h2 className="text-xl font-semibold pb-2">Thông tin Locket:</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-1 rounded-md p-3 card-body">
           <InfoRow label="UID" value={user?.uid} />
           <InfoRow label="Email" value={user?.email} />
@@ -112,12 +104,30 @@ export default function Profile() {
             value={formatDateTimeV2(user?.createdAt)}
           />
           <InfoRow
-            label="Mật khẩu cập nhật lần cuối"
-            value={formatDate(user?.lastRefreshAt)}
+            label="Cập nhật lần cuối"
+            value={formatDateTimeV2(user?.lastRefreshAt)}
           />
           <InfoRow
             label="Xác thực tùy chỉnh"
             value={user?.customAuth ? "Có" : "Không"}
+          />
+        </div>
+      </div>
+
+      <div className="mt-6 bg-base-100 border-base-300 text-base-content p-6 rounded-2xl shadow-md w-full max-w-2xl">
+        <h2 className="text-xl font-semibold pb-2">Thông tin trên web:</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-1 rounded-md p-3 card-body">
+          <InfoRow label="Số người dùng" value={userPlan?.customer_code} />
+          <InfoRow label="Thông tin gói" value={userPlan?.plan_info.name} />
+          <InfoRow label="Ngày bắt đầu" value={userPlan?.start_date} />
+          <InfoRow label="Ngày hết hạn" value={userPlan?.end_date} />
+          <InfoRow
+            label="Ngày tạo tài khoản"
+            value={formatDateTimeV2(userPlan?.created_at)}
+          />
+          <InfoRow
+            label="Cập nhập lần cuối"
+            value={formatDateTimeV2(userPlan?.updated_at)}
           />
         </div>
       </div>

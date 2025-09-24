@@ -8,6 +8,7 @@ function showToast(type, message, body = "", options = {}) {
     dismissible: true, // click vào toast sẽ đóng
     duration: 4000,
     description: body || undefined, // body sẽ hiển thị dưới message
+    closeButton: false,
     ...options,
   };
 

@@ -1,33 +1,11 @@
-import { useEffect, useState } from "react";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem("theme") || "light"
-  );
+  const { theme, changeTheme } = useTheme();
   const isDark = theme === "dark";
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-
-    document.documentElement.style.transition =
-      "background-color 0.5s ease, color 0.5s ease";
-
-    const computedStyle = getComputedStyle(document.documentElement);
-    const baseColor =
-      computedStyle.getPropertyValue("--color-base-100")?.trim() || "#ffffff";
-
-    let metaTheme = document.querySelector('meta[name="theme-color"]');
-    if (!metaTheme) {
-      metaTheme = document.createElement("meta");
-      metaTheme.name = "theme-color";
-      document.head.appendChild(metaTheme);
-    }
-    metaTheme.setAttribute("content", baseColor);
-  }, [theme]);
-
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    changeTheme(isDark ? "light" : "dark");
   };
 
   return (
@@ -40,7 +18,7 @@ export default function ThemeToggle() {
         height="20"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="currentColor" // vẫn dùng currentColor để ăn màu chữ
+        stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

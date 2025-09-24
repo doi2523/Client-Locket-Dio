@@ -60,13 +60,17 @@
   font-style: normal;
   font-display: swap;
 }
-/* @font-face {
-  font-family: 'SF Compact Rounded Black';
-  src: url('./assets/fonts/SF-Compact-Rounded-Semibold.ttf') format('opentype');
+
+.font-purrfect {
+  font-family: "Purrfect", system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+@font-face {
+  font-family: 'Purrfect';
+  src: url("https://cdn.locket-dio.com/v1/fonts/Purrfect.woff2") format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
-} */
+}
 
 /* Class để dùng font này */
 /* .sf-compact-rounded-regular {

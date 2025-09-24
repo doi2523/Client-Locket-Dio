@@ -46,7 +46,7 @@ const FEATURES = [
     icon: <Bell className="w-7 h-7" />,
     title: "Thông báo thông minh",
     description:
-      "Thông báo khi có moment mới hoặc khi bạn cần biết, tính năng mới, celebrate mới.",
+      "Thông báo khi có moment mới hoặc khi bạn cần biết, tính năng mới, celebrity mới.",
     gradientFrom: "from-orange-500/10",
     gradientTo: "to-orange-600/10",
     iconFrom: "from-orange-500",
@@ -79,7 +79,7 @@ const FeatureCardMarquee = () => {
             className={`
               relative 
               p-4 rounded-3xl
-              mx-3 bg-base-100/30 backdrop-blur-sm
+              mx-3 bg-base-100/30 backdrop-blur-[2px]
               w-[280px] h-[240px]
               flex-shrink-0 flex flex-col
             `}
@@ -89,10 +89,10 @@ const FeatureCardMarquee = () => {
             >
               <span className="text-xl text-white">{feature.icon}</span>
             </div>
-            <h3 className="text-lg text-left font-bold text-base-content mb-2 leading-tight">
+            <h3 className="text-lg text-left font-bold text-black mb-2 leading-tight">
               {feature.title}
             </h3>
-            <p className="text-sm text-base-content/80 text-left leading-relaxed line-clamp-6 flex-1">
+            <p className="text-sm text-black text-left leading-relaxed line-clamp-6 flex-1">
               {feature.description}
             </p>
           </div>

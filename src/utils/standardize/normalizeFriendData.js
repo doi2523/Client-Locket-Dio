@@ -9,16 +9,17 @@ export const normalizeFriendData = (response) => {
 
   return {
     uid: data.uid,
-    firstName: data.first_name || "",
-    lastName: data.last_name || "",
-    username: data.username || "",
-    profilePic: replaceFirebaseWithCDN(data.profile_picture_url),
-    badge: data.badge || null,
-    isTemp: data.temp || false,
-    isCelebrity: data.celebrity || false,
-    //celebrityImages: data.celebrity_invite_image_urls || [],
-    friendshipStatus: data.friendship_status || null,
-    celebrityData: data.celebrity_data || null,
+    firstName: data.first_name ?? "",
+    lastName: data.last_name ?? "",
+    username: data.username ?? "",
+    profilePic: data.profile_picture_url
+      ? replaceFirebaseWithCDN(data.profile_picture_url)
+      : null,
+    badge: data.badge ?? null,
+    isTemp: Boolean(data.temp),
+    isCelebrity: Boolean(data.celebrity),
+    friendshipStatus: data.friendship_status ?? null,
+    celebrityData: data.celebrity_data ?? null,
   };
 };
 // {

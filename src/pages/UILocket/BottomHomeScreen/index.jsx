@@ -18,7 +18,6 @@ import QueueViewer from "./MomentsView/QueueViewer";
 import EmojiPicker from "./Modal/EmojiStudio";
 import FlyingEmojiEffect from "./Modal/FlyingEmojiEffect";
 import BottomMenu from "./Layout/BottomMenu";
-import { useMoments } from "@/hooks/useMoments";
 import { MOMENTS_CONFIG } from "@/config/configAlias";
 
 const BottomHomeScreen = () => {
@@ -45,8 +44,10 @@ const BottomHomeScreen = () => {
   } = post;
 
   // Chỉ giữ lại các state thực sự cần thiết
-  const [visibleCount, setVisibleCount] = useState(MOMENTS_CONFIG.initialVisible);
-  const [loadedItems, setLoadedItems] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(
+    MOMENTS_CONFIG.initialVisible
+  );
+
   const [selectItems, setselectItems] = useState(null);
 
   useEffect(() => {
@@ -64,15 +65,6 @@ const BottomHomeScreen = () => {
   const selectedAnimate =
     (selectedMoment !== null && selectedQueue === null) ||
     (selectedMoment === null && selectedQueue !== null);
-
-  const handleCloseMedia = () => {
-    setSelectedMoment(null);
-    setSelectedQueue(null);
-  };
-
-  const handleLoaded = (id) => {
-    setLoadedItems((prev) => (prev.includes(id) ? prev : [...prev, id]));
-  };
 
   return (
     <div
@@ -113,12 +105,7 @@ const BottomHomeScreen = () => {
             }`}
           >
             <div className="h-16"></div>
-            <UploadingQueue
-              payloads={uploadPayloads}
-              setuploadPayloads={setuploadPayloads}
-              handleLoaded={handleLoaded}
-              setselectItems={setselectItems}
-            />
+            <UploadingQueue />
             <MomentsGrid visibleCount={visibleCount} />
           </div>
         </div>

@@ -27,12 +27,12 @@ import * as ultils from "@/utils";
 import { useApp } from "@/context/AppContext";
 import { AuthContext } from "@/context/AuthLocket";
 import api from "@/lib/axios";
-import { clearMoments } from "@/cache/momentDB";
 import { MenuItem } from "./MenuItem";
 import { AuthButton } from "./AuthButton";
 import ThemeToggle from "./ThemeToggle";
 import PlanBadge from "../ui/PlanBadge/PlanBadge";
 import { SonnerError, SonnerSuccess } from "../ui/SonnerToast";
+import { clearAllData } from "@/utils/SyncData/clearAllData";
 
 const Sidebar = () => {
   const { user, resetAuthContext } = useContext(AuthContext);
@@ -49,11 +49,7 @@ const Sidebar = () => {
     try {
       api.get(`${ultils.API_URL.LOGOUT_URL}`);
       resetAuthContext();
-      ultils.clearAuthData();
-      ultils.removeUser();
-      ultils.clearAuthStorage();
-      ultils.clearLocalData();
-      await clearMoments();
+      await clearAllData();
       SonnerSuccess(
         "Đăng xuất thành công!",
         `Tạm biệt ${user?.displayName || "người dùng"}!`

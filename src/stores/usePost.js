@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthLocket";
 import { getMaxUploads } from "../hooks/useFeature";
+import { getPostedMoments, getQueuePayloads } from "@/process/uploadQueue";
 
 export const defaultPostOverlay = {
   overlay_id: "standard",
@@ -29,14 +30,8 @@ export const usePost = () => {
   const [isTextColor, setTextColor] = useState(null);
   const [isSizeMedia, setSizeMedia] = useState(null);
 
-  const [recentPosts, setRecentPosts] = useState(() => {
-    const saved = localStorage.getItem("uploadedMoments");
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [uploadPayloads, setuploadPayloads] = useState(() => {
-    const saved = localStorage.getItem("uploadPayloads");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [recentPosts, setRecentPosts] = useState([]);
+  const [uploadPayloads, setuploadPayloads] = useState([]); // payloads chờ upload
 
   const [audience, setAudience] = useState("all"); // "all" | "selected"
   const [selectedRecipients, setSelectedRecipients] = useState([]); // array userId hoặc object bạn bè
@@ -53,6 +48,24 @@ export const usePost = () => {
     }
   }, [userPlan]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+        // Lấy các post đã đăng
+        const posted = await getPostedMoments();
+        setRecentPosts(posted);
+
+        // Lấy tất cả payload từ queue DB
+        const currentPayloads = await getQueuePayloads();
+        // Lọc những payload chưa xong (queued, retrying, processing)
+        const pendingPayloads = currentPayloads.filter(
+          (p) => p.status !== "done" && p.status !== "failed"
+        );
+        setuploadPayloads(pendingPayloads);
+    };
+
+    fetchData();
+  }, []); // chỉ chạy 1 lần khi component mount
+
   const [selectedMoment, setSelectedMoment] = useState(null);
   const [selectedMomentId, setSelectedMomentId] = useState(null);
 
@@ -60,12 +73,12 @@ export const usePost = () => {
 
   const [selectedFriendUid, setSelectedFriendUid] = useState(null);
 
-        const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [reactionInfo, setReactionInfo] = useState({
     emoji: "💛",
     moment_id: null,
     intensity: 1000,
-  });  
+  });
 
   return {
     caption,
@@ -96,11 +109,17 @@ export const usePost = () => {
     setMaxVideoSizeMB,
     uploadPayloads,
     setuploadPayloads,
-    selectedMoment, setSelectedMoment,
-    selectedMomentId, setSelectedMomentId,
-    selectedQueue, setSelectedQueue,
-    selectedFriendUid, setSelectedFriendUid,
-    reactionInfo, setReactionInfo,
-    showEmojiPicker, setShowEmojiPicker
+    selectedMoment,
+    setSelectedMoment,
+    selectedMomentId,
+    setSelectedMomentId,
+    selectedQueue,
+    setSelectedQueue,
+    selectedFriendUid,
+    setSelectedFriendUid,
+    reactionInfo,
+    setReactionInfo,
+    showEmojiPicker,
+    setShowEmojiPicker,
   };
 };

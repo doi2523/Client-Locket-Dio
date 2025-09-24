@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useApp } from "@/context/AppContext";
 import { Check, RotateCcw, X } from "lucide-react";
-import * as utils from "@/utils";
 import LoadingOverlay from "@/components/ui/Loading/LineSpinner";
-import { showError, showInfo, showSuccess } from "@/components/Toast";
-import { PostMoments } from "@/services";
 import BottomMenu from "../Layout/BottomMenu";
+import { enRetryPayload, getQueuePayloads } from "@/process/uploadQueue";
+import { AuthContext } from "@/context/AuthLocket";
 
 const QueueViewer = () => {
+  const { setStreak } = useContext(AuthContext);
   const { post } = useApp();
   const {
     uploadPayloads,
@@ -55,89 +55,36 @@ const QueueViewer = () => {
   }, [selectedQueue, isAnimating]);
 
   const handleRetry = async () => {
-    let payloads = JSON.parse(localStorage.getItem("uploadPayloads") || "[]");
-    const retryPayload = payloads[selectedQueue];
+    const retryPayload = uploadPayloads[selectedQueue];
+    setRetryingIndex(selectedQueue);
 
-    if (!retryPayload) return;
+    if (!retryPayload) {
+      console.warn("⚠️ Không tìm thấy payload để retry");
+      setRetryingIndex(null);
+      return;
+    }
 
     try {
-      setRetryingIndex(selectedQueue);
-
-      // ✅ Cập nhật state: chuyển sang "uploading" ngay lập tức
+      // Tăng số lần thử và reset errorMessage
       const updatedPayload = {
         ...retryPayload,
-        status: "uploading",
         errorMessage: null,
         retryCount: (retryPayload.retryCount || 0) + 1,
-        lastTried: new Date().toISOString(),
       };
-      payloads[selectedQueue] = updatedPayload;
 
-      setuploadPayloads([...payloads]);
-      setQueueInfo(updatedPayload);
-      localStorage.setItem("uploadPayloads", JSON.stringify(payloads));
+      // Đưa payload vào queue để consumer xử lý
+      await enRetryPayload(updatedPayload, setStreak);
 
-      showInfo("Đang gửi lại...");
+      // Cập nhật state UI
+      const currentPayloads = await getQueuePayloads();
+      setuploadPayloads(currentPayloads);
 
-      // Gọi API upload
-      const response = await PostMoments(retryPayload);
-
-      if (response?.data) {
-        payloads[selectedQueue] = {
-          ...payloads[selectedQueue],
-          status: "done",
-        };
-        setuploadPayloads([...payloads]);
-        localStorage.setItem("uploadPayloads", JSON.stringify(payloads));
-
-        // Lưu vào uploadedMoments
-        const savedResponses = JSON.parse(
-          localStorage.getItem("uploadedMoments") || "[]"
-        );
-        const normalizedNewData = utils.normalizeMoments([response.data]);
-        const updatedData = [...savedResponses, ...normalizedNewData];
-
-        localStorage.setItem("uploadedMoments", JSON.stringify(updatedData));
-        setRecentPosts(updatedData.reverse());
-
-        showSuccess(
-          `${
-            retryPayload.contentType === "video" ? "Video" : "Hình ảnh"
-          } đã được tải lên thành công!`
-        );
-
-        handleClose(); // đóng modal sau khi thành công
-      }
+      const currentQueueInfo = currentPayloads.find(
+        (p) => p.id === updatedPayload.id
+      );
+      setQueueInfo(currentQueueInfo);
     } catch (error) {
       console.error("❌ Upload thất bại:", error);
-
-      const errorCode = error?.response?.status;
-      const errorMessage =
-        error?.response?.data?.message || error.message || "Lỗi không xác định";
-
-      if (errorCode === 409) {
-        // Xoá phần tử bị lỗi 409
-        payloads.splice(selectedQueue, 1);
-
-        setuploadPayloads([...payloads]);
-        localStorage.setItem("uploadPayloads", JSON.stringify(payloads));
-        handleClose(); // Đóng modal nếu cần
-      } else {
-        // Các lỗi khác
-        payloads[selectedQueue] = {
-          ...payloads[selectedQueue],
-          status: "error",
-          errorMessage: errorMessage,
-          retryCount: (payloads[selectedQueue].retryCount || 0) + 1,
-          lastTried: new Date().toISOString(),
-        };
-
-        setuploadPayloads([...payloads]);
-        setQueueInfo(payloads[selectedQueue]);
-        localStorage.setItem("uploadPayloads", JSON.stringify(payloads));
-
-        showError(`Upload thất bại: ${errorMessage}`);
-      }
     } finally {
       setRetryingIndex(null);
     }
@@ -206,13 +153,13 @@ const QueueViewer = () => {
                 <div className="absolute inset-0 backdrop-blur-[2px] bg-black/40 flex items-center justify-center z-10"></div>
 
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-                  {queueInfo?.status === "uploading" && (
+                  {queueInfo?.status === "processing" && (
                     <LoadingOverlay color="white" />
                   )}
                   {queueInfo?.status === "done" && (
                     <Check className="text-green-400 w-6 h-6 animate-bounce" />
                   )}
-                  {queueInfo?.status === "error" && (
+                  {queueInfo?.status === "failed" && (
                     <div
                       className="flex flex-col items-center justify-center text-error cursor-pointer"
                       onClick={handleRetry}

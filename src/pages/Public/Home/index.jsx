@@ -2,74 +2,108 @@ import { lazy, Suspense, useState } from "react";
 import { Download, UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import "./styles.css";
-const NotificationPrompt = lazy(() => import("@/components/ui/NotificationPrompt"));
-const FeatureCardMarquee = lazy(() => import("@/components/ui/Marquee/FeatureCardMarquee"));
+import { CONFIG } from "@/config";
+const NotificationPrompt = lazy(() =>
+  import("@/components/ui/NotificationPrompt")
+);
+const FeatureCardMarquee = lazy(() =>
+  import("@/components/ui/Marquee/FeatureCardMarquee")
+);
 const StepsSection = lazy(() => import("./StepsSection"));
 
 const Home = () => {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className="flex flex-col py-5 items-center justify-center min-h-screen w-full text-center bg-gradient-to-r from-blue-400 to-purple-500">
-      <section className="w-full max-w-screen-xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-y-0 gap-x-12 items-start">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full text-center bg-grid">
+      <section className="w-full max-w-screen-2xl mx-auto px-4 pt-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-10 md:gap-y-0 gap-x-12 items-center min-h-[84vh]">
           {/* LEFT */}
           <div className="flex flex-col justify-center gap-4 md:gap-6 text-left md:pr-8">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight tracking-tight relative h-[55px] md:h-[65px] lg:h-[70px]">
-              <span className="absolute word-rotate  whitespace-nowrap text-white">
+              <span className="absolute word-rotate whitespace-nowrap text-white">
                 <span>Trải nghiệm</span>
                 <span>Khám phá</span>
                 <span>Sáng tạo</span>
                 <span>Chia sẻ</span>
               </span>
             </h1>
+
             <h2 className="text-5xl inline-block no-select md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight -mb-3">
-              <span className="no-select font-lovehouse text-white">
+              <span className="no-select font-purrfect text-white">
                 Locket Camera
               </span>
             </h2>
 
             <p className="text-white/90 text-base md:text-lg leading-relaxed">
-              Trải nghiệm "Locket Camera" ngay trên trình duyệt! Ghi lại khoảnh
-              khắc, thêm caption cực chất và chia sẻ tức thì chỉ với vài thao
-              tác đơn giản. Hoặc thêm ứng dụng vào màn hình chính của bạn.
+              Ghi lại khoảnh khắc, thêm caption cực chất và chia sẻ ngay tức thì
+              – tất cả chỉ với vài thao tác đơn giản trên <b>Locket Camera</b>.
+              Bạn có thể dùng trực tiếp trên trình duyệt hoặc thêm ứng dụng vào
+              màn hình chính để tiện lợi hơn.
             </p>
 
-            <p className="text-white text-base md:text-lg font-medium animate-fade-in delay-200">
-              Bạn cần đăng nhập để sử dụng chức năng trên trang này!
+            <p className="text-white/80 text-sm italic">
+              “Locket Dio” là dự án cá nhân, hoạt động độc lập. Không liên kết
+              với bên thứ ba nào trừ khi có thông báo chính thức từ Dio.
             </p>
-            <p className="text-white/60 text-sm italic">
-              Locket Dio là một dự án cá nhân hoạt động độc lập. Mọi hoạt động
-              trên trang không liên kết với bất kỳ bên thứ ba nào, trừ khi có
-              thông báo từ Dio.
+
+            <p className="text-white/90 text-sm font-semibold space-y-1">
+              <span className="block">
+                ❗ Mọi giao dịch mua bán “quyền sử dụng” hay “truy cập web”
+                không do Dio ủy quyền đều là <b>gian lận</b>.
+              </span>
+              <span className="block">
+                • Nếu bạn phải trả phí để truy cập trang web này thì thì đó là
+                dấu hiệu của scam (lừa đảo).
+              </span>
+              <span className="block">
+                • Nếu phát hiện ai đó đang kinh doanh website này, vui lòng báo
+                cáo với{" "}
+                <Link to={"/contact"} className="underline">
+                  Quản trị viên
+                </Link>
+                .
+              </span>
+              <span className="block">
+                • Danh sách cá nhân được uỷ quyền{" "}
+                <a
+                  href={CONFIG.app.docs.personal_authorization}
+                  rel="noopener noreferrer"
+                  target="__blank"
+                  className="underline"
+                >
+                  Tìm hiểu thêm
+                </a>
+                .
+              </span>
             </p>
 
             <div className="flex flex-wrap gap-3 mt-2 animate-fade-in delay-400">
               <Link
                 to={"/login"}
-                className="px-8 py-3 bg-white text-blue-600 font-semibold text-base md:text-lg rounded-full shadow-lg hover:bg-gray-100 transition-all duration-300 hover:scale-105"
+                className="px-4 py-3 bg-white text-blue-600 font-semibold rounded-full shadow-lg hover:bg-gray-100 transition-all duration-300 hover:scale-105"
               >
-                Login now
+                Đăng nhập ngay
               </Link>
               <Link
-                to={"/download"} // tuỳ link download bạn xử lý
-                className="px-8 py-3 rotate-[3deg] gradient-effect text-white font-semibold text-base md:text-lg rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-105"
+                to={"/download"}
+                className="px-4 py-3 rotate-[1deg] gradient-effect text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 hover:scale-105"
               >
-                Add to Screen
+                Thêm vào màn hình
               </Link>
             </div>
           </div>
 
           {/* RIGHT */}
-          <div className="flex justify-center animate-fade-in-up animation-delay-500 md:pl-6 no-select">
-            <div className="relative transform hover:scale-105 transition-transform duration-500 pt-6.5">
+          <div className="flex items-center justify-center h-full w-full md:pl-6 no-select -mb-10">
+            <div className="relative transform hover:scale-105 transition-transform duration-500">
               <img
                 src="https://cdn.locket-dio.com/v1/images/double-phone-view-locketdio.webp"
                 alt="Locket Dio WebApp Preview"
                 onLoad={() => setLoaded(true)}
                 className={`
-            w-full max-w-sm lg:max-w-sm xl:max-w-md h-auto object-contain drop-shadow-2xl
-            transition-opacity duration-500 ease-in-out float-up-down 
+            md:w-[380px] lg:w-[400px] h-auto object-contain 
+            drop-shadow-2xl transition-opacity duration-500 ease-in-out float-up-down
             ${loaded ? "opacity-100" : "opacity-0"}
           `}
               />

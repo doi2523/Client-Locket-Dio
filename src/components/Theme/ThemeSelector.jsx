@@ -1,63 +1,11 @@
-import { useState, useEffect } from "react";
-
-const themes = [
-  "light",
-  "dark",
-  "cupcake",
-  "bumblebee",
-  "emerald",
-  "corporate",
-  "synthwave",
-  "retro",
-  "valentine",
-  "halloween",
-  "garden",
-  "forest",
-  "lofi",
-  "pastel",
-  "fantasy",
-  "wireframe",
-  "black",
-  "luxury",
-  "dracula",
-  "cmyk",
-  "autumn",
-  "business",
-  "acid",
-  "lemonade",
-  "night",
-  "coffee",
-  "winter",
-];
+import { CONFIG } from "@/config";
+import { useTheme } from "@/hooks/useTheme";
 
 const ThemeSelector = () => {
-  const [theme, setTheme] = useState(
-    localStorage.getItem("theme") || "default"
-  );
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-    // Lấy màu thực tế từ biến CSS
-    const computedStyle = getComputedStyle(document.documentElement);
-    const baseColor =
-      computedStyle.getPropertyValue("--color-base-100")?.trim() || "#ffffff";
-
-    // Cập nhật meta theme-color
-    const metaTheme = document.querySelector('meta[name="theme-color"]');
-    if (metaTheme) {
-      metaTheme.setAttribute("content", baseColor);
-    } else {
-      const newMeta = document.createElement("meta");
-      newMeta.name = "theme-color";
-      newMeta.content = baseColor;
-      document.head.appendChild(newMeta);
-    }
-  }, [theme]);
+  const { theme, changeTheme } = useTheme();
 
   return (
     <div className="w-full flex justify-center">
-      {/* Custom Theme */}
       <div className="w-full">
         <h1 className="font-lovehouse text-base-content text-center text-3xl font-semibold">
           Setting Theme
@@ -69,16 +17,16 @@ const ThemeSelector = () => {
           </legend>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[400px] overflow-y-auto px-4 py-3">
-            {themes.map((t) => (
+            {CONFIG.ui.themes.map((t) => (
               <label
                 key={t}
                 className={`flex flex-col items-center gap-2 p-2 rounded-lg shadow-sm transition-all duration-300
-            bg-base-100 hover:bg-base-300 
-            ${
-              theme === t
-                ? "outline-3 scale-80 outline-dotted outline-primary opacity-70 cursor-not-allowed"
-                : "cursor-pointer"
-            }`}
+                  bg-base-100 hover:bg-base-300 
+                  ${
+                    theme === t
+                      ? "outline-3 scale-80 outline-dotted outline-primary opacity-70 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`}
                 data-theme={t}
               >
                 <div className="grid grid-cols-5 grid-rows-3 w-30 h-12 rounded-lg overflow-hidden border border-gray-300">
@@ -116,7 +64,7 @@ const ThemeSelector = () => {
                   className="radio radio-sm hidden"
                   value={t}
                   checked={theme === t}
-                  onChange={() => setTheme(t)}
+                  onChange={() => changeTheme(t)}
                 />
               </label>
             ))}

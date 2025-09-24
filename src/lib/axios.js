@@ -220,10 +220,6 @@ api.interceptors.response.use(
       );
     }
 
-    if (status === 409) {
-      showInfo(message || "Tệp này đã được xử lý trước đó.");
-    }
-
     if (status === 500) {
       showInfo(message || "Lỗi máy chủ. Vui lòng thử lại sau.");
     }

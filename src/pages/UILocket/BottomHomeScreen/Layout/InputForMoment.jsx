@@ -8,6 +8,7 @@ import { AuthContext } from "@/context/AuthLocket";
 import LoadingRing from "@/components/ui/Loading/ring";
 import { formatTimeAgo } from "@/utils";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
+import { getFriendDetail } from "@/cache/friendsDB";
 
 const LoadingActivityItem = () => (
   <li className="flex items-center gap-3 animate-pulse">
@@ -98,26 +99,13 @@ const InputForMoment = () => {
     setReactionPower(0);
   };
 
-  const getUserFromFriendDetails = (uid) => {
-    if (!uid) return null;
-    try {
-      const data = localStorage.getItem("friendDetails");
-      if (!data) return null;
-      const users = JSON.parse(data);
-      return users.find((user) => user.uid === uid) || null;
-    } catch (error) {
-      console.error("Lỗi khi đọc friendDetails:", error);
-      return null;
-    }
-  };
-
   useEffect(() => {
     const fetchMomentAndUser = async () => {
       try {
         setIsLoadingMoment(true);
         const moment = await getMomentById(selectedMomentId);
         setMomentUser(moment.user);
-        const data = await getUserFromFriendDetails(moment.user);
+        const data = await getFriendDetail(moment.user);
         setUserDetail(data);
       } catch (err) {
         console.error("Lỗi khi lấy moment hoặc user:", err);
@@ -165,7 +153,7 @@ const InputForMoment = () => {
           // Map qua từng view, gắn thêm userInfo + reaction (nếu có)
           const merged = await Promise.all(
             views.map(async (view) => {
-              const userInfo = await getUserFromFriendDetails(view.user);
+              const userInfo = await getFriendDetail(view.user);
               const reaction = reactions.find((r) => r.user === view.user);
 
               return {
@@ -254,6 +242,19 @@ const InputForMoment = () => {
                   <X className="w-6 h-6" />
                 </button>
               </div>
+              {/* Tổng kết */}
+              {!isLoadingActivity && activity.length > 0 && (
+                <div className="mb-4 text-base-content font-medium">
+                  <p>
+                    - Tổng người xem:{" "}
+                    {activity.filter((i) => i.viewedAt).length}
+                  </p>
+                  <p>
+                    - Tổng người đã thả cảm xúc:{" "}
+                    {activity.filter((i) => i.reaction).length}
+                  </p>
+                </div>
+              )}
 
               {/* Nội dung cuộn */}
               <div className="overflow-y-auto h-[calc(100%-3rem)]">

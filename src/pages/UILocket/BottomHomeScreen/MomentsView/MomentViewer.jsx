@@ -58,21 +58,6 @@ const MomentViewer = () => {
     };
   }, [hasValidMoment, isAnimating]);
 
-  const getUserFromFriendDetails = (uid) => {
-    if (!uid) return null;
-
-    try {
-      const data = localStorage.getItem("friendDetails");
-      if (!data) return null;
-
-      const users = JSON.parse(data);
-      return users.find((user) => user.uid === uid) || null;
-    } catch (error) {
-      console.error("Lỗi khi đọc friendDetails từ localStorage:", error);
-      return null;
-    }
-  };
-
   const [isMediaLoading, setIsMediaLoading] = useState(true);
 
   if (!hasValidMoment && !isAnimating) return null;
@@ -160,7 +145,7 @@ const MomentViewer = () => {
 
       {/* Info user + date */}
       <UserInfo
-        user={getUserFromFriendDetails(currentMoment?.user)}
+        user={currentMoment?.user}
         me={me}
         date={currentMoment?.date}
       />

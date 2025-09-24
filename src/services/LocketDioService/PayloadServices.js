@@ -64,6 +64,7 @@ export const createRequestPayloadV5 = async (
       options: optionsData,
       model: "Version-UploadmediaV3.1",
       mediaInfo,
+      contentType: previewType,
     };
 
     return payload;

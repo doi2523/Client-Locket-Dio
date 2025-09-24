@@ -17,8 +17,8 @@ export const CONFIG = {
   app: {
     name: "Locket Dio", // Tên app hiển thị
     fullName: "Locket Dio - Đăng ảnh & Video lên Locket", // Tên đầy đủ
-    clientVersion: "Beta2.5.4.0", // Version client
-    apiVersion: "V2.2.0", // Version API
+    clientVersion: "Beta2.5.4.0.5", // Version client
+    apiVersion: "V2.2.1", // Version API
     env: import.meta.env.MODE, // development | production
     camera: {
       limits: {
@@ -61,9 +61,18 @@ export const CONFIG = {
       accountNumber: "1051852055",
       accountName: "DAO VAN DOI",
     },
+    docs: {
+      personal_authorization: "https://docs.google.com/document/d/1c2ttnmPyR3YIYooMj69MlT1XAhCO_xMytHztzi6EaEY/edit?usp=sharing"
+    }
   },
   ui: {
     theme: "light", // hoặc "dark"
+    themes: [
+      "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
+      "synthwave", "retro", "valentine", "halloween", "garden", "forest",
+      "lofi", "pastel", "fantasy", "wireframe", "black", "luxury", "dracula",
+      "cmyk", "autumn", "business", "acid", "lemonade", "night", "coffee", "winter",
+    ],
     maxToastVisible: 3,
     dateFormat: "DD/MM/YYYY",
     timeFormat: "HH:mm:ss",

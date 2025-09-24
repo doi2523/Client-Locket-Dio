@@ -4,7 +4,7 @@ import { AuthContext } from "@/context/AuthLocket";
 import BottomToolBar from "./BottomToolBar";
 import DeleteFriendsTool from "./tools/DeleteFriendsTool";
 import { TbUserStar } from "react-icons/tb";
-import CelebrateTool from "./tools/CelebrateTool";
+import CelebrityTool from "./tools/CelebrityTool";
 
 const toolsList = [
   {
@@ -14,10 +14,10 @@ const toolsList = [
     content: <DeleteFriendsTool />,
   },
   {
-    key: "celebrate",
-    label: "Celebrate Tool",
+    key: "celebrity",
+    label: "Celebrity Tool",
     icon: <TbUserStar />,
-    content: <CelebrateTool />,
+    content: <CelebrityTool />,
   },
   {
     key: "editor",
@@ -38,7 +38,7 @@ export default function ToolsLocket() {
   const [activeTab, setActiveTab] = useState(toolsList[0].key);
 
   return (
-    <div className="flex flex-col min-h-[84vh] w-full bg-base-200 p-3">
+    <div className="flex flex-col min-h-[84vh] w-full p-3">
       {/* Title */}
       <h1 className="text-3xl font-bold text-primary text-center">
         🧰 ToolsLocket by Dio

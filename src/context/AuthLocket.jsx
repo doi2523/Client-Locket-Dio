@@ -7,210 +7,95 @@ import React, {
 } from "react";
 import PropTypes from "prop-types";
 import * as utils from "@/utils";
-import {
-  getListIdFriends,
-  GetUserData,
-  loadFriendDetails,
-  updateUserInfo,
-  GetLastestMoment,
-} from "@/services";
+import { GetUserData, updateUserInfo } from "@/services";
+import { fetchAndSyncFriendDetails } from "@/utils/SyncData/friendSyncUtils";
+import { fetchStreak } from "@/utils/SyncData/streakUtils";
+import { getAllFriendDetails } from "@/cache/friendsDB";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(utils.getUser());
   const [authTokens, setAuthTokens] = useState(() => utils.getToken());
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  // Refs để tracking trạng thái fetch
-  const hasFetchedFriends = useRef(false);
   const hasFetchedPlan = useRef(false);
-  const hasFetchedUploadStats = useRef(false);
-  const isConnected = useRef(false);
-
-  const [friends, setFriends] = useState(() => {
-    const saved = localStorage.getItem("friendsList");
-    return saved ? JSON.parse(saved) : [];
-  });
 
   const [friendDetails, setFriendDetails] = useState([]);
 
   const [userPlan, setUserPlan] = useState(null);
-
-  const [uploadStats, setUploadStats] = useState(() => {
-    const saved = localStorage.getItem("uploadStats");
-    return saved ? JSON.parse(saved) : null;
-  });
-
-  const [theme, setTheme] = useState(
-    localStorage.getItem("theme") || "default"
+  const [uploadStats, setUploadStats] = useState(null);
+  const [streak, setStreak] = useState(() =>
+    JSON.parse(localStorage.getItem("streak") || "null")
   );
-
-  const [streak, setStreak] = useState(() => {
-    const saved = localStorage.getItem("streak");
-    return saved ? JSON.parse(saved) : null;
-  });
-
-  // Chỉ ping API một lần khi component mount
-  // useEffect(() => {
-  //   if (!isConnected.current) {
-  //     api
-  //       .get("/")
-  //       .then(() => {
-  //         console.log("✅ Connected");
-  //         isConnected.current = true;
-  //       })
-  //       .catch((err) => console.warn("❌ Ping lỗi", err));
-  //   }
-  // }, []);
 
   useEffect(() => {
     localStorage.removeItem("failedUploads");
+    localStorage.removeItem("friendsList");
+    localStorage.removeItem("uploadedMoments");
+    localStorage.removeItem("uploadedPayloads");
   }, []);
 
-  // Fetch friends chỉ khi cần thiết
   useEffect(() => {
-    const fetchFriends = async () => {
-      // Kiểm tra điều kiện cần thiết để fetch
-      if (!user || !authTokens?.idToken || friends.length > 0) {
-        setLoading(false);
-        return;
-      }
+    const loadFriends = async () => {
+      if (!user || !authTokens?.idToken) return;
 
-      // Kiểm tra localStorage trước
-      const savedFriends = localStorage.getItem("friendsList");
-      if (savedFriends) {
-        try {
-          const parsed = JSON.parse(savedFriends);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setFriends(parsed);
-            hasFetchedFriends.current = true;
-            setLoading(false);
-            return;
-          }
-        } catch (error) {
-          console.error("❌ Parse friendsList error:", error);
-        }
-      }
+      // 1. Lấy dữ liệu local trước để hiển thị ngay
+      const localFriends = await getAllFriendDetails();
+      setFriendDetails(localFriends);
 
-      // Fetch từ API
-      try {
-        const friendsList = await getListIdFriends();
-        setFriends(friendsList);
-        localStorage.setItem("friendsList", JSON.stringify(friendsList));
-        hasFetchedFriends.current = true;
-      } catch (error) {
-        console.error("❌ Lỗi khi fetch friends:", error);
-      } finally {
-        setLoading(false);
-      }
+      // 2. Sau đó đồng bộ với server (background update)
+      const updatedDetails = await fetchAndSyncFriendDetails();
+      setFriendDetails(updatedDetails);
     };
 
-    fetchFriends();
-  }, [user, authTokens?.idToken, friends.length]);
+    loadFriends();
+  }, [user, authTokens?.idToken]);
 
-  //Lấy thông tin hiện tại của người dùng
+  // 🔹 Fetch user plan
   useEffect(() => {
     if (!user || !authTokens?.idToken || !authTokens?.localId) return;
 
     const init = async () => {
       if (!hasFetchedPlan.current) {
         const userData = await GetUserData();
-
         setUserPlan(userData);
         setUploadStats(userData?.upload_stats);
-        fetchStreak();
+        fetchStreak(setStreak);
       }
-
-      await updateUserInfo(user); // Gọi sau khi fetchPlan hoàn tất
+      await updateUserInfo(user);
     };
 
     init();
   }, [user, authTokens?.idToken, authTokens?.localId]);
 
-  const fetchStreak = async () => {
-    try {
-      const data = await GetLastestMoment();
-      if (data?.streak) {
-        setStreak(data.streak);
-        localStorage.setItem("streak", JSON.stringify(data.streak));
-      }
-    } catch (error) {
-      console.error("Error fetching streak:", error);
-    }
-  };
-
-  // Load friend details và cache thông minh
-  useEffect(() => {
-    const fetchDetails = async () => {
-      const data = await loadFriendDetails(friends);
-      setFriendDetails(data);
-    };
-
-    fetchDetails();
-  }, [friends]);
-
-  // Reset context và refs
+  // 🔹 Reset context
   const resetAuthContext = () => {
     setUser(null);
     setAuthTokens(null);
-    setFriends([]);
     setFriendDetails([]);
     setUserPlan(null);
     setUploadStats(null);
 
-    // Reset refs
-    hasFetchedFriends.current = false;
     hasFetchedPlan.current = false;
-    hasFetchedUploadStats.current = false;
-    isConnected.current = false;
 
-    // Clear storage với timestamp
     utils.removeUser();
     utils.removeToken();
     localStorage.removeItem("friendsList");
-    localStorage.removeItem("friendDetails");
-    localStorage.removeItem("friendDetailsTimestamp");
     localStorage.removeItem("userPlan");
-    localStorage.removeItem("userPlanTimestamp");
     localStorage.removeItem("uploadStats");
   };
 
-  // Reset refs khi user thay đổi
-  useEffect(() => {
-    hasFetchedFriends.current = false;
-    hasFetchedPlan.current = false;
-    hasFetchedUploadStats.current = false;
-  }, [user?.uid]); // Chỉ reset khi user ID thay đổi
-
-  // Cập nhật theme khi thay đổi
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-    // Lấy màu thực tế từ biến CSS
-    const computedStyle = getComputedStyle(document.documentElement);
-    const baseColor =
-      computedStyle.getPropertyValue("--color-base-100")?.trim() || "#ffffff";
-
-    // Cập nhật meta theme-color
-    const metaTheme = document.querySelector('meta[name="theme-color"]');
-    if (metaTheme) {
-      metaTheme.setAttribute("content", baseColor);
-    } else {
-      const newMeta = document.createElement("meta");
-      newMeta.name = "theme-color";
-      newMeta.content = baseColor;
-      document.head.appendChild(newMeta);
-    }
-  }, [theme]);
+  const refreshStreak = (newStreak) => {
+    setStreak(newStreak);
+    localStorage.setItem("streak", JSON.stringify(newStreak));
+  };
 
   const contextValue = useMemo(
     () => ({
       user,
       setUser,
       loading,
-      friends,
-      setFriends,
       friendDetails,
       setFriendDetails,
       userPlan,
@@ -223,17 +108,9 @@ export const AuthProvider = ({ children }) => {
       streak,
       setStreak,
       fetchStreak,
+      refreshStreak,
     }),
-    [
-      user,
-      loading,
-      friends,
-      friendDetails,
-      userPlan,
-      authTokens,
-      uploadStats,
-      streak,
-    ]
+    [user, loading, friendDetails, userPlan, authTokens, uploadStats, streak]
   );
 
   return (

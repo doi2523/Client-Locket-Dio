@@ -1,76 +1,67 @@
 /**
- * Chuẩn hoá mảng dữ liệu moments từ Firestore thành định dạng dễ dùng hơn
- * @param {Array} data Mảng moments thô từ Firestore
- * @returns {Array} Mảng moments đã chuẩn hoá
+ * Chuẩn hoá một moment từ Firestore thành định dạng dễ dùng hơn
+ * @param {Object} data Object moment thô từ Firestore
+ * @returns {Object|null} Moment đã chuẩn hoá hoặc null nếu input không hợp lệ
  */
-export function normalizeMoments(data) {
-  if (!Array.isArray(data)) return [];
+export function normalizeMoment(data) {
+  if (!data || typeof data !== "object") return null;
 
-  return data.map((item) => {
-    const {
-      canonical_uid,
-      id,
-      user,
-      image_url,
-      video_url = null,
-      thumbnail_url,
-      overlays = [],
-      caption,
-      md5,
-      sent_to_all,
-      show_personally,
-      date,
-    } = item;
+  const {
+    canonical_uid,
+    id,
+    user,
+    image_url,
+    video_url = null,
+    thumbnail_url,
+    overlays = [],
+    caption,
+    md5,
+    sent_to_all,
+    show_personally,
+    date,
+  } = data;
 
-    // ID có thể là 'id' hoặc 'canonical_uid'
-    const momentId = canonical_uid || id || null;
+  const momentId = canonical_uid || id || null;
 
-    const firestoreDate =
-      date && date._seconds ? new Date(date._seconds * 1000) : null;
+  const firestoreDate = date?._seconds ? new Date(date._seconds * 1000) : null;
+  const dateVNString = firestoreDate
+    ? firestoreDate.toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })
+    : null;
 
-    const dateVNString = firestoreDate
-      ? firestoreDate.toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })
-      : null;
-
-    // Lấy captions từ overlays
-    let captions = [];
-    if (Array.isArray(overlays)) {
-      captions = overlays
-        .filter((overlay) => overlay.overlay_type === "caption")
-        .map((overlay) => {
-          const { text, text_color, icon, background } = overlay.data || {};
+  // Lấy captions từ overlays
+  const captions = Array.isArray(overlays)
+    ? overlays
+        .filter((o) => o.overlay_type === "caption")
+        .map((o) => {
+          const { text, text_color, icon, background } = o.data || {};
           return { text, text_color, icon, background };
-        });
-    }
+        })
+    : [];
 
-    // Nếu không có overlay nhưng có caption dạng chuỗi -> đẩy vào captions
-    if (
-      captions.length === 0 &&
-      typeof caption === "string" &&
-      caption.trim() !== ""
-    ) {
-      captions.push({
-        text: caption,
-        text_color: "#FFFFFF",
-        icon: null,
-        background: { material_blur: "ultra_thin", colors: [] },
-      });
-    }
+  // Nếu không có overlay nhưng có caption dạng chuỗi
+  if (!captions.length && typeof caption === "string" && caption.trim() !== "") {
+    captions.push({
+      text: caption,
+      text_color: "#FFFFFF",
+      icon: null,
+      background: { material_blur: "ultra_thin", colors: [] },
+    });
+  }
 
-    return {
-      id: momentId,
-      user,
-      image_url,
-      video_url,
-      thumbnail_url,
-      date: dateVNString,
-      md5: md5 || null,
-      sent_to_all: !!sent_to_all,
-      show_personally: !!show_personally,
-      captions,
-    };
-  });
+  return {
+    id: momentId,
+    user,
+    image_url,
+    video_url,
+    thumbnail_url,
+    date: dateVNString,
+    md5: md5 || null,
+    sent_to_all: !!sent_to_all,
+    show_personally: !!show_personally,
+    captions,
+  };
 }
+
 
 //   [
 //     {

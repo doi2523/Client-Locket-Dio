@@ -1,12 +1,18 @@
 import { X, Sparkles } from "lucide-react";
 import * as services from "@/services";
 import { useApp } from "@/context/AppContext.jsx";
-import { useCallback, useState } from "react";
-import { showError, showInfo, showSuccess } from "@/components/Toast/index.jsx";
+import { useCallback, useContext, useState } from "react";
+import { showError } from "@/components/Toast/index.jsx";
 import { defaultPostOverlay } from "@/stores/usePost.js";
 import UploadStatusIcon from "./UploadStatusIcon.jsx";
 import { getMaxUploads } from "@/hooks/useFeature.js";
-import { useUploadQueue } from "@/hooks/useUploadQueue.js";
+import {
+  SonnerError,
+  SonnerSuccess,
+  SonnerWarning,
+} from "@/components/ui/SonnerToast";
+import { enqueuePayload, getQueuePayloads } from "@/process/uploadQueue.js";
+import { AuthContext } from "@/context/AuthLocket.jsx";
 
 const MediaControls = () => {
   const { navigation, post, useloading, camera } = useApp();
@@ -32,10 +38,10 @@ const MediaControls = () => {
     setuploadPayloads,
   } = post;
   const { setCameraActive } = camera;
+  const { setStreak } = useContext(AuthContext);
 
   //Nhap hooks
   const { storage_limit_mb } = getMaxUploads();
-  const { handleQueueUpload, isProcessingQueue } = useUploadQueue();
 
   // State để quản lý hiệu ứng loading và success
   const [isSuccess, setIsSuccess] = useState(false);
@@ -71,7 +77,7 @@ const MediaControls = () => {
       return;
     }
     if (isSizeMedia > maxFileSize) {
-      showError(
+      SonnerWarning(
         `${
           isImage ? "Ảnh" : "Video"
         } vượt quá dung lượng. Tối đa ${maxFileSize}MB.`
@@ -90,63 +96,43 @@ const MediaControls = () => {
         previewType,
         postOverlay,
         audience,
-        selectedRecipients,
+        selectedRecipients
       );
 
       if (!payload) {
         throw new Error("Không tạo được payload. Hủy tiến trình tải lên.");
       }
 
-      // Thêm thông tin bổ sung vào payload
-      payload.contentType = previewType;
-      payload.createdAt = new Date().toISOString();
-      payload.status = "uploading"; // Đánh dấu trạng thái là đang upload
+      // Lưu payload vào memory
+      await enqueuePayload(payload, setStreak);
 
-      // Lưu payload vào localStorage
-      const savedPayloads = JSON.parse(
-        localStorage.getItem("uploadPayloads") || "[]"
-      );
-      savedPayloads.push(payload);
-      localStorage.setItem("uploadPayloads", JSON.stringify(savedPayloads));
-      setuploadPayloads(savedPayloads);
       // Kết thúc loading và hiển thị success
       setUploadLoading(false);
       setIsSuccess(true);
       // Hiển thị thông báo thành công
-      showSuccess(
-        `Đã đưa bài vào hàng chờ. Tổng cộng ${savedPayloads.length} bài đang chờ xử lý.`
+      SonnerSuccess(
+        "Thêm vào hàng đợi!", // Title
+        "Bài viết đang được xử lý..." // Body
       );
 
+      // Cập nhật danh sách payloads từ IndexedDB
+      const currentPayloads = await getQueuePayloads();
+      setuploadPayloads(currentPayloads);
       // Reset success state sau 1 giây
       setTimeout(() => {
         setIsSuccess(false);
         handleDelete();
       }, 1000);
-
-      // Tự động bắt đầu xử lý hàng đợi nếu chưa chạy
-      if (!isProcessingQueue) {
-        console.log("🚀 Tự động bắt đầu xử lý hàng đợi upload...");
-        setTimeout(() => {
-          handleQueueUpload();
-        }, 1500); // Delay nhỏ để UI kịp cập nhật
-      }
     } catch (error) {
       setUploadLoading(false);
       setIsSuccess(false);
 
       const errorMessage =
         error?.response?.data?.message || error.message || "Lỗi không xác định";
-      showError(`Tạo payload thất bại: ${errorMessage}`);
+      SonnerError("Tạo payload thất bại!", `${errorMessage}`);
 
       console.error("❌ Tạo payload thất bại:", error);
     }
-  };
-
-  // Hàm để xóa tất cả hàng đợi (nếu cần)
-  const clearAllQueues = () => {
-    localStorage.removeItem("uploadPayloads");
-    localStorage.removeItem("failedUploads");
-    showSuccess("Đã xóa tất cả hàng đợi upload.");
   };
 
   return (

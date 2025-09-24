@@ -1,6 +1,6 @@
 import React from "react";
-import { Code2, Mail, Coffee, Globe } from "lucide-react";
-import ImageMarquee from "../../../components/ui/Marquee/LanguageMarquee";
+import { Code2, Mail, Globe } from "lucide-react";
+import ImageMarquee from "@/components/ui/Marquee/LanguageMarquee";
 import {
   FaReact,
   FaGithub,
@@ -10,7 +10,6 @@ import {
   FaNodeJs,
 } from "react-icons/fa";
 import { RiTailwindCssFill, RiVercelFill } from "react-icons/ri";
-import DonateHistory from "../../Public/Sponsors";
 
 const AboutMe = () => {
   return (
@@ -20,7 +19,7 @@ const AboutMe = () => {
         {/* Avatar + Name */}
         <div className="flex flex-col items-center mb-10">
           <img
-            src="https://cdn.locket-dio.space/v1/images/avt/avtdio.webp" // đổi thành avatar của bạn
+            src="https://cdn.locket-dio.com/v1/images/avt/avtdio.webp" // đổi thành avatar của bạn
             alt="Dio Avatar"
             className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-lg mb-4"
             loading="lazy"

@@ -1,33 +1,22 @@
 import React, { createContext, useEffect, useState } from "react";
-import LoadingPage from "../components/pages/LoadingPage";
+import { applyTheme } from "@/utils/theme/themeUtils";
 
 export const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState("light");
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-    const storedTheme = localStorage.getItem("theme") || "light";
-    setTheme(storedTheme);
-    document.documentElement.setAttribute("data-theme", storedTheme);
-  }, []);
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("theme") || "light"
+  );
 
   const changeTheme = (newTheme) => {
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
-    document.documentElement.setAttribute("data-theme", newTheme);
-    // Cập nhật biến CSS
-    document.documentElement.style.setProperty(
-      "--theme-color",
-      getThemeColor(newTheme)
-    );
+    applyTheme(newTheme); // chỉ cần gọi ở đây thôi
   };
 
-  if (!isMounted) {
-    return <LoadingPage isLoading={true} />;
-  }
+  useEffect(() => {
+    applyTheme(theme);
+  }, []); // chỉ chạy 1 lần khi mount
 
   return (
     <ThemeContext.Provider value={{ theme, changeTheme }}>

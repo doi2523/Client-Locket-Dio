@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Bell, X } from "lucide-react";
 import { API_URL } from "@/utils";
+import { TbPinned } from "react-icons/tb";
 
 const highlightWords = ["Server01", "Telegram", "Discord", "Messenger"];
 
@@ -80,7 +81,17 @@ const FloatingNotification = () => {
         const formatted = data.map((item) => ({
           ...item,
           time: new Date(item.created_at).toLocaleString(),
+          createdAt: new Date(item.created_at).getTime(),
         }));
+
+        // Sắp xếp:
+        // - pinned trước
+        // - cùng pinned thì sort theo createdAt DESC (mới nhất trước)
+        formatted.sort((a, b) => {
+          if (a.pinned && !b.pinned) return -1;
+          if (!a.pinned && b.pinned) return 1;
+          return b.createdAt - a.createdAt;
+        });
 
         if (formatted.length > 0) {
           setShowNewNotificationAlert(true);
@@ -155,7 +166,7 @@ const FloatingNotification = () => {
       {/* Modal */}
       {showModal && (
         <div
-          className={`fixed inset-0 z-[60] flex items-center justify-center p-4 
+          className={`fixed inset-0 z-[60] shadow-md flex items-center justify-center p-4 
             bg-base-100/10 backdrop-blur-sm transition-opacity duration-300 
             ${animate ? "opacity-100" : "opacity-0"}`}
           onClick={closeModal}
@@ -163,7 +174,9 @@ const FloatingNotification = () => {
           <div
             className={`relative w-full max-w-lg bg-base-100 rounded-2xl shadow-2xl overflow-hidden 
               transform transition-all duration-300 
-              ${animate ? "scale-100 translate-y-0" : "scale-90 translate-y-4"}`}
+              ${
+                animate ? "scale-100 translate-y-0" : "scale-90 translate-y-4"
+              }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -172,7 +185,9 @@ const FloatingNotification = () => {
                 <div className="p-2 bg-white/20 rounded-lg">
                   <Bell className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-xl font-bold text-white">Thông báo</h2>
+                <h2 className="text-xl font-bold text-white">
+                  Thông báo
+                </h2>
               </div>
               <button
                 onClick={closeModal}
@@ -197,23 +212,31 @@ const FloatingNotification = () => {
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                <div className="bg-base-100">
                   {notifications.map((item, index) => (
                     <div
                       key={item.id}
-                      className={`p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 ${
-                        index === 0 ? "bg-base-300" : ""
-                      }`}
+                      className={`p-6 bg-base-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 rounded-2xl m-2 shadow 
+      ${index === 0 && !item.pinned ? "bg-base-300" : ""}`}
                     >
                       {item.title && (
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="relative flex items-center justify-between mb-2">
                           <h3 className="font-semibold text-base-content text-base leading-snug">
                             {item.title}
                           </h3>
-                          {index === 0 && (
+
+                          {/* Nếu item là thông báo đầu tiên KHÔNG GHIM → gắn "Mới nhất" */}
+                          {index === 0 && !item.pinned && (
                             <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
                               Mới nhất
                             </span>
+                          )}
+
+                          {item.pinned === true && (
+                            <TbPinned
+                              className="absolute -top-2 -right-2 text-red-600 rotate-30"
+                              size={25}
+                            />
                           )}
                         </div>
                       )}

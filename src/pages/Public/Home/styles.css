@@ -258,3 +258,14 @@
 .bounce-subtle {
   animation: pulseBounce 2s ease-in-out infinite;
 }
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px),
+    linear-gradient(to right, #3b82f6, #8b5cf6);
+  background-size: 40px 40px, 40px 40px, 100% 100%;
+  background-position: 0 20px, 20px 0, center;
+  background-color: #111;
+}
+

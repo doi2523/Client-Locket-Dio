@@ -1,30 +1,37 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Check, RotateCcw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import LoadingOverlay from "@/components/ui/Loading/LineSpinner";
+import { getQueuePayloads } from "@/process/uploadQueue";
 
-const UploadingQueue = ({
-  payloads = [],
-  setuploadPayloads,
-  handleLoaded,
-  setselectItems,
-}) => {
-  const { selectedQueue, setSelectedQueue } = useApp().post;
+const UploadingQueue = () => {
+  const [loadedItems, setLoadedItems] = useState([]);
+  const { selectedQueue, setSelectedQueue, uploadPayloads, setuploadPayloads } =
+    useApp().post;
 
+  const handleLoaded = (id) => {
+    setLoadedItems((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  };
   useEffect(() => {
     const timer = setInterval(() => {
-      const updated = payloads.filter((p) => p.status !== "done");
-      if (updated.length < payloads.length) {
-        localStorage.setItem("uploadPayloads", JSON.stringify(updated));
-        setuploadPayloads(updated);
-      }
+      const updateQueue = async () => {
+        try {
+          const currentPayloads = await getQueuePayloads(); // lấy tất cả payload từ DB
+          // lọc những payload chưa xong
+          setuploadPayloads(currentPayloads);
+        } catch (err) {
+          console.error("❌ Lỗi khi cập nhật queue:", err);
+        }
+      };
+
+      updateQueue();
     }, 3000);
 
     return () => clearInterval(timer);
-  }, [payloads]);
+  }, [uploadPayloads]);
 
-  if (payloads.length === 0) return null;
+  if (uploadPayloads.length === 0) return null;
 
   return (
     <>
@@ -37,7 +44,7 @@ const UploadingQueue = ({
         Page tham khảo lỗi
       </Link>
       <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mt-2">
-        {payloads.map((item, index) => {
+        {uploadPayloads.map((item, index) => {
           const media = item.mediaInfo;
           const status = item.status || "uploading";
           const isVideo = media?.type === "video";
@@ -83,11 +90,11 @@ const UploadingQueue = ({
 
               {/* Overlay theo trạng thái */}
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
-                {status === "uploading" && <LoadingOverlay color="white" />}
+                {status === "queued" && <LoadingOverlay color="white" />}
                 {status === "done" && (
                   <Check className="text-green-400 w-6 h-6 animate-bounce" />
                 )}
-                {status === "error" && (
+                {status === "failed" && (
                   <div className="flex flex-col items-center font-semibold text-error">
                     <RotateCcw strokeWidth={1.5} className={`w-12 h-12 `} />
                   </div>

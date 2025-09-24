@@ -21,13 +21,13 @@ export default function FloatingActions() {
         <MyBirthday />
       </Suspense> */}
 
-      <Suspense
+      {/* <Suspense
         fallback={
           <div className="animate-pulse w-12 h-12 bg-base-300 rounded-full" />
         }
       >
         <ContactSupportButton />
-      </Suspense>
+      </Suspense> */}
     </div>
   );
 }
