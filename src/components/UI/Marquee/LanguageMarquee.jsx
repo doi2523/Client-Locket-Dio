@@ -15,20 +15,13 @@ const ImageMarquee = () => {
 
   return (
     <div className="relative py-4 overflow-hidden disable-select">
-      <Marquee
-        speed={30}
-        gradient={true}
-        gradientColor={[248, 251, 253]} // màu trắng xanh nhạt như nền
-        gradientWidth={100}             // đủ rộng để thấy rõ hiệu ứng
-      >
+      <Marquee speed={25}>
         {images.map((src, index) => (
-          <div key={index} className="w-22 h-22 mx-2 flex justify-center items-center">
-            <img
-              src={src}
-              alt={`Image ${index}`}
-              className="object-contain w-full h-full"
-            />
-          </div>
+          <img
+            src={src}
+            alt={`Image ${index}`}
+            className="object-contain w-20 h-20 mx-2"
+          />
         ))}
       </Marquee>
     </div>

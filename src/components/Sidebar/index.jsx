@@ -109,12 +109,12 @@ const Sidebar = () => {
         { to: "/about", icon: Info, text: "Locket Dio" },
         { to: "/about-dio", icon: UserCircle, text: "Về Dio" },
         { to: "/newsfeed", icon: Newspaper, text: "Bảng tin", badge: "New" },
+        { to: "/download", icon: SquareArrowOutUpRight, text: "Cài đặt WebApp"},
       ],
     },
     {
       title: "Tài nguyên",
       items: [
-        { to: "/download", icon: SquareArrowOutUpRight, text: "Cài đặt WebApp"},
         { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "New" },
         { to: "/collection", icon: Package, text: "Thư viện phiên bản" },
         { to: "/sponsors", icon: Heart, text: "Ủng hộ dự án" },

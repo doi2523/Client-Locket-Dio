@@ -64,7 +64,7 @@ const Home = () => {
                 </Link>
                 .
               </span>
-              <span className="block">
+              {/* <span className="block">
                 • Danh sách cá nhân được uỷ quyền{" "}
                 <a
                   href={CONFIG.app.docs.personal_authorization}
@@ -75,7 +75,7 @@ const Home = () => {
                   Tìm hiểu thêm
                 </a>
                 .
-              </span>
+              </span> */}
             </p>
 
             <div className="flex flex-wrap gap-3 mt-2 animate-fade-in delay-400">
@@ -145,17 +145,17 @@ const Home = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {[
               {
-                number: "13.5K+",
+                number: "7K+",
                 label: "Người dùng hoạt động",
                 color: "from-blue-400 to-cyan-400",
               },
               {
-                number: "20K+",
+                number: "800K+",
                 label: "Ảnh & Video đã tạo",
                 color: "from-purple-400 to-pink-400",
               },
               {
-                number: "20GB+",
+                number: "15GB+",
                 label: "Dung lượng sử dụng mỗi ngày",
                 color: "from-green-400 to-emerald-400",
               },

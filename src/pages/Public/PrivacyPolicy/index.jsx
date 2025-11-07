@@ -112,11 +112,11 @@ const PrivacyPolicy = () => {
           <p>
             <strong>Website</strong> refers to Locket Dio, accessible from{" "}
             <a
-              href="https://locket-dio.space"
+              href="https://locket-dio.com"
               rel="external nofollow noopener"
               target="_blank"
             >
-              https://locket-dio.space
+              https://locket-dio.com
             </a>
           </p>
         </li>

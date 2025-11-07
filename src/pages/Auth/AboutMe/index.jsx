@@ -15,9 +15,9 @@ const AboutMe = () => {
   return (
     <>
       {" "}
-      <div className="min-h-screen flex flex-col px-6 items-center p-6">
+      <div className="min-h-screen flex flex-col items-center py-4">
         {/* Avatar + Name */}
-        <div className="flex flex-col items-center mb-10">
+        <div className="flex flex-col items-center mb-10 px-4">
           <img
             src="https://cdn.locket-dio.com/v1/images/avt/avtdio.webp" // đổi thành avatar của bạn
             alt="Dio Avatar"
@@ -33,7 +33,7 @@ const AboutMe = () => {
         </div>
 
         {/* About */}
-        <div className="max-w-3xl text-left mb-12">
+        <div className="max-w-3xl text-left mb-12 px-4">
           <p className="text-lg leading-relaxed">
             Mình là sinh viên năm cuối ngành CNTT, đam mê lập trình web và xây
             dựng sản phẩm thực tế.
