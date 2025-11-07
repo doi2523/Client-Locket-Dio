@@ -1,5 +1,5 @@
+import db from "@/cache/configDB";
 import {
-  friendDB,
   getFriendIds,
   getAllFriendDetails,
   setFriendDetailsBulk,
@@ -23,7 +23,7 @@ export const syncFriendsWithCache = async (apiFriends) => {
     const removedFriends = cachedIds.filter((f) => !apiUids.has(f.uid));
 
     if (newFriends.length > 0) {
-      await friendDB.friendIds.bulkPut(newFriends);
+      await db.friendIds.bulkPut(newFriends);
     }
     if (removedFriends.length > 0) {
       for (const f of removedFriends) {

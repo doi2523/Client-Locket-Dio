@@ -1,11 +1,8 @@
 // cache/momentDB.js
-import Dexie from "dexie";
+import db from "./configDB";
 
-export const momentDB = new Dexie("LocketMomentDB");
+const momentDB = db;
 
-momentDB.version(1).stores({
-  moments: "id, user, date", // id là primary key
-});
 //Nhập dữ liệu mảng vào indexdb
 const MAX_MOMENTS_CACHE = 10000; // Giới hạn cache tối đa
 
@@ -69,6 +66,15 @@ export const getMomentById = async (id) => {
     return moment || null; // trả về null nếu không tìm thấy
   } catch (err) {
     console.error("❌ Lỗi khi lấy moment theo id:", err);
+    return null;
+  }
+};
+
+export const deleteMomentById = async (id) => {
+  try {
+    await momentDB.moments.delete(id);
+  } catch (err) {
+    console.error("❌ Lỗi khi xoá moment theo id:", err);
     return null;
   }
 };

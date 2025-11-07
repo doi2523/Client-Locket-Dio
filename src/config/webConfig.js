@@ -3,10 +3,14 @@
 export const CONFIG = {
   api: {
     baseUrl: import.meta.env.VITE_BASE_API_URL, // API chính
+    betaUrl: import.meta.env.VITE_BETA_API_URL,
     storage: import.meta.env.VITE_STORAGE_API_URL, // API lưu trữ file
     database: import.meta.env.VITE_DATABASE_API_URL, // API database
     payment: import.meta.env.VITE_PAYMENT_API_URL, // API thanh toán
-    cdn: import.meta.env.VITE_CDN_URL, // API cdn
+    cdnUrl: import.meta.env.VITE_CDN_URL, // API cdn
+    chatServer: import.meta.env.VITE_CHAT_SERVER_URL, // server realtime chat (socket + API)
+    locketApi: import.meta.env.VITE_LOCKET_API_URL, // API Locket chính thức
+    exportApi: import.meta.env.VITE_EXPORTS_API_URL, // API export data pdf, excel,...
   },
 
   keys: {
@@ -17,7 +21,7 @@ export const CONFIG = {
   app: {
     name: "Locket Dio", // Tên app hiển thị
     fullName: "Locket Dio - Đăng ảnh & Video lên Locket", // Tên đầy đủ
-    clientVersion: "Beta2.5.4.0.5", // Version client
+    clientVersion: "Beta2.5.4.4.0", // Version client
     apiVersion: "V2.2.1", // Version API
     env: import.meta.env.MODE, // development | production
     camera: {
@@ -61,20 +65,75 @@ export const CONFIG = {
       accountNumber: "1051852055",
       accountName: "DAO VAN DOI",
     },
+    bankInfo: {
+      urlImg: "https://cdn.locket-dio.com/v1/images/qr/dio-mbbank-qr.jpg",
+      bankName: "Ngân hàng MBBank (MB)",
+      accountNumber: "66222222222266",
+      accountName: "DAO VAN DOI",
+    },
     docs: {
-      personal_authorization: "https://docs.google.com/document/d/1c2ttnmPyR3YIYooMj69MlT1XAhCO_xMytHztzi6EaEY/edit?usp=sharing"
-    }
+      personal_authorization:
+        "https://docs.google.com/document/d/1c2ttnmPyR3YIYooMj69MlT1XAhCO_xMytHztzi6EaEY/edit?usp=sharing",
+    },
+    videoTutorials: {
+      youtubeChannel: "https://www.youtube.com/@LocketDio",
+      iosAddscreen: {
+        title: "Hướng dẫn thêm Locket Dio vào màn hình chính trên iPhone!",
+        url: "https://www.youtube.com/embed/iElPAnQ7lNY",
+      }, // Hướng dẫn thêm trang web vào màn hình chính trên iPhone (Safari)
+      androidAddscreen: {
+        title: "Hướng dẫn thêm Locket Dio vào màn hình chính trên Android!",
+        url: "https://www.youtube.com/embed/2I_ZRNE-3nM",
+      }, // Hướng dẫn thêm trang web vào màn hình chính trên Android (Chrome)
+    },
   },
   ui: {
     theme: "light", // hoặc "dark"
     themes: [
-      "light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
-      "synthwave", "retro", "valentine", "halloween", "garden", "forest",
-      "lofi", "pastel", "fantasy", "wireframe", "black", "luxury", "dracula",
-      "cmyk", "autumn", "business", "acid", "lemonade", "night", "coffee", "winter",
+      "light",
+      "dark",
+      "cupcake",
+      "bumblebee",
+      "emerald",
+      "corporate",
+      "synthwave",
+      "retro",
+      "valentine",
+      "halloween",
+      "garden",
+      "forest",
+      "lofi",
+      "pastel",
+      "fantasy",
+      "wireframe",
+      "black",
+      "luxury",
+      "dracula",
+      "cmyk",
+      "autumn",
+      "business",
+      "acid",
+      "lemonade",
+      "night",
+      "coffee",
+      "winter",
     ],
     maxToastVisible: 3,
     dateFormat: "DD/MM/YYYY",
     timeFormat: "HH:mm:ss",
+
+    moments: {
+      initialVisible: 50,
+      maxDisplayLimit: 5000,
+      duplicateThreshold: 3,
+    },
+    chat: { initialVisible: 10 },
+
+    categories: [
+      { id: "update", label: "Cập nhật", icon: "Sparkles" },
+      { id: "event", label: "Sự kiện", icon: "Gift" },
+      { id: "announcement", label: "Thông báo", icon: "Megaphone" },
+      { id: "tip", label: "Mẹo sử dụng", icon: "Lightbulb" },
+    ],
   },
 };

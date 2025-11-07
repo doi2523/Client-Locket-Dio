@@ -7,6 +7,12 @@ export const useFeatureVisible = (type) => {
   return !!userPlan?.plan_info?.feature_flags?.[type];
 };
 
+export const useGetCode = (type) => {
+  const { userPlan } = useContext(AuthContext);
+  const code = userPlan.customer_code;
+  return code;
+};
+
 export const getMaxUploads = () => {
   const { userPlan } = useContext(AuthContext);
 

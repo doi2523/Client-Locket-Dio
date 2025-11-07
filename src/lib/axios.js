@@ -2,23 +2,7 @@ import axios from "axios";
 import { API_URL, clearLocalData, removeToken, removeUser } from "../utils";
 import { showInfo } from "../components/Toast";
 import { CONFIG } from "@/config";
-
-// ==== Hàm parse JWT an toàn (base64url) ====
-function parseJwt(token) {
-  try {
-    const base64Url = token.split(".")[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split("")
-        .map((c) => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"))
-        .join("")
-    );
-    return JSON.parse(jsonPayload);
-  } catch {
-    return null;
-  }
-}
+import { parseJwt } from "@/utils/auth";
 
 // ==== Kiểm tra token sắp hết hạn (dưới 5 phút) ====
 let cachedExp = null;
@@ -35,11 +19,11 @@ function isTokenExpired(token) {
 
   const timeLeft = cachedExp - now;
 
-  console.log(
-    `⏰ Token còn lại: ${timeLeft}s (hết hạn lúc: ${new Date(
-      cachedExp * 1000
-    ).toLocaleString()})`
-  );
+  // console.log(
+  //   `⏰ Token còn lại: ${timeLeft}s (hết hạn lúc: ${new Date(
+  //     cachedExp * 1000
+  //   ).toLocaleString()})`
+  // );
 
   return timeLeft < 300; // < 5 phút thì coi là sắp hết hạn
 }

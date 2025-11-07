@@ -28,7 +28,9 @@
     "react-router-dom": "^7.2.0",
     "react-toastify": "^11.0.5",
     "react-turnstile": "^1.1.4",
+    "socket.io-client": "^4.8.1",
     "sonner": "^2.0.7",
+    "uuid": "^13.0.0",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

@@ -80,12 +80,12 @@ export function useLocationOptions() {
           const uniqueOptions = [...new Set(variants.filter(Boolean))];
           setAddressOptions(uniqueOptions);
         } catch (err) {
-          console.error("Lỗi xử lý địa chỉ:", err);
+          // console.error("Lỗi xử lý địa chỉ:", err);
           setError("Không thể xử lý địa chỉ");
         }
       },
       (err) => {
-        console.error("Lỗi lấy vị trí:", err);
+        // console.error("Lỗi lấy vị trí:", err);
         setError("Không thể lấy vị trí");
       }
     );

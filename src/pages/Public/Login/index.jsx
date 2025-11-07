@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import * as DioService from "@/services/LocketDioService";
+import * as DioService from "@/services/LocketDioServices";
 import { AuthContext } from "@/context/AuthLocket";
 import * as utils from "@/utils";
 import LoadingRing from "@/components/ui/Loading/ring";

@@ -1,168 +1,177 @@
-import React, { useEffect, useState } from "react";
-import { getListRequestFriend, rejectMultipleFriendRequests } from "@/services";
-import { showError, showInfo, showSuccess } from "@/components/Toast";
-import LoadingRing from "@/components/ui/Loading/ring";
+import React, { useState } from "react";
+import {
+  getAllRequestFriend,
+  rejectMultipleFriendRequests,
+} from "@/services";
 import { useFeatureVisible } from "@/hooks/useFeature";
-
-const SESSION_KEY = "invites_session";
+import { formatDateTime } from "@/utils/Formats";
+import LoadingRing from "@/components/ui/Loading/ring";
+import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
+import { showInfo } from "@/components/Toast";
 
 export default function DeleteFriendsTool() {
-  const actionDelete = !useFeatureVisible("invite_cleanup_tool");
+  const isFeatureVisible = useFeatureVisible("invite_cleanup_tool");
+
   const [invites, setInvites] = useState([]);
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [deleteCount, setDeleteCount] = useState(200); // 👈 cho phép nhập
   const [fetchProgress, setFetchProgress] = useState({
     current: 0,
     total: 0,
     isEstimating: true,
   });
 
-  useEffect(() => {
-    const cached = sessionStorage.getItem(SESSION_KEY);
-    if (cached) {
-      try {
-        setInvites(JSON.parse(cached)?.invites || []);
-      } catch (err) {
-        console.error("Failed to parse session data", err);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ invites }));
-  }, [invites]);
-
+  // 📥 Lấy toàn bộ danh sách lời mời
   const handleFetchAllInvites = async () => {
     setLoading(true);
     setInvites([]);
     setFetchProgress({ current: 0, total: 0, isEstimating: true });
 
     try {
-      let allInvites = [];
-      let nextPageToken = null;
-      let pageCount = 0;
+      const res = await getAllRequestFriend(null, 1000); // 1000 tuỳ chỉnh theo API
+      const friends = res.friends || [];
 
-      do {
-        pageCount++;
-        const res = await getListRequestFriend(nextPageToken, 80);
-        if (res.message) {
-          showError(res.message);
-          break;
-        }
-        const newInvites = res?.friends || [];
-        allInvites = [...allInvites, ...newInvites];
-        nextPageToken = res?.nextPageToken;
-
-        setFetchProgress({
-          current: allInvites.length,
-          total: nextPageToken ? allInvites.length + 50 : allInvites.length,
-          isEstimating: !!nextPageToken,
-        });
-
-        setInvites([...allInvites]);
-
-        if (nextPageToken) await new Promise(r => setTimeout(r, 500));
-      } while (nextPageToken);
-
+      setInvites(friends);
       setFetchProgress({
-        current: allInvites.length,
-        total: allInvites.length,
+        current: friends.length,
+        total: friends.length,
         isEstimating: false,
       });
 
-      showSuccess(`✅ Đã tải xong ${allInvites.length} lời mời! (${pageCount} trang)`);
+      if (friends.length === 0) {
+        SonnerSuccess("Thông báo từ Locket Dio","Không có lời mời nào.");
+      } else {
+        SonnerSuccess("Thông báo từ Locket Dio",`Tải xong ${friends.length} lời mời.`);
+      }
     } catch (error) {
-      showError("❌ Lỗi khi tải lời mời: " + error.message);
+      SonnerError("❌ Lỗi khi tải lời mời: " + error.message);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
+  // 🧹 Xoá theo số lượng nhập
   const handleDeleteBatch = async () => {
-    const batch = invites.slice(0, 200);
+    const batch = invites.slice(0, deleteCount);
     if (batch.length === 0) return showInfo("📭 Không còn lời mời để xoá.");
 
     setDeleting(true);
     try {
       const uidList = batch.map((invite) => invite.uid);
-      const data = await rejectMultipleFriendRequests(uidList);
-      const successCount = data?.successCount ?? batch.length;
+      const { successCount, successUidList, total } =
+        await rejectMultipleFriendRequests(uidList);
 
-      showSuccess(`🧹 Đã xoá ${successCount}/${batch.length} lời mời.`);
+      SonnerSuccess(`🧹 Đã xoá ${successCount}/${total} lời mời.`);
 
-      setInvites((prev) => prev.filter((invite) => !uidList.includes(invite.uid)));
+      if (successCount > 0) {
+        setInvites((prev) =>
+          prev.filter((invite) => !successUidList.includes(invite.uid))
+        );
+      }
     } catch (error) {
-      showError("❌ Xoá lời mời thất bại: " + error.message);
+      SonnerError("❌ Xoá lời mời thất bại: " + error.message);
     }
     setDeleting(false);
   };
 
+  // 🔒 Nếu tính năng bị khoá
+  if (!isFeatureVisible) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center space-y-4">
+        <div className="text-6xl">🔒</div>
+        <h3 className="text-xl font-semibold">Tính năng bị khóa</h3>
+        <p className="text-sm opacity-70 max-w-md">
+          Bạn không có quyền truy cập vào <b>Clean Requests Tool</b>.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-2">
-        Xoá lời mời không mong muốn{" "}
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold">
+        🧹 Xoá lời mời không mong muốn{" "}
         <span className="badge badge-sm badge-secondary">Hot</span>
       </h2>
-      <p>🎯 Công cụ này giúp bạn xoá lời mời spam. Hành động này không thể hoàn tác.</p>
-      <p className="text-sm">
-        Giới hạn xoá tối đa: <span className="font-semibold underline">200</span> lời mời.
+      <p className="text-sm text-gray-500">
+        Công cụ này giúp bạn xoá lời mời spam hàng loạt. Hành động này không thể
+        hoàn tác.
       </p>
 
-      <div className="mt-6 flex flex-col gap-4">
-        <button
-          onClick={handleFetchAllInvites}
-          className="btn btn-primary w-full"
-          disabled={loading || actionDelete}
-        >
-          {loading && <LoadingRing size={20} stroke={2} color="white" />}
-          {loading ? "Đang tải..." : "📥 Lấy tất cả lời mời"}
-        </button>
+      {/* 📥 Nút tải lời mời */}
+      <button
+        onClick={handleFetchAllInvites}
+        className="btn btn-primary w-full"
+        disabled={loading}
+      >
+        {loading && <LoadingRing size={20} stroke={2} color="white" />}
+        {loading ? "Đang tải..." : "📥 Lấy tất cả lời mời"}
+      </button>
 
-        {loading && fetchProgress.current > 0 && (
-          <div className="bg-base-100 border rounded-lg p-4">
-            <div className="text-sm mb-2">
-              Đang tải: <strong>{fetchProgress.current}</strong>
-              {fetchProgress.isEstimating ? "+" : ""} lời mời
-              {!fetchProgress.isEstimating && ` (hoàn thành)`}
-            </div>
-            <div className="w-full bg-base-300 rounded-full h-2">
-              <div
-                className="bg-primary h-2 rounded-full transition-all duration-300"
-                style={{
-                  width: fetchProgress.isEstimating
-                    ? "70%"
-                    : `${(fetchProgress.current / fetchProgress.total) * 100}%`,
-                }}
-              ></div>
-            </div>
+      {/* ⏳ Tiến trình tải */}
+      {loading && fetchProgress.current > 0 && (
+        <div className="bg-base-100 border rounded-lg p-4">
+          <div className="text-sm mb-2">
+            Đang tải: <strong>{fetchProgress.current}</strong> lời mời
           </div>
-        )}
+          <div className="w-full bg-base-300 rounded-full h-2">
+            <div
+              className="bg-primary h-2 rounded-full transition-all duration-300"
+              style={{
+                width: "100%",
+              }}
+            ></div>
+          </div>
+        </div>
+      )}
 
-        {invites.length > 0 && (
-          <>
-            <div className="text-sm">
-              Đã tìm thấy <strong>{invites.length}</strong> lời mời.
-            </div>
-            <ul className="bg-base-100 border rounded-lg p-4 max-h-48 overflow-auto text-sm space-y-2">
-              {invites.map((invite, idx) => (
-                <li key={idx}>
-                  👤 <code>{invite.uid}</code>{" "}
-                  <span className="text-xs opacity-60">
-                    ({new Date(invite.date).toLocaleString()})
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <button
-              onClick={handleDeleteBatch}
-              className="btn btn-error w-full"
-              disabled={deleting}
-            >
-              {deleting ? "Đang xoá..." : `🗑️ Xoá 200 lời mời`}
-            </button>
-          </>
-        )}
-      </div>
+      {/* 💌 Danh sách lời mời */}
+      {invites.length > 0 ? (
+        <>
+          <div className="text-sm">
+            Đã tìm thấy <strong>{invites.length}</strong> lời mời.
+          </div>
+          <ul className="bg-base-100 border rounded-lg p-4 max-h-48 overflow-auto text-sm space-y-2">
+            {invites.map((invite, idx) => (
+              <li key={idx}>
+                👤 <code>{invite.uid}</code>{" "}
+                <span className="text-xs opacity-60">
+                  {formatDateTime(invite.createdAt)}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          {/* 🔢 Nhập số lượng cần xoá */}
+          <div className="flex items-center gap-3 mt-2">
+            <label className="text-sm">Số lượng muốn xoá:</label>
+            <input
+              type="number"
+              className="input input-bordered w-28"
+              value={deleteCount}
+              min={1}
+              max={invites.length}
+              onChange={(e) => setDeleteCount(Number(e.target.value))}
+            />
+          </div>
+
+          {/* 🗑️ Nút xoá */}
+          <button
+            onClick={handleDeleteBatch}
+            className="btn btn-error w-full mt-3"
+            disabled={deleting}
+          >
+            {deleting ? "Đang xoá..." : `🗑️ Xoá ${deleteCount} lời mời`}
+          </button>
+        </>
+      ) : (
+        !loading && (
+          <div className="text-sm opacity-70 italic">
+            Không tìm thấy lời mời nào.
+          </div>
+        )
+      )}
     </div>
   );
 }

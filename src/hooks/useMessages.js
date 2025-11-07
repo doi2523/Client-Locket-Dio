@@ -1,5 +1,5 @@
 // hooks/useMessages.js
-import { GetAllMessage } from "@/services/LocketDioService/ChatServices";
+import { GetAllMessage } from "@/services/LocketDioServices/ChatServices";
 import { useState, useEffect, useCallback } from "react";
 
 export function useMessages(initialLimit = 20) {

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { showToast } from "@/components/Toast";
-import * as DioService from "@/services/LocketDioService";
+import * as DioService from "@/services/LocketDioServices";
 import LoadingRing from "@/components/ui/Loading/ring";
 import { Link } from "react-router-dom";
+import { SonnerError, SonnerSuccess, SonnerWarning } from "@/components/ui/SonnerToast";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -29,18 +30,21 @@ const ForgotPassword = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      showToast("error", "Email không hợp lệ!");
+      SonnerWarning("error", "Email không hợp lệ!");
       return;
     }
 
     setLoading(true);
     try {
       await DioService.forgotPassword(email);
-      showToast("success", "Link đặt lại mật khẩu đã được gửi đến email của bạn!");
+      SonnerSuccess(
+        "Thông báo từ Locket Dio",
+        "Link đặt lại mật khẩu đã được gửi đến email của bạn!"
+      );
       setEmail("");
       setCooldown(180); // Bắt đầu đếm ngược 3 phút
     } catch (error) {
-      showToast("error", "Có lỗi xảy ra, vui lòng thử lại sau!");
+      SonnerError("Có lỗi xảy ra, vui lòng thử lại sau!",error);
       setCooldown(180); // Cũng bắt cooldown để tránh spam ngay cả khi lỗi
     } finally {
       setLoading(false);

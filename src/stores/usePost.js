@@ -79,6 +79,7 @@ export const usePost = () => {
     moment_id: null,
     intensity: 1000,
   });
+  const [restoreStreak, setRestoreStreak] = useState(null)
 
   return {
     caption,
@@ -121,5 +122,6 @@ export const usePost = () => {
     setReactionInfo,
     showEmojiPicker,
     setShowEmojiPicker,
+    restoreStreak, setRestoreStreak
   };
 };

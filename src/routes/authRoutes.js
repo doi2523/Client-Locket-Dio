@@ -3,6 +3,9 @@ import React from "react";
 // import CameraCapture from "../pages/UILocket";
 // const CameraCapture = React.lazy(() => import("../pages/UILocket"));
 
+const RestoreStreak = React.lazy(() => import("@/pages/Auth/RestoreStreak"));
+const NewsPage = React.lazy(() => import("@/pages/Public/NewsPage"));
+const NewsDetailPage = React.lazy(() => import("@/pages/Public/NewsDetailPage"));
 const AuthHome = React.lazy(() => import("../pages/Auth/Home"));
 const Profile = React.lazy(() => import("../pages/Auth/Profile"));
 const DonatePage = React.lazy(() => import("@/pages/Public/Sponsors"));
@@ -31,6 +34,9 @@ export const authRoutes = [
   { path: "/timeline", component: Timeline, title: `Dòng Thời Gian | ${APP_NAME}` },
   { path: "/sponsors", component: DonatePage, title: `Ủng hộ dự án | ${APP_NAME}` },
 
+  { path: "/newsfeed", component: NewsPage, title: `Bảng tin | ${APP_NAME}` },
+  { path: "/newsfeed/:slug", component: NewsDetailPage, title: `Bảng tin | ${APP_NAME}` },
+
   { path: "/download", component: AddToHomeScreenGuide, title: `Thêm ứng dụng vào màn hình chính | ${APP_NAME}` },
 
   { path: "/pricing", component: PricingPage, title: `Bảng giá & Gói dịch vụ | ${APP_NAME}` },
@@ -39,6 +45,7 @@ export const authRoutes = [
 
   { path: "/profile", component: Profile, title: `Hồ sơ | ${APP_NAME}` },
   { path: "/postmoments", component: PostMoments, title: `Đăng Moment Mới | ${APP_NAME}` },
+  { path: "/restore-streak", component: RestoreStreak, title: `Khôi phục chuỗi Locket | ${APP_NAME}` },
   { path: "/tools", component: ToolsLocket, title: `Công cụ mở rộng | ${APP_NAME}` },
   { path: "/manage", component: ManageCaption, title: `Quản lý Caption | ${APP_NAME}` },
   // { path: "/locket", component: CameraCapture, title: `Locket Camera | ${APP_NAME}` },

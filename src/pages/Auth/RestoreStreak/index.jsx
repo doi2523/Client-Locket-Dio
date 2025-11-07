@@ -1,0 +1,379 @@
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useContext,
+} from "react";
+import {
+  FolderOpen,
+  RotateCcw,
+  Send,
+  Palette,
+  Pencil,
+  FileImage,
+} from "lucide-react";
+import * as utils from "@/utils";
+import * as services from "@/services";
+import LoadingRing from "@/components/ui/Loading/ring.jsx";
+import { useApp } from "@/context/AppContext.jsx";
+import { Link } from "react-router-dom";
+import Hourglass from "@/components/ui/Loading/hourglass.jsx";
+import MediaSizeInfo from "@/components/ui/MediaSizeInfo/index.jsx";
+import { defaultPostOverlay } from "@/stores/usePost.js";
+import { getMaxUploads } from "@/hooks/useFeature.js";
+import { AuthContext } from "@/context/AuthLocket.jsx";
+import PlanBadge from "@/components/ui/PlanBadge/PlanBadge.jsx";
+import { getPostedMoments, savePostedMoment } from "@/process/uploadQueue.js";
+import {
+  SonnerError,
+  SonnerInfo,
+  SonnerSuccess,
+} from "@/components/ui/SonnerToast";
+import { fetchStreak } from "@/utils/SyncData/streakUtils";
+import { useNavigate } from "react-router-dom";
+
+const RestoreStreak = () => {
+  const { post, useloading } = useApp();
+  const navigate = useNavigate();
+  const { uploadStats, setStreak } = useContext(AuthContext);
+  const { sendLoading, setSendLoading, uploadLoading } = useloading;
+
+  const {
+    caption,
+    setCaption,
+    preview,
+    setPreview,
+    selectedFile,
+    setSelectedFile,
+    selectedColors,
+    setSelectedColors,
+    isSizeMedia,
+    setSizeMedia,
+    postOverlay,
+    setPostOverlay,
+    recentPosts,
+    setRecentPosts,
+    maxImageSizeMB,
+    maxVideoSizeMB,
+    setImageToCrop,
+    restoreStreak,
+    setRestoreStreak,
+  } = post;
+  const { storage_limit_mb } = getMaxUploads();
+  const fileInputRef = useRef(null);
+
+  // Đồng bộ caption và màu từ postOverlay → state
+  useEffect(() => {
+    setCaption(postOverlay.caption || "");
+  }, [postOverlay.caption]);
+
+  const handleFileChange = useCallback(async (event) => {
+    const rawFile = event.target.files[0];
+    if (!rawFile) return;
+
+    const localPreviewUrl = URL.createObjectURL(rawFile);
+    const fileType = rawFile.type.startsWith("image/")
+      ? "image"
+      : rawFile.type.startsWith("video/")
+      ? "video"
+      : null;
+
+    if (!fileType) {
+      SonnerError("error", "Chỉ hỗ trợ ảnh và video.");
+      return;
+    }
+    const fileSizeInMB = rawFile.size / (1024 * 1024);
+    setSizeMedia(fileSizeInMB.toFixed(2));
+
+    if (fileType === "image") {
+      setImageToCrop(localPreviewUrl);
+      return;
+    }
+    setPreview({ type: fileType, data: localPreviewUrl });
+
+    setSelectedFile(rawFile);
+  }, []);
+
+  const goToRestoreStreakTab = () => {
+    navigate("/tools#restore-streak", { replace: true });
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedFile) {
+      SonnerError("error", "Không có dữ liệu để tải lên.");
+      return;
+    }
+    if (
+      storage_limit_mb !== -1 &&
+      uploadStats?.total_storage_used_mb > storage_limit_mb
+    ) {
+      SonnerError("Dung lượng sử dụng vượt quá giới hạn của gói hiện tại!");
+      return;
+    }
+
+    try {
+      setSendLoading(true);
+      const payload = await services.createRequestPayloadV4(
+        selectedFile,
+        preview.type,
+        postOverlay,
+        restoreStreak
+        // audience,
+        // selectedRecipients
+      );
+
+      if (!payload) {
+        throw new Error("Không tạo được payload. Hủy tiến trình tải lên.");
+      }
+      // console.log("Payload:", payload);
+
+      SonnerInfo("Đợi chút nhé", `Đang tạo bài viết !`);
+      // Gọi API upload
+      const response = await services.uploadMediaV2(payload);
+
+      const normalizedNewData = utils.normalizeMoment(response?.data);
+
+      savePostedMoment(payload, normalizedNewData);
+
+      SonnerSuccess(
+        "Đăng tải thành công!",
+        `${preview.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
+      );
+      await fetchStreak(setStreak);
+      // const savePosted = getPostedMoments();
+      // // Cập nhật state với dữ liệu đã chuẩn hoá
+      // setRecentPosts(savePosted);
+
+      setPreview(null);
+      setSelectedFile(null);
+      setPostOverlay(defaultPostOverlay);
+      setRestoreStreak(null);
+
+      SonnerSuccess(restoreStreak?.name, "Hãy kiểm tra chuỗi của bạn!");
+
+      goToRestoreStreakTab();
+    } catch (error) {
+      const errorMessage =
+        error?.response?.data?.message || error.message || "Lỗi không xác định";
+      SonnerError("error", `Lỗi khi tải lên: ${errorMessage}`);
+      console.error("Lỗi khi gửi bài:", error);
+    } finally {
+      setSendLoading(false);
+    }
+  };
+
+  const updateOverlayField = (key, value) => {
+    setPostOverlay((prev) => ({
+      ...prev,
+      [key]: value,
+      ...(key === "color_top" || key === "color_bottom" || key === "text_color"
+        ? { type: "background" }
+        : {}),
+    }));
+  };
+
+  return (
+    <div className="flex justify-center items-center flex-col min-h-screen bg-base-200">
+      <div className="p-6 rounded-lg shadow-md w-full max-w-md bg-base-100">
+        <h2 className="text-3xl font-semibold mb-4 text-center">
+          Upload Video hoặc Ảnh
+        </h2>
+
+        <div
+          className="border-2 border-base-content border-dashed rounded-md p-4 cursor-pointer flex items-center justify-center gap-2"
+          onClick={() => fileInputRef.current.click()}
+        >
+          <FolderOpen size={20} />
+          <p>Click để chọn file (video/ảnh)</p>
+          <input
+            ref={fileInputRef}
+            type="file"
+            onChange={handleFileChange}
+            className="hidden"
+            accept="image/jpeg,image/jpg,image/png,image/webp,video/mp4,video/webm,video/quicktime"
+          />
+        </div>
+
+        <div className="text-left">
+          <p className="text-sm text-error mt-2">
+            Hệ thống chỉ hỗ trợ ảnh tối đa{" "}
+            <span className="underline font-semibold">{maxImageSizeMB}MB</span>{" "}
+            và video tối đa{" "}
+            <span className="underline font-semibold">{maxVideoSizeMB}MB</span>.
+            Nếu gặp lỗi khi tải lên, bạn có thể thử lại sau hoặc gửi ảnh/video
+            qua Zalo/Messenger và tải lại.
+            <Link to="/docs" className="underline">
+              {" "}
+              Xem thêm
+            </Link>
+          </p>
+        </div>
+
+        {/* Preview */}
+        <div className="text-center my-3 mb-10">
+          <h2 className="text-3xl font-semibold mb-2">Preview</h2>
+          <div className="relative w-full max-w-[400px] rounded-[40px] aspect-square border border-base-content overflow-hidden flex items-center justify-center">
+            {uploadLoading ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 bg-opacity-50 z-50 gap-3 text-white text-lg font-medium">
+                <Hourglass
+                  size={50}
+                  stroke={2}
+                  bgOpacity={0.1}
+                  speed={1.5}
+                  color="white"
+                />
+                <div>Đang xử lý tệp...</div>
+              </div>
+            ) : preview ? (
+              preview.type === "video" ? (
+                <video
+                  src={preview.data}
+                  autoPlay
+                  loop
+                  playsInline
+                  muted
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <img
+                  src={preview.data}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
+              )
+            ) : (
+              <div className="flex flex-col items-center">
+                <FileImage size={80} />
+                <p className="mt-2 text-sm">Chưa có file</p>
+              </div>
+            )}
+
+            {caption && !uploadLoading && (
+              <div className="absolute bottom-4 w-auto px-3">
+                <div
+                  className="text-white font-semibold py-2 px-4 rounded-3xl bg-black/40 backdrop-blur-3xl"
+                  style={{
+                    ...(postOverlay.type !== "default" && {
+                      background: `linear-gradient(to bottom, ${
+                        postOverlay.color_top || "#000000"
+                      }, ${postOverlay.color_bottom || "#000000"})`,
+                    }),
+                    color: postOverlay.text_color || "#FFFFFF",
+                  }}
+                >
+                  {caption}
+                </div>
+              </div>
+            )}
+          </div>
+          <MediaSizeInfo />
+        </div>
+
+        {/* Caption & Color */}
+        <div className="text-center mb-6">
+          {restoreStreak?.data ? (
+            <h2 className="text-3xl font-semibold mb-4">
+              {restoreStreak?.name}
+            </h2>
+          ) : (
+            <h2 className="text-3xl font-semibold mb-4">Customize Caption </h2>
+          )}
+          <div className="p-4 rounded-md shadow-md border">
+            <h3 className="text-lg font-semibold mb-3 flex items-center justify-between">
+              <div className="flex flex-row items-center">
+                <Pencil size={20} className="mr-2" /> Caption
+              </div>{" "}
+              <PlanBadge />
+            </h3>
+            <input
+              type="text"
+              className="w-full p-2 border shadow-md rounded-xl mb-4"
+              placeholder="Thêm một tin nhắn"
+              value={caption}
+              onChange={(e) => {
+                setCaption(e.target.value);
+                updateOverlayField("caption", e.target.value);
+              }}
+            />
+            <h3 className="text-lg font-semibold mb-1 flex items-center">
+              <Palette size={20} className="mr-1" /> Chọn màu
+            </h3>
+            <p className="text-left text-sm mb-3 text-primary">
+              Note: 2 đen 1 trắng là mặc định caption sẽ không có màu
+            </p>
+            <div className="flex justify-center items-center gap-4">
+              {[
+                {
+                  label: "Màu trên",
+                  key: "color_top",
+                  value: postOverlay.color_top,
+                },
+                {
+                  label: "Màu dưới",
+                  key: "color_bottom",
+                  value: postOverlay.color_bottom,
+                },
+                {
+                  label: "Màu chữ",
+                  key: "text_color",
+                  value: postOverlay.text_color || "#FFFFFF",
+                },
+              ].map(({ label, key, value }) => (
+                <div key={key} className="flex flex-col items-center">
+                  <label className="mb-1">{label}</label>
+                  <input
+                    type="color"
+                    value={value}
+                    onChange={(e) => updateOverlayField(key, e.target.value)}
+                    className="w-10 h-10 rounded-md border p-1"
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-center">
+              <button
+                onClick={() => {
+                  updateOverlayField("color_top", "");
+                  updateOverlayField("color_bottom", "");
+                  updateOverlayField("text_color", "#FFFFFF");
+                  updateOverlayField("type", "default");
+                }}
+                className="flex items-center gap-2 px-4 py-2 rounded-md shadow-md mt-4 btn"
+              >
+                <RotateCcw size={20} /> Reset màu
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Nút gửi */}
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={handleSubmit}
+            className="btn btn-primary rounded-xl disabled:bg-gray-400"
+            disabled={
+              sendLoading ||
+              (preview?.type === "image" && isSizeMedia > maxImageSizeMB) ||
+              (preview?.type === "video" && isSizeMedia > maxVideoSizeMB)
+            }
+          >
+            {sendLoading ? (
+              <>
+                <LoadingRing size={20} stroke={3} speed={2} color="white" />
+                <span>Đang tải lên...</span>
+              </>
+            ) : (
+              <>
+                <span>Đăng bài viết</span>
+                <Send size={20} />
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default RestoreStreak;

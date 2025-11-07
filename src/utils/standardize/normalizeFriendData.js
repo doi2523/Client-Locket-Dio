@@ -35,3 +35,23 @@ export const normalizeFriendData = (response) => {
 //     friendshipStatus: null,
 //     celebrityData: null
 //   }
+export const normalizeFriendDataV2 = (friend) => {
+  if (!friend) {
+    return null;
+  }
+
+  return {
+    uid: friend.uid,
+    firstName: friend.first_name ?? "",
+    lastName: friend.last_name ?? "",
+    username: friend.username ?? "",
+    profilePic: friend.profile_picture_url
+      ? replaceFirebaseWithCDN(friend.profile_picture_url)
+      : null,
+    badge: friend.badge ?? null,
+    isTemp: Boolean(friend.temp),
+    isCelebrity: Boolean(friend.celebrity),
+    friendshipStatus: friend.friendship_status ?? null,
+    celebrityData: friend.celebrity_data ?? null,
+  };
+};

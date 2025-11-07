@@ -14,7 +14,9 @@ import {
   CheckCircle,
   Chrome,
   Globe,
+  PlayCircle,
 } from "lucide-react";
+import { EMBEDVIDEO_CONFIG } from "@/config";
 
 const AddToHomeScreenGuide = () => {
   const [activeTab, setActiveTab] = useState("android");
@@ -121,7 +123,7 @@ const AddToHomeScreenGuide = () => {
                     <div className="flex items-center gap-2">
                       <Menu className="w-4 h-4 text-gray-500" />
                       <span className="text-base-content">
-                        Nhấn menu hoặc ⋮ ở góc
+                        Nhấn menu hoặc biểu tượng ⋮ ở góc
                       </span>
                     </div>
                   </div>
@@ -239,6 +241,35 @@ const AddToHomeScreenGuide = () => {
             </div>
           </div>
         )}
+        <div className="bg-base-100 rounded-2xl shadow-xl p-5 mb-8">
+          <h2 className="text-2xl font-bold text-base-content mb-3 flex items-center gap-2">
+            <PlayCircle className="w-6 h-6 text-purple-600" />
+            Video hướng dẫn
+          </h2>
+          <div className="relative w-full max-w-xs mx-auto aspect-[9/16] overflow-hidden rounded-2xl shadow-lg">
+            {activeTab === "android" ? (
+              <iframe
+                className="absolute inset-0 w-full h-full rounded-2xl"
+                src={EMBEDVIDEO_CONFIG.embedAndroid.url}
+                title={EMBEDVIDEO_CONFIG.embedAndroid.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              ></iframe>
+            ) : (
+              <iframe
+                className="absolute inset-0 w-full h-full rounded-2xl"
+                src={EMBEDVIDEO_CONFIG.embedIos.url}
+                title={EMBEDVIDEO_CONFIG.embedIos.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              ></iframe>
+            )}
+          </div>
+        </div>
 
         {/* Benefits Section */}
         <div className="bg-base-100 rounded-2xl shadow-xl p-5 mb-8">
@@ -317,7 +348,7 @@ const AddToHomeScreenGuide = () => {
                 Không thấy biểu tượng trên màn hình?
               </h3>
               <p className="text-yellow-700 text-sm">
-                Kiểm tra các trang màn hình chính khác hoặc tìm kiếm trên google
+                Kiểm tra các trang màn hình chính khác hoặc tìm kiếm trên thiết bị
                 "Locket Dio"
               </p>
             </div>

@@ -1,12 +1,7 @@
 // cache/friendDB.js
-import Dexie from "dexie";
+import db from "./configDB";
 
-export const friendDB = new Dexie("LocketFriendDB");
-
-friendDB.version(2).stores({
-  friendIds: "uid, createdAt", // uid là primary key
-  friendDetails: "uid, username, badge, isCelebrity"
-});
+const friendDB = db;
 
 // ===== Friend IDs =====
 export const setFriendIds = async (friends) => {
@@ -131,3 +126,19 @@ export const syncFriendsWithCache = async (apiFriends) => {
   }
 };
 
+// Thêm 1 bạn mới vào cache (cả ID và detail)
+export const addFriendToCache = async (friend) => {
+  try {
+    if (!friend?.uid) return;
+    // lưu ID
+    await friendDB.friendIds.put({
+      uid: friend.uid,
+      createdAt: friend.createdAt || Date.now(),
+    });
+    // lưu chi tiết
+    await friendDB.friendDetails.put(friend);
+    console.log("✅ Đã thêm bạn mới vào cache:", friend.uid);
+  } catch (err) {
+    console.error("❌ Lỗi khi thêm bạn mới:", err);
+  }
+};

@@ -30,7 +30,7 @@ function showToast(type, message, body = "", options = {}) {
       });
       break;
     case "info":
-      toast(message, {
+      toast.info(message, {
         ...baseConfig,
         duration: 3000,
       });

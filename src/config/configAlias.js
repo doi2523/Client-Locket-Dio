@@ -33,3 +33,8 @@ export const SPONSORS_CONFIG = {
   urlImg: CONFIG.app.sponsors.urlImg,
   bankName: CONFIG.app.sponsors.bankName,
 };
+
+export const EMBEDVIDEO_CONFIG = {
+  embedIos: CONFIG.app.videoTutorials.iosAddscreen,
+  embedAndroid: CONFIG.app.videoTutorials.androidAddscreen,
+};

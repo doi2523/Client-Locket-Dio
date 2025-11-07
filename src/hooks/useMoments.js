@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import {
   bulkAddMoments,
   clearMoments,
+  deleteMomentById,
   getAllMoments,
   getMomentsByUser,
 } from "@/cache/momentDB";
@@ -123,6 +124,18 @@ export function useMoments(userUid = null, initialLimit = 50) {
     setLastFetchedTime(null);
   };
 
+  // 🧩 Thêm hàm xoá 1 moment
+  const removeMoment = async (momentId) => {
+    try {
+      await deleteMomentById(momentId); // xoá khỏi IndexedDB
+      setMoments((prev) => prev.filter((m) => m.id !== momentId)); // xoá khỏi state
+      // SonnerSuccess("Đã xoá bài viết khỏi cache.");
+    } catch (err) {
+      console.error("❌ removeMoment:", err);
+      // SonnerError("Không thể xoá bài viết khỏi cache.");
+    }
+  };
+
   useEffect(() => {
     fetchFromCache();
   }, [userUid]);
@@ -135,5 +148,6 @@ export function useMoments(userUid = null, initialLimit = 50) {
     clearCache,
     lastFetchedTime,
     nextPageToken,
+    removeMoment,
   };
 }

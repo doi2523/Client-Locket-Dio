@@ -4,6 +4,9 @@ import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
 import { CONFIG } from "@/config";
 // import CameraCapture from "@/pages/UILocket";
+// const WhitePage = React.lazy(() => import("@/pages/Public/WhitePage"));
+const NewsPage = React.lazy(() => import("@/pages/Public/NewsPage"));
+const NewsDetailPage = React.lazy(() => import("@/pages/Public/NewsDetailPage"));
 const ForgotPassword = React.lazy(() => import("@/pages/Public/ForgotPassword"));
 const DonatePage = React.lazy(() => import("@/pages/Public/Sponsors"));
 const AboutLocketDio = React.lazy(() => import("../pages/Public/About"));
@@ -30,6 +33,10 @@ export const publicRoutes = [
 
   { path: "/about", component: AboutLocketDio, title: `Về Website Locket Dio | ${APP_NAME}` },
   { path: "/about-dio", component: AboutMe, title: `Về Dio | ${APP_NAME}` },
+
+  { path: "/newsfeed", component: NewsPage, title: `Bảng tin | ${APP_NAME}` },
+  { path: "/newsfeed/:slug", component: NewsDetailPage, title: `Bảng tin | ${APP_NAME}` },
+  
   { path: "/download", component: AddToHomeScreenGuide, title: `Thêm ứng dụng vào màn hình chính | ${APP_NAME}` },
   { path: "/timeline", component: Timeline, title: `Dòng Thời Gian | ${APP_NAME}` },
 
@@ -49,6 +56,8 @@ export const publicRoutes = [
   { path: "/contact", component: Contact, title: `Liên hệ & Hỗ trợ | ${APP_NAME}` },
 
   { path: "/happy-birthday", component: BirthdayPage, title: `Chúc mừng sinh nhật Dio | ${APP_NAME}` },
+
+  // { path: "/wt", component: WhitePage, title: `White Page for Development | ${APP_NAME}` },
 
   { path: "/forgot-password", component: ForgotPassword, title: `Khôi phục mật khẩu | ${APP_NAME}` },
 ];

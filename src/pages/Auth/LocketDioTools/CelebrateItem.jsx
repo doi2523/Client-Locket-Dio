@@ -36,11 +36,11 @@ export default function CelebrateItem({ user, onAdd }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* Avatar + badge overlay */}
-          <div className="relative w-16 h-16">
+          <div className="relative w-14 h-14">
             <img
               src={user.profile_picture_url || "./default-avatar.png"}
               alt={`${user.first_name} ${user.last_name}`}
-              className="w-16 h-16 rounded-full border-[3.5px] p-0.5 border-amber-400 object-cover"
+              className="w-14 h-14 rounded-full border-[3.5px] p-0.5 border-amber-400 object-cover"
             />
 
             {/* Ưu tiên hiển thị badge nếu có, nếu không thì celeb */}
@@ -48,13 +48,13 @@ export default function CelebrateItem({ user, onAdd }) {
               <img
                 src="https://cdn.locket-dio.com/v1/caption/caption-icon/locket_gold_badge.png"
                 alt="Gold Badge"
-                className="absolute bottom-0 right-0 w-6 h-6 p-0.5 bg-base-100 rounded-full"
+                className="absolute bottom-0 right-0 w-5 h-5 p-0.5 bg-base-100 rounded-full"
               />
             ) : user.celebrity ? (
               <img
                 src="https://cdn.locket-dio.com/v1/caption/caption-icon/celebrity_badge.png"
                 alt="Celebrity"
-                className="absolute bottom-0 right-0 w-6 h-6 p-0.5 bg-base-100 rounded-full"
+                className="absolute bottom-0 right-0 w-5 h-5 p-0.5 bg-base-100 rounded-full"
               />
             ) : null}
           </div>
@@ -81,13 +81,17 @@ export default function CelebrateItem({ user, onAdd }) {
 
         {/* Bên phải: render theo friendship_status */}
         {user.friendship_status === "friends" ? (
-          <div className="flex flex-row items-center gap-1 text-base-content bg-primary px-2 py-1 rounded-2xl">
+          <div className="flex flex-row items-center gap-1 text-white bg-primary px-2 py-1 rounded-2xl">
             <UserRoundCheck className="w-5 h-5" />
             <span className="text-sm font-semibold">Bạn bè</span>
           </div>
         ) : user.friendship_status === "follower-waitlist" ? (
-          <div className="text-base-content text-sm bg-secondary px-2 py-1 rounded-2xl font-semibold">
+          <div className="text-white text-sm bg-primary px-2 py-1 rounded-2xl font-semibold">
             Đang xếp hàng
+          </div>
+        )  : user.friendship_status === "outgoing-follow-request" ? (
+          <div className="text-white text-sm bg-primary px-2 py-1 rounded-2xl font-semibold">
+            Đang chờ chấp nhận
           </div>
         ) : (
           <button

@@ -8,9 +8,9 @@ import React, {
 import PropTypes from "prop-types";
 import * as utils from "@/utils";
 import { GetUserData, updateUserInfo } from "@/services";
-import { fetchAndSyncFriendDetails } from "@/utils/SyncData/friendSyncUtils";
 import { fetchStreak } from "@/utils/SyncData/streakUtils";
-import { getAllFriendDetails } from "@/cache/friendsDB";
+import { useFriendStore } from "@/stores/useFriendStore";
+import { showDevWarning } from "@/utils/logging/devConsole";
 
 export const AuthContext = createContext();
 
@@ -29,7 +29,10 @@ export const AuthProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("streak") || "null")
   );
 
+  const { loadFriends } = useFriendStore();
+
   useEffect(() => {
+    showDevWarning();
     localStorage.removeItem("failedUploads");
     localStorage.removeItem("friendsList");
     localStorage.removeItem("uploadedMoments");
@@ -37,20 +40,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const loadFriends = async () => {
-      if (!user || !authTokens?.idToken) return;
-
-      // 1. Lấy dữ liệu local trước để hiển thị ngay
-      const localFriends = await getAllFriendDetails();
-      setFriendDetails(localFriends);
-
-      // 2. Sau đó đồng bộ với server (background update)
-      const updatedDetails = await fetchAndSyncFriendDetails();
-      setFriendDetails(updatedDetails);
-    };
-
-    loadFriends();
-  }, [user, authTokens?.idToken]);
+    loadFriends(user, authTokens); // ✅ Tự load local + sync server
+  }, [user, authTokens]);
 
   // 🔹 Fetch user plan
   useEffect(() => {
