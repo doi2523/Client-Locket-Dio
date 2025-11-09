@@ -68,6 +68,7 @@ const Sidebar = () => {
       title: "Locket Dio",
       items: [
         { to: "/home", icon: Home, text: "Trang chủ" },
+        { to: "/about", icon: Info, text: "Locket Dio" },
         { to: "/newsfeed", icon: Newspaper, text: "Bảng tin", badge: "New" },
         {
           to: "/download",

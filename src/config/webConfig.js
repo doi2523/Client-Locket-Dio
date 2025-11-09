@@ -83,7 +83,7 @@ export const CONFIG = {
       }, // Hướng dẫn thêm trang web vào màn hình chính trên iPhone (Safari)
       androidAddscreen: {
         title: "Hướng dẫn thêm Locket Dio vào màn hình chính trên Android!",
-        url: "https://www.youtube.com/embed/2I_ZRNE-3nM",
+        url: "https://www.youtube.com/embed/JtgfTNbKTZY",
       }, // Hướng dẫn thêm trang web vào màn hình chính trên Android (Chrome)
     },
   },

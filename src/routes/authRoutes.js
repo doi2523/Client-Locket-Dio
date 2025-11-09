@@ -2,7 +2,7 @@ import { CONFIG } from "@/config";
 import React from "react";
 // import CameraCapture from "../pages/UILocket";
 // const CameraCapture = React.lazy(() => import("../pages/UILocket"));
-
+const AboutLocketDio = React.lazy(() => import("../pages/Public/About"));
 const RestoreStreak = React.lazy(() => import("@/pages/Auth/RestoreStreak"));
 const NewsPage = React.lazy(() => import("@/pages/Public/NewsPage"));
 const NewsDetailPage = React.lazy(() => import("@/pages/Public/NewsDetailPage"));
@@ -30,7 +30,8 @@ const APP_NAME = CONFIG.app.fullName;
 
 export const authRoutes = [
   { path: "/home", component: AuthHome, title: `Trang chủ | ${APP_NAME}` },
-  { path: "/aboutdio", component: AboutMe, title: `Về Dio | ${APP_NAME}` },
+  { path: "/about", component: AboutLocketDio, title: `Về Website Locket Dio | ${APP_NAME}` },
+  { path: "/about-dio", component: AboutMe, title: `Về Dio | ${APP_NAME}` },
   { path: "/timeline", component: Timeline, title: `Dòng Thời Gian | ${APP_NAME}` },
   { path: "/sponsors", component: DonatePage, title: `Ủng hộ dự án | ${APP_NAME}` },
 
