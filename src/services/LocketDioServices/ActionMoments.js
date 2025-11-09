@@ -91,15 +91,21 @@ export const SendMessageMoment = async (message, selectedMomentId, uid) => {
 export const DeleteMoment = async (selectedMomentId) => {
   try {
     const infoMoment = await getMomentById(selectedMomentId);
+    const { localId } = getToken();
+
     if (!infoMoment) {
       console.warn("❌ Moment not found for deletion");
       return null;
     }
+
+    //Xác định có xoá toàn cục không?
+    const deleteGlobally = infoMoment.user === localId;
+
     const body = {
       data: {
         moment_uid: selectedMomentId,
         owner_uid: infoMoment.user,
-        delete_globally: false,
+        delete_globally: deleteGlobally, // true nếu là chủ sở hữu
       },
     };
 
