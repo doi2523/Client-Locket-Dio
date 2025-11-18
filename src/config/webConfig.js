@@ -16,6 +16,8 @@ export const CONFIG = {
   keys: {
     vapidPublicKey: import.meta.env.VITE_VAPID_PUBLIC_KEY, // Push notification
     turnstileKey: import.meta.env.VITE_TURNSTILE_SITE_KEY, // Cloudflare Turnstile
+
+    apiKey: import.meta.env.PUBLIC_API_KEY,
   },
 
   app: {

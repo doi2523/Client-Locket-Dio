@@ -28,7 +28,7 @@ const StatusServer = () => {
     checkServer();
 
     // set interval để check lại sau mỗi 10s
-    intervalId = setInterval(checkServer, 10000);
+    intervalId = setInterval(checkServer, 6000);
 
     // cleanup khi unmount
     return () => clearInterval(intervalId);

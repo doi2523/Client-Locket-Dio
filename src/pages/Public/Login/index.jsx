@@ -13,6 +13,7 @@ import {
   SonnerSuccess,
 } from "@/components/ui/SonnerToast";
 import { CONFIG } from "@/config";
+import RotatingCircleText from "./RotatingCircleText";
 
 const Login = () => {
   const { setUser, setAuthTokens } = useContext(AuthContext);
@@ -118,7 +119,8 @@ const Login = () => {
   return (
     <>
       <div className="flex items-center justify-center h-[84vh] bg-base-200 px-6">
-        <div className="w-full max-w-md p-6 shadow-lg rounded-xl bg-opacity-50 backdrop-blur-3xl bg-base-100 border-base-300 text-base-content">
+        <div className="relative w-full max-w-md p-6 shadow-lg overflow-hidden rounded-xl bg-opacity-50 backdrop-blur-3xl bg-base-100 border-base-300 text-base-content">
+          <RotatingCircleText />
           <h1 className="text-3xl font-bold text-center">Đăng Nhập Locket</h1>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -192,6 +194,7 @@ const Login = () => {
                 <input
                   id="rememberMe"
                   type="checkbox"
+                  disabled
                   className="checkbox checkbox-primary checkbox-sm"
                   checked={rememberMe}
                   onChange={() => setRememberMe(!rememberMe)}

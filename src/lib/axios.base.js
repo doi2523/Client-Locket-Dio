@@ -8,4 +8,8 @@ export const instanceBase = axios.create({
   httpAgent: "http",
   httpsAgent: "https",
   timeout: 30000,
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": CONFIG.keys.apiKey, // ví dụ thêm x-key mặc định
+  },
 });
