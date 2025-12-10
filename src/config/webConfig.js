@@ -23,7 +23,7 @@ export const CONFIG = {
   app: {
     name: "Locket Dio", // Tên app hiển thị
     fullName: "Locket Dio - Đăng ảnh & Video lên Locket", // Tên đầy đủ
-    clientVersion: "Beta2.5.4.4.0", // Version client
+    clientVersion: "Beta2.5.5.0", // Version client
     apiVersion: "V2.2.1", // Version API
     env: import.meta.env.MODE, // development | production
     camera: {
@@ -50,6 +50,7 @@ export const CONFIG = {
     moments: {
       initialVisible: 50, // Số lượng moments hiển thị ban đầu
       maxDisplayLimit: 5000, // Giới hạn tối đa moments hiển thị trên client
+      loadMoreLimit: 50, // Số lượng moments tải thêm mỗi lần
       duplicateThreshold: 3, // Ngưỡng trùng lặp để dừng tải thêm
     },
     contact: {

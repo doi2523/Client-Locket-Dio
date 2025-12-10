@@ -4,6 +4,7 @@ import React, {
   useState,
   useMemo,
   useRef,
+  useContext,
 } from "react";
 import PropTypes from "prop-types";
 import * as utils from "@/utils";
@@ -112,3 +113,7 @@ export const AuthProvider = ({ children }) => {
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
+
+export function useAuth() {
+  return useContext(AuthContext);
+}

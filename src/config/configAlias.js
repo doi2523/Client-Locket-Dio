@@ -6,6 +6,7 @@ export const MOMENTS_CONFIG = {
   maxDisplayLimit: CONFIG.app.moments.maxDisplayLimit,
   duplicateThreshold: CONFIG.app.moments.duplicateThreshold,
   initialVisible: CONFIG.app.moments.initialVisible,
+  loadMoreLimit: CONFIG.app.moments.loadMoreLimit,
 };
 
 // Config cho Camera

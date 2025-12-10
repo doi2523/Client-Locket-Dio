@@ -8,13 +8,7 @@ const MAX_MOMENTS_CACHE = 10000; // Giới hạn cache tối đa
 
 export const bulkAddMoments = async (moments) => {
   try {
-    // Sắp xếp bài mới nhất trước
-    const sortedMoments = [...moments].sort(
-      (a, b) => new Date(b.date) - new Date(a.date)
-    );
-
-    await momentDB.moments.bulkPut(sortedMoments);
-    // console.log(`💾 Đã lưu ${sortedMoments.length} moments vào cache`);
+    await momentDB.moments.bulkPut(moments);
 
     // Sau khi lưu, kiểm tra tổng số lượng
     const total = await momentDB.moments.count();

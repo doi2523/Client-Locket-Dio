@@ -3,6 +3,7 @@ import React from "react";
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
 import { CONFIG } from "@/config";
+import LocketCameraBeta from "@/pages/LocketCameraBeta";
 // import CameraCapture from "@/pages/UILocket";
 // const WhitePage = React.lazy(() => import("@/pages/Public/WhitePage"));
 const NewsPage = React.lazy(() => import("@/pages/Public/NewsPage"));
@@ -17,6 +18,7 @@ const CollectionPage = React.lazy(() => import("@/pages/Public/CollectionPage"))
 const Contact = React.lazy(() => import("../pages/Public/Contact"));
 const PrivacyPolicy = React.lazy(() => import("../pages/Public/PrivacyPolicy"));
 const PricingPage = React.lazy(() => import("../pages/Public/Pricing"));
+const PlanDetailPage = React.lazy(() => import("../pages/Auth/PricingDetail"));
 const ToolsLocket = React.lazy(() => import("../pages/Auth/LocketDioTools"));
 const Settings = React.lazy(() => import("../pages/Public/Settings"));
 const DevPage = React.lazy(() => import("../pages/Public/DevPage"));
@@ -43,10 +45,11 @@ export const publicRoutes = [
   { path: "/docs", component: Docs, title: `Tài liệu | ${APP_NAME}` },
   { path: "/sponsors", component: DonatePage, title: `Ủng hộ dự án | ${APP_NAME}` },
   { path: "/collection", component: CollectionPage, title: `Thư viện phiên bản | ${APP_NAME}` },
-  // { path: "/locket", component: CameraCapture, title: `Locket Camera | ${APP_NAME}` },
+  { path: "/locket-beta", component: LocketCameraBeta, title: `Locket Camera | ${APP_NAME}` },
 
   { path: "/privacy", component: PrivacyPolicy, title: `Chính sách riêng tư | ${APP_NAME}` },
   { path: "/pricing", component: PricingPage, title: `Đăng ký gói thành viên | ${APP_NAME}` },
+  { path: "/pricing/:planId", component: PlanDetailPage, title: `Chi tiết gói | ${APP_NAME}` },
   { path: "/locketdio-tools", component: ToolsLocket, title: `Công cụ mở rộng | ${APP_NAME}` },
 
   { path: "/settings", component: Settings, title: `Cài đặt | ${APP_NAME}` },
@@ -58,6 +61,7 @@ export const publicRoutes = [
   { path: "/happy-birthday", component: BirthdayPage, title: `Chúc mừng sinh nhật Dio | ${APP_NAME}` },
 
   // { path: "/wt", component: WhitePage, title: `White Page for Development | ${APP_NAME}` },
+  // { path: "/locket", component: LocketCameraBeta, title: `White Page for Development | ${APP_NAME}` },
 
   { path: "/forgot-password", component: ForgotPassword, title: `Khôi phục mật khẩu | ${APP_NAME}` },
 ];

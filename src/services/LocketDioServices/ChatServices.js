@@ -5,10 +5,10 @@ import { instanceLocket } from "@/lib/axios.locket";
 import { getToken } from "@/utils";
 import { generateUUIDv4Upper } from "@/utils/generate/uuid";
 
-export const GetAllMessage = async (timestamp = null) => {
+export const GetAllMessage = async () => {
   try {
     const res = await api.post(API_ENDPOINTS.getAllMessages, {
-      timestamp,
+      timestamp: null,
     });
     return res.data?.data;
   } catch (err) {

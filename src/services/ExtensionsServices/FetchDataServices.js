@@ -1,4 +1,4 @@
-import { instanceBase } from "@/lib/axios.base";
+import { instanceBase } from "@/lib/axios.data";
 
 /**
  * Lấy danh sách hoặc chi tiết bài viết.

@@ -1,11 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Check, X, Info } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { AuthContext } from "@/context/AuthLocket";
 import LoadingPage from "@/components/pages/LoadingPage";
 import { API_URL } from "@/utils";
 import * as services from "@/services";
-import FeatureMarquee from "@/components/ui/Marquee/FeatureMarquee";
+import NoticePricing from "./NoticePricing";
+import PlanDetailCard from "./PlanDetail";
+import { SonnerWarning } from "@/components/ui/SonnerToast";
 
 export default function PlanDetailPage() {
   const { user, userPlan } = useContext(AuthContext);
@@ -38,39 +40,34 @@ export default function PlanDetailPage() {
 
   const handleCreateOrder = async () => {
     try {
+      if (coupon) {
+        const data = await services.CheckCoupon(coupon, planData.id);
+        if (!data.valid) {
+          SonnerWarning("Thông báo từ Locket Dio", data.message);
+          setCoupon("");
+          setDiscountAmount("");
+          setCouponStatus(null);
+          return; // dừng tạo order
+        }
+        setDiscountAmount(data.discount_amount || 0);
+        setCouponStatus(`✅ ${data.message}`);
+      }
+
       setLoadingCreate(true);
       const response = await services.CreateNewOrder(
         planData.id,
         planData.price,
         coupon
       );
-      const data = response;
 
-      if (data?.ExistingOrder) {
-        const confirm = window.confirm(
-          "Bạn đã có đơn hàng đang chờ thanh toán.\nBấm OK để tiếp tục thanh toán hoặc Cancel để hủy."
-        );
-
-        if (!confirm) {
-          try {
-            await services.CancelToOrder(data.orderId, data.orderCode);
-            alert("✅ Đơn hàng đã được hủy.");
-          } catch (error) {
-            console.error("❌ Lỗi khi hủy đơn hàng:", error);
-            alert("❌ Không thể hủy đơn hàng. Vui lòng thử lại.");
-          }
-          return;
-        }
-      }
-
-      if (!data?.orderId) {
+      if (!response?.orderId) {
         throw new Error("Tạo đơn hàng thất bại");
       }
 
-      navigate(`/pay?orderId=${data.orderId}`);
+      navigate(`/pay?orderId=${response.orderId}`);
     } catch (error) {
       console.error("Lỗi khi tạo đơn hàng:", error);
-      alert("Không thể tạo đơn hàng. Vui lòng thử lại.");
+      alert(error.message || "Không thể tạo đơn hàng. Vui lòng thử lại.");
     } finally {
       setLoadingCreate(false);
     }
@@ -84,17 +81,19 @@ export default function PlanDetailPage() {
 
     try {
       const data = await services.CheckCoupon(coupon, planData.id);
-      if (data?.discount_amount > 0) {
-        setDiscountAmount(data.discount_amount);
-        setCouponStatus("✅ Mã giảm giá hợp lệ!");
+
+      if (data.valid) {
+        setDiscountAmount(data.discount_amount || 0);
+        setCouponStatus(`✅ ${data.message}`);
       } else {
+        setCoupon("");
         setDiscountAmount(0);
-        setCouponStatus("❌ Mã giảm giá không hợp lệ.");
+        setCouponStatus(`❌ ${data.message}`);
       }
     } catch (error) {
       console.error("Coupon error:", error);
       setDiscountAmount(0);
-      setCouponStatus("❌ Mã giảm giá không hợp lệ hoặc đã hết hạn.");
+      setCouponStatus("❌ Không thể kiểm tra mã giảm giá. Vui lòng thử lại.");
     }
   };
 
@@ -105,6 +104,7 @@ export default function PlanDetailPage() {
         Không tìm thấy gói
       </div>
     );
+  const finalPrice = Math.max(planData.price - discountAmount, 0);
 
   return (
     <div className="min-h-screen bg-base-100">
@@ -144,77 +144,7 @@ export default function PlanDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {/* Left Column - Plan Details */}
           <div className="space-y-6">
-            {/* Plan Information */}
-            <div className="bg-base-200 rounded-2xl shadow-lg p-4 sm:p-6">
-              <div className="flex flex-row justify-between items-center mb-6 gap-4">
-                <h2 className="text-xl sm:text-2xl font-bold text-base-content">
-                  Thông tin gói
-                </h2>
-                {planData.recommended && (
-                  <span className="px-4 py-1 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-800 self-start">
-                    Đề xuất
-                  </span>
-                )}
-              </div>
-              <div className="grid grid-cols-2 gap-4 sm:gap-6 text-sm">
-                <div>
-                  <p className="text-gray-600">Giá</p>
-                  <p className="text-xl sm:text-2xl font-semibold text-green-600">
-                    {planData.price === 0
-                      ? "Miễn phí"
-                      : `${planData.price.toLocaleString()}đ`}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-600">Thời hạn</p>
-                  <p className="text-base sm:text-lg font-medium text-blue-600">
-                    {planData.duration_days} ngày
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-600">Dung lượng</p>
-                  <p className="text-base sm:text-lg font-medium text-indigo-600">
-                    {planData.storage_limit_mb === -1
-                      ? "Không giới hạn"
-                      : `${planData.storage_limit_mb} MB`}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-600">Số lượng ảnh/video</p>
-                  <p className="text-base sm:text-lg font-medium text-indigo-600">
-                    {planData.max_uploads === -1
-                      ? "Không giới hạn"
-                      : planData.max_uploads}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Featured Features */}
-            <div className="bg-base-200 rounded-2xl shadow-lg p-4 sm:p-6">
-              <h3 className="text-xl sm:text-2xl font-bold text-base-content mb-6">
-                Tính năng nổi bật
-              </h3>
-              <ul className="space-y-3">
-                {planData.features?.map((feature, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-start gap-3 text-gray-800"
-                  >
-                    <Check className="text-green-500 w-5 h-5 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm sm:text-base">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Feature Details */}
-            <div className="bg-base-200 rounded-2xl shadow-lg p-4 sm:p-6">
-              <h3 className="text-xl sm:text-2xl font-bold text-base-content mb-6">
-                Chi tiết tính năng
-              </h3>
-              <FeatureMarquee flags={planData.feature_flags} />
-            </div>
+            <PlanDetailCard planData={planData} />
           </div>
 
           {/* Right Column - Payment Information */}
@@ -314,43 +244,34 @@ export default function PlanDetailPage() {
               </div>
 
               {/* Notice */}
-              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Info className="w-5 h-5 text-yellow-600 flex-shrink-0" />
-                  <h4 className="font-semibold text-yellow-800">Lưu ý:</h4>
+              <NoticePricing />
+
+              {!user && (
+                <div className="p-4 mb-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-700 text-sm">
+                    Bạn chưa đăng nhập. Hãy đăng nhập để áp dụng mã giảm giá và
+                    mua gói.
+                  </p>
                 </div>
-                <p className="text-sm text-yellow-700">
-                  1. Nhấn <strong>"Tiếp tục thanh toán"</strong> để hoàn tất.
-                  Gói sẽ được kích hoạt trong vòng <strong>5–10 phút</strong>{" "}
-                  sau khi thanh toán. Liên hệ hỗ trợ qua{" "}
-                  <a
-                    className="text-blue-600 underline"
-                    href="https://zalo.me/0329254203"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Zalo
-                  </a>
-                  .
-                </p>
-                <p className="text-sm text-yellow-700">
-                  2. Mã giảm giá chỉ có hiệu lực cho một lần sử dụng.
-                </p>
-              </div>
+              )}
 
               {/* Action Buttons */}
               <div className="space-y-4">
                 <button
-                  onClick={handleCreateOrder}
+                  onClick={() => {
+                    if (!user) return navigate("/login");
+                    handleCreateOrder();
+                  }}
                   disabled={loadingCreate}
                   className="w-full btn btn-primary text-white text-base sm:text-lg font-semibold rounded-3xl py-5 hover:bg-indigo-600 transition-colors disabled:opacity-50"
                 >
                   {loadingCreate
                     ? "Đang xử lý..."
-                    : `💳 Tiếp tục thanh toán ${(
-                        planData.price - discountAmount
-                      ).toLocaleString()}đ`}
+                    : finalPrice === 0
+                    ? "🎉 Xác nhận & Đăng ký gói"
+                    : `💳 Tiếp tục thanh toán ${finalPrice.toLocaleString()}đ`}
                 </button>
+
                 <button
                   onClick={handleBack}
                   className="w-full btn btn-outline rounded-xl hover:bg-gray-100 transition-colors"

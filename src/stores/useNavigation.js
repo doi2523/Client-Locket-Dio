@@ -9,6 +9,8 @@ export const useNavigation = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isFriendsTabOpen, setFriendsTabOpen] = useState(false);
   const [isSettingTabOpen, setSettingTabOpen] = useState(false);
+  const [isOptionModalOpen, setOptionModalOpen] = useState(false);
+  const [isFriendHistoryOpen, setFriendHistoryOpen] = useState(false);
   const [isFullview, setIsFullview] = useState(() => {
     const saved = localStorage.getItem("isFullview");
     return saved === "true";
@@ -49,6 +51,7 @@ export const useNavigation = () => {
     setIsBottomOpen,
     isFriendsTabOpen,
     setFriendsTabOpen,
+    isOptionModalOpen, setOptionModalOpen,
     isFullview,
     setIsFullview,
     isSettingTabOpen,
@@ -57,6 +60,7 @@ export const useNavigation = () => {
     setShowFlyingEffect,
     flyingEmojis,
     setFlyingEmojis,
-    isPWA, setIsPWA
+    isPWA, setIsPWA,
+    isFriendHistoryOpen, setFriendHistoryOpen
   };
 };

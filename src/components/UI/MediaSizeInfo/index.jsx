@@ -17,7 +17,7 @@ const MediaSizeInfo = () => {
   const colorClass = isTooBig ? "text-red-500" : "text-green-500";
 
   return (
-    <div className="h-6 transition-opacity duration-300 ease-in-out">
+    <div className="h-2 transition-opacity duration-300 ease-in-out">
       {preview?.type && isSizeMedia ? (
         <div className={`text-sm flex items-center gap-1 ${colorClass}`}>
           Dung lượng {isImage ? "ảnh" : "video"} là{" "}

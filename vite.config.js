@@ -75,7 +75,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           react: ["react", "react-dom"],
-          ui: ["lucide-react", "sonner", "react-icons", "react-toastify", "react-fast-marquee"],
+          ui: ["lucide-react", "sonner", "react-icons", "react-toastify", "react-fast-marquee", "swiper"],
           crop: ["react-easy-crop"],
           vendor: ["axios", "zustand", "dexie"]
         },

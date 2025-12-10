@@ -1,8 +1,23 @@
 import { getMomentById } from "@/cache/momentDB";
+import { API_ENDPOINTS } from "@/config/apiConfig";
 import api from "@/lib/axios";
 import { instanceLocketV2 } from "@/lib/axios.locket";
 import { getToken } from "@/utils";
 import { generateUUIDv4Upper } from "@/utils/generate/uuid";
+
+
+export const GetAllMoments = async ({ timestamp = null, friendId = null, limit = 60}) => {
+  try {
+    const res = await api.post(API_ENDPOINTS.getMoments, {
+      timestamp: timestamp,
+      friendId: friendId,
+      limit: limit,
+    });
+    return res.data?.data;
+  } catch (err) {
+    console.warn("Failed", err);
+  }
+};
 
 export const SendReactMoment = async (emoji, selectedMomentId, power) => {
   try {

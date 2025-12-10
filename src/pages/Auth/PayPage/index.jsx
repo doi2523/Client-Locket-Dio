@@ -2,10 +2,14 @@ import React, { useEffect, useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "@/context/AuthLocket";
 import LoadingPage from "@/components/pages/LoadingPage";
-import { Copy, XCircle } from "lucide-react";
+import { CheckCircle, Copy, XCircle } from "lucide-react";
 import VietQRImage from "./QrCodeImage";
 import * as services from "@/services";
-import { showSuccess } from "@/components/Toast";
+import {
+  SonnerInfo,
+  SonnerSuccess,
+  SonnerWarning,
+} from "@/components/ui/SonnerToast";
 
 export default function PayPage() {
   const { user } = useContext(AuthContext);
@@ -52,15 +56,15 @@ export default function PayPage() {
       const data = await services.GetInfoOrder(orderId);
 
       if (data?.status === "PENDING") {
-        showWarning("⏳ Đơn hàng chưa được thanh toán.");
+        SonnerInfo("⏳ Đơn hàng chưa được thanh toán.");
       } else if (data?.status === "PAID") {
-        showSuccess("✅ Đơn hàng đã thanh toán thành công!");
+        SonnerSuccess("✅ Đơn hàng đã thanh toán thành công!");
       } else if (data?.status === "CANCELLED") {
-        showWarning("❌ Đơn hàng đã bị huỷ.");
+        SonnerInfo("❌ Đơn hàng đã bị huỷ.");
       } else {
-        showWarning("⚠️ Trạng thái đơn hàng không xác định.");
+        SonnerWarning("⚠️ Trạng thái đơn hàng không xác định.");
       }
-      
+
       SetOrder(data);
     } catch (error) {
       console.error("Lỗi khi kiểm tra lại đơn hàng:", error);
@@ -105,6 +109,32 @@ export default function PayPage() {
     );
   }
 
+  if (plan.status === "PAID") {
+    return (
+      <div className="h-[84vh] bg-base-100 flex items-center justify-center p-4">
+        <div className="bg-base-200 shadow-md rounded-xl p-6 w-full max-w-sm text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="bg-green-100 p-3 rounded-full text-green-600">
+              <CheckCircle className="w-6 h-6" />
+            </div>
+          </div>
+          <h2 className="text-xl font-bold text-green-700">
+            🎉 Thanh toán thành công
+          </h2>
+          <p className="text-sm text-gray-600">
+            Cảm ơn bạn đã thanh toán. Gói của bạn đã được kích hoạt.
+          </p>
+          <button
+            onClick={() => navigate("/pricing")}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition"
+          >
+            Xem gói của bạn
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-base-100 px-6 py-6 flex items-center justify-center">
       <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8 bg-base-100 shadow-2xl rounded-xl p-6">
@@ -118,18 +148,21 @@ export default function PayPage() {
             amount={plan.info_order.amount}
           />
 
-          <div className="grid grid-cols-2 gap-4 text-center text-sm w-full max-w-xs">
-            <div className="bg-blue-50 rounded-lg p-3">
-              <div className="text-lg font-bold text-green-600">
-                {plan.price.toLocaleString()}đ
-              </div>
-              <div className="text-secondary">Giá gói</div>
-            </div>
-            <div className="bg-blue-50 rounded-lg p-3">
-              <div className="text-lg font-bold text-blue-600">
-                {plan.duration_days} ngày
-              </div>
-              <div className="text-secondary">Thời hạn</div>
+          <div className="flex justify-center text-sm w-full">
+            <div className="">
+              <button
+                className="w-full bg-indigo-500 text-white rounded-lg p-2 hover:bg-indigo-600 transition-colors"
+                onClick={() => {
+                  if (plan.checkout_url) {
+                    navigator.clipboard.writeText(plan.checkout_url);
+                    SonnerInfo("Link thanh toán đã được copy!");
+                  } else {
+                    SonnerInfo("Link thanh toán chưa sẵn sàng.");
+                  }
+                }}
+              >
+                Copy link thanh toán
+              </button>
             </div>
           </div>
 

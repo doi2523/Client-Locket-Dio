@@ -25,4 +25,6 @@ export const API_ENDPOINTS = {
   // REST endpoints
   getAllMessages: `${PROTOCOL}://${CHAT_SERVER_HOST}${API_NAMESPACE.locket}/getAllMessageV2`,
   getMessagesWithUser: `${PROTOCOL}://${CHAT_SERVER_HOST}${API_NAMESPACE.locket}/getMessageWithUserV2`,
+
+  getMoments: `${PROTOCOL}://${CHAT_SERVER_HOST}${API_NAMESPACE.locket}/getMomentV2`,
 };

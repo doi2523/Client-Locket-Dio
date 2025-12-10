@@ -84,9 +84,10 @@ const Sidebar = () => {
       items: [
         { to: "/postmoments", icon: Upload, text: "Đăng ảnh, video" },
         { to: "/locket", icon: Smartphone, text: "Locket Camera", badge: "Hot" },
+        { to: "/locket-beta", icon: Smartphone, text: "Locket Camera", badge: "Beta" },
         { to: "/manage", icon: Palette, text: "Quản lý Caption" },
         { to: "/tools", icon: Wrench, text: "Công cụ Locket" },
-        { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "New" },
+        { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "Hot" },
         { to: "/profile", icon: UserRound, text: "Hồ sơ của bạn" },
       ],
     },

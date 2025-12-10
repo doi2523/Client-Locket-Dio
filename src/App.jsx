@@ -15,19 +15,22 @@ import ToastProvider from "./components/Toast";
 import getLayout from "./layouts";
 import LoadingPage from "./components/pages/LoadingPage";
 import NotFoundPage from "./components/pages/NotFoundPage";
-import { Toaster } from 'sonner';
+import { Toaster } from "sonner";
+import { SocketProvider } from "./context/SocketContext";
 
 function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <AppProvider>
-          <Router>
-            <AppContent />
-          </Router>
-          <ToastProvider />
-          <Toaster />
-        </AppProvider>
+        <SocketProvider>
+          <AppProvider>
+            <Router>
+              <AppContent />
+            </Router>
+            <ToastProvider />
+            <Toaster />
+          </AppProvider>
+        </SocketProvider>
       </AuthProvider>
     </ThemeProvider>
   );

@@ -10,6 +10,7 @@ export const createSocket = (idToken, { onConnect, onDisconnect, onError } = {})
     transports: ["websocket"],
     auth: { token: idToken },
     autoConnect: false,
+    reconnection: false,
   });
 
   // Trạng thái kết nối

@@ -1,0 +1,27 @@
+.square-progress {
+    display: block;
+  }
+  
+  .square-progress .path-bg {
+    stroke: #444;
+    stroke-width: 10;
+    fill: none;
+  }
+  
+  .square-progress .path-progress {
+    stroke: #00ccff;
+    stroke-width: 10;
+    fill: none;
+    stroke-linecap: round;
+    stroke-dasharray: 800;
+    stroke-dashoffset: 800;
+    animation: pathProgress 5s linear forwards;
+    animation-play-state: paused;
+  }
+  
+  @keyframes pathProgress {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  
