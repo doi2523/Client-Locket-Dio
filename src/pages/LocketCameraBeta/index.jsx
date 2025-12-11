@@ -38,7 +38,7 @@ export default function LocketCameraBeta() {
       {/* Modal Views */}
       <FriendsContainer />
       <CropImageStudio />
-      {/* <ScreenCustomeStudio /> */}
+      <ScreenCustomeStudio />
       <EmojiPicker />
       <OptionMoment
         setOptionModalOpen={setOptionModalOpen}
@@ -46,7 +46,7 @@ export default function LocketCameraBeta() {
       />
       {/* Canvas for capturing image/video */}
       <canvas ref={canvasRef} className="hidden" />
-      <span className="absolute z-60 bottom-3 right-4 text-xs text-gray-400 select-none">
+      <span className="fixed pointer-events-none z-60 bottom-3 right-4 text-xs text-gray-400 select-none">
         © Locket Dio
       </span>
     </>

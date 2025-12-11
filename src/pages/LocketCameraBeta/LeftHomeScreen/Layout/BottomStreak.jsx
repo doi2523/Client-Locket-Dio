@@ -1,5 +1,5 @@
 import { Flame, Heart } from "lucide-react";
-import { useStreak } from "../../../hooks/useStreak";
+import { useStreak } from "@/hooks/useStreak";
 
 export default function BottomStreak({ recentPosts = [] }) {
   const streak = useStreak();
