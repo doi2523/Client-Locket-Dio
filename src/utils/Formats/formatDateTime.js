@@ -14,3 +14,23 @@ export const formatDateTime = (isoString) => {
 
   return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 };
+
+// utils/date.ts hoặc date.js
+export function getWeekdayFromFirestore(timestamp) {
+  if (!timestamp?._seconds) return "";
+
+  const date = new Date(timestamp._seconds * 1000);
+  const day = date.getDay(); // 0 = CN, 1 = T2, ...
+
+  const map = [
+    "Chủ nhật",
+    "Thứ Hai",
+    "Thứ Ba",
+    "Thứ Tư",
+    "Thứ Năm",
+    "Thứ Sáu",
+    "Thứ Bảy",
+  ];
+
+  return map[day];
+}

@@ -9,7 +9,9 @@ import {
 
 export const useMoments = (user, selectedFriendUid, deps = []) => {
   const [moments, setMoments] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(MOMENTS_CONFIG.initialVisible);
+  const [visibleCount, setVisibleCount] = useState(
+    MOMENTS_CONFIG.initialVisible
+  );
   const [loading, setLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -49,7 +51,9 @@ export const useMoments = (user, selectedFriendUid, deps = []) => {
 
         if (!apiData) return;
 
-        const sortedApi = [...apiData].sort((a, b) => b.createTime - a.createTime);
+        const sortedApi = [...apiData].sort(
+          (a, b) => b.createTime - a.createTime
+        );
 
         setMoments(sortedApi);
         await bulkAddMoments(apiData);
@@ -109,18 +113,22 @@ export const useMoments = (user, selectedFriendUid, deps = []) => {
   // -------------------------------------------------------
   // 🎯 3) Add moment mới từ realtime
   // -------------------------------------------------------
-  const addNewMoment = useCallback(async (newMoment) => {
-    setMoments((prev) => {
-      if (prev.some((m) => m.id === newMoment.id)) return prev;
+  const addNewMoment = useCallback(async (newMoments) => {
+    // newMoments có thể là mảng hoặc object, chuẩn hóa thành mảng
+    const items = Array.isArray(newMoments) ? newMoments : [newMoments];
 
-      const updated = [newMoment, ...prev].sort(
+    setMoments((prev) => {
+      // Lọc bỏ các moment trùng id
+      const filtered = items.filter((m) => !prev.some((p) => p.id === m.id));
+      if (filtered.length === 0) return prev;
+
+      const updated = [...filtered, ...prev].sort(
         (a, b) => b.createTime - a.createTime
       );
-
       return updated;
     });
 
-    await bulkAddMoments([newMoment]);
+    await bulkAddMoments(items);
   }, []);
 
   // -------------------------------------------------------

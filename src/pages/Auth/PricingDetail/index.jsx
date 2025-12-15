@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { AuthContext } from "@/context/AuthLocket";
 import LoadingPage from "@/components/pages/LoadingPage";
-import { API_URL } from "@/utils";
 import * as services from "@/services";
 import NoticePricing from "./NoticePricing";
 import PlanDetailCard from "./PlanDetail";
@@ -24,9 +23,8 @@ export default function PlanDetailPage() {
   useEffect(() => {
     const fetchPlanData = async () => {
       try {
-        const response = await fetch(`${API_URL.GET_DIO_PLANS}/${planId}`);
-        const data = await response.json();
-        setPlanData(data);
+        const result = await services.GetInfoPlanWithId(planId);;
+        setPlanData(result);
       } catch (error) {
         console.error("Error fetching plan:", error);
       } finally {

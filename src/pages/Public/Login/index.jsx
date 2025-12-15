@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/SonnerToast";
 import { CONFIG } from "@/config";
 import RotatingCircleText from "./RotatingCircleText";
+import { ensureDBOwner } from "@/cache/configDB";
 
 const Login = () => {
   const { setUser, setAuthTokens } = useContext(AuthContext);
@@ -52,7 +53,11 @@ const Login = () => {
 
     setIsLoginLoading(true);
     try {
-      const res = await DioService.login(email, password, captchaToken);
+      const res = await DioService.loginV2({
+        email: email,
+        password: password,
+        captchaToken: captchaToken,
+      });
       if (!res) throw new Error("Lỗi: Server không trả về dữ liệu!");
 
       const { idToken, localId } = res.data;
@@ -60,7 +65,7 @@ const Login = () => {
       // ⚡️ Lưu refreshToken theo rememberMe
       // Khi login thành công:
       utils.saveToken({ idToken, localId }, rememberMe);
-
+      await ensureDBOwner(localId);
       // ⚡️ Lưu user data toàn bộ (gồm thông tin cá nhân)
       utils.saveUser(res.data);
       setAuthTokens(utils.getToken());

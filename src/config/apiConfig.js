@@ -28,3 +28,15 @@ export const API_ENDPOINTS = {
 
   getMoments: `${PROTOCOL}://${CHAT_SERVER_HOST}${API_NAMESPACE.locket}/getMomentV2`,
 };
+
+
+export const PUBLIC_API = {
+  feeds: "v1/public/feeds",
+  donations: "v1/public/donations",
+  timelines: "v1/public/timelines",
+  frames: "v1/public/myframes",
+  celebrates: "v1/public/getAllCelebrate",
+  notifications: "v1/public/notification",
+  plans: "v1/public/dio-plans",
+  themes: "v1/public/themes",
+};

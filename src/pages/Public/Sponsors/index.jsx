@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Heart, Gift, CreditCard, Coffee, UsersRound } from "lucide-react";
-import axios from "axios";
-import { API_URL } from "@/utils";
 import { Link } from "react-router-dom";
 import { SPONSORS_CONFIG } from "@/config";
+import { getListDonates } from "@/services";
 
 const DonatePage = () => {
   const [donations, setDonations] = useState([]);
@@ -16,8 +15,8 @@ const DonatePage = () => {
     const fetchDonations = async () => {
       try {
         setIsLoading(true);
-        const res = await axios.get(`${API_URL.DONATE_URL}`);
-        setDonations(res.data);
+        const result = await getListDonates();
+        setDonations(result);
         setIsLoading(false);
       } catch (err) {
         console.error("Lỗi khi fetch donations:", err);

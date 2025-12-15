@@ -1,36 +1,15 @@
-import axios from "axios";
-import * as utils from "@/utils";
 import api from "@/lib/axios";
+import { instanceMain } from "@/lib/axios.main";
+import { CONFIG } from "@/config";
 
 //Login
-export const login = async (email, password) => {
+export const loginV2 = async ({ email, password, captchaToken }) => {
   try {
-    const res = await axios.post(
-      utils.API_URL.LOGIN_URL_V2,
-      { email, password },
-      { withCredentials: true } // Nhận cookie từ server
-    );
-
-    // Kiểm tra nếu API trả về lỗi nhưng vẫn có status 200
-    if (res.data?.success === false) {
-      console.error("Login failed:", res.data.message);
-      return null;
-    }
-
-    return res.data; // Trả về dữ liệu từ server
-  } catch (error) {
-    if (error.response && error.response.data?.error) {
-      throw error.response.data.error; // ⬅️ Ném lỗi từ `error.response.data.error`
-    }
-    console.error("❌ Network Error:", error.message);
-    throw new Error(
-      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút."
-    );
-  }
-};
-export const loginV2 = async (email, password) => {
-  try {
-    const res = await api.post(utils.API_URL.LOGIN_URL_V2, { email, password });
+    const res = await instanceMain.post("locket/loginV2", {
+      email,
+      password,
+      captchaToken,
+    });
 
     // Kiểm tra nếu API trả về lỗi nhưng vẫn có status 200
     if (res.data?.success === false) {
@@ -51,8 +30,8 @@ export const loginV2 = async (email, password) => {
 };
 export const refreshIdToken = async (refreshToken) => {
   try {
-    const res = await axios.post(
-      utils.API_URL.REFESH_TOKEN_URL,
+    const res = await instanceMain.post(
+      "locket/refresh-token",
       { refreshToken },
       { withCredentials: true } // Nhận cookie từ server
     );
@@ -78,16 +57,7 @@ export const forgotPassword = async (email) => {
   try {
     const body = { email };
 
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
-
-    const res = await axios.post(
-      utils.API_URL.FORGOT_PASSWORD_URL,
-      body,
-      { headers }
-    );
+    const res = await instanceMain.post("locket/resetPassword", body);
 
     return res.data;
   } catch (error) {
@@ -107,9 +77,11 @@ export const forgotPassword = async (email) => {
 //Logout
 export const logout = async () => {
   try {
-    const response = await axios.get(utils.API_URL.LOGOUT_URL, {
-      withCredentials: true,
-    });
+    const body = {
+      author: CONFIG.app.name,
+      client: CONFIG.app.clientVersion,
+    };
+    const response = await instanceMain.get("locket/logout", {});
     return response.data; // ✅ Trả về dữ liệu từ API (ví dụ: { message: "Đã đăng xuất!" })
   } catch (error) {
     console.error(

@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { useApp } from "@/context/AppContext";
 import { Check, RotateCcw, X } from "lucide-react";
 import LoadingOverlay from "@/components/ui/Loading/LineSpinner";
-import BottomMenu from "../Layout/BottomMenu";
 import { enRetryPayload, getQueuePayloads } from "@/process/uploadQueue";
 import { AuthContext } from "@/context/AuthLocket";
 
@@ -110,7 +109,7 @@ const QueueViewer = () => {
       // onClick={handleClose}
       tabIndex={0}
     >
-      <div className="flex-1 flex flex-col justify-center items-center w-full gap-2">
+      <div className="flex-1 flex flex-col justify-center items-center w-full gap-2 pb-30">
         <div
           className={`relative w-full max-w-md aspect-square bg-base-200 rounded-[64px] overflow-hidden transition-all duration-300 ease-in-out ${
             isVisible && !isAnimating
@@ -196,7 +195,6 @@ const QueueViewer = () => {
           </div>
         </div>
       </div>
-      <BottomMenu />
     </div>
   );
 };

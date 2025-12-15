@@ -35,7 +35,7 @@ export default function ManageCaption() {
     }
 
     try {
-      const apiUrl = `${CONFIG.api.database}/locketpro/cs/${encodeURIComponent(
+      const apiUrl = `${CONFIG.api.data}/locketpro/cs/${encodeURIComponent(
         captionId
       )}`;
       console.log("Gửi request tới:", apiUrl);

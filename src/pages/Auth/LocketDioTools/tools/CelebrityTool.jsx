@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { CONFIG } from "@/config";
-import { fetchUserV2 } from "@/services";
+import { fetchUserV2, getListCelebrity } from "@/services";
 import CelebrateItem from "../CelebrateItem";
 import {
   SonnerError,
@@ -10,7 +9,6 @@ import {
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
 import { Copy, RefreshCcw } from "lucide-react";
-import api from "@/lib/axios";
 import { useFeatureVisible, useGetCode } from "@/hooks/useFeature";
 import { PiExport } from "react-icons/pi";
 
@@ -43,18 +41,15 @@ export default function CelebrateTool() {
       }
 
       // Nếu chưa có cache, cache hết hạn, hoặc data rỗng thì gọi API
-      const res = await axios.get(
-        `${CONFIG.api.database}/locketpro/getAllCelebrate`
-      );
-      const data = res.data || [];
+      const result = await getListCelebrity();
 
-      setCelebrateList(data);
+      setCelebrateList(result || []);
 
       // Lưu cache kèm timestamp
       localStorage.setItem(
         cacheKey,
         JSON.stringify({
-          data,
+          result,
           timestamp: Date.now(),
         })
       );

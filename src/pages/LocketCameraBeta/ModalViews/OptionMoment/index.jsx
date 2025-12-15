@@ -6,6 +6,7 @@ import { useApp } from "@/context/AppContext";
 import { SonnerSuccess, SonnerWarning } from "@/components/ui/SonnerToast";
 import Modal from "@/components/ui/Modal";
 import { useMoments } from "@/hooks/useMoments";
+import { deletePayloadById } from "@/process/uploadQueue";
 
 const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
   const { navigation, post } = useApp();
@@ -55,9 +56,8 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
       const updatedPayloads = uploadPayloads.filter(
         (_, index) => index !== selectedQueue
       );
-
+      await deletePayloadById(selectedQueue);
       setuploadPayloads(updatedPayloads);
-      localStorage.setItem("uploadPayloads", JSON.stringify(updatedPayloads));
 
       setSelectedQueue(null);
       showSuccess("Đã xoá thành công!");
@@ -100,7 +100,7 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
         </div>
         <p className="text-left text-sm mt-4 text-base-content/70">
           Bạn có thể tải về hình ảnh/video của bạn bè hoặc xoá chúng khỏi lịch
-          sử của bạn
+          sử của bạn {selectedQueue}
         </p>
         <div className="w-full flex flex-row justify-center items-center gap-3 mt-6">
           <button className="btn btn-neutral btn-outline rounded-3xl w-36 flex items-center justify-center gap-2">

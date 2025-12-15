@@ -96,7 +96,7 @@ function AppContent() {
         {/* Điều hướng ngược lại khi đã đăng nhập mà cố vào public route */}
         {user &&
           publicRoutes.map(({ path }) => (
-            <Route key={path} path={path} element={<Navigate to="/locket" />} />
+            <Route key={path} path={path} element={<Navigate to="/locket-beta" />} />
           ))}
 
         <Route path="*" element={<NotFoundPage />} />

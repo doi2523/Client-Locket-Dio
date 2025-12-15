@@ -32,8 +32,13 @@ export default function GeneralThemes({ title }) {
   const [reviewRating, setReviewRating] = useState(0);
 
   useEffect(() => {
-    if (addressOptions.length > 0) setSavedAddressOptions(addressOptions);
-  }, [addressOptions]);
+    if (
+      addressOptions.length > 0 &&
+      JSON.stringify(addressOptions) !== JSON.stringify(savedAddressOptions)
+    ) {
+      setSavedAddressOptions(addressOptions);
+    }
+  }, [addressOptions, savedAddressOptions]);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);

@@ -172,7 +172,7 @@ Tạo file `.env` trong thư mục gốc:
 VITE_BASE_API_URL=https://apilocket-diov2.onrender.com
 
 # API test cơ sở dữ liệu
-VITE_DATABASE_API_URL=https://server-admin-xi.vercel.app
+VITE_DATA_API_URL=https://data.locket-dio.com
 
 #API upload phương tiện lên cloud
 VITE_STORAGE_API_URL=https://storage.locket-dio.com
@@ -281,7 +281,7 @@ Client-Locket-Dio/
 ### 🔐 Xác Thực
 
 ```http
-POST /locket/login
+POST /locket/loginV2
 Content-Type: application/json
 
 {

@@ -1,5 +1,3 @@
-import axios from "axios";
-import * as utils from "@/utils";
 import api from "@/lib/axios";
 
 const LAST_UPDATE_KEY = "lastUserUpdate";
@@ -31,16 +29,5 @@ export const updateUserInfo = async (user) => {
     console.log("✅ User info updated");
   } catch (err) {
     console.error("❌ Failed to update user info:", err);
-  }
-};
-
-export const GetListInfoPlans = async () => {
-  try {
-    const response = await axios.get(utils.API_URL.GET_DIO_PLANS);
-
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching upload stats:", error);
-    throw error;
   }
 };

@@ -228,9 +228,9 @@ const MonthCalendar = ({ monthKey, postsInMonth }) => {
                 <div className="flex-1" />
               ) : (
                 <div className="grid grid-cols-2 gap-0.5 flex-1 overflow-hidden">
-                  {posts.slice(0, 4).map((item) => (
+                  {posts.slice(0, 4).map((item, index) => (
                     <div
-                      key={item.id}
+                      key={item.id || index + 1}
                       className="relative rounded-md overflow-hidden"
                       title={item.captions?.[0]?.text || item.date}
                     >

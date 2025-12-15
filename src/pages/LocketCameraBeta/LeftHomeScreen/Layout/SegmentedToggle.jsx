@@ -1,11 +1,10 @@
 import { CalendarDays, Megaphone } from "lucide-react";
-import { useState } from "react";
 
 export default function SegmentedToggle({active, setActive}) {
 
   return (
-    <div className="fixed bottom-5 w-full flex justify-center items-center">
-      <div className="flex flex-row gap-1 bg-base-100/20 px-2 py-1.5 rounded-4xl shadow-lg backdrop-blur-[4px]">
+    <div className="w-full flex justify-center items-center">
+      <div className="flex flex-row gap-1 bg-base-100/20 px-2 py-1 rounded-4xl shadow-lg backdrop-blur-[4px]">
         
         {/* Rollcalls */}
         <button

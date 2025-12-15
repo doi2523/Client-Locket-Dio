@@ -3,28 +3,30 @@
 export const CONFIG = {
   api: {
     baseUrl: import.meta.env.VITE_BASE_API_URL, // API chính
-    betaUrl: import.meta.env.VITE_BETA_API_URL,
     storage: import.meta.env.VITE_STORAGE_API_URL, // API lưu trữ file
-    database: import.meta.env.VITE_DATABASE_API_URL, // API database
+    data: import.meta.env.VITE_DATA_API_URL, // API data local
     payment: import.meta.env.VITE_PAYMENT_API_URL, // API thanh toán
     cdnUrl: import.meta.env.VITE_CDN_URL, // API cdn
     chatServer: import.meta.env.VITE_CHAT_SERVER_URL, // server realtime chat (socket + API)
     locketApi: import.meta.env.VITE_LOCKET_API_URL, // API Locket chính thức
     exportApi: import.meta.env.VITE_EXPORTS_API_URL, // API export data pdf, excel,...
+    convertApi: import.meta.env.VITE_CONVERTS_API_URL,
   },
 
   keys: {
     vapidPublicKey: import.meta.env.VITE_VAPID_PUBLIC_KEY, // Push notification
     turnstileKey: import.meta.env.VITE_TURNSTILE_SITE_KEY, // Cloudflare Turnstile
 
-    apiKey: import.meta.env.PUBLIC_API_KEY,
+    apiKey: import.meta.env.VITE_PUBLIC_API_KEY,
   },
 
   app: {
     name: "Locket Dio", // Tên app hiển thị
+    author: "dio",
+    shortname: "locketdio",
     fullName: "Locket Dio - Đăng ảnh & Video lên Locket", // Tên đầy đủ
-    clientVersion: "Beta2.5.5.0", // Version client
-    apiVersion: "V2.2.1", // Version API
+    clientVersion: "Beta2.5.5.1", // Version client
+    apiVersion: "v2.2.1", // Version API
     env: import.meta.env.MODE, // development | production
     camera: {
       limits: {

@@ -1,8 +1,7 @@
 import { Camera, Check } from "lucide-react";
 import { useApp } from "@/context/AppContext";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { API_URL } from "@/utils";
+import { getAllFrameCamera } from "@/services";
 
 export default function CameraFrameSelector() {
   const { camera } = useApp();
@@ -12,9 +11,9 @@ export default function CameraFrameSelector() {
   useEffect(() => {
     const fetchFrames = async () => {
       try {
-        const res = await axios.get(`${API_URL.GET_FRAMES_URL}`);
+        const result = await getAllFrameCamera();
         // Thêm frame mặc định vào đầu danh sách
-        const apiFrames = res.data || [];
+        const apiFrames = result || [];
         const defaultFrame = { id: 0, name: "Không có", imageSrc: null };
 
         setFrames([defaultFrame, ...apiFrames.filter((f) => f.id !== 0)]);

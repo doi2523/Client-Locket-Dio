@@ -1,7 +1,6 @@
 import { Suspense, lazy } from "react";
 // const MyBirthday = lazy(() => import("./MyBirthday"));
 const FloatingNotification = lazy(() => import("./Notification"));
-const ContactSupportButton = lazy(() => import("./ContactSupport"));
 
 export default function FloatingActions() {
   return (

@@ -3,6 +3,7 @@ import axios from "axios";
 import { Bell, X } from "lucide-react";
 import { API_URL } from "@/utils";
 import { TbPinned } from "react-icons/tb";
+import { getNotifications } from "@/services";
 
 const highlightWords = ["Server01", "Telegram", "Discord", "Messenger"];
 
@@ -73,7 +74,7 @@ const FloatingNotification = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get(`${API_URL.NOTIFI_URL}`);
+        const res = await getNotifications();
         const data = Array.isArray(res.data.notifications)
           ? res.data.notifications
           : [];

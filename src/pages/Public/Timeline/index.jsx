@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { API_URL } from "@/utils";
+import { getAllTimelines } from "@/services";
 
 export default function Timeline() {
   const [timelineData, setTimelineData] = useState([]);
@@ -27,10 +26,10 @@ export default function Timeline() {
         }
 
         // Nếu không có cache hoặc đã cũ thì gọi API
-        const res = await axios.get(API_URL.GET_TIMELINE);
-        if (Array.isArray(res.data)) {
-          setTimelineData(res.data);
-          sessionStorage.setItem("timelineData", JSON.stringify(res.data));
+        const result = await getAllTimelines();
+        if (Array.isArray(result)) {
+          setTimelineData(result);
+          sessionStorage.setItem("timelineData", JSON.stringify(result));
           sessionStorage.setItem("timelineCacheTime", now.toString());
         } else {
           setTimelineData([]);

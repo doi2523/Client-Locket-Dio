@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { API_URL } from "../utils";
+import { getAllOverlayCaption } from "@/services";
 
 const sortByOrderIndex = (themes) => {
   return [...themes].sort(
@@ -40,13 +39,13 @@ export const useThemes = () => {
       } else {
         try {
           // Nếu chưa có, gọi API để fetch dữ liệu
-          const { data } = await axios.get(API_URL.GET_CAPTION_THEMES);
+          const result = await getAllOverlayCaption();
 
           // Lưu dữ liệu vào sessionStorage để tránh gọi API lại sau này
-          sessionStorage.setItem("captionThemes", JSON.stringify(groupThemesByType(data)));
+          sessionStorage.setItem("captionThemes", JSON.stringify(groupThemesByType(result)));
 
           // Cập nhật state
-          setCaptionThemes(groupThemesByType(data));
+          setCaptionThemes(groupThemesByType(result));
         } catch (error) {
           console.error("Lỗi khi fetch themes:", error);
         }

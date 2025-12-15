@@ -3,8 +3,8 @@ import React from "react";
 
 function HeaderOne({ setIsProfileOpen }) {
   return (
-    <div className="flex items-center justify-between px-4 py-2">
-      <div className="font-lovehouse shadow shadow-black/40 select-none backdrop-blur-2xl text-2xl px-3 pt-1.5 border-3 border-amber-400 rounded-xl">
+    <div className="flex items-center justify-between px-4 py-1">
+      <div className="font-lovehouse shadow/40 select-none backdrop-blur-2xl text-xl px-3 pt-1.5 border-3 border-amber-400 rounded-xl">
         Locket Dio
       </div>
       <button

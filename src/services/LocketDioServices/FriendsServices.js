@@ -8,7 +8,7 @@ import { chunkArray } from "@/helpers/chunkArray";
 //lấy toàn bộ danh sách bạn bè (uid, createdAt) từ API
 export const getListIdFriends = async () => {
   try {
-    const res = await api.post(utils.API_URL.GET_LIST_FRIENDS_URL);
+    const res = await api.post("locket/getAllFriendsV2");
 
     const allFriends = res?.data?.data || [];
 

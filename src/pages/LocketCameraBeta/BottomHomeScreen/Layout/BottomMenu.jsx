@@ -1,7 +1,6 @@
 import { CalendarHeart, LayoutGrid, Share } from "lucide-react";
 import InputForMoment from "./InputForMoment";
 import { useApp } from "@/context/AppContext";
-import { useState } from "react";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
 
 const BottomMenu = ({ setIsBottomOpen, setOptionModalOpen }) => {
@@ -30,8 +29,7 @@ const BottomMenu = ({ setIsBottomOpen, setOptionModalOpen }) => {
   return (
     <>
       <div className="fixed z-70 w-full bottom-0 px-5 pb-5 text-base-content space-y-3">
-        {(typeof selectedMoment === "number" ||
-          typeof selectedQueue === "number") && <InputForMoment />}
+        {typeof selectedMoment === "number" && <InputForMoment />}
 
         <div className="grid grid-cols-3 items-center">
           <div className="flex justify-start">
@@ -51,20 +49,21 @@ const BottomMenu = ({ setIsBottomOpen, setOptionModalOpen }) => {
               className="relative flex items-center justify-center w-20 h-20"
             >
               <div className="absolute w-20 h-20 border-4 border-base-content/30 rounded-full z-10"></div>
-              <div className="absolute rounded-full w-16 h-16 bg-secondary-content z-0 hover:scale-105 transition-transform"></div>
+              <div className="absolute rounded-full w-16 h-16 bg-base-content z-0 hover:scale-105 transition-transform"></div>
             </button>
           </div>
 
           <div className="flex justify-end">
-            {selectedMoment !== null && (
+            {(selectedMoment !== null || selectedQueue !== null) && (
               <button
                 onClick={() => setOptionModalOpen(true)}
-                className="p-2 backdrop-blur-xs bg-base-100/30 text-base-content cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
+                className="btn btn-circle btn-lg p-2 backdrop-blur-xs bg-base-100/30 text-base-content cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
               >
                 <Share size={28} />
               </button>
             )}
-            {selectedMoment == null && (
+            {/* CALENDAR – mặc định hiện, ẩn khi có selection */}
+            {selectedMoment === null && selectedQueue === null && (
               <button
                 onClick={() => SonnerInfo("Chức năng này đang phát triển!")}
                 className="btn btn-circle btn-lg backdrop-blur-xs bg-base-100/30 text-base-content cursor-pointer hover:bg-base-200/50 transition-colors"

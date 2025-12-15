@@ -50,12 +50,9 @@ const BottomHomeScreen = () => {
     visibleCount,
     setVisibleCount,
     loadMoreOlder,
+    addNewMoment,
     resetVisible,
-  } = useMoments(user, selectedFriendUid, [
-    isBottomOpen,
-    isHomeOpen,
-    isProfileOpen,
-  ]);
+  } = useMoments(user, selectedFriendUid);
 
   useEffect(() => {
     resetVisible();
@@ -75,7 +72,7 @@ const BottomHomeScreen = () => {
     const handler = createListHandler(setMoments, bulkAddMoments);
 
     // LISTEN
-    socket.on("new_on_moments", handler);
+    socket.on("new_on_moments", addNewMoment);
 
     // EMIT để server gửi moments đầu tiên
     socket.emit("on_moments", {
@@ -88,7 +85,7 @@ const BottomHomeScreen = () => {
 
     // CLEANUP — rất quan trọng
     return () => {
-      socket.off("new_on_moments", handler); // phải cùng tên event!
+      socket.off("new_on_moments", addNewMoment); // phải cùng tên event!
     };
   }, [idToken, socket]); // nên thêm socket vào dependency
 

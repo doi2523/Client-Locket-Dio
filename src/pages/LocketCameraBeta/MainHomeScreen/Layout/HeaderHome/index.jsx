@@ -101,6 +101,9 @@ const HeaderHome = ({
               src={user?.profilePicture || "/images/default_profile.png"}
               alt="avatar"
               onLoad={() => setIsImageLoaded(true)}
+              onError={(e) => {
+                e.currentTarget.src = "/images/default_profile.png";
+              }}
               className={`rounded-full h-9.5 w-9.5 relative backdrop-blur-3xl transition-opacity duration-300 ${
                 isImageLoaded ? "opacity-100" : "opacity-0"
               }`}

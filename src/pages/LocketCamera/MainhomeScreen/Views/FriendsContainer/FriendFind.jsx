@@ -11,7 +11,7 @@ export default function FriendFind({ friend }) {
     if (friend.username) {
       console.log(friend);
       SonnerWarning("Chưa hỗ trợ tính năng này!")
-      // await SendRequestToFriend(friend.uid);
+      await SendRequestToFriend(friend.uid);
     } else {
       console.warn("❌ Không có username để điều hướng");
     }

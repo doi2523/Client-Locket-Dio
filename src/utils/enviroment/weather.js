@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { API_URL } from "../API/apiRoutes";
+import { getInfoWeather } from "@/services";
 
 const CACHE_KEY = "weather_cache";
 const CACHE_DURATION = 10 * 60 * 1000; // 2 phút
@@ -32,10 +31,7 @@ export function useLocationWeather() {
         try {
           const { latitude, longitude } = position.coords;
 
-          const res = await axios.post(API_URL.GET_WEATHER_URL_V2, {
-            lat: latitude,
-            lon: longitude,
-          });          
+          const res = await getInfoWeather({ lat: latitude, lon: longitude });
 
           const data = res?.data?.data;
 

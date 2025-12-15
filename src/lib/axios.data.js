@@ -3,20 +3,31 @@ import { CONFIG } from "@/config";
 import { getToken } from "@/utils";
 import axios from "axios";
 
-export const BASE_URL = CONFIG.api.database;
+export const BASE_URL = CONFIG.api.data;
+
+// meta tĩnh của app
+const APP_META = {
+  "x-app-author": CONFIG.app.author,
+  "x-app-name": CONFIG.app.shortname,
+  "x-app-client": CONFIG.app.clientVersion,
+  "x-app-api": CONFIG.app.apiVersion,
+  "x-app-env": CONFIG.app.env,
+};
 
 // Tạo axios instance
-export const instanceBase = axios.create({
+export const instanceBaseData = axios.create({
   baseURL: BASE_URL,
   timeout: 30000,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     "x-api-key": CONFIG.keys.apiKey,
+    ...APP_META,
   },
 });
 
-// Thêm interceptor để cập nhật Authorization trước mỗi request
-instanceBase.interceptors.request.use(
+// Interceptor request
+instanceBaseData.interceptors.request.use(
   (config) => {
     const { idToken } = getToken();
     if (idToken) {
@@ -26,3 +37,4 @@ instanceBase.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
