@@ -138,6 +138,17 @@ export const useMoments = (user, selectedFriendUid, deps = []) => {
     setVisibleCount(MOMENTS_CONFIG.initialVisible);
   };
 
+  // -------------------------------------------------------
+  // 🎯 5) Remove moment (state + local DB)
+  // -------------------------------------------------------
+  const removeMoment = useCallback(async (momentId) => {
+    if (!momentId) return;
+
+    setMoments((prev) => prev.filter((m) => m.id !== momentId));
+
+    await deleteMomentById(momentId);
+  }, []);
+
   return {
     moments,
     setMoments,
@@ -147,6 +158,7 @@ export const useMoments = (user, selectedFriendUid, deps = []) => {
     setVisibleCount,
     loadMoreOlder,
     addNewMoment,
+    removeMoment,
     resetVisible,
   };
 };

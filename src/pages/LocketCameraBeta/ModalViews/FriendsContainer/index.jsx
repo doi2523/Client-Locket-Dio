@@ -44,9 +44,11 @@ const FriendsContainer = () => {
       document.body.classList.add("overflow-hidden");
     } else {
       document.body.classList.remove("overflow-hidden");
+      setShowAllFriends(false);
     }
     return () => {
       document.body.classList.remove("overflow-hidden");
+      setShowAllFriends(false);
     };
   }, [isFriendsTabOpen]);
 

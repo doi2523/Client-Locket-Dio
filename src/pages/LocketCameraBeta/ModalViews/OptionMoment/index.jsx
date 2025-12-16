@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { DeleteMoment } from "@/services/LocketDioServices/ActionMoments";
 import { Download, Trash2, X } from "lucide-react";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge";
 import { useApp } from "@/context/AppContext";
 import { SonnerSuccess, SonnerWarning } from "@/components/ui/SonnerToast";
 import Modal from "@/components/ui/Modal";
-import { useMoments } from "@/hooks/useMoments";
 import { deletePayloadById } from "@/process/uploadQueue";
+import { useMoments } from "@/hooks/useMomentsV2";
+import { DeleteMoment } from "@/services";
+import { getMomentById } from "@/cache/momentDB";
 
 const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
   const { navigation, post } = useApp();
@@ -35,8 +36,10 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
   const handleDelete = async () => {
     if (selectedMomentId !== null) {
       try {
+        //Call API xoá ảnh
         const deletedMoment = await DeleteMoment(selectedMomentId);
         if (deletedMoment === selectedMomentId) {
+          //Xoá ảnh trong local nếu id đã xoá trùng id chọn
           await removeMoment(selectedMomentId);
           SonnerSuccess(
             "Đã xoá ảnh thành công!",
@@ -64,6 +67,13 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
     }
   };
 
+  const handleDownload = async () => {
+    if (!selectedMomentId) return;
+
+    const data = await getMomentById(selectedMomentId);
+    if (!data) return;
+  };
+
   return (
     <>
       {/* Overlay */}
@@ -77,7 +87,7 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
       />
 
       <div
-        className={`fixed border-t border-base-content bottom-0 left-0 w-full pt-3 pb-5 px-4 bg-base-100 rounded-t-4xl shadow-lg transition-all duration-500 ease-in-out z-[63] flex flex-col text-base-content ${
+        className={`fixed border-t border-base-content bottom-0 left-0 w-full pt-3 pb-6 px-4 bg-base-100 rounded-t-4xl shadow-lg transition-all duration-500 ease-in-out z-[63] flex flex-col text-base-content ${
           isOptionModalOpen
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-full"
@@ -103,7 +113,10 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
           sử của bạn {selectedQueue}
         </p>
         <div className="w-full flex flex-row justify-center items-center gap-3 mt-6">
-          <button className="btn btn-neutral btn-outline rounded-3xl w-36 flex items-center justify-center gap-2">
+          <button
+            onClick={handleDownload}
+            className="btn btn-neutral btn-outline rounded-3xl w-36 flex items-center justify-center gap-2"
+          >
             <Download size={24} /> Tải xuống
           </button>
 
