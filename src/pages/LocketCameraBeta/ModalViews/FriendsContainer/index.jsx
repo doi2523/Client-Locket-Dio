@@ -272,8 +272,8 @@ const FriendsContainer = () => {
             </div>
 
             {/* Requests */}
-            {/* <IncomingFriendRequests /> */}
-            {/* <OutgoingRequest /> */}
+            <IncomingFriendRequests />
+            <OutgoingRequest />
           </div>
         </div>
       </div>

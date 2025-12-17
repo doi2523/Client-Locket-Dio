@@ -32,9 +32,11 @@ export default function FriendSelectItems({ friend, isSelected, onToggle }) {
           </div>
         ) : (
           <img
-            src={friend.profilePic || "./prvlocket.png"}
+            src={friend.profilePic || "/images/default_profile.png"}
             alt={friend.firstName}
-            onError={() => setImgError(true)}
+            onError={(e) => {
+              e.currentTarget.src = "/images/default_profile.png";
+            }}
             className="w-11 h-11 rounded-full object-cover"
           />
         )}

@@ -8,9 +8,11 @@ import { useApp } from "@/context/AppContext";
 import { X } from "lucide-react";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
+import { useAuth } from "@/context/AuthLocket";
 
 const OutgoingRequest = () => {
   const { navigation } = useApp();
+  const { user } = useAuth();
   const { isFriendsTabOpen } = navigation;
   const [friends, setFriends] = useState([]);
   const [nextPageToken, setNextPageToken] = useState(null);
@@ -28,6 +30,7 @@ const OutgoingRequest = () => {
   }, [isFriendsTabOpen]);
 
   const fetchFriendRequests = async (pageToken = null) => {
+    if (!user) return;
     setLoading(true);
     const result = await getOutgoingRequestFriend(pageToken);
 

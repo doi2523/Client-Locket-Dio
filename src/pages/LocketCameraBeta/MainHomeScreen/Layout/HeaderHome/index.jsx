@@ -143,7 +143,7 @@ const HeaderHome = ({
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>{friendDetails.length || "36"}</span>người bạn
+                <span>{friendDetails.length || "0"}</span>người bạn
               </>
             )}
           </button>

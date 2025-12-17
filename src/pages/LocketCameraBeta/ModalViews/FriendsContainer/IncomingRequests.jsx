@@ -9,8 +9,10 @@ import { useApp } from "@/context/AppContext";
 import { Check } from "lucide-react";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 import { useFriendStore } from "@/stores/useFriendStore";
+import { useAuth } from "@/context/AuthLocket";
 
 const IncomingFriendRequests = () => {
+  const { user } = useAuth()
   const { navigation } = useApp();
   const { isFriendsTabOpen } = navigation;
   const [friends, setFriends] = useState([]);
@@ -30,6 +32,7 @@ const IncomingFriendRequests = () => {
   }, [isFriendsTabOpen]);
 
   const fetchFriendRequests = async (pageToken = null) => {
+    if (!user) return;
     setLoading(true);
     const result = await getListRequestFriendV2(pageToken);
 

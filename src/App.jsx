@@ -65,7 +65,7 @@ function AppContent() {
     setMeta("meta[name='twitter:title']", document.title);
   }, [location.pathname]);
 
-  if (loading) return <LoadingPage isLoading={true} />;
+  // if (loading) return <LoadingPage isLoading={true} />;
 
   return (
     <Suspense fallback={<LoadingPage isLoading={true} />}>
