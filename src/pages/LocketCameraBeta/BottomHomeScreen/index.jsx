@@ -10,7 +10,7 @@ import { Virtual } from "swiper/modules";
 import "swiper/css";
 import MomentSlide from "./MomentsView/MomentSlide";
 import { useSocket } from "@/context/SocketContext";
-import { useMomentsStore } from "@/stores";
+import { useMomentsStoreV2 } from "@/stores/useMomentsStoreV2";
 
 const BottomHomeScreen = () => {
   const { navigation, post } = useApp();
@@ -40,20 +40,29 @@ const BottomHomeScreen = () => {
   const { user } = useAuth();
 
   const { socket, isConnected } = useSocket();
+
+  const selectedKey = selectedFriendUid ?? "all";
+
+  const bucket = useMomentsStoreV2((s) => s.momentsByUser[selectedKey]);
+
   const {
-    moments,
-    loading,
-    hasMore,
-    visibleCount,
-    increaseVisibleCount,
+    items: moments = [],
+    loading = false,
+    hasMore = true,
+    visibleCount = 0,
+  } = bucket || {};
+
+  const {
     fetchMoments,
     loadMoreOlder,
     addNewMoment,
+    syncMomentsSnapshot,
+    increaseVisibleCount,
     resetVisible,
-  } = useMomentsStore();
+  } = useMomentsStoreV2();
 
   useEffect(() => {
-    resetVisible();
+    resetVisible(selectedFriendUid);
   }, [isBottomOpen, isHomeOpen, isProfileOpen, selectedFriendUid]);
 
   // Fetch initial moments
@@ -71,8 +80,20 @@ const BottomHomeScreen = () => {
   useEffect(() => {
     if (!idToken || !socket) return;
 
+    const handleMoments = (data) => {
+      if (!data) return;
+
+      // 🧠 Snapshot (xoá / sync)
+      if (Array.isArray(data) && data.length > 1) {
+        syncMomentsSnapshot(data);
+        return;
+      }
+
+      // 🧠 Add realtime
+      addNewMoment(data);
+    };
     // LISTEN
-    socket.on("new_on_moments", addNewMoment);
+    socket.on("new_on_moments", handleMoments);
 
     // EMIT để server gửi moments đầu tiên
     socket.emit("on_moments", {
@@ -85,7 +106,7 @@ const BottomHomeScreen = () => {
 
     // CLEANUP — rất quan trọng
     return () => {
-      socket.off("new_on_moments", addNewMoment); // phải cùng tên event!
+      socket.off("new_on_moments", handleMoments); // phải cùng tên event!
     };
   }, [idToken, socket]); // nên thêm socket vào dependency
 
@@ -153,7 +174,7 @@ const BottomHomeScreen = () => {
         <UploadingQueue />
         <MomentsGrid
           visibleCount={visibleCount}
-          increaseVisibleCount={increaseVisibleCount}
+          increaseVisibleCount={() => increaseVisibleCount(selectedFriendUid)}
           moments={moments}
           loadMoreOlder={loadMoreOlder}
           hasMore={hasMore}

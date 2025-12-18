@@ -43,7 +43,7 @@ const MomentsGrid = ({
         }
 
         // 2️⃣ hết local → load API theo friend
-        if (loadMoreOlder && hasMore && selectedFriendUid) {
+        if (loadMoreOlder && hasMore) {
           loadMoreOlder(selectedFriendUid);
         }
       },
