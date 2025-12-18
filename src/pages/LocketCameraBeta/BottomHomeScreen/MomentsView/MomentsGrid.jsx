@@ -1,18 +1,22 @@
 import { useEffect, useState, useRef } from "react";
 import { MdSlowMotionVideo } from "react-icons/md";
 import { useApp } from "@/context/AppContext";
-import { MOMENTS_CONFIG } from "@/config";
 
 const MomentsGrid = ({
   visibleCount,
-  setVisibleCount,
+  increaseVisibleCount,
   moments,
   loadMoreOlder,
   hasMore,
   loading,
 }) => {
   const { post } = useApp();
-  const { selectedMoment, setSelectedMoment, setSelectedMomentId, selectedFriendUid } = post;
+  const {
+    selectedMoment,
+    setSelectedMoment,
+    setSelectedMomentId,
+    selectedFriendUid,
+  } = post;
 
   const [loadedItems, setLoadedItems] = useState([]);
   const lastElementRef = useRef(null);
@@ -36,9 +40,7 @@ const MomentsGrid = ({
         if (entry.isIntersecting) {
           // 1️⃣ Nếu còn item trong local → tăng visibleCount
           if (visibleCount < moments.length) {
-            setVisibleCount((prev) =>
-              Math.min(prev + MOMENTS_CONFIG.initialVisible, moments.length)
-            );
+            increaseVisibleCount();
             return;
           }
 
@@ -65,9 +67,7 @@ const MomentsGrid = ({
   const handleLoadMore = () => {
     // Tăng visibleCount trước, nếu hết mới gọi API
     if (visibleCount < moments.length) {
-      setVisibleCount((prev) =>
-        Math.min(prev + MOMENTS_CONFIG.initialVisible, moments.length)
-      );
+      increaseVisibleCount();
     } else if (hasMore) {
       loadMoreOlder && loadMoreOlder();
     }

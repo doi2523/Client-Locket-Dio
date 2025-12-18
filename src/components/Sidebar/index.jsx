@@ -83,7 +83,7 @@ const Sidebar = () => {
       badge: <PlanBadge />,
       items: [
         { to: "/postmoments", icon: Upload, text: "Đăng ảnh, video" },
-        { to: "/locket", icon: Smartphone, text: "Locket Camera", badge: "Hot" },
+        // { to: "/locket", icon: Smartphone, text: "Locket Camera", badge: "Hot" },
         { to: "/locket-beta", icon: Smartphone, text: "Locket Camera", badge: "Beta" },
         { to: "/manage", icon: Palette, text: "Quản lý Caption" },
         { to: "/tools", icon: Wrench, text: "Công cụ Locket" },

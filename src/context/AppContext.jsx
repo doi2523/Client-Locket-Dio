@@ -1,7 +1,6 @@
 // src/context/AppContext.jsx
 import React, { createContext, useContext } from "react";
 import {
-  ModalState,
   useCamera,
   useLoading,
   useNavigation,
@@ -18,7 +17,6 @@ export const AppProvider = ({ children }) => {
   const useloading = useLoading();
   const post = usePost();
   const captiontheme = useThemes();
-  const modal = ModalState();
 
   return (
     <AppContext.Provider
@@ -28,7 +26,6 @@ export const AppProvider = ({ children }) => {
         useloading,
         post,
         captiontheme,
-        modal,
       }}
     >
       {children}

@@ -3,30 +3,13 @@ import { AuthContext } from "@/context/AuthLocket";
 import { ChevronLeft } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import ChatDetail from "./View/ChatDetail";
-import {
-  addMessageToConversation,
-  getAllConversations,
-  getMessagesByConversationId,
-  saveConversations,
-  saveMessageWithUsers,
-  upsertConversations,
-} from "@/cache/chatsDB";
 import SocketStatus from "./View/SocketStatus";
-import {
-  handleListMessage,
-  handleListMessageWithUser,
-  handleNewMessageWithUser,
-} from "@/socket/socketHandlers";
 import { ConversationItem } from "./View/Conversation/ConversationItem";
-import { createSocket } from "@/socket/socketClient";
-import {
-  GetAllMessage,
-  getMessagesWithUser,
-  markReadMessage,
-} from "@/services";
+import { markReadMessage } from "@/services";
 import { ConversationSkeleton } from "./View/Conversation/ConversationSkeleton";
 import { CONFIG } from "@/config";
 import { useSocket } from "@/context/SocketContext";
+import { useMessagesStore } from "@/stores";
 
 const INITIAL_DISPLAY_COUNT = CONFIG.ui.chat.initialVisible;
 
@@ -37,19 +20,44 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
   const { isHomeOpen } = navigation;
 
   const { socket, isConnected } = useSocket();
-  const [messages, setMessages] = useState([]); // danh sách conversations
   const [selectedChat, setSelectedChat] = useState(null); // conversation đang mở
-  const [chatMessages, setChatMessages] = useState([]); // tin nhắn của user đang chọn
-  const [loading, setLoading] = useState(true);
   const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY_COUNT);
 
   const idToken = localStorage.getItem("idToken");
+
+  const {
+    messages,
+    fetchConversations,
+    upsertConversation,
+    loading,
+    conversations,
+    getMessagesByUser,
+    addMessageWithUserV2,
+  } = useMessagesStore();
+
+  const handleListMessage = (upsertConversation) => (data) => {
+    if (!Array.isArray(data) || !data.length) return;
+    data.forEach(upsertConversation);
+  };
+
+  const handleNewMessageWithUserV2 = (data) => {
+    if (!data) return;
+
+    const items = Array.isArray(data) ? data : [data];
+
+    items.forEach((msg) => {
+      const convId = msg.uid;
+      if (!convId) return;
+
+      addMessageWithUserV2(convId, msg);
+    });
+  };
 
   // ================= Socket init =================
   useEffect(() => {
     if (isHomeOpen || !socket) return;
 
-    const handler = handleListMessage(setMessages, upsertConversations);
+    const handler = handleListMessage(upsertConversation);
 
     socket.on("new_on_list_message", handler);
 
@@ -68,11 +76,7 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
   useEffect(() => {
     if (!socket || !selectedChat?.uid) return;
 
-    const listHandler = handleListMessageWithUser(setChatMessages);
-    const newHandler = handleNewMessageWithUser(setChatMessages);
-
-    socket.on("list_message_with_user", listHandler);
-    socket.on("new_message_with_user", newHandler);
+    socket.on("new_message_with_user", handleNewMessageWithUserV2);
 
     socket.emit("get_messages_with_user", {
       messageId: selectedChat.uid,
@@ -81,8 +85,7 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
     });
 
     return () => {
-      socket.off("list_message_with_user", listHandler);
-      socket.off("new_message_with_user", newHandler);
+      socket.off("new_message_with_user", handleNewMessageWithUserV2);
     };
   }, [socket, selectedChat?.uid]);
 
@@ -96,34 +99,7 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
   // ================= Fetch conversations =================
   useEffect(() => {
     if (!idToken) return;
-
-    const fetchMessages = async () => {
-      try {
-        setLoading(true);
-
-        // 1. Lấy từ DB trước
-        const localConversations = await getAllConversations();
-        if (localConversations?.length > 0) {
-          console.log("✅ Loaded from DB:", localConversations.length);
-          setMessages(localConversations);
-        }
-
-        // 2. Gọi API để sync mới nhất
-        console.log("🌐 Fetching from API...");
-        const conversations = await GetAllMessage();
-
-        if (conversations?.length > 0) {
-          await saveConversations(conversations);
-          setMessages(conversations);
-        }
-      } catch (err) {
-        console.error("❌ Fetch messages error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMessages();
+    fetchConversations();
   }, [idToken]);
 
   // ================= Chọn chat =================
@@ -132,32 +108,10 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
 
     if (!chat?.uid) return;
 
-    try {
-      // 1. Lấy từ DB trước
-      const localMessages = await getMessagesByConversationId(chat.uid);
-      if (localMessages?.messages?.length > 0) {
-        console.log(
-          "✅ Loaded messages from DB:",
-          localMessages.messages.length
-        );
-        setChatMessages(localMessages.messages);
-      }
+    await getMessagesByUser(chat.uid);
 
-      // 2. Gọi API để sync mới nhất
-      console.log("🌐 Fetching messages from API...");
-      const messages = await getMessagesWithUser(chat.uid);
-
-      if (messages?.length > 0) {
-        await addMessageToConversation(chat.uid, chat.with_user, messages);
-        setChatMessages(messages);
-      }
-
-      // 3. Nếu chưa đọc → đánh dấu đã đọc
-      if (chat.isRead === false) {
-        await markReadMessage(chat.uid);
-      }
-    } catch (err) {
-      console.error("❌ Fetch chat messages error:", err);
+    if (chat.isRead === false) {
+      await markReadMessage(chat.uid);
     }
   };
 
@@ -167,7 +121,7 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
   };
 
   // ================= Sắp xếp và lọc conversations =================
-  const sortedMessages = messages
+  const sortedMessages = conversations
     ?.slice()
     .sort(
       (a, b) =>
@@ -177,6 +131,10 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
 
   const displayedMessages = sortedMessages.slice(0, displayCount);
   const remainingCount = sortedMessages.length - displayCount;
+
+  const messagesByConversation = selectedChat?.uid
+    ? messages[selectedChat.uid] || []
+    : [];
 
   return (
     <>
@@ -245,7 +203,7 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
       {/* ================= ChatDetail ================= */}
       <ChatDetail
         selectedChat={selectedChat}
-        messages={chatMessages || []}
+        messages={messagesByConversation || []}
         setSelectedChat={setSelectedChat}
       />
     </>

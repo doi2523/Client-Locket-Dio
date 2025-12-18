@@ -25,7 +25,7 @@ export const CONFIG = {
     author: "dio",
     shortname: "locketdio",
     fullName: "Locket Dio - Đăng ảnh & Video lên Locket", // Tên đầy đủ
-    clientVersion: "Beta2.5.5.1", // Version client
+    clientVersion: "Beta2.5.5.2", // Version client
     apiVersion: "v2.2.1", // Version API
     env: import.meta.env.MODE, // development | production
     camera: {
@@ -54,6 +54,11 @@ export const CONFIG = {
       maxDisplayLimit: 5000, // Giới hạn tối đa moments hiển thị trên client
       loadMoreLimit: 50, // Số lượng moments tải thêm mỗi lần
       duplicateThreshold: 3, // Ngưỡng trùng lặp để dừng tải thêm
+    },
+    messages: {
+      initialVisible: 50, // Số lượng messages hiển thị ban đầu
+      maxDisplayLimit: 5000, // Giới hạn tối đa messages hiển thị trên client
+      loadMoreLimit: 50, // Số lượng messages tải thêm mỗi lần
     },
     contact: {
       supportEmail: "doibncm2003@gmail.com",

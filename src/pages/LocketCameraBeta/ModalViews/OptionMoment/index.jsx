@@ -5,9 +5,9 @@ import { useApp } from "@/context/AppContext";
 import { SonnerSuccess, SonnerWarning } from "@/components/ui/SonnerToast";
 import Modal from "@/components/ui/Modal";
 import { deletePayloadById } from "@/process/uploadQueue";
-import { useMoments } from "@/hooks/useMomentsV2";
 import { DeleteMoment } from "@/services";
 import { getMomentById } from "@/cache/momentDB";
+import { useMomentsStore } from "@/stores";
 
 const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
   const { navigation, post } = useApp();
@@ -23,7 +23,7 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
   } = post;
   const [openModal, setOpenModal] = useState(false);
 
-  const { removeMoment } = useMoments();
+  const { removeMoment } = useMomentsStore();
 
   // Lock scroll khi mở modal
   useEffect(() => {
@@ -33,6 +33,11 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
     };
   }, [isOptionModalOpen]);
 
+  const handleClose = () => {
+    setSelectedMoment(null);
+    setSelectedQueue(null);
+  };
+
   const handleDelete = async () => {
     if (selectedMomentId !== null) {
       try {
@@ -41,16 +46,14 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
         if (deletedMoment === selectedMomentId) {
           //Xoá ảnh trong local nếu id đã xoá trùng id chọn
           await removeMoment(selectedMomentId);
-          SonnerSuccess(
-            "Đã xoá ảnh thành công!",
-            "Vui lòng làm mới để cập nhật."
-          );
+          SonnerSuccess("Đã xoá ảnh thành công!");
           handleClose();
         } else {
           SonnerWarning("Xoá không thành công, vui lòng thử lại!");
         }
       } catch (error) {
         SonnerWarning("Xoá không thành công, vui lòng thử lại!");
+        console.warn("❌ Failed", error);
       }
       return;
     }

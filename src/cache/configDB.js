@@ -10,8 +10,8 @@ export function createLocketDioDB() {
     friendDetails: "uid, username, badge, isCelebrity",
     moments: "id, user, date",
     conversations: "uid, with_user, update_time",
-    conversationWithUser: "uid, with_user, update_time",
-    rollcalls: "uid, user, week_of_year, created_at"
+    messages: "id, uid, update_time, [uid+update_time]",
+    rollcalls: "uid, user, week_of_year, create_time"
   });
 
   return db;

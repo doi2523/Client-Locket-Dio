@@ -9,6 +9,13 @@ export const MOMENTS_CONFIG = {
   loadMoreLimit: CONFIG.app.moments.loadMoreLimit,
 };
 
+// Config cho Messages
+export const MESSAGES_CONFIG = {
+  maxDisplayLimit: CONFIG.app.messages.maxDisplayLimit,
+  initialVisible: CONFIG.app.messages.initialVisible,
+  loadMoreLimit: CONFIG.app.messages.loadMoreLimit,
+};
+
 // Config cho Camera
 export const CAMERA_CONFIG = {
   maxRecordTime: CONFIG.app.camera.limits.maxRecordTime,

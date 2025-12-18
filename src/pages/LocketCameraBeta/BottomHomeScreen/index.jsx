@@ -9,10 +9,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Virtual } from "swiper/modules";
 import "swiper/css";
 import MomentSlide from "./MomentsView/MomentSlide";
-import { useMoments } from "@/hooks/useMomentsV2";
 import { useSocket } from "@/context/SocketContext";
-import { bulkAddMoments } from "@/cache/momentDB";
-import { createListHandler } from "@/socket/socketHandlersV2";
+import { useMomentsStore } from "@/stores";
 
 const BottomHomeScreen = () => {
   const { navigation, post } = useApp();
@@ -44,19 +42,24 @@ const BottomHomeScreen = () => {
   const { socket, isConnected } = useSocket();
   const {
     moments,
-    setMoments,
     loading,
     hasMore,
     visibleCount,
-    setVisibleCount,
+    increaseVisibleCount,
+    fetchMoments,
     loadMoreOlder,
     addNewMoment,
     resetVisible,
-  } = useMoments(user, selectedFriendUid);
+  } = useMomentsStore();
 
   useEffect(() => {
     resetVisible();
   }, [isBottomOpen, isHomeOpen, isProfileOpen, selectedFriendUid]);
+
+  // Fetch initial moments
+  useEffect(() => {
+    fetchMoments(user, selectedFriendUid);
+  }, [user, selectedFriendUid]);
 
   const handleClose = () => {
     setSelectedMoment(null);
@@ -67,9 +70,6 @@ const BottomHomeScreen = () => {
   // ================= Socket init =================
   useEffect(() => {
     if (!idToken || !socket) return;
-
-    //Dữ liệu trả về là chuỗi [{},{}] nên sẽ gọi list
-    const handler = createListHandler(setMoments, bulkAddMoments);
 
     // LISTEN
     socket.on("new_on_moments", addNewMoment);
@@ -153,7 +153,7 @@ const BottomHomeScreen = () => {
         <UploadingQueue />
         <MomentsGrid
           visibleCount={visibleCount}
-          setVisibleCount={setVisibleCount}
+          increaseVisibleCount={increaseVisibleCount}
           moments={moments}
           loadMoreOlder={loadMoreOlder}
           hasMore={hasMore}

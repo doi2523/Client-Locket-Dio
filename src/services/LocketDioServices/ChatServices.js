@@ -5,10 +5,11 @@ import { instanceLocket } from "@/lib/axios.locket";
 import { getToken } from "@/utils";
 import { generateUUIDv4Upper } from "@/utils/generate/uuid";
 
-export const GetAllMessage = async () => {
+export const GetAllMessage = async ({ timestamp = null, limit = 50 }) => {
   try {
     const res = await api.post(API_ENDPOINTS.getAllMessages, {
-      timestamp: null,
+      timestamp: timestamp,
+      limit: limit,
     });
     return res.data?.data;
   } catch (err) {
@@ -16,10 +17,10 @@ export const GetAllMessage = async () => {
   }
 };
 
-export const getMessagesWithUser = async (
+export const getMessagesWithUser = async ({
   messageId, // 👈 uid của người cần lấy message
-  timestamp = null
-) => {
+  timestamp = null,
+}) => {
   try {
     const res = await api.post(API_ENDPOINTS.getMessagesWithUser, {
       messageId: messageId,

@@ -144,7 +144,6 @@ export const DeleteMoment = async (selectedMomentId) => {
 
     const deletedIds = res?.data?.result?.data;
     const deletedId = Array.isArray(deletedIds) ? deletedIds[0] : null;
-
     return deletedId; // 👉 trả về ID đã xoá
   } catch (err) {
     console.warn("❌ Failed", err);
