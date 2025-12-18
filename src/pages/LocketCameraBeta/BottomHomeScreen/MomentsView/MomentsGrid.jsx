@@ -29,25 +29,22 @@ const MomentsGrid = ({
   useEffect(() => {
     if (!lastElementRef.current) return;
 
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
+    observerRef.current?.disconnect();
 
     observerRef.current = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
+        if (!entry.isIntersecting) return;
 
-        if (entry.isIntersecting) {
-          // 1️⃣ Nếu còn item trong local → tăng visibleCount
-          if (visibleCount < moments.length) {
-            increaseVisibleCount();
-            return;
-          }
+        // 1️⃣ còn local thì show tiếp
+        if (visibleCount < moments.length) {
+          increaseVisibleCount();
+          return;
+        }
 
-          // 2️⃣ Nếu đã hiển thị hết → gọi API load thêm
-          if (loadMoreOlder && hasMore) {
-            loadMoreOlder();
-          }
+        // 2️⃣ hết local → load API theo friend
+        if (loadMoreOlder && hasMore && selectedFriendUid) {
+          loadMoreOlder(selectedFriendUid);
         }
       },
       {
@@ -57,19 +54,19 @@ const MomentsGrid = ({
     );
 
     observerRef.current.observe(lastElementRef.current);
+
     return () => observerRef.current?.disconnect();
-  }, [visibleCount, moments.length, loadMoreOlder, hasMore]);
+  }, [visibleCount, moments.length, hasMore, loadMoreOlder, selectedFriendUid]);
 
   const handleLoaded = (id) => {
     setLoadedItems((prev) => [...prev, id]);
   };
 
   const handleLoadMore = () => {
-    // Tăng visibleCount trước, nếu hết mới gọi API
     if (visibleCount < moments.length) {
       increaseVisibleCount();
-    } else if (hasMore) {
-      loadMoreOlder && loadMoreOlder();
+    } else if (hasMore && selectedFriendUid) {
+      loadMoreOlder(selectedFriendUid);
     }
   };
 
