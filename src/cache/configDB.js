@@ -11,7 +11,8 @@ export function createLocketDioDB() {
     moments: "id, user, date",
     conversations: "uid, with_user, update_time",
     messages: "id, uid, update_time, [uid+update_time]",
-    rollcalls: "uid, user, week_of_year, create_time"
+    rollcalls: "uid, user, week_of_year, create_time",
+    viewedMoments: "id, user, viewedAt"
   });
 
   return db;
@@ -49,5 +50,6 @@ export async function ensureDBOwner(currentUid) {
     console.warn("⚠️ DB owner mismatch → clearing DB");
     await clearAllDB();
     await setDBOwner(currentUid);    // set owner mới
+    await initUserSettings()
   }
 }

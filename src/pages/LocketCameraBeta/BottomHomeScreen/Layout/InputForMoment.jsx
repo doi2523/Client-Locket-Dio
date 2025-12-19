@@ -8,6 +8,7 @@ import { AuthContext } from "@/context/AuthLocket";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 import { getFriendDetail } from "@/cache/friendsDB";
 import ActivitySection from "../Modal/ActivityViews/ActivityModal";
+import { markMomentViewedOnce } from "@/cache/viewedMomentDB";
 
 const InputForMoment = () => {
   const { user } = useContext(AuthContext);
@@ -107,6 +108,23 @@ const InputForMoment = () => {
       fetchMomentAndUser();
     }
   }, [selectedMomentId]);
+
+  useEffect(() => {
+    if (!selectedMomentId || !momentUser) return;
+
+    const markViewed = async () => {
+      try {
+        // await markMomentViewedOnce({
+        //   id: selectedMomentId,
+        //   user: momentUser,
+        // });
+      } catch (err) {
+        console.error("❌ Lỗi mark viewed:", err);
+      }
+    };
+
+    markViewed();
+  }, [selectedMomentId, momentUser]);
 
   const handleSend = async () => {
     if (isSendingMessage || !message.trim()) return;
