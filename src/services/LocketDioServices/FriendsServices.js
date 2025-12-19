@@ -422,6 +422,21 @@ export const removeFriend = async (uid) => {
   }
 };
 
+export const toggleHiddenFriend = async (uid) => {
+  const body = {
+    data: {
+      user_uid: uid,
+    },
+  };
+
+  const response = await instanceLocketV2.post("toggleFriendHidden", body);
+
+  return {
+    success: response.status === 200,
+    uid,
+  };
+};
+
 // Hàm tìm bạn qua username
 export const FindFriendByUserName = async (eqfriend) => {
   try {

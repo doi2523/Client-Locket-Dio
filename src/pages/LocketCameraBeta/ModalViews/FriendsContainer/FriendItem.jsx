@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Ban, EyeOff, UserRoundX, X } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 
-export default function FriendItem({ friends, onDelete }) {
+export default function FriendItem({ friends, onDelete, onHidden }) {
   const [openMenuUid, setOpenMenuUid] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [openModalTwo, setOpenModalTwo] = useState(false);
@@ -186,7 +186,7 @@ export default function FriendItem({ friends, onDelete }) {
             </button>
             <button
               onClick={() => {
-                // onDelete();
+                onHidden(selectedFriend.uid);
                 setOpenModalTwo(false);
               }}
               className="btn btn-accent px-4 rounded-xl py-2 transition-colors"

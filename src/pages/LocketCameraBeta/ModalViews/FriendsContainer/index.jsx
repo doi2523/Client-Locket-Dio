@@ -2,7 +2,12 @@ import { useRef, useState, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 import { RefreshCcw, X } from "lucide-react";
 import { FaUserFriends, FaSearchPlus } from "react-icons/fa";
-import { FindFriendByUserName, refreshFriends, removeFriend } from "@/services";
+import {
+  FindFriendByUserName,
+  refreshFriends,
+  removeFriend,
+  toggleHiddenFriend,
+} from "@/services";
 import LoadingRing from "@/components/ui/Loading/ring";
 import FriendItem from "./FriendItem";
 import SearchInput from "@/components/ui/Input/SearchInput";
@@ -99,6 +104,24 @@ const FriendsContainer = () => {
     } catch (error) {
       console.error("❌ Lỗi khi xoá bạn:", error);
       SonnerError("Có lỗi xảy ra khi xoá bạn.");
+    }
+  };
+
+  const handleHiddenFriend = async (uid) => {
+    const prev = friendDetails;
+
+    // setFriendDetails((prev) =>
+    //   prev.map((f) => (f.uid === uid ? { ...f, hidden: !f.hidden } : f))
+    // );
+
+    try {
+      // const res = await toggleHiddenFriend(uid);
+      // if (!res?.success) throw new Error();
+
+      SonnerSuccess("Chức năng này đang phát triển!");
+    } catch {
+      setFriendDetails(prev);
+      SonnerError("Không thể cập nhật trạng thái");
     }
   };
 
@@ -262,6 +285,7 @@ const FriendsContainer = () => {
                 <FriendItem
                   friends={visibleFriends}
                   onDelete={handleDeleteFriend}
+                  onHidden={handleHiddenFriend}
                 />
 
                 {filteredFriends.length > 3 && (
