@@ -9,7 +9,11 @@ import SearchInput from "@/components/ui/Input/SearchInput";
 import { showError } from "@/components/Toast";
 import FriendFind from "./FriendFind";
 import IncomingFriendRequests from "./IncomingRequests";
-import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
+import {
+  SonnerError,
+  SonnerSuccess,
+  SonnerWarning,
+} from "@/components/ui/SonnerToast";
 import OutgoingRequest from "./OutgoingRequest";
 import {
   setFriendDetail,
@@ -80,14 +84,18 @@ const FriendsContainer = () => {
 
   const handleDeleteFriend = async (uid) => {
     try {
-      await removeFriend(uid);
-      // ✅ update state
-      await deleteFriendDetail(uid);
-      await deleteFriendId(uid);
-      const updatedFriends = friendDetails.filter((f) => f.uid !== uid);
-      setFriendDetails(updatedFriends);
-      // ✅ update DB + localStorage
-      SonnerSuccess("Đã xoá bạn thành công.");
+      const result = await removeFriend(uid);
+      if (result === uid) {
+        // ✅ update state
+        await deleteFriendDetail(uid);
+        await deleteFriendId(uid);
+        const updatedFriends = friendDetails.filter((f) => f.uid !== uid);
+        setFriendDetails(updatedFriends);
+        // ✅ update DB + localStorage
+        SonnerSuccess("Đã xoá bạn thành công.");
+      } else {
+        SonnerWarning("Vui lòng thử lại sau!");
+      }
     } catch (error) {
       console.error("❌ Lỗi khi xoá bạn:", error);
       SonnerError("Có lỗi xảy ra khi xoá bạn.");

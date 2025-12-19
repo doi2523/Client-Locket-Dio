@@ -152,7 +152,7 @@ export default function FriendItem({ friends, onDelete }) {
             </button>
             <button
               onClick={() => {
-                onDelete();
+                onDelete(selectedFriend.uid);
                 setOpenModal(false);
               }}
               className="btn btn-error px-4 rounded-xl py-2 transition-colors"
