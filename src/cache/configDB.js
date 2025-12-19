@@ -50,6 +50,5 @@ export async function ensureDBOwner(currentUid) {
     console.warn("⚠️ DB owner mismatch → clearing DB");
     await clearAllDB();
     await setDBOwner(currentUid);    // set owner mới
-    await initUserSettings()
   }
 }
