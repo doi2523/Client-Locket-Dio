@@ -3,7 +3,7 @@ import React from "react";
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
 import { CONFIG } from "@/config";
-// import LocketCameraBeta from "@/pages/LocketCameraBeta";
+const LocketCameraBeta = React.lazy(() => import("../pages/LocketCameraBeta"));
 // import CameraCapture from "@/pages/UILocket";
 // const WhitePage = React.lazy(() => import("@/pages/Public/WhitePage"));
 const NewsPage = React.lazy(() => import("@/pages/Public/NewsPage"));
