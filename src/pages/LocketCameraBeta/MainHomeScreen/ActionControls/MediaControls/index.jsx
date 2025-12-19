@@ -2,7 +2,6 @@ import { X, Sparkles } from "lucide-react";
 import * as services from "@/services";
 import { useApp } from "@/context/AppContext.jsx";
 import { useCallback, useContext, useState } from "react";
-import { showError } from "@/components/Toast/index.jsx";
 import { defaultPostOverlay } from "@/stores/usePost.js";
 import UploadStatusIcon from "./UploadStatusIcon.jsx";
 import { getMaxUploads } from "@/hooks/useFeature.js";
@@ -64,7 +63,7 @@ const MediaControls = () => {
   // Hàm submit được cải tiến
   const handleSubmit = async () => {
     if (!selectedFile) {
-      showError("Không có dữ liệu để tải lên.");
+      SonnerWarning("Không có dữ liệu để tải lên.");
       return;
     }
 
@@ -74,7 +73,7 @@ const MediaControls = () => {
     const maxFileSize = isImage ? maxImageSizeMB : maxVideoSizeMB;
 
     if (isVideo && isSizeMedia < 0.2) {
-      showError("Video quá nhẹ hoặc không hợp lệ (dưới 0.2MB).");
+      SonnerWarning("Video quá nhẹ hoặc không hợp lệ (dưới 0.2MB).");
       return;
     }
     if (isSizeMedia > maxFileSize) {
@@ -150,7 +149,7 @@ const MediaControls = () => {
           onClick={handleSubmit}
           className={`rounded-full w-22 h-22 duration-500 outline-base-300 backdrop-blur-4xl mx-2.5 text-center flex items-center justify-center disabled:opacity-50 transition-all ease-in-out ${
             isSuccess
-              ? "bg-green-500/20 scale-105"
+              ? "bg-green-500/20"
               : uploadLoading
               ? "bg-blue-500/20"
               : "bg-base-300/50 hover:bg-base-300/70"
