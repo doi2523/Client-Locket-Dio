@@ -9,7 +9,7 @@ export const useFeatureVisible = (type) => {
 
 export const useGetCode = (type) => {
   const { userPlan } = useContext(AuthContext);
-  const code = userPlan.customer_code;
+  const code = userPlan?.customer_code;
   return code;
 };
 

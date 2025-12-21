@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CONFIG } from "@/config";
-import { fetchUserV2, getListCelebrity } from "@/services";
+import { fetchUserByToken, fetchUserV2, getListCelebrity } from "@/services";
 import CelebrateItem from "../CelebrateItem";
 import {
   SonnerError,
@@ -69,7 +69,7 @@ export default function CelebrateTool() {
     setLoading(true);
     try {
       const details = await Promise.all(
-        list.map((item) => fetchUserV2(item.uid))
+        list.map((item) => fetchUserByToken(item?.token))
       );
       setUserDetails(details.filter(Boolean));
     } catch (err) {
@@ -128,18 +128,18 @@ export default function CelebrateTool() {
   // --- Phân loại user ---
   const categorized = {
     all: userDetails,
-    friends: userDetails.filter((u) => u.friendship_status === "friends"),
+    friends: userDetails.filter((u) => u?.user?.friendship_status === "friends"),
     waitlist: userDetails.filter(
-      (u) => u.friendship_status === "follower-waitlist"
+      (u) => u?.user?.friendship_status === "follower-waitlist"
     ),
     waitaccept: userDetails.filter(
-      (u) => u.friendship_status === "outgoing-follow-request"
+      (u) => u?.user?.friendship_status === "outgoing-follow-request"
     ),
     hasSlot: userDetails.filter(
-      (u) => u.celebrity_data.friend_count < u.celebrity_data.max_friends
+      (u) => u?.celebrity_data.friend_count < u?.celebrity_data.max_friends
     ),
     noSlot: userDetails.filter(
-      (u) => u.celebrity_data.friend_count >= u.celebrity_data.max_friends
+      (u) => u?.celebrity_data.friend_count >= u?.celebrity_data.max_friends
     ),
   };
 
@@ -323,7 +323,7 @@ export default function CelebrateTool() {
           </>
         ) : categorized[activeTab]?.length > 0 ? (
           categorized[activeTab].map((user) => (
-            <CelebrateItem key={user.uid} user={user} onAdd={handleAddUid} />
+            <CelebrateItem key={user?.user?.uid} user={user?.user} slotdata={user?.celebrity_data} onAdd={handleAddUid} />
           ))
         ) : (
           <p className="text-sm opacity-70 p-3">📭 Không có dữ liệu.</p>

@@ -11,6 +11,7 @@ export const CONFIG = {
     locketApi: import.meta.env.VITE_LOCKET_API_URL, // API Locket chính thức
     exportApi: import.meta.env.VITE_EXPORTS_API_URL, // API export data pdf, excel,...
     convertApi: import.meta.env.VITE_CONVERTS_API_URL,
+    extenApi: import.meta.env.VITE_EXTENS_API_URL,
   },
 
   keys: {

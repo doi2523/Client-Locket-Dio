@@ -2,15 +2,11 @@ import React from "react";
 import { Link, Plus, UserRoundCheck } from "lucide-react";
 import { SonnerSuccess } from "@/components/ui/SonnerToast";
 
-export default function CelebrateItem({ user, onAdd }) {
+export default function CelebrateItem({ user, slotdata, onAdd }) {
   // Tính % bạn bè (nếu có dữ liệu)
   const percent =
-    user.celebrity_data?.max_friends && user.celebrity_data?.friend_count
-      ? Math.min(
-          (user.celebrity_data.friend_count / user.celebrity_data.max_friends) *
-            100,
-          100
-        )
+    slotdata?.max_friends && slotdata?.friend_count
+      ? Math.min((slotdata.friend_count / slotdata.max_friends) * 100, 100)
       : 0;
 
   const handleCopyUsername = () => {
@@ -20,11 +16,11 @@ export default function CelebrateItem({ user, onAdd }) {
     SonnerSuccess("Đã sao chép URL profile!", ` ${url}`);
   };
 
-    // const handleCopyLink = () => {
-    // if (!user?.uid) return;
-    // const url = `https://locket.camera/links/${user.uid}`;
-    // navigator.clipboard.writeText(url);
-    // SonnerSuccess("Đã sao chép URL chia sẻ!", ` ${url}`);
+  // const handleCopyLink = () => {
+  // if (!user?.uid) return;
+  // const url = `https://locket.camera/links/${user.uid}`;
+  // navigator.clipboard.writeText(url);
+  // SonnerSuccess("Đã sao chép URL chia sẻ!", ` ${url}`);
   // };
 
   return (
@@ -36,11 +32,11 @@ export default function CelebrateItem({ user, onAdd }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* Avatar + badge overlay */}
-          <div className="relative w-14 h-14">
+          <div className="relative w-12 h-12">
             <img
               src={user.profile_picture_url || "./default-avatar.png"}
               alt={`${user.first_name} ${user.last_name}`}
-              className="w-14 h-14 rounded-full border-[3.5px] p-0.5 border-amber-400 object-cover"
+              className="w-12 h-12 rounded-full border-[3.5px] p-0.5 border-amber-400 object-cover"
             />
 
             {/* Ưu tiên hiển thị badge nếu có, nếu không thì celeb */}
@@ -48,13 +44,13 @@ export default function CelebrateItem({ user, onAdd }) {
               <img
                 src="https://cdn.locket-dio.com/v1/caption/caption-icon/locket_gold_badge.png"
                 alt="Gold Badge"
-                className="absolute bottom-0 right-0 w-5 h-5 p-0.5 bg-base-100 rounded-full"
+                className="absolute bottom-0 right-0 w-4 h-4 p-0.5 bg-base-100 rounded-full"
               />
             ) : user.celebrity ? (
               <img
                 src="https://cdn.locket-dio.com/v1/caption/caption-icon/celebrity_badge.png"
                 alt="Celebrity"
-                className="absolute bottom-0 right-0 w-5 h-5 p-0.5 bg-base-100 rounded-full"
+                className="absolute bottom-0 right-0 w-4 h-4 p-0.5 bg-base-100 rounded-full"
               />
             ) : null}
           </div>
@@ -89,7 +85,7 @@ export default function CelebrateItem({ user, onAdd }) {
           <div className="text-white text-sm bg-primary px-2 py-1 rounded-2xl font-semibold">
             Đang xếp hàng
           </div>
-        )  : user.friendship_status === "outgoing-follow-request" ? (
+        ) : user.friendship_status === "outgoing-follow-request" ? (
           <div className="text-white text-sm bg-primary px-2 py-1 rounded-2xl font-semibold">
             Đang chờ chấp nhận
           </div>
@@ -107,7 +103,7 @@ export default function CelebrateItem({ user, onAdd }) {
       </div>
 
       {/* Thanh tiến trình bạn bè */}
-      {user.celebrity_data?.max_friends && (
+      {slotdata?.max_friends && (
         <div className="mt-1">
           <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
@@ -118,7 +114,7 @@ export default function CelebrateItem({ user, onAdd }) {
             />
           </div>
           <p className="text-xs text-gray-600 mt-1">
-            {user.celebrity_data.friend_count}/{user.celebrity_data.max_friends}
+            {slotdata.friend_count}/{slotdata.max_friends}
           </p>
         </div>
       )}

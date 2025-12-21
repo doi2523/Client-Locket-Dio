@@ -39,6 +39,17 @@ export const getListDonates = async () => {
     return null;
   }
 };
+
+export const getListIncidents = async () => {
+  try {
+    const res = await instanceBaseData.get(PUBLIC_API.incidents);
+    return res.data;
+  } catch (error) {
+    console.error("🚨 Lỗi khi gọi API:", error.message);
+    return null;
+  }
+};
+
 export const getAllTimelines = async () => {
   try {
     const res = await instanceBaseData.get(PUBLIC_API.timelines);
