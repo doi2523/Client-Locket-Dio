@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Search,
   AlertTriangle,
@@ -6,81 +6,48 @@ import {
   Bug,
   Copy,
   Check,
-  X,
-  Eye,
   Lightbulb,
 } from "lucide-react";
+import { getListIncidents } from "@/services";
 
 const severityMap = {
   low: {
     label: "Thấp",
-    color: "bg-green-100 text-green-700",
+    color: "bg-green-100 text-green-700 border-green-200",
     icon: CheckCircle,
   },
   medium: {
     label: "Trung bình",
-    color: "bg-yellow-100 text-yellow-700",
+    color: "bg-yellow-100 text-yellow-700 border-yellow-200",
     icon: AlertTriangle,
   },
-  high: { label: "Cao", color: "bg-red-100 text-red-700", icon: Bug },
+  high: {
+    label: "Cao",
+    color: "bg-red-100 text-red-700 border-red-200",
+    icon: Bug,
+  },
 };
 
 const ErrorReferencePage = () => {
-  const [errors] = useState([
-    {
-      id: 1,
-      code: "500",
-      name: "Lỗi máy chủ",
-      title: "Không thể tải ảnh hoặc video",
-      description:
-        "Bạn gặp lỗi này khi ứng dụng không kết nối được với máy chủ. Có thể do mất mạng hoặc máy chủ đang gặp sự cố, gián đoạn quá trình gửi đi.",
-      category: "network",
-      severity: "medium",
-      image: [
-        "https://firebasestorage.googleapis.com/v0/b/webdio-20ca8.appspot.com/o/images%2FLocket%2FIMG_8968.PNG?alt=media&token=652291d1-6483-4aec-ac97-3f325d3cdcb0",
-        "https://cdn.discordapp.com/attachments/1379014441848541275/1442447570243682394/Screenshot_2025-11-19-13-43-31-61_40deb401b9ffe8e1df2f1cc5ba480b12.jpg?ex=6925777c&is=692425fc&hm=c0537fd9b8c88027d161cbb914b2c63982b681dca0e42beb0e963933c63d6b58&",
-      ],
-      solutions: [
-        "Kiểm tra kết nối Internet của bạn.",
-        "Thử làm mới trang hoặc đợi vài phút.",
-        "Nếu vẫn lỗi, máy chủ có thể đang bảo trì.",
-        "Các bài đăng không hiển thị hình ảnh/video thì nên xoá bỏ bởi chúng sẽ được xoá sau khoảng thời gian.",
-      ],
-      causes: ["Mất kết nối Internet", "Máy chủ quá tải hoặc gặp sự cố"],
-      preventions: [
-        "Đảm bảo kết nối mạng ổn định.",
-        "Thử lại sau một thời gian.",
-      ],
-      related: [],
-      added: "2025-06-15",
-    },
-    {
-      id: 2,
-      code: "null",
-      name: "Camera not Active",
-      title: "Không thể sử dụng Camera",
-      description:
-        "Lỗi này xảy ra khi quyền truy cập camera chưa được sự cho phép của trình duyệt.",
-      category: "feature",
-      severity: "medium",
-      image: [
-        "https://cdn.discordapp.com/attachments/1379014441848541275/1442446407632949389/IMG_2785.png?ex=69257666&is=692424e6&hm=a7806bc44598c153a4c5da4098198a4b835e20e2e2e3c625b6730221d8368384&",
-      ],
-      solutions: [
-        "Kiểm tra lại quyền truy cập của Camera.",
-        "Nếu Android dùng Chrome, iOS dùng Safari để cấp quyền.",
-        "PWA trên iOS có thể cần 1–2 ngày để cấp quyền camera hoàn chỉnh.",
-      ],
-      causes: ["Chưa cấp quyền", "Chế độ PWA iOS"],
-      preventions: ["Kiểm tra quyền truy cập", "Cập nhật ứng dụng web"],
-      related: [],
-      added: "2025-07-20",
-    },
-  ]);
-
+  const [errors, setErrors] = useState([]);
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const fetchDatas = async () => {
+      try {
+        const data = await getListIncidents();
+        setErrors(data);
+      } catch (err) {
+        console.error("❌ Không thể lấy danh sách:", err);
+      }
+    };
+
+    fetchDatas();
+  }, []);
 
   const filtered = useMemo(() => {
     const s = search.toLowerCase();
@@ -99,148 +66,227 @@ const ErrorReferencePage = () => {
     setTimeout(() => setCopiedId(null), 1500);
   };
 
+  const openImageModal = (images, index) => {
+    setSelectedImage(images);
+    setCurrentImageIndex(index);
+  };
+
+  const closeImageModal = () => {
+    setSelectedImage(null);
+    setCurrentImageIndex(0);
+  };
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === selectedImage.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? selectedImage.length - 1 : prev - 1
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 px-5 py-8">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">
-          Tra cứu lỗi & hướng dẫn khắc phục
-        </h1>
-        <p className="text-gray-600 text-center mb-8">
-          Tìm lỗi theo mã hoặc mô tả
-        </p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            🔍 Tra cứu lỗi & Khắc phục
+          </h1>
+          <p className="text-gray-600 text-lg">
+            Tìm kiếm và giải quyết lỗi nhanh chóng
+          </p>
+        </div>
 
         {/* Search Box */}
-        <div className="relative mb-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <div className="relative mb-8 max-w-2xl mx-auto">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
-            placeholder="Nhập mã lỗi hoặc từ khóa..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
+            placeholder="Nhập mã lỗi, từ khóa hoặc mô tả..."
+            className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
-        {/* Cards */}
-        <div className="grid md:grid-cols-2 gap-5">
+        {/* Cards Grid */}
+        <div className="grid md:grid-cols-2 gap-6">
           {filtered.map((err) => {
             const sev = severityMap[err.severity] || severityMap.medium;
             const Icon = sev.icon;
-
             const isOpen = expanded === err.id;
 
             return (
               <div
                 key={err.id}
-                className="bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition"
+                className="bg-white border-2 border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
               >
-                {/* Top Badges */}
-                <div className="flex gap-2 mb-3">
+                {/* Header Badges */}
+                <div className="flex flex-wrap gap-2 mb-4">
                   <span
-                    className={`px-2 py-1 rounded text-xs flex items-center gap-1 ${sev.color}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 border ${sev.color}`}
                   >
-                    <Icon className="w-3 h-3" />
+                    <Icon className="w-3.5 h-3.5" />
                     {sev.label}
                   </span>
-                  <span className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-xs">
+                  <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium border border-gray-200">
                     {err.category}
                   </span>
                 </div>
 
-                {/* Title */}
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-1 bg-red-500 text-white rounded text-xs font-mono">
-                    {err.code}
-                  </span>
-                  <h3 className="font-semibold text-gray-900">{err.title}</h3>
+                {/* Error Code & Title */}
+                <div className="mb-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="px-2.5 py-1 bg-red-500 text-white rounded-md text-xs font-mono font-bold">
+                      {err.code}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-lg text-gray-900 mb-2">
+                    {err.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {err.description}
+                  </p>
                 </div>
 
-                <p className="text-gray-600 text-sm mb-3">{err.description}</p>
-
-                {/* Image */}
-                <details className="mb-3">
-                  <summary className="flex items-center gap-1 mb-1">
-                    <span className="text-sm font-medium text-gray-800">
-                      Hình ảnh lỗi
-                    </span>
-                  </summary>
-                  <div className="flex flex-row bg-base-300 p-2 gap-2 overflow-x-auto">
-                    {err.image.map((imgUrl, idx) => (
-                      <img
-                        key={idx}
-                        src={imgUrl}
-                        className="w-auto h-80 object-contain cursor-pointer rounded-2xl"
-                      />
-                    ))}
+                {/* Image Gallery */}
+                {err.images && err.images.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-sm font-semibold text-gray-700 mb-2">
+                      📷 Hình ảnh minh họa ({err.images.length})
+                    </p>
+                    <div className="flex gap-2 overflow-x-auto pb-2">
+                      {err.images.map((imgUrl, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => openImageModal(err.images, idx)}
+                          className="flex-shrink-0 w-36 h-full rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-400 cursor-pointer transition-all hover:scale-105"
+                        >
+                          <img
+                            src={imgUrl}
+                            alt={`Error ${err.code} - Image ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </details>
+                )}
 
-                {/* Toggle */}
+                {/* Toggle Solutions Button */}
                 <button
                   onClick={() => setExpanded(isOpen ? null : err.id)}
-                  className="flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm font-medium mb-2"
+                  className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                    isOpen
+                      ? "bg-blue-500 text-white hover:bg-blue-600"
+                      : "bg-blue-50 text-blue-600 hover:bg-blue-100 border-2 border-blue-200"
+                  }`}
                 >
                   <Lightbulb className="w-4 h-4" />
-                  {isOpen ? "Ẩn hướng dẫn" : "Xem hướng dẫn"}
+                  {isOpen ? "Ẩn hướng dẫn khắc phục" : "Xem hướng dẫn khắc phục"}
                 </button>
 
+                {/* Expanded Solutions Panel */}
                 {isOpen && (
-                  <div className="bg-gray-50 rounded p-3 space-y-3 border">
-                    <div className="relative">
-                      <button
-                        onClick={() => copySolutions(err)}
-                        className="absolute top-1 right-1 p-1 hover:bg-gray-200 rounded"
-                      >
-                        {copiedId === err.id ? (
-                          <Check className="w-4 h-4 text-green-600" />
-                        ) : (
-                          <Copy className="w-4 h-4 text-gray-600" />
-                        )}
-                      </button>
-                      <h4 className="font-semibold mb-1">Cách khắc phục:</h4>
-                      <ol className="list-decimal list-inside text-sm space-y-1">
+                  <div className="mt-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border-2 border-blue-200 space-y-4">
+                    {/* Solutions */}
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-bold text-gray-900 flex items-center gap-2">
+                          <span className="text-green-500">✅</span>
+                          Cách khắc phục
+                        </h4>
+                        <button
+                          onClick={() => copySolutions(err)}
+                          className="p-2 hover:bg-gray-100 rounded-lg transition"
+                          title="Sao chép hướng dẫn"
+                        >
+                          {copiedId === err.id ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <Copy className="w-4 h-4 text-gray-600" />
+                          )}
+                        </button>
+                      </div>
+                      <ol className="space-y-2">
                         {err.solutions.map((s, i) => (
-                          <li key={i}>{s}</li>
+                          <li
+                            key={i}
+                            className="flex gap-3 text-sm text-gray-700"
+                          >
+                            <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                              {i + 1}
+                            </span>
+                            <span className="flex-1 pt-0.5">{s}</span>
+                          </li>
                         ))}
                       </ol>
                     </div>
 
-                    <div>
-                      <h4 className="font-semibold mb-1 text-sm">
-                        Nguyên nhân:
+                    {/* Causes */}
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                        <span className="text-orange-500">⚠️</span>
+                        Nguyên nhân
                       </h4>
-                      <ul className="list-disc list-inside text-xs text-gray-600 space-y-1">
+                      <ul className="space-y-1.5">
                         {err.causes.map((c, i) => (
-                          <li key={i}>{c}</li>
+                          <li
+                            key={i}
+                            className="flex gap-2 text-sm text-gray-600"
+                          >
+                            <span className="text-orange-500">•</span>
+                            <span>{c}</span>
+                          </li>
                         ))}
                       </ul>
                     </div>
 
-                    <div>
-                      <h4 className="font-semibold mb-1 text-sm">
-                        Cách tránh lỗi:
+                    {/* Preventions */}
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                        <span className="text-blue-500">🛡️</span>
+                        Cách phòng tránh
                       </h4>
-                      <ul className="list-disc list-inside text-xs text-gray-600 space-y-1">
+                      <ul className="space-y-1.5">
                         {err.preventions.map((p, i) => (
-                          <li key={i}>{p}</li>
+                          <li
+                            key={i}
+                            className="flex gap-2 text-sm text-gray-600"
+                          >
+                            <span className="text-blue-500">•</span>
+                            <span>{p}</span>
+                          </li>
                         ))}
                       </ul>
                     </div>
                   </div>
                 )}
 
-                <p className="text-xs text-gray-500 mt-3">
-                  {new Date(err.added).toLocaleDateString("vi-VN")}
+                {/* Footer Date */}
+                <p className="text-xs text-gray-400 mt-4 text-right">
+                  Cập nhật: {new Date(err.added).toLocaleDateString("vi-VN")}
                 </p>
               </div>
             );
           })}
         </div>
 
+        {/* Empty State */}
         {filtered.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            <div className="text-4xl mb-2">🔍</div>
-            Không tìm thấy lỗi phù hợp
+          <div className="text-center py-16">
+            <div className="text-6xl mb-4">🔍</div>
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+              Không tìm thấy kết quả
+            </h3>
+            <p className="text-gray-500">
+              Thử tìm kiếm với từ khóa khác hoặc mã lỗi khác
+            </p>
           </div>
         )}
       </div>
