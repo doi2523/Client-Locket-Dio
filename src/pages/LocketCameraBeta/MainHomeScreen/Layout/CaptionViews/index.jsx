@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import "./styles.css"
 import { PiClockFill } from "react-icons/pi";
 import { useApp } from "@/context/AppContext";
 import { StarRating } from "../../Widgets/StarRating/StarRating";

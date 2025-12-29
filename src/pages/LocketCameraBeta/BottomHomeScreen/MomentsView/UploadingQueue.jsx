@@ -7,8 +7,14 @@ import { getQueuePayloads } from "@/process/uploadQueue";
 
 const UploadingQueue = () => {
   const [loadedItems, setLoadedItems] = useState([]);
-  const { selectedQueue, setSelectedQueue, uploadPayloads, setuploadPayloads } =
-    useApp().post;
+  const {
+    selectedQueue,
+    selectedQueueId,
+    setSelectedQueueId,
+    setSelectedQueue,
+    uploadPayloads,
+    setuploadPayloads,
+  } = useApp().post;
 
   const handleLoaded = (id) => {
     setLoadedItems((prev) => (prev.includes(id) ? prev : [...prev, id]));
@@ -61,6 +67,7 @@ const UploadingQueue = () => {
               className="relative aspect-square overflow-hidden rounded-xl bg-gray-100 shadow group"
               onClick={() => {
                 setSelectedQueue(index);
+                setSelectedQueueId(item.id);
               }}
             >
               {isVideo ? (

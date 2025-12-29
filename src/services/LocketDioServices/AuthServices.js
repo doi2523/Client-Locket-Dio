@@ -1,7 +1,5 @@
 import api from "@/lib/axios";
 import { instanceMain } from "@/lib/axios.main";
-import { CONFIG } from "@/config";
-
 //Login
 export const loginV2 = async ({ email, password, captchaToken }) => {
   try {
@@ -77,10 +75,6 @@ export const forgotPassword = async (email) => {
 //Logout
 export const logout = async () => {
   try {
-    const body = {
-      author: CONFIG.app.name,
-      client: CONFIG.app.clientVersion,
-    };
     const response = await instanceMain.get("locket/logout", {});
     return response.data; // ✅ Trả về dữ liệu từ API (ví dụ: { message: "Đã đăng xuất!" })
   } catch (error) {

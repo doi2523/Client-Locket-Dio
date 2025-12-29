@@ -5,6 +5,7 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 import { Loader2, SmilePlus } from "lucide-react";
 import { getImageSrc } from "@/utils/replace/replaceUrl";
+import { replaceFirebaseWithCDN } from "@/utils/replace/replaceFirebaseWithCDN";
 
 function RollcallImages({ items, onActiveChange }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -37,7 +38,7 @@ function RollcallImages({ items, onActiveChange }) {
             <SwiperSlide key={item.uid}>
               <div className="relative w-full h-full overflow-hidden rounded-lg">
                 {/* IMAGE */}
-                <LazyImage src={getImageSrc(item.main_url)} alt="" />
+                <LazyImage src={replaceFirebaseWithCDN(item.main_url)} alt="" />
 
                 {/* COUNTER – chỉ slide active */}
                 {isActive && (

@@ -1,4 +1,3 @@
-import { API_ENDPOINTS } from "@/config/apiConfig";
 import { loginHeader } from "@/constants/constrain";
 import api from "@/lib/axios";
 import { instanceLocket } from "@/lib/axios.locket";
@@ -7,7 +6,7 @@ import { generateUUIDv4Upper } from "@/utils/generate/uuid";
 
 export const GetAllMessage = async ({ timestamp = null, limit = 50 }) => {
   try {
-    const res = await api.post(API_ENDPOINTS.getAllMessages, {
+    const res = await api.post("/locket/getAllMessageV2", {
       timestamp: timestamp,
       limit: limit,
     });
@@ -22,7 +21,7 @@ export const getMessagesWithUser = async ({
   timestamp = null,
 }) => {
   try {
-    const res = await api.post(API_ENDPOINTS.getMessagesWithUser, {
+    const res = await api.post("/locket/getMessageWithUserV2", {
       messageId: messageId,
       timestamp,
     });

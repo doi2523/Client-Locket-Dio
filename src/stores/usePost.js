@@ -70,6 +70,7 @@ export const usePost = () => {
   const [selectedMomentId, setSelectedMomentId] = useState(null);
 
   const [selectedQueue, setSelectedQueue] = useState(null);
+  const [selectedQueueId, setSelectedQueueId] = useState(null);
 
   const [selectedFriendUid, setSelectedFriendUid] = useState(null);
 
@@ -116,6 +117,7 @@ export const usePost = () => {
     setSelectedMomentId,
     selectedQueue,
     setSelectedQueue,
+    selectedQueueId, setSelectedQueueId,
     selectedFriendUid,
     setSelectedFriendUid,
     reactionInfo,

@@ -23,17 +23,17 @@ import {
   SquareArrowOutUpRight,
   Heart,
   Newspaper,
+  CalendarClock,
 } from "lucide-react";
-import * as ultils from "@/utils";
 import { useApp } from "@/context/AppContext";
 import { AuthContext } from "@/context/AuthLocket";
-import api from "@/lib/axios";
 import { MenuItem } from "./MenuItem";
 import { AuthButton } from "./AuthButton";
 import ThemeToggle from "./ThemeToggle";
 import PlanBadge from "../ui/PlanBadge/PlanBadge";
 import { SonnerError, SonnerSuccess } from "../ui/SonnerToast";
 import { clearAllData } from "@/utils/SyncData/clearAllData";
+import { logout } from "@/services";
 
 const Sidebar = () => {
   const { user, resetAuthContext } = useContext(AuthContext);
@@ -48,7 +48,7 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
-      api.get(`${ultils.API_URL.LOGOUT_URL}`);
+      await logout();
       resetAuthContext();
       await clearAllData();
       SonnerSuccess(
@@ -83,10 +83,10 @@ const Sidebar = () => {
       badge: <PlanBadge />,
       items: [
         { to: "/postmoments", icon: Upload, text: "Đăng ảnh, video" },
-        // { to: "/locket", icon: Smartphone, text: "Locket Camera", badge: "Hot" },
         { to: "/locket-beta", icon: Smartphone, text: "Locket Camera", badge: "Beta" },
         { to: "/manage", icon: Palette, text: "Quản lý Caption" },
         { to: "/tools", icon: Wrench, text: "Công cụ Locket" },
+        { to: "/diary", icon: CalendarClock, text: "Nhật ký Locket", badge: "New" },
         { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "Hot" },
         { to: "/profile", icon: UserRound, text: "Hồ sơ của bạn" },
       ],

@@ -6,11 +6,15 @@ export const createSocket = (idToken, { onConnect, onDisconnect, onError } = {})
   if (!idToken) return null;
 
   const socketClient = io(API_ENDPOINTS.socketUrl, {
-    path: "/socket.io/chat",
     transports: ["websocket"],
     auth: { token: idToken },
     autoConnect: false,
-    reconnection: false,
+    // ✅ RECONNECT CONFIG
+    reconnection: true,
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    timeout: 10000,
   });
 
   // Trạng thái kết nối

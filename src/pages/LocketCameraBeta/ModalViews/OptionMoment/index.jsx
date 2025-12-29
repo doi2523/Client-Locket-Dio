@@ -7,23 +7,25 @@ import Modal from "@/components/ui/Modal";
 import { deletePayloadById } from "@/process/uploadQueue";
 import { DeleteMoment } from "@/services";
 import { getMomentById } from "@/cache/momentDB";
-import { useMomentsStore } from "@/stores";
+import { useMomentsStoreV2 } from "@/stores";
 
 const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
-  const { navigation, post } = useApp();
+  const { post } = useApp();
   const {
-    recentPosts,
     uploadPayloads,
     setuploadPayloads,
-    selectedMoment,
     selectedMomentId,
+    setSelectedMomentId,
     setSelectedMoment,
     selectedQueue,
+    selectedQueueId,
+    setSelectedQueueId,
     setSelectedQueue,
+    selectedFriendUid,
   } = post;
   const [openModal, setOpenModal] = useState(false);
 
-  const { removeMoment } = useMomentsStore();
+  const { removeMoment } = useMomentsStoreV2();
 
   // Lock scroll khi mở modal
   useEffect(() => {
@@ -36,6 +38,8 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
   const handleClose = () => {
     setSelectedMoment(null);
     setSelectedQueue(null);
+    setSelectedQueueId(null);
+    setSelectedMomentId(null);
   };
 
   const handleDelete = async () => {
@@ -45,7 +49,7 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
         const deletedMoment = await DeleteMoment(selectedMomentId);
         if (deletedMoment === selectedMomentId) {
           //Xoá ảnh trong local nếu id đã xoá trùng id chọn
-          await removeMoment(selectedMomentId);
+          await removeMoment(selectedMomentId, selectedFriendUid);
           SonnerSuccess("Đã xoá ảnh thành công!");
           handleClose();
         } else {
@@ -58,15 +62,17 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
       return;
     }
 
-    if (selectedQueue !== null) {
+    if (selectedQueueId !== null) {
       const updatedPayloads = uploadPayloads.filter(
-        (_, index) => index !== selectedQueue
+        (item) => item.id !== selectedQueueId
       );
-      await deletePayloadById(selectedQueue);
+
+      await deletePayloadById(selectedQueueId);
       setuploadPayloads(updatedPayloads);
 
-      setSelectedQueue(null);
-      showSuccess("Đã xoá thành công!");
+      setSelectedQueueId(null);
+      SonnerSuccess("Đã xoá thành công khỏi hàng chờ!");
+      handleClose();
     }
   };
 

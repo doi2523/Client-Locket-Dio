@@ -119,38 +119,44 @@ const RestoreStreak = () => {
         preview.type,
         postOverlay,
         restoreStreak
-        // audience,
-        // selectedRecipients
       );
 
       if (!payload) {
         throw new Error("Không tạo được payload. Hủy tiến trình tải lên.");
       }
-      // console.log("Payload:", payload);
 
       SonnerInfo("Đợi chút nhé", `Đang tạo bài viết !`);
+
       // Gọi API upload
       const response = await services.uploadMediaV2(payload);
 
-      const normalizedNewData = utils.normalizeMoment(response?.data);
+      // Nếu response.data null thì dùng mảng rỗng hoặc object trống
+      const normalizedNewData = response?.data
+        ? utils.normalizeMoment(response.data)
+        : [];
 
-      savePostedMoment(payload, normalizedNewData);
+      // Chỉ lưu khi có dữ liệu chuẩn hoá
+      if (normalizedNewData.length > 0) {
+        savePostedMoment(payload, normalizedNewData);
+      } else {
+        console.warn("Dữ liệu upload trả về rỗng hoặc không hợp lệ");
+      }
 
       SonnerSuccess(
         "Đăng tải thành công!",
         `${preview.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
       );
+
       await fetchStreak(setStreak);
-      // const savePosted = getPostedMoments();
-      // // Cập nhật state với dữ liệu đã chuẩn hoá
-      // setRecentPosts(savePosted);
 
       setPreview(null);
       setSelectedFile(null);
       setPostOverlay(defaultPostOverlay);
       setRestoreStreak(null);
 
-      SonnerSuccess(restoreStreak?.name, "Hãy kiểm tra chuỗi của bạn!");
+      if (restoreStreak?.name) {
+        SonnerSuccess(restoreStreak.name, "Hãy kiểm tra chuỗi của bạn!");
+      }
 
       goToRestoreStreakTab();
     } catch (error) {
@@ -272,13 +278,18 @@ const RestoreStreak = () => {
 
         {/* Caption & Color */}
         <div className="text-center mb-6">
-          {restoreStreak?.data ? (
-            <h2 className="text-3xl font-semibold mb-4">
-              {restoreStreak?.name}
-            </h2>
-          ) : (
-            <h2 className="text-3xl font-semibold mb-4">Customize Caption </h2>
+          <h2 className="text-3xl font-semibold mb-4">Customize Caption </h2>
+
+          {/* Hiển thị chế độ khôi phục / nối tiếp + số ngày */}
+          {restoreStreak?.mode && (
+            <div className="mb-4 p-3 rounded-md bg-blue-100 text-blue-800 text-center font-semibold">
+              <p className="mb-1">{restoreStreak.name}</p>
+              {restoreStreak.data && (
+                <p>Số ngày đã chọn: {restoreStreak.data}</p>
+              )}
+            </div>
           )}
+
           <div className="p-4 rounded-md shadow-md border">
             <h3 className="text-lg font-semibold mb-3 flex items-center justify-between">
               <div className="flex flex-row items-center">

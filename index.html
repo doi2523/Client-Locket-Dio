@@ -53,7 +53,15 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link href="./tailwind.css" rel="stylesheet" />
+    <link
+      rel="preload"
+      href="/tailwind.css"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="/tailwind.css" />
+    </noscript>
 
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-7596Z1M8BB"></script>

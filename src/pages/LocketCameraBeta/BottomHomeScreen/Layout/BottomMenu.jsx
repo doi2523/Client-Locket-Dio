@@ -4,13 +4,11 @@ import { useApp } from "@/context/AppContext";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
 
 const BottomMenu = ({ setIsBottomOpen, setOptionModalOpen }) => {
-  const { navigation, post } = useApp();
+  const { post } = useApp();
   const {
-    recentPosts,
-    uploadPayloads,
-    setuploadPayloads,
     selectedMoment,
-    selectedMomentId,
+    setSelectedMomentId,
+    setSelectedQueueId,
     setSelectedMoment,
     selectedQueue,
     setSelectedQueue,
@@ -19,11 +17,15 @@ const BottomMenu = ({ setIsBottomOpen, setOptionModalOpen }) => {
   const handleReturnHome = () => {
     setSelectedMoment(null);
     setSelectedQueue(null);
+    setSelectedMomentId(null);
+    setSelectedQueueId(null);
     setIsBottomOpen(false);
   };
   const handleClose = () => {
     setSelectedMoment(null);
     setSelectedQueue(null);
+    setSelectedMomentId(null);
+    setSelectedQueueId(null);
   };
 
   return (
@@ -33,7 +35,7 @@ const BottomMenu = ({ setIsBottomOpen, setOptionModalOpen }) => {
 
         <div className="grid grid-cols-3 items-center">
           <div className="flex justify-start">
-            {selectedMoment !== null && (
+            {(selectedMoment !== null || selectedQueue !== null) && (
               <button
                 className="p-2 text-base-content cursor-pointer hover:bg-base-200/50 rounded-full transition-colors"
                 onClick={handleClose}

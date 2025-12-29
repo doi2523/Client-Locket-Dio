@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import "./styles.css";
 import { Bell, X } from "lucide-react";
-import { API_URL } from "@/utils";
 import { TbPinned } from "react-icons/tb";
 import { getNotifications } from "@/services";
 

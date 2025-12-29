@@ -100,6 +100,7 @@ const Home = () => {
               <img
                 src="https://cdn.locket-dio.com/v1/images/double-phone-view-locketdio.webp"
                 alt="Locket Dio WebApp Preview"
+                loading="lazy"
                 onLoad={() => setLoaded(true)}
                 className={`
             md:w-[380px] lg:w-[400px] h-auto object-contain 

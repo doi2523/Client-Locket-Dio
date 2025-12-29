@@ -47,6 +47,9 @@ function AppContent() {
     let el = document.querySelector(selector);
     if (el) el.setAttribute("content", content);
   }
+  useEffect(() => {
+    import('./styles/animation.css');
+  }, []);
 
   useEffect(() => {
     const r = allRoutes.find((route) => route.path === location.pathname);

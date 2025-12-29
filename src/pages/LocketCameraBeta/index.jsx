@@ -2,6 +2,7 @@ import React, { lazy } from "react";
 import { useApp } from "@/context/AppContext";
 import MainHomeScreen from "./MainHomeScreen";
 import { MusicPlayer } from "./Widgets/MusicPlayer";
+const Snowfall = lazy(() => import("@/components/Effects/SnowBanner"));
 
 const LeftHomeScreen = lazy(() => import("./LeftHomeScreen"));
 const RightHomeScreen = lazy(() => import("./RightHomeScreen"));
@@ -13,7 +14,7 @@ const CropImageStudio = lazy(() => import("./ModalViews/CropImageStudio"));
 const OptionMoment = lazy(() => import("./ModalViews/OptionMoment"));
 
 export default function LocketCameraBeta() {
-  const { navigation, camera, useloading, post } = useApp();
+  const { navigation, camera, post } = useApp();
 
   const {
     isHomeOpen,
@@ -33,6 +34,7 @@ export default function LocketCameraBeta() {
 
   return (
     <>
+      <Snowfall />
       <MainHomeScreen />
       {/* Page Views */}
       <LeftHomeScreen setIsProfileOpen={setIsProfileOpen} />

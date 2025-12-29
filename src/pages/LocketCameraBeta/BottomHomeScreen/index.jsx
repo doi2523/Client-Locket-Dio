@@ -10,7 +10,7 @@ import { Virtual } from "swiper/modules";
 import "swiper/css";
 import MomentSlide from "./MomentsView/MomentSlide";
 import { useSocket } from "@/context/SocketContext";
-import { useMomentsStoreV2 } from "@/stores/useMomentsStoreV2";
+import { useMomentsStoreV2 } from "@/stores";
 
 const BottomHomeScreen = () => {
   const { navigation, post } = useApp();
@@ -72,6 +72,7 @@ const BottomHomeScreen = () => {
 
   const handleClose = () => {
     setSelectedMoment(null);
+    setSelectedMomentId(null);
   };
 
   const idToken = localStorage.getItem("idToken");

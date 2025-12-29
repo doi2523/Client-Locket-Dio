@@ -89,41 +89,41 @@ const MediaPreview = ({ capturedMedia }) => {
     }
   };
 
-  useEffect(() => {
-    if (!cameraActive) return;
-
-    if (!preview && !selectedFile) {
-      startCamera();
-    } else {
-      stopCamera();
-    }
-
-    return () => {
-      stopCamera();
-    };
-  }, [cameraActive, cameraMode, preview, selectedFile]);
-
   // useEffect(() => {
-  //   if (cameraActive && !preview && !selectedFile) {
+  //   if (!cameraActive) return;
+
+  //   if (!preview && !selectedFile) {
   //     startCamera();
-  //   } else if (!cameraActive || preview || selectedFile) {
-  //     if (streamRef.current && (preview || selectedFile)) {
-  //       stopCamera();
-  //     }
+  //   } else {
+  //     stopCamera();
   //   }
 
   //   return () => {
-  //     if (!preview && !selectedFile) {
-  //       stopCamera();
-  //     }
+  //     stopCamera();
   //   };
   // }, [cameraActive, cameraMode, preview, selectedFile]);
 
-  // useEffect(() => {
-  //   if (!preview && !selectedFile && !cameraActive) {
-  //     setCameraActive(true);
-  //   }
-  // }, [preview, selectedFile, cameraActive]);
+  useEffect(() => {
+    if (cameraActive && !preview && !selectedFile) {
+      startCamera();
+    } else if (!cameraActive || preview || selectedFile) {
+      if (streamRef.current && (preview || selectedFile)) {
+        stopCamera();
+      }
+    }
+
+    return () => {
+      if (!preview && !selectedFile) {
+        stopCamera();
+      }
+    };
+  }, [cameraActive, cameraMode, preview, selectedFile]);
+
+  useEffect(() => {
+    if (!preview && !selectedFile && !cameraActive) {
+      setCameraActive(true);
+    }
+  }, [preview, selectedFile, cameraActive]);
 
   const handleCycleZoomCamera = async () => {
     const cameras = await getAvailableCameras();
