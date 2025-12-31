@@ -35,6 +35,35 @@ export const useStreakStore = create((set, get) => ({
     }
   },
 
+  syncStreak: async () => {
+    // 1️⃣ Load local trước (sync)
+    try {
+      const cached = localStorage.getItem(STREAK_KEY);
+      if (cached) {
+        set({ streak: JSON.parse(cached) });
+      }
+    } catch (err) {
+      console.error("❌ Load local streak error:", err);
+    }
+
+    // 2️⃣ Fetch server (async)
+    if (get().loading) return;
+
+    set({ loading: true });
+
+    try {
+      const data = await GetLastestMoment();
+      if (!data?.streak) return;
+
+      set({ streak: data.streak });
+      localStorage.setItem(STREAK_KEY, JSON.stringify(data.streak));
+    } catch (error) {
+      console.error("❌ Fetch streak error:", error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   /* ---------- fetch if NOT updated today ---------- */
   fetchStreakIfNeeded: async () => {
     const { streak, loading } = get();

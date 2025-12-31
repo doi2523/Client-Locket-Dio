@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
   const [uploadStats, setUploadStats] = useState(null);
 
   const { loadFriends } = useFriendStore();
-  const { fetchStreak } = useStreakStore();
+  const { syncStreak } = useStreakStore();
 
   useEffect(() => {
     showDevWarning();
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
         setUserPlan(userData);
         setUploadStats(userData?.upload_stats);
         loadFriends();
-        fetchStreak();
+        syncStreak();
       }
       await updateUserInfo(user);
     };
