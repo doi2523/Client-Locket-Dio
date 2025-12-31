@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/SonnerToast";
 import { PostMoments } from "@/services";
 import { normalizeMoment } from "@/utils";
-import { fetchStreak } from "@/utils/SyncData/streakUtils";
+import { useStreakStore } from "@/stores";
 import Dexie from "dexie";
 
 // ===== DB setup =====
@@ -16,7 +16,7 @@ db.version(1).stores({
 });
 
 // ===== Producer: thêm payload vào queue =====
-export const enqueuePayload = async (payload, setStreak) => {
+export const enqueuePayload = async (payload) => {
   const id = await db.payloads.add({
     ...payload,
     status: "queued",
@@ -24,11 +24,11 @@ export const enqueuePayload = async (payload, setStreak) => {
   });
 
   // Gọi consumer ngay sau khi thêm
-  processQueue(setStreak);
+  processQueue();
   return id;
 };
 
-export const enRetryPayload = async (payload, setStreak) => {
+export const enRetryPayload = async (payload) => {
   if (payload.id) {
     // Nếu đã có id, cập nhật payload để retry
     await db.payloads.update(payload.id, {
@@ -47,7 +47,7 @@ export const enRetryPayload = async (payload, setStreak) => {
   }
 
   // Gọi consumer ngay sau khi thêm hoặc update
-  processRetryQueue(setStreak);
+  processRetryQueue();
 
   return payload.id;
 };
@@ -115,7 +115,7 @@ export const getQueuePayloads = async (filterStatus = null) => {
 // ===== Consumer: xử lý payload theo queue =====
 let isProcessingQueue = false;
 
-export const processQueue = async (setStreak) => {
+export const processQueue = async () => {
   if (isProcessingQueue) return; // tránh chạy đồng thời
   isProcessingQueue = true;
 
@@ -143,7 +143,7 @@ export const processQueue = async (setStreak) => {
             payload.contentType === "video" ? "Video" : "Hình ảnh"
           } đã được tải lên!`
         );
-        await fetchStreak(setStreak);
+        useStreakStore.getState().fetchStreakIfNeeded();
 
         // ✅ Tự động xóa sau 3 giây
         deleteDonePayloadAfterDelay(payload.id, 3000);
@@ -166,7 +166,7 @@ export const processQueue = async (setStreak) => {
 
 let isProcessingRetryQueue = false;
 
-export const processRetryQueue = async (setStreak) => {
+export const processRetryQueue = async () => {
   if (isProcessingRetryQueue) return; // tránh chạy đồng thời
   isProcessingRetryQueue = true;
 
@@ -196,7 +196,7 @@ export const processRetryQueue = async (setStreak) => {
           } đã được tải lên!`
         );
         // await
-        await fetchStreak(setStreak);
+        useStreakStore.getState().fetchStreakIfNeeded();
 
         // ✅ Tự động xóa sau 3 giây
         deleteDonePayloadAfterDelay(payload.id, 3000);

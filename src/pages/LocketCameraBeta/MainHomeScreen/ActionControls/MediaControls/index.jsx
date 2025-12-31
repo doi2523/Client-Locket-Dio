@@ -1,7 +1,7 @@
 import { X, Sparkles } from "lucide-react";
 import * as services from "@/services";
 import { useApp } from "@/context/AppContext.jsx";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import { defaultPostOverlay } from "@/stores/usePost.js";
 import UploadStatusIcon from "./UploadStatusIcon.jsx";
 import { getMaxUploads } from "@/hooks/useFeature.js";
@@ -11,7 +11,6 @@ import {
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
 import { enqueuePayload, getQueuePayloads } from "@/process/uploadQueue.js";
-import { AuthContext } from "@/context/AuthLocket.jsx";
 
 const MediaControls = () => {
   const { navigation, post, useloading, camera } = useApp();
@@ -37,7 +36,6 @@ const MediaControls = () => {
     setuploadPayloads,
   } = post;
   const { setCameraActive } = camera;
-  const { setStreak } = useContext(AuthContext);
 
   //Nhap hooks
   const { storage_limit_mb } = getMaxUploads();
@@ -104,7 +102,7 @@ const MediaControls = () => {
       }
 
       // Lưu payload vào memory
-      await enqueuePayload(payload, setStreak);
+      await enqueuePayload(payload);
 
       // Kết thúc loading và hiển thị success
       setUploadLoading(false);

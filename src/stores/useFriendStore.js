@@ -10,9 +10,7 @@ export const useFriendStore = create((set, get) => ({
   setFriendDetails: (friends) => set({ friendDetails: friends }),
 
   // 🔹 Load & sync friend data
-  loadFriends: async (user, authTokens) => {
-    if (!user || !authTokens?.idToken) return;
-
+  loadFriends: async () => {
     set({ loading: true });
 
     try {

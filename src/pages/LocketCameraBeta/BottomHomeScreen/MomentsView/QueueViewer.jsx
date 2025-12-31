@@ -1,12 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useApp } from "@/context/AppContext";
 import { Check, RotateCcw, X } from "lucide-react";
 import LoadingOverlay from "@/components/ui/Loading/LineSpinner";
 import { enRetryPayload, getQueuePayloads } from "@/process/uploadQueue";
-import { AuthContext } from "@/context/AuthLocket";
 
 const QueueViewer = () => {
-  const { setStreak } = useContext(AuthContext);
   const { post } = useApp();
   const {
     uploadPayloads,
@@ -72,7 +70,7 @@ const QueueViewer = () => {
       };
 
       // Đưa payload vào queue để consumer xử lý
-      await enRetryPayload(updatedPayload, setStreak);
+      await enRetryPayload(updatedPayload);
 
       // Cập nhật state UI
       const currentPayloads = await getQueuePayloads();

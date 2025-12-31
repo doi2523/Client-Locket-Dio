@@ -1,7 +1,7 @@
 import { showError } from "@/components/Toast";
 import { getToken } from "@/utils";
 import { uploadFileAndGetInfoR2 } from "./StorageServices";
-import { getStreakToday } from "@/utils/moment/streak";
+import { useStreakStore } from "@/stores";
 
 // Hàm con xác định recipients
 const determineRecipients = (audience, selectedRecipients, localId) => {
@@ -20,7 +20,7 @@ export const createRequestPayloadV5 = async (
 ) => {
   try {
     const { localId } = getToken() || {};
-    const isStreakToday = getStreakToday();
+    const isStreakToday = useStreakStore.getState().isStreakUpdatedToday();
 
     if (!localId) {
       showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
@@ -84,7 +84,6 @@ export const createRequestPayloadV4 = async (
 ) => {
   try {
     const { localId } = getToken() || {};
-    const isStreakToday = getStreakToday();
 
     if (!localId) {
       showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");

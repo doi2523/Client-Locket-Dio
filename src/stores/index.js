@@ -5,4 +5,5 @@ export * from "./usePost";
 export * from "./useThemes";
 export * from "./useFriendStore";
 export * from "./useMessagesStore";
-export * from "./useMomentsStoreV2"
+export * from "./useMomentsStoreV2";
+export * from "./useStreakStore";

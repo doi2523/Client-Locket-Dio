@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Flame, FolderDown, UserRoundX } from "lucide-react";
 import { AuthContext } from "@/context/AuthLocket";
-import BottomToolBar from "./BottomToolBar";
+import BottomToolBar from "./Layout/BottomToolBar";
 import DeleteFriendsTool from "./tools/DeleteFriendsTool";
 import { TbUserStar } from "react-icons/tb";
 import CelebrityTool from "./tools/CelebrityTool";

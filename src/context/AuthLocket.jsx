@@ -9,9 +9,9 @@ import React, {
 import PropTypes from "prop-types";
 import * as utils from "@/utils";
 import { GetUserData, updateUserInfo } from "@/services";
-import { fetchStreak } from "@/utils/SyncData/streakUtils";
 import { useFriendStore } from "@/stores/useFriendStore";
 import { showDevWarning } from "@/utils/logging/devConsole";
+import { useStreakStore } from "@/stores";
 
 export const AuthContext = createContext();
 
@@ -22,27 +22,15 @@ export const AuthProvider = ({ children }) => {
 
   const hasFetchedPlan = useRef(false);
 
-  const [friendDetails, setFriendDetails] = useState([]);
-
   const [userPlan, setUserPlan] = useState(null);
   const [uploadStats, setUploadStats] = useState(null);
-  const [streak, setStreak] = useState(() =>
-    JSON.parse(localStorage.getItem("streak") || "null")
-  );
 
   const { loadFriends } = useFriendStore();
+  const { fetchStreak } = useStreakStore();
 
   useEffect(() => {
     showDevWarning();
-    localStorage.removeItem("failedUploads");
-    localStorage.removeItem("friendsList");
-    localStorage.removeItem("uploadedMoments");
-    localStorage.removeItem("uploadedPayloads");
   }, []);
-
-  useEffect(() => {
-    loadFriends(user, authTokens); // ✅ Tự load local + sync server
-  }, [user, authTokens]);
 
   // 🔹 Fetch user plan
   useEffect(() => {
@@ -53,7 +41,8 @@ export const AuthProvider = ({ children }) => {
         const userData = await GetUserData();
         setUserPlan(userData);
         setUploadStats(userData?.upload_stats);
-        fetchStreak(setStreak);
+        loadFriends();
+        fetchStreak();
       }
       await updateUserInfo(user);
     };
@@ -65,7 +54,6 @@ export const AuthProvider = ({ children }) => {
   const resetAuthContext = () => {
     setUser(null);
     setAuthTokens(null);
-    setFriendDetails([]);
     setUserPlan(null);
     setUploadStats(null);
 
@@ -73,14 +61,6 @@ export const AuthProvider = ({ children }) => {
 
     utils.removeUser();
     utils.removeToken();
-    localStorage.removeItem("friendsList");
-    localStorage.removeItem("userPlan");
-    localStorage.removeItem("uploadStats");
-  };
-
-  const refreshStreak = (newStreak) => {
-    setStreak(newStreak);
-    localStorage.setItem("streak", JSON.stringify(newStreak));
   };
 
   const contextValue = useMemo(
@@ -88,8 +68,6 @@ export const AuthProvider = ({ children }) => {
       user,
       setUser,
       loading,
-      friendDetails,
-      setFriendDetails,
       userPlan,
       setUserPlan,
       authTokens,
@@ -97,12 +75,8 @@ export const AuthProvider = ({ children }) => {
       resetAuthContext,
       uploadStats,
       setUploadStats,
-      streak,
-      setStreak,
-      fetchStreak,
-      refreshStreak,
     }),
-    [user, loading, friendDetails, userPlan, authTokens, uploadStats, streak]
+    [user, loading, userPlan, authTokens, uploadStats]
   );
 
   return (

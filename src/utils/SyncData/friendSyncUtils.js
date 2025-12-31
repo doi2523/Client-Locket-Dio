@@ -1,4 +1,5 @@
 import db from "@/cache/configDB";
+import { addRemovedFriend } from "@/cache/diaryDB";
 import {
   getFriendIds,
   getAllFriendDetails,
@@ -29,6 +30,7 @@ export const syncFriendsWithCache = async (apiFriends) => {
       for (const f of removedFriends) {
         await deleteFriendId(f.uid);
         await deleteFriendDetail(f.uid);
+        await addRemovedFriend(f.uid);
       }
     }
 
@@ -46,7 +48,11 @@ export const fetchAndSyncFriendDetails = async () => {
   try {
     // 1. Lấy danh sách bạn từ API
     const apiFriends = await getListIdFriends();
-    if (!apiFriends?.length) {
+    if (apiFriends === null) {
+      console.warn("⚠️ API friends failed, skip sync");
+      return await getAllFriendDetails();
+    }
+    if (apiFriends.length === 0) {
       await setFriendDetailsBulk([]);
       return [];
     }

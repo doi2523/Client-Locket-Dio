@@ -1,20 +1,14 @@
 import React, { useState, useMemo, useEffect } from "react";
 import LoadingRing from "@/components/ui/Loading/ring";
 import { useFeatureVisible } from "@/hooks/useFeature";
-import { useStreak } from "@/hooks/useStreak";
 import { useApp } from "@/context/AppContext";
 import { Link } from "react-router-dom";
-
-const formatYYYYMMDD = (date = new Date()) => {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  return Number(`${yyyy}${mm}${dd}`);
-};
+import { formatYYYYMMDD } from "@/utils";
+import { useStreakStore } from "@/stores";
 
 export default function RestoreStreak() {
   const hasAccess = useFeatureVisible("restore_streak_tool");
-  const streak = useStreak();
+  const { streak } = useStreakStore();
   const { restoreStreak, setRestoreStreak } = useApp().post;
   const [mode, setMode] = useState("restore"); // "restore" | "continue"
 
@@ -32,7 +26,7 @@ export default function RestoreStreak() {
 
   useEffect(() => {
     setRestoreStreak({
-      data: restoreStreakDate,
+      data: 20250925,
       mode,
       name:
         mode === "restore" ? "Chế độ khôi phục chuỗi" : "Chế độ nối tiếp chuỗi",

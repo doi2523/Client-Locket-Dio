@@ -24,19 +24,19 @@ import { defaultPostOverlay } from "@/stores/usePost.js";
 import { getMaxUploads } from "@/hooks/useFeature.js";
 import { AuthContext } from "@/context/AuthLocket.jsx";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge.jsx";
-import { getPostedMoments, savePostedMoment } from "@/process/uploadQueue.js";
+import { savePostedMoment } from "@/process/uploadQueue.js";
 import {
   SonnerError,
   SonnerInfo,
   SonnerSuccess,
 } from "@/components/ui/SonnerToast";
-import { fetchStreak } from "@/utils/SyncData/streakUtils";
 import { useNavigate } from "react-router-dom";
+import { useStreakStore } from "@/stores";
 
 const RestoreStreak = () => {
   const { post, useloading } = useApp();
   const navigate = useNavigate();
-  const { uploadStats, setStreak } = useContext(AuthContext);
+  const { uploadStats } = useContext(AuthContext);
   const { sendLoading, setSendLoading, uploadLoading } = useloading;
 
   const {
@@ -62,6 +62,7 @@ const RestoreStreak = () => {
   } = post;
   const { storage_limit_mb } = getMaxUploads();
   const fileInputRef = useRef(null);
+  const { fetchStreak } = useStreakStore();
 
   // Đồng bộ caption và màu từ postOverlay → state
   useEffect(() => {
@@ -147,7 +148,7 @@ const RestoreStreak = () => {
         `${preview.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
       );
 
-      await fetchStreak(setStreak);
+      fetchStreak();
 
       setPreview(null);
       setSelectedFile(null);

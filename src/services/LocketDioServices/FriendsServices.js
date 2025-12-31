@@ -20,7 +20,7 @@ export const getListIdFriends = async () => {
     return cleanedFriends;
   } catch (err) {
     console.error("❌ Lỗi khi gọi API get-friends:", err);
-    return [];
+    return null;
   }
 };
 

@@ -1,15 +1,15 @@
-import React, { lazy ,useContext, useEffect, useState } from "react";
-import { AuthContext } from "@/context/AuthLocket";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthLocket";
 import { useApp } from "@/context/AppContext";
 import { getPostedMoments } from "@/process/uploadQueue";
 import HeaderOne from "./Layout/HeaderOne";
 import InfoUser from "./Layout/InfoUser";
 import SegmentedToggle from "./Layout/SegmentedToggle";
 import RollcallsPost from "./Views/RollcallsPage";
-import StreakLocket from "./Views/StreakLocket";
+import StreakLocket from "./Views/CalenderStreak";
 
 const LeftHomeScreen = ({ setIsProfileOpen }) => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const { navigation, post } = useApp();
   const { isProfileOpen } = navigation;
   const { recentPosts, setRecentPosts } = post;
