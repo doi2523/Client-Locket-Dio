@@ -34,6 +34,7 @@ const BottomHomeScreen = () => {
     selectedQueue,
     setSelectedQueue,
     selectedFriendUid,
+    selectedMomentId,
     setSelectedMomentId,
   } = post;
 
@@ -69,6 +70,20 @@ const BottomHomeScreen = () => {
   useEffect(() => {
     fetchMoments(user, selectedFriendUid);
   }, [user, selectedFriendUid]);
+
+  useEffect(() => {
+    if (!swiperRef) return;
+    if (selectedMomentId == null) return;
+
+    const newIndex = moments.findIndex((m) => m.id === selectedMomentId);
+
+    if (newIndex === -1) return;
+
+    if (newIndex !== selectedMoment) {
+      setSelectedMoment(newIndex);
+      swiperRef.slideTo(newIndex, 0); // giữ nguyên moment đang xem
+    }
+  }, [moments, selectedMomentId, swiperRef]);
 
   const handleClose = () => {
     setSelectedMoment(null);

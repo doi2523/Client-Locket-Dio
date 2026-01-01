@@ -100,24 +100,18 @@ export const useMomentsStoreV2 = create((set, get) => ({
       if (apiData?.length) {
         set((state) => {
           const bucket = state.momentsByUser[key] ?? defaultBucket();
-          const existingIds = new Set(bucket.items.map((i) => i.id));
-
-          const merged = [
-            ...bucket.items,
-            ...apiData.filter((i) => !existingIds.has(i.id)),
-          ].sort((a, b) => b.createTime - a.createTime);
-
           return {
             momentsByUser: {
               ...state.momentsByUser,
               [key]: {
                 ...bucket,
-                items: merged,
+                items: [...apiData].sort((a, b) => b.createTime - a.createTime),
               },
             },
           };
         });
 
+        // cache lại local
         await bulkAddMoments(apiData);
       }
     } catch (err) {

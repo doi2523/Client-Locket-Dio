@@ -210,6 +210,7 @@ const MediaPreview = ({ capturedMedia }) => {
               <div className="absolute inset-0 z-20 pointer-events-none">
                 <img
                   src={selectedFrame.imageSrc}
+                  loading="lazy"
                   alt="Khung viền camera"
                   className="w-full h-full object-cover"
                 />
