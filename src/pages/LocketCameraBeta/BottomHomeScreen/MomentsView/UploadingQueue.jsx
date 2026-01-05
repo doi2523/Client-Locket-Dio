@@ -48,8 +48,9 @@ const UploadingQueue = () => {
     <>
       <h1 className="text-base font-semibold">Ảnh/Video đang tải lên</h1>
       <p className="text-sm italic">
-        Lưu ý phương tiện đang tải lên sẽ bị xoá sau một khoảng thời gian nhất
-        định.
+        Lưu ý phương tiện ở mục này sẽ bị xoá sau một khoảng thời gian nhất
+        định. Nếu bạn gặp lỗi khi tải lên, hãy thử lại hoặc tham khảo trang sự
+        cố.
       </p>
       <Link to={"/incidents"} className="text-sm underline cursor-pointer">
         Page tham khảo lỗi
