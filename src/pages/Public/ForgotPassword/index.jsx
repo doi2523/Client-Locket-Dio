@@ -44,7 +44,9 @@ const ForgotPassword = () => {
       setEmail("");
       setCooldown(180); // Bắt đầu đếm ngược 3 phút
     } catch (error) {
-      SonnerError("Có lỗi xảy ra, vui lòng thử lại sau!",error);
+      console.log(error);
+      
+      SonnerError("Có lỗi xảy ra, vui lòng thử lại sau!");
       setCooldown(180); // Cũng bắt cooldown để tránh spam ngay cả khi lỗi
     } finally {
       setLoading(false);

@@ -2,7 +2,7 @@ import { CONFIG } from "./webConfig";
 
 // Chat server host
 export const BASE_SERVER_HOST = CONFIG.api.baseUrl;
-
+export const BETA_SERVER_HOST = import.meta.env.VITE_BETA_API_URL;
 // Namespace
 export const API_NAMESPACE = {
   main: "/api",

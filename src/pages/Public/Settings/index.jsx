@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from "react";
 
 // Lazy load components
 const ThemeSelector = lazy(() => import("@/components/Theme/ThemeSelector"));
+const ThemeSelect = lazy(() => import("./ThemeViewSelect"));
 const SettingsExtras = lazy(() => import("./SettingsExtras"));
 const CameraFrameSelector = lazy(() => import("./CameraFrameSelector"));
 
@@ -15,6 +16,18 @@ export default function Settings() {
 
         {/* Responsive grid: 1 -> 2 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <Suspense
+            fallback={
+              <div className="bg-base-300 rounded-2xl shadow-md p-4 h-[200px] flex items-center justify-center">
+                <span className="loading loading-spinner text-primary"></span>
+              </div>
+            }
+          >
+            <div className="bg-base-300 rounded-2xl shadow-md p-4 h-full flex flex-col">
+              <ThemeSelect />
+            </div>
+          </Suspense>
+
           <Suspense
             fallback={
               <div className="bg-base-300 rounded-2xl shadow-md p-4 h-[200px] flex items-center justify-center">
@@ -50,12 +63,6 @@ export default function Settings() {
               <SettingsExtras />
             </div>
           </Suspense>
-
-          <div className="bg-base-300 rounded-2xl shadow-md p-4 h-full flex flex-col">
-            <p className="text-center text-base-content opacity-70">
-              Coming Soon...
-            </p>
-          </div>
         </div>
       </div>
     </div>

@@ -225,7 +225,7 @@ const ScreenCustomeStudio = () => {
             />
           </FeatureGate>
           <SavedCaptions
-            title="🎨 Caption đã lưu"
+            title="🎨 Caption Kanade hợp tác"
             captions={captions}
             onSelect={handleSelectCaption}
           />

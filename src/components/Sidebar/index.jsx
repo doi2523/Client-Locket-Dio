@@ -24,6 +24,7 @@ import {
   Heart,
   Newspaper,
   CalendarClock,
+  SquareArrowDown,
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { AuthContext } from "@/context/AuthLocket";
@@ -34,6 +35,7 @@ import PlanBadge from "../ui/PlanBadge/PlanBadge";
 import { SonnerError, SonnerSuccess } from "../ui/SonnerToast";
 import { clearAllData } from "@/utils/SyncData/clearAllData";
 import { logout } from "@/services";
+import { CONFIG } from "@/config";
 
 const Sidebar = () => {
   const { user, resetAuthContext } = useContext(AuthContext);
@@ -46,6 +48,8 @@ const Sidebar = () => {
     return () => document.body.classList.remove("overflow-hidden");
   }, [isSidebarOpen]);
 
+  const currentYear = new Date().getFullYear();
+  const { startYear } = CONFIG.app;
   const handleLogout = async () => {
     try {
       await logout();
@@ -83,12 +87,32 @@ const Sidebar = () => {
       badge: <PlanBadge />,
       items: [
         { to: "/postmoments", icon: Upload, text: "Đăng ảnh, video" },
-        { to: "/locket-beta", icon: Smartphone, text: "Locket Camera", badge: "Beta" },
-        { to: "/manage", icon: Palette, text: "Quản lý Caption" },
+        {
+          to: "/locket-beta",
+          icon: Smartphone,
+          text: "Locket Camera",
+          badge: "Beta",
+        },
         { to: "/tools", icon: Wrench, text: "Công cụ Locket" },
-        { to: "/diary", icon: CalendarClock, text: "Nhật ký Locket", badge: "New" },
+        {
+          to: "/diary",
+          icon: CalendarClock,
+          text: "Nhật ký Locket",
+          badge: "New",
+        },
         { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "Hot" },
         { to: "/profile", icon: UserRound, text: "Hồ sơ của bạn" },
+      ],
+    },
+    {
+      title: "Hợp tác",
+      items: [
+        { to: "/collab/caption-kanade", icon: Palette, text: "Caption Kanade" },
+        {
+          to: "/collab/locket-upload",
+          icon: SquareArrowDown,
+          text: "Locket Upload",
+        },
       ],
     },
     {
@@ -111,7 +135,11 @@ const Sidebar = () => {
         { to: "/about", icon: Info, text: "Locket Dio" },
         { to: "/about-dio", icon: UserCircle, text: "Về Dio" },
         { to: "/newsfeed", icon: Newspaper, text: "Bảng tin", badge: "New" },
-        { to: "/download", icon: SquareArrowOutUpRight, text: "Cài đặt WebApp"},
+        {
+          to: "/download",
+          icon: SquareArrowOutUpRight,
+          text: "Cài đặt WebApp",
+        },
       ],
     },
     {
@@ -125,9 +153,19 @@ const Sidebar = () => {
       ],
     },
     {
+      title: "Hợp tác",
+      items: [
+        { to: "/collab/caption-kanade", icon: Palette, text: "Caption Kanade" },
+        {
+          to: "/collab/locket-upload",
+          icon: SquareArrowDown,
+          text: "Locket Upload",
+        },
+      ],
+    },
+    {
       title: "Hệ thống & Hỗ trợ",
       items: [
-        // { to: "/devpage", icon: Code2, text: "Trang lập trình", badge: "New" },
         { to: "/incidents", icon: Bug, text: "Trung tâm sự cố" },
         { to: "/contact", icon: LifeBuoy, text: "Liên hệ & Hỗ trợ" },
         { to: "/privacy", icon: ShieldCheck, text: "Chính sách bảo mật" },
@@ -210,7 +248,8 @@ const Sidebar = () => {
 
         <div>
           <p className="text-center text-xs pb-2 text-base-content/70">
-            © {new Date().getFullYear()}{" "}
+            © {startYear}
+            {currentYear > startYear && `–${currentYear}`}{" "}
             <span className="font-semibold font-lovehouse">Dio</span>. All
             rights reserved.
           </p>

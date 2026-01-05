@@ -16,7 +16,7 @@ const StatusServer = () => {
     const checkServer = async () => {
       try {
         const response = await axios.get(utils.API_URL.CHECK_SERVER, {
-          timeout: 5000, // tránh treo request
+          timeout: 15000, // tránh treo request
         });
         setIsStatusServer(response.status === 200);
       } catch (error) {
@@ -28,7 +28,7 @@ const StatusServer = () => {
     checkServer();
 
     // set interval để check lại sau mỗi 10s
-    intervalId = setInterval(checkServer, 6000);
+    intervalId = setInterval(checkServer, 15000);
 
     // cleanup khi unmount
     return () => clearInterval(intervalId);

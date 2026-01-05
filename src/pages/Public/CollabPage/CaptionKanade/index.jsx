@@ -1,5 +1,5 @@
 import { showError, showSuccess } from "@/components/Toast";
-import { CONFIG } from "@/config";
+import { getCollabCaption } from "@/services";
 import { useState, useEffect } from "react";
 
 export default function ManageCaption() {
@@ -35,19 +35,9 @@ export default function ManageCaption() {
     }
 
     try {
-      const apiUrl = `${CONFIG.api.data}/locketpro/cs/${encodeURIComponent(
-        captionId
-      )}`;
-      console.log("Gửi request tới:", apiUrl);
+      const result = await getCollabCaption(captionId);
 
-      const response = await fetch(apiUrl);
-      if (!response.ok) {
-        throw new Error(`Lỗi khi gọi API: ${response.status}`);
-      }
-
-      const json = await response.json();
-      const caption = json?.data?.caption;
-      if (!caption) {
+      if (!result) {
         throw new Error("Không tìm thấy caption trong dữ liệu trả về");
       }
 
@@ -58,8 +48,8 @@ export default function ManageCaption() {
 
       // Tránh trùng ID
       const updatedCaptions = [
-        caption,
-        ...storedCaptions.filter((c) => c.id !== caption.id),
+        result,
+        ...storedCaptions.filter((c) => c.id !== result.id),
       ];
 
       localStorage.setItem("Yourcaptions", JSON.stringify(updatedCaptions));
@@ -90,6 +80,9 @@ export default function ManageCaption() {
       <p className="text-sm text-gray-600">
         Bạn có ID của caption do bạn bè gửi hoặc lấy được? Hãy dán nó vào đây để
         tải caption đó về máy của bạn.
+      </p>
+      <p className="text-sm text-gray-600 my-2">
+        Từ khoá tìm kiếm "captionkanade".
       </p>
       <p className="text-sm text-gray-600 mb-6">
         Truy cập{" "}

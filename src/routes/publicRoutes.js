@@ -3,6 +3,7 @@ import React from "react";
 import Home from "../pages/Public/Home";
 import Login from "../pages/Public/Login";
 import { CONFIG } from "@/config";
+const LocketUpload = React.lazy(() => import("@/pages/Public/CollabPage/LocketUpload"));
 const LocketCameraBeta = React.lazy(() => import("../pages/LocketCameraBeta"));
 // import CameraCapture from "@/pages/UILocket";
 // const WhitePage = React.lazy(() => import("@/pages/Public/WhitePage"));
@@ -22,6 +23,7 @@ const PlanDetailPage = React.lazy(() => import("../pages/Auth/PricingDetail"));
 const ToolsLocket = React.lazy(() => import("../pages/Auth/LocketDioTools"));
 const Settings = React.lazy(() => import("../pages/Public/Settings"));
 const DevPage = React.lazy(() => import("../pages/Public/DevPage"));
+const ManageCaption = React.lazy(() => import("@/pages/Public/CollabPage/CaptionKanade"));
 const AddToHomeScreenGuide = React.lazy(() => import("../pages/Public/AddToScreen"));
 const ErrorReferencePage = React.lazy(() => import("../pages/Public/ErrorReferencePage"));
 const ReferencePage = React.lazy(() => import("../pages/Public/APIDocs"));
@@ -58,6 +60,8 @@ export const publicRoutes = [
   { path: "/incidents", component: ErrorReferencePage, title: `Trung tâm sự cố | ${APP_NAME}` },
   { path: "/contact", component: Contact, title: `Liên hệ & Hỗ trợ | ${APP_NAME}` },
 
+  { path: "/collab/caption-kanade", component: ManageCaption, title: `Web hợp tác Caption Kanade | ${APP_NAME}` },
+  { path: "/collab/locket-upload", component: LocketUpload, title: `Web hợp tác Locket Upload | ${APP_NAME}` },
   { path: "/happy-birthday", component: BirthdayPage, title: `Chúc mừng sinh nhật Dio | ${APP_NAME}` },
 
   // { path: "/wt", component: WhitePage, title: `White Page for Development | ${APP_NAME}` },

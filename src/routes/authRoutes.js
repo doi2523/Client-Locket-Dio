@@ -20,11 +20,12 @@ const PlanDetailPage = React.lazy(() => import("../pages/Auth/PricingDetail"));
 const PayPage = React.lazy(() => import("../pages/Auth/PayPage"));
 const Timeline = React.lazy(() => import("../pages/Public/Timeline"));
 const ToolsLocket = React.lazy(() => import("../pages/Auth/LocketDioTools"));
-const ManageCaption = React.lazy(() => import("@/pages/Public/ManageCaption"));
+const ManageCaption = React.lazy(() => import("@/pages/Public/CollabPage/CaptionKanade"));
 const ErrorReferencePage = React.lazy(() => import("../pages/Public/ErrorReferencePage"));
 const Contact = React.lazy(() => import("../pages/Public/Contact"));
 const PrivacyPolicy = React.lazy(() => import("../pages/Public/PrivacyPolicy"));
 const BirthdayPage = React.lazy(() => import("../pages/Public/BirthdayPage"));
+const LocketUpload = React.lazy(() => import("@/pages/Public/CollabPage/LocketUpload"));
 
 const APP_NAME = CONFIG.app.fullName;
 
@@ -48,7 +49,8 @@ export const authRoutes = [
   { path: "/postmoments", component: PostMoments, title: `Đăng Moment Mới | ${APP_NAME}` },
   { path: "/restore-streak", component: RestoreStreak, title: `Khôi phục chuỗi Locket | ${APP_NAME}` },
   { path: "/tools", component: ToolsLocket, title: `Công cụ mở rộng | ${APP_NAME}` },
-  { path: "/manage", component: ManageCaption, title: `Quản lý Caption | ${APP_NAME}` },
+  { path: "/collab/caption-kanade", component: ManageCaption, title: `Web hợp tác Caption Kanade | ${APP_NAME}` },
+  { path: "/collab/locket-upload", component: LocketUpload, title: `Web hợp tác Locket Upload | ${APP_NAME}` },
   { path: "/diary", component: DiaryPage, title: `Nhật ký Locket | ${APP_NAME}` },
 
   { path: "/settings", component: Settings, title: `Cài đặt | ${APP_NAME}` },

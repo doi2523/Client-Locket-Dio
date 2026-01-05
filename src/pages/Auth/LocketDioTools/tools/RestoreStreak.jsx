@@ -26,7 +26,7 @@ export default function RestoreStreak() {
 
   useEffect(() => {
     setRestoreStreak({
-      data: 20250925,
+      data: restoreStreakDate,
       mode,
       name:
         mode === "restore" ? "Chế độ khôi phục chuỗi" : "Chế độ nối tiếp chuỗi",

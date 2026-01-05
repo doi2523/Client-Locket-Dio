@@ -2,9 +2,12 @@ import React from "react";
 import "./styles.css";
 import { Mail, MapPin } from "lucide-react";
 import MailForm from "@/components/ui/SupportForms/MailForm";
-import { COMMUNITY_CONFIG, CONTACT_CONFIG } from "@/config";
+import { COMMUNITY_CONFIG, CONFIG, CONTACT_CONFIG } from "@/config";
 
 export default function Contact() {
+  const avatarUrl = CONFIG.app.myInfo.avatarUrl;
+  const fullName = CONFIG.app.myInfo.fullName;
+
   const communityLinks = [
     {
       name: "Discord",
@@ -50,8 +53,8 @@ export default function Contact() {
             Liên hệ & Hỗ trợ
           </h1>
           <p className="mt-3 text-base-content/70 text-lg">
-            Kết nối với <span className="font-semibold">Đào Văn Đôi (Dio)</span>{" "}
-            - Tác giả <span className="font-semibold">Locket Dio</span>
+            Kết nối với <span className="font-semibold">{fullName}</span> - Tác
+            giả <span className="font-semibold">Locket Dio</span>
           </p>
         </div>
 
@@ -59,7 +62,7 @@ export default function Contact() {
           {/* Profile */}
           <div className="bg-base-100 w-full flex flex-col items-center justify-start p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1 animate-slideUp">
             <img
-              src="https://cdn.locket-dio.com/v1/images/avt/avtdio.webp"
+              src={avatarUrl}
               alt="Đào Văn Đôi"
               className="w-28 h-28 rounded-full object-cover border-4 border-base-300 mb-4 shadow-md hover:scale-105 transition duration-300"
             />

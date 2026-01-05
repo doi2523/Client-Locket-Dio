@@ -27,6 +27,7 @@ export const CONFIG = {
     fullName: "Locket Dio - Đăng ảnh & Video lên Locket", // Tên đầy đủ
     clientVersion: "Beta2.5.5.2.1", // Version client
     apiVersion: "v2.2.1", // Version API
+    startYear: 2025,
     env: import.meta.env.MODE, // development | production
     camera: {
       limits: {
@@ -80,6 +81,13 @@ export const CONFIG = {
       bankName: "Ngân hàng MBBank (MB)",
       accountNumber: "66222222222266",
       accountName: "DAO VAN DOI",
+    },
+    myInfo: {
+      fullName: "Đào Văn Đôi (Dio)",
+      email: "doibncm2003@gmail.com",
+      phone: "0123456789",
+      github: "https://github.com/doi2523",
+      avatarUrl: "https://github.com/doi2523.png",
     },
     docs: {
       personal_authorization:
