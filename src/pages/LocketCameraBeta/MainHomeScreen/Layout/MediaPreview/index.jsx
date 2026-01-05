@@ -8,7 +8,7 @@ import { useApp } from "@/context/AppContext";
 import { CONFIG } from "@/config";
 import BorderProgress from "../../Widgets/SquareProgress";
 
-const MediaPreview = ({ capturedMedia }) => {
+const MediaPreview = () => {
   const { post, useloading, camera } = useApp();
   const { selectedFile, preview, isSizeMedia } = post;
   const {
@@ -171,7 +171,7 @@ const MediaPreview = ({ capturedMedia }) => {
       <div
         className={`relative w-full max-w-md aspect-square bg-gray-800 rounded-[65px] overflow-hidden transition-transform duration-500 `}
       >
-        {!preview && !selectedFile && !capturedMedia && cameraActive && (
+        {!preview && !selectedFile && cameraActive && (
           <video
             ref={videoRef}
             autoPlay

@@ -4,11 +4,10 @@ import MediaControls from "./MediaControls/index.jsx";
 import MediaCapture from "./MediaCapture/index.jsx";
 
 const ActionControls = () => {
-  const { post, camera } = useApp();
+  const { post } = useApp();
   const { selectedFile } = post;
-  const { capturedMedia } = camera;
 
-  const targetView = capturedMedia || selectedFile ? "controls" : "capture";
+  const targetView = selectedFile ? "controls" : "capture";
 
   // view hiện tại đang mount trong DOM
   const [view, setView] = useState(targetView);

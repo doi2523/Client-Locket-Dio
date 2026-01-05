@@ -7,7 +7,6 @@ export const useCamera = () => {
   const streamRef = useRef(null);
   const cameraRef = useRef(null);
 
-  const [capturedMedia, setCapturedMedia] = useState(null);
   const [permissionChecked, setPermissionChecked] = useState(true);
   const [cameraActive, setCameraActive] = useState(true);
   const [rotation, setRotation] = useState(0);
@@ -37,8 +36,6 @@ export const useCamera = () => {
     streamRef,
     cameraRef,
     canvasRef,
-    capturedMedia,
-    setCapturedMedia,
     permissionChecked,
     setPermissionChecked,
     holdTime,
