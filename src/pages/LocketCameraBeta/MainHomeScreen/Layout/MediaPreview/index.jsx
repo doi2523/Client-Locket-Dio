@@ -2,7 +2,7 @@ import React, { lazy, Suspense, useEffect, useRef } from "react";
 
 import MediaSizeInfo from "@/components/ui/MediaSizeInfo";
 import { showInfo } from "@/components/Toast";
-import { getAvailableCameras } from "@/utils";
+import { getAvailableCameras, isIOS } from "@/utils";
 const AutoResizeCaption = lazy(() => import("../CaptionViews"));
 import { useApp } from "@/context/AppContext";
 import { CONFIG } from "@/config";
@@ -27,7 +27,7 @@ const MediaPreview = () => {
 
   const cameraInitialized = useRef(false);
   const lastCameraMode = useRef(cameraMode);
-
+  const iosDevice = isIOS();
   const stopCamera = () => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
@@ -57,9 +57,12 @@ const MediaPreview = () => {
       }
 
       let videoConstraints = {
-        deviceId: deviceId ? { exact: deviceId } : undefined,
         facingMode: cameraMode || "user",
       };
+
+      if (iosDevice && deviceId) {
+        videoConstraints.deviceId = { exact: deviceId };
+      }
 
       const isUser = cameraMode === "user";
       const isZoom05 = zoomLevel === "0.5x";
