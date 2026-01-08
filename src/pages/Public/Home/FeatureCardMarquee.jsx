@@ -79,7 +79,7 @@ const FeatureCardMarquee = () => {
             className={`
               relative 
               p-4 rounded-3xl
-              mx-3 bg-base-100/30 backdrop-blur-[2px]
+              mx-3 bg-base-100/20 backdrop-blur-[2px]
               w-[280px] h-[240px]
               flex-shrink-0 flex flex-col
             `}
@@ -89,10 +89,10 @@ const FeatureCardMarquee = () => {
             >
               <span className="text-xl text-white">{feature.icon}</span>
             </div>
-            <h3 className="text-lg text-left font-bold text-black mb-2 leading-tight">
+            <h3 className="text-lg text-left font-bold text-text-base-content mb-2 leading-tight">
               {feature.title}
             </h3>
-            <p className="text-sm text-black text-left leading-relaxed line-clamp-6 flex-1">
+            <p className="text-sm text-text-base-content text-left leading-relaxed line-clamp-6 flex-1">
               {feature.description}
             </p>
           </div>

@@ -19,6 +19,9 @@ export const getFriendIds = async () => {
   return await friendDB.friendIds.toArray();
 };
 
+export const putNewFriendId = async (newFriends) => {
+  await friendDB.friendIds.bulkPut(newFriends);
+}
 // ===== Friend Details =====
 export const setFriendDetail = async (friend) => {
   try {
@@ -140,5 +143,19 @@ export const addFriendToCache = async (friend) => {
     console.log("✅ Đã thêm bạn mới vào cache:", friend.uid);
   } catch (err) {
     console.error("❌ Lỗi khi thêm bạn mới:", err);
+  }
+};
+
+// Xoá 1 bạn mới khỏi cache (cả ID và detail)
+export const removeFriendToCache = async (uid) => {
+  try {
+    if (!uid) return;
+    // lưu ID
+    await friendDB.friendIds.delete(uid);
+    // lưu chi tiết
+    await friendDB.friendDetails.delete(uid);
+    console.log("✅ Đã xoá bạn mới khỏi cache:", uid);
+  } catch (err) {
+    console.error("❌ Lỗi khi xoá bạn:", err);
   }
 };

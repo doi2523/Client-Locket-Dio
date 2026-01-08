@@ -1,56 +1,37 @@
 import React, {
-  useContext,
   useEffect,
   useState,
   useCallback,
   useMemo,
 } from "react";
-import { AuthContext } from "@/context/AuthLocket";
-import { showInfo, showSuccess } from "@/components/Toast";
-import { GetListInfoPlans, GetUserData } from "@/services";
+import { showInfo } from "@/components/Toast";
+import { GetListInfoPlans } from "@/services";
 import { UserPlanCard } from "./UserPlanCard";
 import PlanListSection from "./PlanListSection";
 import MemberPlanIntro from "./MemberPlanIntro";
 import PlanEmptyNotice from "./PlanEmptyNotice";
+import { useAuthStore } from "@/stores";
+import { SonnerSuccess } from "@/components/ui/SonnerToast";
 
 export default function PricingPage() {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { loading, user, userPlan, uploadStats, init } = useAuthStore();
   const [loadingplans, setLoadingPlans] = useState(false);
   const [tab, setTab] = useState("all");
-  const {
-    user,
-    userPlan,
-    setUserPlan,
-    authTokens,
-    uploadStats,
-    setUploadStats,
-  } = useContext(AuthContext);
   const [lastRefreshTime, setLastRefreshTime] = useState(0);
 
   // Memoize the refresh handler with debouncing
   const handleRefreshPlan = useCallback(async () => {
     const now = Date.now();
 
-    setLoading(true);
     setLastRefreshTime(now);
     try {
-      const userData = await GetUserData();
-
-      setUserPlan(userData);
-      setUploadStats(userData?.upload_stats);
-
-      if (userData) {
-        setUserPlan(userData);
-        showSuccess("Làm mới thông tin thành công!");
-      }
+      init();
+      SonnerSuccess("Làm mới thông tin thành công!");
     } catch (err) {
       console.error("❌ Lỗi khi cập nhật gói hoặc thống kê:", err);
       showInfo("⚠️ Đã xảy ra lỗi khi cập nhật thông tin người dùng.");
-    } finally {
-      setLoading(false);
     }
-  }, [user, authTokens, lastRefreshTime, setUserPlan]);
+  }, [user, lastRefreshTime]);
 
   // Check if user has a valid plan (prevent duplicate rendering)
   const hasValidPlan = useMemo(() => {

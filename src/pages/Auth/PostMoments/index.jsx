@@ -1,9 +1,7 @@
 import React, {
-  useState,
   useRef,
   useCallback,
   useEffect,
-  useContext,
 } from "react";
 import {
   FolderOpen,
@@ -23,18 +21,18 @@ import Hourglass from "@/components/ui/Loading/hourglass.jsx";
 import MediaSizeInfo from "@/components/ui/MediaSizeInfo/index.jsx";
 import { defaultPostOverlay } from "@/stores/usePost.js";
 import { getMaxUploads } from "@/hooks/useFeature.js";
-import { AuthContext } from "@/context/AuthLocket.jsx";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge.jsx";
 import StorageUsageBar from "./StorageUsageBar.jsx";
-import { getPostedMoments, savePostedMoment } from "@/process/uploadQueue.js";
 import {
   SonnerInfo,
   SonnerSuccess,
 } from "@/components/ui/SonnerToast/index.jsx";
+import { useAuthStore } from "@/stores/useAuthStore.js";
+import { useUploadQueueStore } from "@/stores";
 
 const PostMoments = () => {
   const { post, useloading } = useApp();
-  const { uploadStats } = useContext(AuthContext);
+  const { uploadStats } = useAuthStore();
   const { sendLoading, setSendLoading, uploadLoading } = useloading;
 
   const {
@@ -50,13 +48,12 @@ const PostMoments = () => {
     setSizeMedia,
     postOverlay,
     setPostOverlay,
-    recentPosts,
-    setRecentPosts,
     maxImageSizeMB,
     maxVideoSizeMB,
     setImageToCrop,
   } = post;
   const { storage_limit_mb } = getMaxUploads();
+  const savePostedMoment = useUploadQueueStore((s) => s.savePostedMoment)
   const fileInputRef = useRef(null);
 
   // Đồng bộ caption và màu từ postOverlay → state
@@ -135,9 +132,6 @@ const PostMoments = () => {
         "Đăng tải thành công!",
         `${preview.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
       );
-      // const savePosted = getPostedMoments();
-      // // Cập nhật state với dữ liệu đã chuẩn hoá
-      // setRecentPosts(savePosted);
 
       setPreview(null);
       setSelectedFile(null);

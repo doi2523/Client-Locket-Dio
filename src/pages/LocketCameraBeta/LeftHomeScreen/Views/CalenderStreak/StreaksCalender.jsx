@@ -101,7 +101,7 @@ const MonthCalendar = ({ monthKey, postsInMonth }) => {
   const postsByDate = useMemo(() => {
     const map = {};
     postsInMonth.forEach((post) => {
-      const d = parseCustomDate(post.date);
+      const d = parseCustomDate(post?.createdAt);
       const key = `${d.getFullYear()}-${(d.getMonth() + 1)
         .toString()
         .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
@@ -217,7 +217,7 @@ const MonthCalendar = ({ monthKey, postsInMonth }) => {
       `}
               title={
                 posts.length > 0
-                  ? posts[0].date // dùng nguyên chuỗi gốc
+                  ? posts[0].createdAt // dùng nguyên chuỗi gốc
                   : dayKey
               }
             >
@@ -287,7 +287,7 @@ const StreaksCalender = ({ recentPosts = [] }) => {
   const postsByMonth = useMemo(() => {
     const map = {};
     recentPosts.forEach((post) => {
-      const monthKey = getMonthKeyFromCustomDate(post.date);
+      const monthKey = getMonthKeyFromCustomDate(post?.createdAt);
       if (!map[monthKey]) map[monthKey] = [];
       map[monthKey].push(post);
     });

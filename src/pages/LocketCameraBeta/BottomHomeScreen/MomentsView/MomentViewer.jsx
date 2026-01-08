@@ -1,12 +1,12 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Virtual } from "swiper/modules";
 import { useApp } from "@/context/AppContext";
-import { AuthContext } from "@/context/AuthLocket";
 import MomentSlide from "./MomentSlide";
+import { useAuthStore } from "@/stores";
 
 const MomentViewer = ({ moments }) => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuthStore();
   const [swiperRef, setSwiperRef] = useState(null);
   const { post } = useApp();
   const {

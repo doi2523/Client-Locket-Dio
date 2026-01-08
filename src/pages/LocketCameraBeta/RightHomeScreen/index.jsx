@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "@/context/AuthLocket";
+import { useEffect, useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import ChatDetail from "./View/ChatDetail";
@@ -9,13 +8,13 @@ import { markReadMessage } from "@/services";
 import { ConversationSkeleton } from "./View/Conversation/ConversationSkeleton";
 import { CONFIG } from "@/config";
 import { useSocket } from "@/context/SocketContext";
-import { useMessagesStore } from "@/stores";
+import { useAuthStore, useMessagesStore } from "@/stores";
 
 const INITIAL_DISPLAY_COUNT = CONFIG.ui.chat.initialVisible;
 
 // ================= Component: RightHomeScreen =================
 const RightHomeScreen = ({ setIsHomeOpen }) => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuthStore();
   const { navigation } = useApp();
   const { isHomeOpen } = navigation;
 

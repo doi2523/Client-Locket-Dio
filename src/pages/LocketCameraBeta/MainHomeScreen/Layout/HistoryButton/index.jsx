@@ -1,20 +1,10 @@
-import React, { useEffect } from "react";
-import { useApp } from "@/context/AppContext";
+import React from "react";
 
 const HistoryArrow = ({ setIsBottomOpen }) => {
-  const { navigation, post } = useApp();
-  const { recentPosts, setRecentPosts } = post;
 
   const handleClick = () => {
     setIsBottomOpen(true);
   };
-  // Khởi tạo và đồng bộ dữ liệu từ localStorage
-  useEffect(() => {
-    const savedPayloads = JSON.parse(
-      localStorage.getItem("uploadedMoments") || "[]"
-    );
-    setRecentPosts(savedPayloads); // Cập nhật state từ localStorage
-  }, [, setRecentPosts]);
 
   return (
     <>

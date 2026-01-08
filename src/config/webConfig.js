@@ -3,6 +3,7 @@
 export const CONFIG = {
   api: {
     baseUrl: import.meta.env.VITE_BASE_API_URL, // API chính (socket + API)
+    authUrl: import.meta.env.VITE_AUTH_API_URL,
     storage: import.meta.env.VITE_STORAGE_API_URL, // API lưu trữ file
     data: import.meta.env.VITE_DATA_API_URL, // API data local
     payment: import.meta.env.VITE_PAYMENT_API_URL, // API thanh toán
@@ -25,7 +26,7 @@ export const CONFIG = {
     author: "dio",
     shortname: "locketdio",
     fullName: "Locket Dio - Đăng ảnh & Video lên Locket", // Tên đầy đủ
-    clientVersion: "Beta2.5.5.2.1", // Version client
+    clientVersion: "Beta2.5.5.2.2", // Version client
     apiVersion: "v2.2.1", // Version API
     startYear: 2025,
     env: import.meta.env.MODE, // development | production

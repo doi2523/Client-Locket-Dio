@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
-import axios from "axios";
 import { useApp } from "@/context/AppContext";
 import BouncyLoader from "../Loading/Bouncy";
-import * as utils from "@/utils";
 import { RiEmotionHappyLine } from "react-icons/ri";
 import { TbMoodCrazyHappy } from "react-icons/tb";
+import { instanceAuth } from "@/lib/axios.auth";
 
 const StatusServer = () => {
   const { useloading } = useApp();
@@ -15,7 +14,7 @@ const StatusServer = () => {
 
     const checkServer = async () => {
       try {
-        const response = await axios.get(utils.API_URL.CHECK_SERVER, {
+        const response = await instanceAuth.get("/", {
           timeout: 15000, // tránh treo request
         });
         setIsStatusServer(response.status === 200);

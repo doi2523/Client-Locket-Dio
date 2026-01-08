@@ -1,18 +1,13 @@
-import { useMemo } from "react";
-import { useFriendStore } from "@/stores/useFriendStore";
 import { formatTimeAgoV2 } from "@/utils";
 import { ChevronRight } from "lucide-react";
+import { useFriendStoreV2 } from "@/stores";
 
 // ================= Component: ConversationItem =================
 export const ConversationItem = ({ msg, onSelect }) => {
-  const friendDetails = useFriendStore((s) => s.friendDetails);
+  const friendMap = useFriendStoreV2((s) => s.friendDetailsMap);
 
-  // 🔹 Tìm bạn trong danh sách friendDetails
-  const friendDetail = useMemo(
-    () => friendDetails.find((f) => f.uid === msg.with_user),
-    [friendDetails, msg.with_user]
-  );
-
+  // 🔹 Lookup O(1)
+  const friendDetail = friendMap?.[msg.with_user] ?? null;
   const isUnread = msg.isRead === false;
 
   return (

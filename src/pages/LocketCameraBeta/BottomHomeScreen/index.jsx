@@ -3,14 +3,13 @@ import { useApp } from "@/context/AppContext";
 import UploadingQueue from "./MomentsView/UploadingQueue";
 import MomentsGrid from "./MomentsView/MomentsGrid";
 import QueueViewer from "./MomentsView/QueueViewer";
-import { useAuth } from "@/context/AuthLocket";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Virtual } from "swiper/modules";
 import "swiper/css";
 import MomentSlide from "./MomentsView/MomentSlide";
 import { useSocket } from "@/context/SocketContext";
-import { useMomentsStoreV2 } from "@/stores";
+import { useAuthStore, useMomentsStoreV2 } from "@/stores";
 
 const BottomHomeScreen = () => {
   const { navigation, post } = useApp();
@@ -25,10 +24,6 @@ const BottomHomeScreen = () => {
     isProfileOpen,
   } = navigation;
   const {
-    recentPosts,
-    setRecentPosts,
-    uploadPayloads,
-    setuploadPayloads,
     selectedMoment,
     setSelectedMoment,
     selectedQueue,
@@ -38,7 +33,7 @@ const BottomHomeScreen = () => {
     setSelectedMomentId,
   } = post;
 
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   const { socket, isConnected } = useSocket();
 

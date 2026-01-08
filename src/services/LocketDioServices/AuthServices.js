@@ -1,15 +1,19 @@
 import { BETA_SERVER_HOST } from "@/config/apiConfig";
 import api from "@/lib/axios";
+import { instanceAuth } from "@/lib/axios.auth";
 import { instanceLocketV2 } from "@/lib/axios.locket";
 import { instanceMain } from "@/lib/axios.main";
 //Login
 export const loginV2 = async ({ email, password, captchaToken }) => {
   try {
-    const res = await instanceMain.post("locket/loginV2", {
-      email,
-      password,
-      captchaToken,
-    });
+    const res = await instanceAuth.post(
+      "locket/loginV2",
+      {
+        email,
+        password,
+        captchaToken,
+      }
+    );
 
     // Kiểm tra nếu API trả về lỗi nhưng vẫn có status 200
     if (res.data?.success === false) {
@@ -213,7 +217,7 @@ export const sendVerifiCode = async ({ phone }) => {
 
 export const refreshIdToken = async (refreshToken) => {
   try {
-    const res = await instanceMain.post(
+    const res = await instanceAuth.post(
       "locket/refresh-token",
       { refreshToken },
       { withCredentials: true } // Nhận cookie từ server
@@ -262,7 +266,7 @@ export const forgotPassword = async (email) => {
 //Logout
 export const logout = async () => {
   try {
-    const response = await instanceMain.get("locket/logout", {});
+    const response = await instanceAuth.get("locket/logout", {});
     return response.data; // ✅ Trả về dữ liệu từ API (ví dụ: { message: "Đã đăng xuất!" })
   } catch (error) {
     console.error(
@@ -276,6 +280,35 @@ export const logout = async () => {
 export const GetUserData = async () => {
   try {
     const res = await api.get("/api/me");
+    return res.data?.data;
+  } catch (error) {
+    console.error(
+      "❌ Lỗi khi lấy thông tin người dùng:",
+      error.response?.data || error.message
+    );
+    throw error.response?.data || error.message;
+  }
+};
+
+export const GetUserDataV2 = async () => {
+  try {
+    const res = await api.get("/api/me");
+    return res.data?.data;
+  } catch (error) {
+    console.error(
+      "❌ Lỗi khi lấy thông tin người dùng:",
+      error.response?.data || error.message
+    );
+    throw error.response?.data || error.message;
+  }
+};
+
+export const GetUserLocket = async () => {
+  try {
+    const res = await api.get(
+      "https://auth.locket-dio.com/locket/getInfoUser",
+      { withCredentials: true }
+    );
     return res.data?.data;
   } catch (error) {
     console.error(

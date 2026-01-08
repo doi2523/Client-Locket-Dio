@@ -8,6 +8,7 @@ import { useStreakStore } from "@/stores";
 
 export default function RestoreStreak() {
   const hasAccess = useFeatureVisible("restore_streak_tool");
+  const [confirmDeletedToday, setConfirmDeletedToday] = useState(false);
   const { streak } = useStreakStore();
   const { restoreStreak, setRestoreStreak } = useApp().post;
   const [mode, setMode] = useState("restore"); // "restore" | "continue"
@@ -23,6 +24,10 @@ export default function RestoreStreak() {
 
   // ✅ Xác định xem chuỗi hôm nay đã cập nhật chưa
   const isTodayStreak = streak?.last_updated_yyyymmdd === currentDate;
+  const canRestore = !isTodayStreak || confirmDeletedToday;
+  useEffect(() => {
+    setConfirmDeletedToday(false);
+  }, [isTodayStreak]);
 
   useEffect(() => {
     setRestoreStreak({
@@ -112,8 +117,8 @@ export default function RestoreStreak() {
           <p className="font-medium">🧭 Chọn chế độ khôi phục:</p>
 
           <fieldset
-            disabled={isTodayStreak}
-            className={isTodayStreak ? "opacity-50 cursor-not-allowed" : ""}
+            disabled={!canRestore}
+            className={!canRestore ? "opacity-50 cursor-not-allowed" : ""}
           >
             <label className="flex items-center gap-2 cursor-pointer mb-2">
               <input
@@ -155,6 +160,28 @@ export default function RestoreStreak() {
             đổi.
           </div>
         )}
+        {isTodayStreak && (
+          <div className="mt-4 p-4 rounded-xl border border-warning bg-warning/10">
+            <h4 className="font-semibold text-sm mb-2 text-warning">
+              ⚠️ Xác nhận trước khi khôi phục
+            </h4>
+
+            <label className="flex items-start gap-3 cursor-pointer text-sm">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-warning checkbox-sm mt-1"
+                checked={confirmDeletedToday}
+                onChange={(e) => setConfirmDeletedToday(e.target.checked)}
+              />
+              <span className="opacity-80">
+                Tôi xác nhận rằng{" "}
+                <b>đã xoá toàn bộ bài đăng của ngày hôm nay</b> và hiểu rằng
+                việc khôi phục chuỗi có thể làm sai lệch dữ liệu nếu thông tin
+                này không chính xác.
+              </span>
+            </label>
+          </div>
+        )}
       </div>
 
       {/* CONDITIONS */}
@@ -172,8 +199,9 @@ export default function RestoreStreak() {
             chuỗi.
           </li>
           <li>
-            <b>Cần hỗ trợ?</b>: Nếu bạn không hiểu hãy liên hệ quản trị viên để
-            được giúp đỡ.
+            <b>Cần hỗ trợ?</b> Chuỗi có thể khôi phục vô hạn số lần chỉ với
+            điều kiện thực hiện đúng cách, nếu đã đăng bài hiện lên chuỗi 1 hoặc
+            2 thì hãy liên hệ quản trị viên để được giúp đỡ.
           </li>
         </ul>
       </div>
@@ -182,9 +210,9 @@ export default function RestoreStreak() {
       <div className="flex justify-end">
         <Link
           className={`btn btn-primary ${
-            isTodayStreak ? "btn-disabled opacity-50 cursor-not-allowed" : ""
+            !canRestore ? "btn-disabled opacity-50 cursor-not-allowed" : ""
           }`}
-          to={isTodayStreak ? "#" : "/restore-streak"}
+          to={!canRestore ? "#" : "/restore-streak"}
         >
           🚀 Chuyển tới trang đăng bài khôi phục
         </Link>

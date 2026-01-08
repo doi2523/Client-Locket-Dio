@@ -2,23 +2,19 @@ import { useEffect, useState } from "react";
 import { useApp } from "@/context/AppContext";
 import { Check, RotateCcw, X } from "lucide-react";
 import LoadingOverlay from "@/components/ui/Loading/LineSpinner";
-import { enRetryPayload, getQueuePayloads } from "@/process/uploadQueue";
+import { useUploadQueueStore } from "@/stores";
 
 const QueueViewer = () => {
   const { post } = useApp();
-  const {
-    uploadPayloads,
-    selectedQueue,
-    setSelectedQueue,
-    setuploadPayloads,
-    setRecentPosts,
-  } = post;
-  const [queueInfo, setQueueInfo] = useState(uploadPayloads[selectedQueue]);
+  const retryUploadItem = useUploadQueueStore((s) => s.retryUploadItem);
+  const { selectedQueue, setSelectedQueue, selectedQueueId } = post;
+  const queueInfo = useUploadQueueStore((s) =>
+    s.uploadItems.find((i) => i.id === selectedQueueId)
+  );
 
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isMediaLoading, setIsMediaLoading] = useState(true);
-  const [retryingIndex, setRetryingIndex] = useState(null);
 
   // Mở hiệu ứng khi có selectedQueue
   useEffect(() => {
@@ -52,38 +48,13 @@ const QueueViewer = () => {
   }, [selectedQueue, isAnimating]);
 
   const handleRetry = async () => {
-    const retryPayload = uploadPayloads[selectedQueue];
-    setRetryingIndex(selectedQueue);
-
-    if (!retryPayload) {
-      console.warn("⚠️ Không tìm thấy payload để retry");
-      setRetryingIndex(null);
-      return;
-    }
+    if (!queueInfo?.id) return;
 
     try {
-      // Tăng số lần thử và reset errorMessage
-      const updatedPayload = {
-        ...retryPayload,
-        errorMessage: null,
-        retryCount: (retryPayload.retryCount || 0) + 1,
-      };
-
-      // Đưa payload vào queue để consumer xử lý
-      await enRetryPayload(updatedPayload);
-
-      // Cập nhật state UI
-      const currentPayloads = await getQueuePayloads();
-      setuploadPayloads(currentPayloads);
-
-      const currentQueueInfo = currentPayloads.find(
-        (p) => p.id === updatedPayload.id
-      );
-      setQueueInfo(currentQueueInfo);
-    } catch (error) {
-      console.error("❌ Upload thất bại:", error);
-    } finally {
-      setRetryingIndex(null);
+      retryUploadItem(queueInfo.id);
+      handleClose();
+    } catch (err) {
+      console.error("❌ Retry failed:", err);
     }
   };
 
@@ -104,10 +75,9 @@ const QueueViewer = () => {
           ? "opacity-100"
           : "opacity-0 pointer-events-none"
       }`}
-      // onClick={handleClose}
       tabIndex={0}
     >
-      <div className="flex-1 flex flex-col justify-center items-center w-full gap-2 pb-30">
+      <div className="flex-1 flex flex-col justify-center items-center w-full gap-2 pb-25">
         <div
           className={`relative w-full max-w-md aspect-square bg-base-200 rounded-[64px] overflow-hidden transition-all duration-300 ease-in-out ${
             isVisible && !isAnimating
@@ -134,33 +104,29 @@ const QueueViewer = () => {
                 muted
                 loop
                 playsInline
-                //   onLoadedData={() => setIsMediaLoading(false)}
               />
             ) : (
               <img
                 src={mediaUrl}
                 alt={caption}
                 className="max-h-full max-w-full object-contain rounded-2xl"
-                //   onLoad={() => setIsMediaLoading(false)}
               />
             )}
+
             {/* Status Icon */}
             {queueInfo?.status && (
               <>
                 <div className="absolute inset-0 backdrop-blur-[2px] bg-black/40 flex items-center justify-center z-10"></div>
 
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-                  {queueInfo?.status === "processing" || queueInfo?.status === "queued" && (
+                  {queueInfo?.status === "uploading" && (
                     <LoadingOverlay color="white" />
                   )}
                   {queueInfo?.status === "done" && (
                     <Check className="text-green-400 w-6 h-6 animate-bounce" />
                   )}
                   {queueInfo?.status === "failed" && (
-                    <div
-                      className="flex flex-col items-center justify-center text-error cursor-pointer"
-                      onClick={handleRetry}
-                    >
+                    <div className="flex flex-col items-center justify-center text-error">
                       <RotateCcw
                         strokeWidth={1.5}
                         className="w-16 h-16 transition-transform duration-700"
@@ -177,6 +143,7 @@ const QueueViewer = () => {
                 </div>
               </>
             )}
+
             {/* Caption nếu có */}
             {caption && (
               <div
@@ -191,6 +158,18 @@ const QueueViewer = () => {
               </div>
             )}
           </div>
+        </div>
+        <div className="flex justify-center z-30">
+          <button
+            onClick={handleRetry}
+            className="flex items-center gap-1 px-6 py-3 rounded-2xl font-semibold text-error"
+          >
+            <RotateCcw
+              strokeWidth={2}
+              className="w-10 h-10"
+            />
+            Thử lại
+          </button>
         </div>
       </div>
     </div>

@@ -13,15 +13,16 @@ import { useFeatureVisible } from "@/hooks/useFeature";
 import FeatureGate from "@/components/common/FeatureGate";
 import SavedCaptions from "./CaptionItems/SavedCaptions";
 import SpecialCaption from "./CaptionItems/SpecialCaption";
+import { useOverlayStore } from "@/stores";
 
 const ScreenCustomeStudio = () => {
   const navigate = useNavigate();
   const popupRef = useRef(null);
-  const { navigation, post, captiontheme } = useApp();
+  const { navigation, post } = useApp();
 
   const { isFilterOpen, setIsFilterOpen } = navigation;
   const { setPostOverlay } = post;
-  const { captionThemes } = captiontheme;
+  const { captionOverlays, userCaptions } = useOverlayStore();
 
   const canUseCaptionGif = useFeatureVisible("caption_gif");
   const canUseCaptionIcon = useFeatureVisible("caption_icon");
@@ -36,21 +37,6 @@ const ScreenCustomeStudio = () => {
     return () => {
       document.body.classList.remove("overflow-hidden");
     };
-  }, [isFilterOpen]);
-
-  const [savedPosts, setSavedPosts] = useState([]);
-
-  useEffect(() => {
-    if (isFilterOpen) {
-      const stored = localStorage.getItem("savedPosts");
-      if (stored) {
-        try {
-          setSavedPosts(JSON.parse(stored));
-        } catch (e) {
-          console.error("Error parsing savedPosts:", e);
-        }
-      }
-    }
   }, [isFilterOpen]);
 
   const handleCustomeSelect = (
@@ -121,14 +107,6 @@ const ScreenCustomeStudio = () => {
     setIsFilterOpen(false);
   };
 
-  const [captions, setCaptions] = useState([]);
-
-  useEffect(() => {
-    // Lấy dữ liệu từ localStorage
-    const saved = JSON.parse(localStorage.getItem("Yourcaptions") || "[]");
-    setCaptions(saved);
-  }, []);
-
   const handleSelectCaption = (caption) => {
     // console.log("Chọn caption:", caption);
     // Cập nhật postOverlay từ giá trị preset
@@ -186,47 +164,46 @@ const ScreenCustomeStudio = () => {
         <div className="flex-1 overflow-y-auto">
           <GeneralThemes
             title="🎨 General"
-            captionThemes={captionThemes}
             onSelect={handleCustomeSelectTest}
           />
           <ThemesCustomes
             title="🎨 Suggest Theme"
-            presets={captionThemes.background}
+            presets={captionOverlays.background}
             onSelect={handleCustomeSelect}
           />
           <SpecialCaption
             title = "⭐ Caption đặc biệt"
-            presets={captionThemes.special}
+            presets={captionOverlays.special}
             onSelect={handleCustomeSelect}
           />
           {/* Decorative by Locket */}
           <ThemesCustomes
             title="🎨 Decorative by Locket"
-            presets={captionThemes.decorative}
+            presets={captionOverlays.decorative}
             onSelect={handleCustomeSelect}
           />
           <ThemesCustomes
             title="🎨 Decorative by Dio"
-            presets={captionThemes.custome}
+            presets={captionOverlays.custome}
             onSelect={handleCustomeSelect}
           />
           <FeatureGate canUse={canUseCaptionIcon}>
             <CaptionIconSelector
               title="🎨 Caption Icon - Truy cập sớm"
-              captionThemes={captionThemes}
+              captionThemes={captionOverlays}
               onSelect={handleCustomeSelectTest}
             />
           </FeatureGate>
           <FeatureGate canUse={canUseCaptionGif}>
             <CaptionGifThemes
               title="🎨 Caption Gif - Truy cập sớm"
-              captionThemes={captionThemes}
+              captionThemes={captionOverlays}
               onSelect={handleCustomeSelectTest}
             />
           </FeatureGate>
           <SavedCaptions
             title="🎨 Caption Kanade hợp tác"
-            captions={captions}
+            captions={userCaptions}
             onSelect={handleSelectCaption}
           />
           <FeatureGate canUse={canUseCaptionimage}>

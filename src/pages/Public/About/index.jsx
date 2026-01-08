@@ -6,14 +6,14 @@ import RotatingCircleText from "./RotatingCircleText";
 
 export default function AboutLocketDio() {
   return (
-    <section className="min-h-screen bg-gray-50 text-gray-900 py-8 px-6">
+    <section className="min-h-screen py-8 px-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-3">
             Giới thiệu về <span className="text-purple-600">Locket Dio</span>
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-base-content/80 max-w-2xl mx-auto">
             Locket Dio — nền tảng mở rộng dành cho Locket Widget, giúp bạn chia
             sẻ ảnh và video trực tiếp với giao diện hiện đại, nhanh chóng và
             tiện lợi.
@@ -31,16 +31,16 @@ export default function AboutLocketDio() {
         </div>
 
         {/* What is Locket Dio */}
-        <div className="bg-white rounded-xl shadow-md p-5 mb-8">
+        <div className="bg-base-300 rounded-3xl shadow-md p-5 mb-8">
           <h2 className="text-2xl font-bold mb-4">Locket Dio là gì?</h2>
-          <p className="text-gray-700 leading-relaxed mb-3">
+          <p className="text-base-content/80 leading-relaxed mb-3">
             - Locket Dio là nền tảng web được thiết kế để mở rộng khả năng của
             ứng dụng Locket Widget. Với Locket Dio, bạn có thể dễ dàng tải lên
             và chia sẻ ảnh, video từ máy tính hoặc bất kỳ thiết bị nào có trình
             duyệt web. <br />- Là một dự án cá nhân, hoạt động độc lập. Không
             liên kết với bên thứ ba nào khác ngoài Dio.
           </p>
-          <p className="text-gray-700 leading-relaxed text-sm">
+          <p className="text-base-content/80 leading-relaxed text-sm">
             *Không cần cài đặt ứng dụng, không cần chuyển file phức tạp — chỉ
             cần truy cập website, đăng nhập và chia sẻ những khoảnh khắc đáng
             nhớ cùng bạn bè và người thân.
@@ -49,23 +49,23 @@ export default function AboutLocketDio() {
 
         {/* Mission & Story */}
         <div className="grid md:grid-cols-2 gap-4 mb-8">
-          <div className="bg-white rounded-xl shadow-md p-5">
+          <div className="bg-base-300 rounded-xl shadow-md p-5">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl">🎯</span>
               <h3 className="text-xl font-semibold">Sứ mệnh</h3>
             </div>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-base-content/80 leading-relaxed">
               Mang đến trải nghiệm chia sẻ khoảnh khắc đơn giản, nhanh chóng và
               tiện lợi nhất cho người dùng Locket Widget trên mọi thiết bị.
             </p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-5">
+          <div className="bg-base-300 rounded-xl shadow-md p-5">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl">💡</span>
               <h3 className="text-xl font-semibold">Câu chuyện</h3>
             </div>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-base-content/80 leading-relaxed">
               “Locket Dio” được tạo ra từ nhu cầu thực tế:
               <br />• Làm sao để chia sẻ ảnh từ máy tính hoặc điện thoại lên
               Locket Widget mà không cần mua gói Locket Gold? <br />• Làm sao để
@@ -81,34 +81,34 @@ export default function AboutLocketDio() {
 
         {/* Core Values */}
         <div className="relative bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl py-6 mb-8 shadow-sm overflow-hidden">
-          <h2 className="text-2xl font-bold mb-6 text-center">
+          <h2 className="text-2xl font-bold mb-6 text-center text-primary">
             Giá trị cốt lõi
             <RotatingCircleText />
           </h2>
           <Marquee speed={30}>
             <div className="flex items-center gap-6 px-2">
-              <div className="bg-white rounded-lg px-6 py-4 text-center w-50">
+              <div className="bg-base-300 rounded-lg px-6 py-4 text-center w-50">
                 <div className="text-4xl mb-2">💻</div>
                 <h3 className="font-semibold mb-1">Đa nền tảng</h3>
                 <p className="text-sm text-gray-600">
                   Hỗ trợ mọi thiết bị: PC, laptop, tablet
                 </p>
               </div>
-              <div className="bg-white rounded-lg px-6 py-4 text-center w-50">
+              <div className="bg-base-300 rounded-lg px-6 py-4 text-center w-50">
                 <div className="text-4xl mb-2">🚀</div>
                 <h3 className="font-semibold mb-1">Nhanh & tiện lợi</h3>
                 <p className="text-sm text-gray-600">
                   Giao diện tối ưu, tốc độ vượt trội
                 </p>
               </div>
-              <div className="bg-white rounded-lg px-6 py-4 text-center w-50">
+              <div className="bg-base-300 rounded-lg px-6 py-4 text-center w-50">
                 <div className="text-4xl mb-2">🔄</div>
                 <h3 className="font-semibold mb-1">Đồng bộ tức thì</h3>
                 <p className="text-sm text-gray-600">
                   Ảnh và video được cập nhật ngay lập tức
                 </p>
               </div>
-              <div className="bg-white rounded-lg px-6 py-4 text-center w-50">
+              <div className="bg-base-300 rounded-lg px-6 py-4 text-center w-50">
                 <div className="text-4xl mb-2">🛡️</div>
                 <h3 className="font-semibold mb-1">Bảo mật</h3>
                 <p className="text-sm text-gray-600">

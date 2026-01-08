@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AuthContext } from "@/context/AuthLocket";
-import LoadingPage from "@/components/pages/LoadingPage";
+import LoadingPageMain from "@/components/pages/LoadPageMain";
 import { CheckCircle, Copy, XCircle } from "lucide-react";
 import VietQRImage from "./QrCodeImage";
 import * as services from "@/services";
@@ -10,9 +9,10 @@ import {
   SonnerSuccess,
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
+import { useAuthStore } from "@/stores";
 
 export default function PayPage() {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -89,7 +89,7 @@ export default function PayPage() {
     }
   };
 
-  if (loading) return <LoadingPage isLoading={true} />;
+  if (loading) return <LoadingPageMain isLoading={true} />;
 
   if (!plan) {
     return (

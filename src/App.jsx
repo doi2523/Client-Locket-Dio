@@ -1,43 +1,55 @@
-import React, { Suspense, useContext, useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
   Navigate,
+  useNavigate,
 } from "react-router-dom";
 
 import { publicRoutes, authRoutes, locketRoutes } from "./routes";
-import { AuthProvider, AuthContext } from "./context/AuthLocket";
 import { ThemeProvider } from "./context/ThemeContext";
 import { AppProvider } from "./context/AppContext";
 import ToastProvider from "./components/Toast";
 import getLayout from "./layouts";
-import LoadingPage from "./components/pages/LoadingPage";
 import NotFoundPage from "./components/pages/NotFoundPage";
 import { Toaster } from "sonner";
 import { SocketProvider } from "./context/SocketContext";
+import {
+  useAuthStore,
+  useFriendStoreV2,
+  useStreakStore,
+  useUploadQueueStore,
+} from "./stores";
+import { showDevWarning } from "./utils/logging/devConsole";
+import LoadingPageMain from "./components/pages/LoadPageMain";
+import { useOverlayStore } from "./stores/useOverlayStore";
 
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <SocketProvider>
-          <AppProvider>
-            <Router>
-              <AppContent />
-            </Router>
-            <ToastProvider />
-            <Toaster />
-          </AppProvider>
-        </SocketProvider>
-      </AuthProvider>
+      <SocketProvider>
+        <AppProvider>
+          <Router>
+            <AppContent />
+          </Router>
+          <ToastProvider />
+          <Toaster />
+        </AppProvider>
+      </SocketProvider>
     </ThemeProvider>
   );
 }
 
 function AppContent() {
-  const { user, loading } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { loading, isAuth, user, hydrate, init } = useAuthStore();
+  const syncStreak = useStreakStore((s) => s.syncStreak);
+  const fetchCaptionOverlays = useOverlayStore((s) => s.fetchCaptionOverlays);
+  const hydrateUploadQueue = useUploadQueueStore((s) => s.hydrateUploadQueue);
+  const loadFriendsV2 = useFriendStoreV2((s) => s.loadFriends);
+
   const location = useLocation();
 
   const allRoutes = [...publicRoutes, ...authRoutes, ...locketRoutes];
@@ -48,8 +60,26 @@ function AppContent() {
     if (el) el.setAttribute("content", content);
   }
   useEffect(() => {
-    import('./styles/animation.css');
+    import("./styles/animation.css");
+    hydrate();
+    init();
+    showDevWarning();
+    fetchCaptionOverlays();
   }, []);
+
+  useEffect(() => {
+    if (!loading && isAuth && location.pathname === "/login") {
+      navigate("/locket-beta", { replace: true });
+    }
+  }, [isAuth, loading, location.pathname]);
+
+  useEffect(() => {
+    if (user) {
+      loadFriendsV2();
+      syncStreak();
+      hydrateUploadQueue();
+    }
+  }, [user]);
 
   useEffect(() => {
     const r = allRoutes.find((route) => route.path === location.pathname);
@@ -68,12 +98,12 @@ function AppContent() {
     setMeta("meta[name='twitter:title']", document.title);
   }, [location.pathname]);
 
-  // if (loading) return <LoadingPage isLoading={true} />;
+  if (loading) return <LoadingPageMain isLoading={true} />;
 
   return (
-    <Suspense fallback={<LoadingPage isLoading={true} />}>
+    <Suspense fallback={<LoadingPageMain isLoading={true} />}>
       <Routes>
-        {(user ? privateRoutes : publicRoutes).map(
+        {(isAuth ? privateRoutes : publicRoutes).map(
           ({ path, component: Component }) => {
             const Layout = getLayout(path);
             return (
@@ -91,15 +121,19 @@ function AppContent() {
         )}
 
         {/* Điều hướng khi chưa đăng nhập cố vào route cần auth */}
-        {!user &&
+        {!isAuth &&
           privateRoutes.map(({ path }) => (
             <Route key={path} path={path} element={<Navigate to="/login" />} />
           ))}
 
         {/* Điều hướng ngược lại khi đã đăng nhập mà cố vào public route */}
-        {user &&
+        {isAuth &&
           publicRoutes.map(({ path }) => (
-            <Route key={path} path={path} element={<Navigate to="/locket-beta" />} />
+            <Route
+              key={path}
+              path={path}
+              element={<Navigate to="/locket-beta" />}
+            />
           ))}
 
         <Route path="*" element={<NotFoundPage />} />

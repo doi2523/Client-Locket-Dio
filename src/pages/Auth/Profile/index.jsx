@@ -1,9 +1,9 @@
-import { useContext, useState } from "react";
-import { AuthContext } from "@/context/AuthLocket";
+import { useState } from "react";
 import LoadingRing from "@/components/ui/Loading/ring";
+import { useAuthStore } from "@/stores";
 
 export default function Profile() {
-  const { user, userPlan } = useContext(AuthContext);
+  const { user, userPlan } = useAuthStore();
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const formatDateTime = (timestamp) => {

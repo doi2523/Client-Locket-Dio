@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Flame, FolderDown, UserRoundX } from "lucide-react";
-import { AuthContext } from "@/context/AuthLocket";
 import BottomToolBar from "./Layout/BottomToolBar";
 import DeleteFriendsTool from "./tools/DeleteFriendsTool";
 import { TbUserStar } from "react-icons/tb";
 import CelebrityTool from "./tools/CelebrityTool";
 import ExportDataTool from "./tools/ExportDataTool";
 import RestoreStreak from "./tools/RestoreStreak";
+import { useAuthStore } from "@/stores";
 
 const toolsList = [
   {
@@ -36,7 +36,7 @@ const toolsList = [
 ];
 
 export default function ToolsLocket() {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState(
     window.location.hash.replace("#", "") || toolsList[0].key
   );

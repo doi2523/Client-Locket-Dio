@@ -46,16 +46,16 @@ export default function StepsSection() {
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
-        <div className="text-center mb-10 text-white max-w-3xl mx-auto">
-          <div className="inline-block px-5 py-2 bg-white/70 backdrop-blur-sm rounded-full border border-white/20 shadow-sm mb-5">
-            <span className="text-sm font-semibold text-gray-700">
+        <div className="text-center mb-10 text-base-content max-w-3xl mx-auto">
+          <div className="inline-block px-5 py-2 bg-base-content-300 backdrop-blur-sm rounded-full shadow-sm mb-5">
+            <span className="text-sm font-semibold text-base-content/80">
               Hướng dẫn sử dụng
             </span>
           </div>
           <h2 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4">
             Cách sử dụng đơn giản
           </h2>
-          <p className="text-base md:text-lg text-gray-200 leading-relaxed">
+          <p className="text-base md:text-lg text-base-content leading-relaxed">
             Chỉ với 4 bước đơn giản, bạn có thể tạo và chia sẻ những khoảnh khắc
             tuyệt vời.
           </p>

@@ -4,14 +4,14 @@ import clsx from "clsx";
 import { useApp } from "@/context/AppContext";
 import { GetInfoMoment, SendMessageMoment, SendReactMoment } from "@/services";
 import { getMomentById } from "@/cache/momentDB";
-import { AuthContext } from "@/context/AuthLocket";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 import { getFriendDetail } from "@/cache/friendsDB";
 import ActivitySection from "../Modal/ActivityViews/ActivityModal";
 import { markMomentViewedOnce } from "@/cache/viewedMomentDB";
+import { useAuthStore } from "@/stores";
 
 const InputForMoment = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuthStore();
   const localId = user?.localId || null;
 
   const {

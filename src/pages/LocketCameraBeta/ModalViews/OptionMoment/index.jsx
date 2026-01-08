@@ -2,18 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Download, Trash2, X } from "lucide-react";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge";
 import { useApp } from "@/context/AppContext";
-import { SonnerSuccess, SonnerWarning } from "@/components/ui/SonnerToast";
+import { SonnerSuccess, SonnerWarning, SonnerInfo } from "@/components/ui/SonnerToast";
 import Modal from "@/components/ui/Modal";
-import { deletePayloadById } from "@/process/uploadQueue";
 import { DeleteMoment } from "@/services";
 import { getMomentById } from "@/cache/momentDB";
-import { useMomentsStoreV2 } from "@/stores";
+import { useMomentsStoreV2, useUploadQueueStore } from "@/stores";
+import { downloadByLink } from "@/utils/dowload/downloadByLink";
 
 const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
   const { post } = useApp();
   const {
-    uploadPayloads,
-    setuploadPayloads,
     selectedMomentId,
     setSelectedMomentId,
     setSelectedMoment,
@@ -27,6 +25,7 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
 
   const { removeMoment } = useMomentsStoreV2();
 
+  const { removeUploadItemById } = useUploadQueueStore();
   // Lock scroll khi mở modal
   useEffect(() => {
     document.body.style.overflow = isOptionModalOpen ? "hidden" : "";
@@ -63,15 +62,8 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
     }
 
     if (selectedQueueId !== null) {
-      const updatedPayloads = uploadPayloads.filter(
-        (item) => item.id !== selectedQueueId
-      );
-
-      await deletePayloadById(selectedQueueId);
-      setuploadPayloads(updatedPayloads);
-
-      setSelectedQueueId(null);
-      SonnerSuccess("Đã xoá thành công khỏi hàng chờ!");
+      await removeUploadItemById(selectedQueueId);
+      SonnerSuccess("Đã xoá khỏi hàng chờ!");
       handleClose();
     }
   };
@@ -81,6 +73,16 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
 
     const data = await getMomentById(selectedMomentId);
     if (!data) return;
+
+    const { videoUrl, thumbnailUrl } = data;
+
+    if (videoUrl) {
+      downloadByLink(videoUrl, `moment_${selectedMomentId}.mp4`);
+    } else if (thumbnailUrl) {
+      downloadByLink(thumbnailUrl, `moment_${selectedMomentId}.jpg`);
+    } else {
+      SonnerInfo("Không có video hoặc thumbnail để tải");
+    }
   };
 
   return (

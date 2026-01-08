@@ -8,11 +8,11 @@ import { useApp } from "@/context/AppContext";
 import { X } from "lucide-react";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
-import { useAuth } from "@/context/AuthLocket";
+import { useAuthStore } from "@/stores";
 
 const OutgoingRequest = () => {
   const { navigation } = useApp();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const { isFriendsTabOpen } = navigation;
   const [friends, setFriends] = useState([]);
   const [nextPageToken, setNextPageToken] = useState(null);

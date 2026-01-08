@@ -144,7 +144,7 @@
   animation: pulseBounce 2s ease-in-out infinite;
 }
 
-.bg-grid {
+/* .bg-grid {
   background-image:
     linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px),
@@ -152,5 +152,15 @@
   background-size: 40px 40px, 40px 40px, 100% 100%;
   background-position: 0 20px, 20px 0, center;
   background-color: #111;
+} */
+
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(253, 193, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(157, 118, 255, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px, 100% 100%;
+  background-position: 0 25px, 20px 0, center;
+  /* background-color: #111; */
 }
 

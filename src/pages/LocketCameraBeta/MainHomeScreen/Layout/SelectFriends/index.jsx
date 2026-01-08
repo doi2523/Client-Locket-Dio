@@ -1,14 +1,19 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { FaUserFriends, FaLock } from "react-icons/fa";
 import { useApp } from "@/context/AppContext";
 import clsx from "clsx";
 import { getToken } from "@/utils";
 import FriendSelectItems from "./FriendSelectItems";
-import { useFriendStore } from "@/stores/useFriendStore";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
+import { useFriendStoreV2 } from "@/stores";
 
 const SelectFriendsList = ({}) => {
-  const { friendDetails, loading, setFriendDetails } = useFriendStore();
+  const friendDetailsMap = useFriendStoreV2((s) => s.friendDetailsMap);
+  const friendDetails = useMemo(
+    () => Object.values(friendDetailsMap),
+    [friendDetailsMap]
+  );
+
   const { post } = useApp();
   const { audience, setAudience, setSelectedRecipients } = post;
 
@@ -16,16 +21,32 @@ const SelectFriendsList = ({}) => {
 
   // Nếu audience là "all", chọn tất cả bạn bè
   useEffect(() => {
-    if (audience === "all") {
-      const allIds = friendDetails.map((f) => f.uid);
-      setSelectedFriends(allIds);
-    }
+    if (audience !== "all") return;
+
+    const allIds = friendDetails.map((f) => f.uid);
+
+    setSelectedFriends((prev) => {
+      if (
+        prev.length === allIds.length &&
+        prev.every((id) => allIds.includes(id))
+      ) {
+        return prev; // ⛔ KHÔNG update → cắt loop
+      }
+      return allIds;
+    });
   }, [audience, friendDetails]);
 
   // Đồng bộ với context + log
   useEffect(() => {
-    setSelectedRecipients(selectedFriends);
-    // console.log("Selected Friends:", selectedFriends);
+    setSelectedRecipients((prev) => {
+      if (
+        prev.length === selectedFriends.length &&
+        prev.every((id) => selectedFriends.includes(id))
+      ) {
+        return prev;
+      }
+      return selectedFriends;
+    });
   }, [selectedFriends]);
 
   const handleToggle = (uid) => {
@@ -47,7 +68,7 @@ const SelectFriendsList = ({}) => {
   };
 
   const handleSelectPrivate = () => {
-    SonnerInfo("Lưu ý chế độ đăng bài","Bạn đang chọn chế độ riêng tư!");
+    SonnerInfo("Lưu ý chế độ đăng bài", "Bạn đang chọn chế độ riêng tư!");
     const { localId } = getToken() || {};
     setAudience("private"); // Thay đổi audience thành "private"
     setSelectedFriends([localId]); // Set selectedFriends là array chứa localId

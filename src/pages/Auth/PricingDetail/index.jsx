@@ -1,15 +1,15 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { AuthContext } from "@/context/AuthLocket";
-import LoadingPage from "@/components/pages/LoadingPage";
+import LoadingPageMain from "@/components/pages/LoadPageMain";
 import * as services from "@/services";
 import NoticePricing from "./NoticePricing";
 import PlanDetailCard from "./PlanDetail";
 import { SonnerWarning } from "@/components/ui/SonnerToast";
+import { useAuthStore } from "@/stores";
 
 export default function PlanDetailPage() {
-  const { user, userPlan } = useContext(AuthContext);
+  const { user } = useAuthStore();
   const { planId } = useParams();
   const navigate = useNavigate();
   const [planData, setPlanData] = useState(null);
@@ -95,7 +95,7 @@ export default function PlanDetailPage() {
     }
   };
 
-  if (loading) return <LoadingPage isLoading={true} />;
+  if (loading) return <LoadingPageMain isLoading={true} />;
   if (!planData)
     return (
       <div className="min-h-screen flex justify-center items-center text-center text-lg text-red-600">

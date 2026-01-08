@@ -27,18 +27,17 @@ import {
   SquareArrowDown,
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
-import { AuthContext } from "@/context/AuthLocket";
 import { MenuItem } from "./MenuItem";
 import { AuthButton } from "./AuthButton";
 import ThemeToggle from "./ThemeToggle";
 import PlanBadge from "../ui/PlanBadge/PlanBadge";
 import { SonnerError, SonnerSuccess } from "../ui/SonnerToast";
 import { clearAllData } from "@/utils/SyncData/clearAllData";
-import { logout } from "@/services";
 import { CONFIG } from "@/config";
+import { useAuthStore } from "@/stores";
 
 const Sidebar = () => {
-  const { user, resetAuthContext } = useContext(AuthContext);
+  const { user, clearAndlogout } = useAuthStore();
   const navigate = useNavigate();
   const { navigation } = useApp();
   const { isSidebarOpen, setIsSidebarOpen } = navigation;
@@ -52,8 +51,7 @@ const Sidebar = () => {
   const { startYear } = CONFIG.app;
   const handleLogout = async () => {
     try {
-      await logout();
-      resetAuthContext();
+      clearAndlogout();
       await clearAllData();
       SonnerSuccess(
         "Đăng xuất thành công!",

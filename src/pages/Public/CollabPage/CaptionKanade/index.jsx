@@ -1,82 +1,46 @@
-import { showError, showSuccess } from "@/components/Toast";
-import { getCollabCaption } from "@/services";
+import { SonnerError, SonnerSuccess, SonnerWarning } from "@/components/ui/SonnerToast";
+import { useOverlayStore } from "@/stores";
 import { useState, useEffect } from "react";
 
 export default function ManageCaption() {
   const [captionId, setCaptionId] = useState("");
-  const [captions, setCaptions] = useState([]);
 
+  const { userCaptions, addUserCaptionById, removeUserCaption } = useOverlayStore();
   // Regex UUID v4
   const uuidV4Regex =
     /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-  // Load captions từ localStorage khi component mount
-  useEffect(() => {
-    const storedCaptions = localStorage.getItem("Yourcaptions");
-    if (storedCaptions) {
-      try {
-        setCaptions(JSON.parse(storedCaptions));
-      } catch (e) {
-        console.error("Lỗi parse captions từ localStorage:", e);
-      }
-    }
-  }, []);
-
   const handleSubmit = async () => {
     if (!captionId.trim()) {
-      alert("Vui lòng nhập ID");
+      SonnerWarning("Vui lòng nhập ID");
       return;
     }
 
-    // ✅ Validate UUID v4
     if (!uuidV4Regex.test(captionId.trim())) {
-      showError("ID không hợp lệ. Vui lòng nhập hợp lệ.");
+      SonnerError("ID không hợp lệ");
       return;
     }
 
-    try {
-      const result = await getCollabCaption(captionId);
+    const { success } = await addUserCaptionById(captionId.trim());
 
-      if (!result) {
-        throw new Error("Không tìm thấy caption trong dữ liệu trả về");
-      }
-
-      // Lưu vào localStorage (mảng)
-      const storedCaptions = JSON.parse(
-        localStorage.getItem("Yourcaptions") || "[]"
-      );
-
-      // Tránh trùng ID
-      const updatedCaptions = [
-        result,
-        ...storedCaptions.filter((c) => c.id !== result.id),
-      ];
-
-      localStorage.setItem("Yourcaptions", JSON.stringify(updatedCaptions));
-
-      // Cập nhật state để hiển thị
-      setCaptions(updatedCaptions);
-      showSuccess("Thêm caption thành công");
-    } catch (error) {
-      console.error("Lỗi khi lấy caption:", error);
-      showError("Thêm caption thất bại");
+    if (success) {
+      SonnerSuccess("Thêm caption thành công");
+      setCaptionId("");
+    } else {
+      SonnerError("Thêm caption thất bại");
     }
-
-    setCaptionId("");
   };
 
   // Xóa caption theo ID
   const handleDelete = (id) => {
-    const updatedCaptions = captions.filter((c) => c.id !== id);
-    setCaptions(updatedCaptions);
-    localStorage.setItem("Yourcaptions", JSON.stringify(updatedCaptions));
-    showSuccess("Xoá caption thành công");
+    removeUserCaption(id)
+    SonnerSuccess("Xoá caption thành công");
   };
 
   return (
     <div className="p-6 mx-auto min-h-screen">
       {/* Tiêu đề */}
-      <h1 className="text-3xl font-bold mb-2">Quản lý Caption</h1>
+      <h1 className="text-3xl font-bold mb-2">Locket Dio x Caption Kanade</h1>
       <p className="text-sm text-gray-600">
         Bạn có ID của caption do bạn bè gửi hoặc lấy được? Hãy dán nó vào đây để
         tải caption đó về máy của bạn.
@@ -116,7 +80,7 @@ export default function ManageCaption() {
 
       {/* Danh sách caption */}
       <h2 className="text-lg font-semibold mb-3">📌 Caption đã lưu:</h2>
-      {captions.length === 0 ? (
+      {userCaptions.length === 0 ? (
         <div className="text-gray-500">
           <p>Chưa có caption nào được lưu.</p>
           <p>
@@ -134,7 +98,7 @@ export default function ManageCaption() {
         </div>
       ) : (
         <div className="flex flex-wrap gap-3">
-          {captions.map((preset) => (
+          {userCaptions.map((preset) => (
             <div
               key={preset.id}
               className="relative flex flex-col items-center"

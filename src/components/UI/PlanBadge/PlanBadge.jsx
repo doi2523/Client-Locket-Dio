@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import { AuthContext } from "@/context/AuthLocket";
+import React from "react";
+import { useAuthStore } from "@/stores";
 
 const PlanBadge = ({ className = "" }) => {
-  const { userPlan } = useContext(AuthContext);
+  const { userPlan } = useAuthStore();
 
   const badge = userPlan?.plan_info?.ui?.badge;
   const gradient = userPlan?.plan_info?.ui?.gradient;

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Check, RotateCcw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import LoadingOverlay from "@/components/ui/Loading/LineSpinner";
-import { getQueuePayloads } from "@/process/uploadQueue";
+import { useUploadQueueStore } from "@/stores";
 
 const UploadingQueue = () => {
   const [loadedItems, setLoadedItems] = useState([]);
@@ -12,32 +12,13 @@ const UploadingQueue = () => {
     selectedQueueId,
     setSelectedQueueId,
     setSelectedQueue,
-    uploadPayloads,
-    setuploadPayloads,
   } = useApp().post;
-
+  const uploadItems = useUploadQueueStore((s) => s.uploadItems);
   const handleLoaded = (id) => {
     setLoadedItems((prev) => (prev.includes(id) ? prev : [...prev, id]));
   };
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const updateQueue = async () => {
-        try {
-          const currentPayloads = await getQueuePayloads(); // lấy tất cả payload từ DB
-          // lọc những payload chưa xong
-          setuploadPayloads(currentPayloads);
-        } catch (err) {
-          console.error("❌ Lỗi khi cập nhật queue:", err);
-        }
-      };
 
-      updateQueue();
-    }, 3000);
-
-    return () => clearInterval(timer);
-  }, [uploadPayloads]);
-
-  if (uploadPayloads.length === 0)
+  if (uploadItems.length === 0)
     return (
       <div className="flex justify-center items-center w-full">
         <p className="text-sm">i love Locket Dio</p>
@@ -52,11 +33,15 @@ const UploadingQueue = () => {
         định. Nếu bạn gặp lỗi khi tải lên, hãy thử lại hoặc tham khảo trang sự
         cố.
       </p>
+      <p>
+        Nếu bài đăng chưa thành công hãy click vào chúng và bấm thử lại để tiếp
+        tục đăng lại.
+      </p>
       <Link to={"/incidents"} className="text-sm underline cursor-pointer">
         Page tham khảo lỗi
       </Link>
       <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mt-2">
-        {uploadPayloads.map((item, index) => {
+        {uploadItems.map((item, index) => {
           const media = item.mediaInfo;
           const status = item.status || "uploading";
           const isVideo = media?.type === "video";
@@ -103,7 +88,7 @@ const UploadingQueue = () => {
 
               {/* Overlay theo trạng thái */}
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
-                {status === "queued" && <LoadingOverlay color="white" />}
+                {status === "uploading" && <LoadingOverlay color="white" />}
                 {status === "done" && (
                   <Check className="text-green-400 w-6 h-6 animate-bounce" />
                 )}

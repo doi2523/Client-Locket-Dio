@@ -1,11 +1,11 @@
 import { createSocket } from "@/socket/socketClient";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { useAuth } from "./AuthLocket";
+import { useAuthStore } from "@/stores";
 
 const SocketContext = createContext(null);
 
 export function SocketProvider({ children }) {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const socketRef = useRef(null);
   const [isConnected, setIsConnected] = useState(false);
 

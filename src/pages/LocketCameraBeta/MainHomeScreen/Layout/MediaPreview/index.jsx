@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect, useRef } from "react";
-
+// import { CircleHelpIcon } from "lucide-react";
 import MediaSizeInfo from "@/components/ui/MediaSizeInfo";
 import { showInfo } from "@/components/Toast";
 import { getAvailableCameras, isIOS } from "@/utils";
@@ -258,6 +258,11 @@ const MediaPreview = () => {
           </Suspense>
         </div>
 
+        {/* <div className="absolute top-6 right-7 z-50 text-primary-content">
+          <button>
+            <CircleHelpIcon />
+          </button>
+        </div> */}
         <div className="absolute inset-0 z-50 pointer-events-none">
           <BorderProgress />
         </div>

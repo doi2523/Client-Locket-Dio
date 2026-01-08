@@ -1,8 +1,7 @@
-import { useContext, useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronDown, Download, Menu, MessageCircle } from "lucide-react";
 import HistorySelectFriend from "@/pages/LocketCameraBeta/ModalViews/HistorySelectFriend";
-import { AuthContext } from "@/context/AuthLocket";
-import { useFriendStore } from "@/stores/useFriendStore";
+import { useAuthStore, useFriendStoreV2 } from "@/stores";
 
 const HeaderHome = ({
   setIsHomeOpen,
@@ -14,8 +13,12 @@ const HeaderHome = ({
   isFriendHistoryOpen,
   selectedFile,
 }) => {
-  const { user } = useContext(AuthContext);
-  const { friendDetails } = useFriendStore();
+  const { user } = useAuthStore();
+  const friendDetailsMap = useFriendStoreV2((s) => s.friendDetailsMap);
+  const friendList = useMemo(
+    () => Object.values(friendDetailsMap),
+    [friendDetailsMap]
+  );
 
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
@@ -143,7 +146,7 @@ const HeaderHome = ({
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>{friendDetails.length || "0"}</span>người bạn
+                <span>{friendList.length || "0"}</span>người bạn
               </>
             )}
           </button>
@@ -169,6 +172,7 @@ const HeaderHome = ({
             setIsVisible={setIsVisible}
             setFriendName={setFriendName}
             onClick={toggleDropdown}
+            friendList={friendList}
           />
         </div>
       )}

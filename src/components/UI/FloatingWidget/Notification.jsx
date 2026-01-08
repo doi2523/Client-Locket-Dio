@@ -147,7 +147,7 @@ const FloatingNotification = () => {
         <button
           aria-label="Mở giao diện thông báo"
           onClick={openModal}
-          className="relative flex items-center justify-center w-12 h-12 rounded-full bg-base-300 border border-amber-400 text-base-content shadow-lg cursor-pointer"
+          className="relative flex items-center justify-center w-12 h-12 rounded-full bg-base-300 border text-base-content shadow-sm cursor-pointer"
         >
           <Bell
             size={24}
@@ -172,7 +172,7 @@ const FloatingNotification = () => {
           onClick={closeModal}
         >
           <div
-            className={`relative w-full max-w-lg bg-base-100 rounded-2xl shadow-2xl overflow-hidden 
+            className={`relative w-full max-w-lg bg-base-100 rounded-3xl shadow-2xl overflow-hidden 
               transform transition-all duration-300 
               ${
                 animate ? "scale-100 translate-y-0" : "scale-90 translate-y-4"
@@ -180,18 +180,18 @@ const FloatingNotification = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-5 flex items-center justify-between">
+            <div className="relative bg-base-300 px-6 py-4 flex items-center justify-between text-base-content">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-white/20 rounded-lg">
-                  <Bell className="w-5 h-5 text-white" />
+                <div className="p-2 bg-base-100/70 rounded-full">
+                  <Bell className="w-6 h-6" />
                 </div>
-                <h2 className="text-xl font-bold text-white">
+                <h2 className="text-xl font-bold">
                   Thông báo
                 </h2>
               </div>
               <button
                 onClick={closeModal}
-                className="p-2 rounded-full hover:bg-white/20 transition-colors duration-200 text-white hover:text-white/90"
+                className="p-2 rounded-full bg-base-100/70"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -201,13 +201,13 @@ const FloatingNotification = () => {
             <div className="max-h-[50vh] overflow-y-auto">
               {notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 px-6">
-                  <div className="w-16 h-16 bg-base-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                    <Bell className="w-8 h-8 text-gray-400" />
+                  <div className="w-16 h-16 bg-base-100 rounded-full flex items-center justify-center mb-4">
+                    <Bell className="w-8 h-8 text-base-content/70" />
                   </div>
-                  <p className="text-gray-500 dark:text-gray-400 text-center text-lg">
+                  <p className="text-base-content/80 text-center text-lg">
                     Không có thông báo nào
                   </p>
-                  <p className="text-gray-400 dark:text-gray-500 text-center text-sm mt-1">
+                  <p className="text-base-content/80 text-center text-sm mt-1">
                     Các thông báo mới sẽ xuất hiện tại đây
                   </p>
                 </div>
@@ -216,7 +216,7 @@ const FloatingNotification = () => {
                   {notifications.map((item, index) => (
                     <div
                       key={item.id}
-                      className={`p-6 bg-base-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 rounded-2xl m-2 shadow 
+                      className={`p-6 bg-base-200 transition-colors duration-200 rounded-2xl m-2 shadow 
       ${index === 0 && !item.pinned ? "bg-base-300" : ""}`}
                     >
                       {item.title && (
@@ -227,14 +227,14 @@ const FloatingNotification = () => {
 
                           {/* Nếu item là thông báo đầu tiên KHÔNG GHIM → gắn "Mới nhất" */}
                           {index === 0 && !item.pinned && (
-                            <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
+                            <span className="bg-error text-base-content text-xs font-bold px-2 py-0.5 rounded-full shadow">
                               Mới nhất
                             </span>
                           )}
 
                           {item.pinned === true && (
                             <TbPinned
-                              className="absolute -top-2 -right-2 text-red-600 rotate-30"
+                              className="absolute -top-2 -right-2 text-error rotate-30"
                               size={25}
                             />
                           )}
@@ -243,7 +243,7 @@ const FloatingNotification = () => {
                       <div className="text-base-content text-sm leading-relaxed whitespace-pre-line mb-3">
                         {parseMessage(item.message, highlightWords)}
                       </div>
-                      <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-xs">
+                      <div className="flex items-center gap-2 text-xs text-base-content/80">
                         <svg
                           className="w-3 h-3"
                           fill="currentColor"

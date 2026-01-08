@@ -1,8 +1,4 @@
-import React, { lazy, useState } from "react";
-// import HeaderBeforeCapture from "./Header";
-// import ActionControls from "./ActionControls";
-// import MediaPreview from "./MediaDisplay";
-// import HistoryArrow from "./HistoryButton";
+import React, { lazy } from "react";
 import { useApp } from "@/context/AppContext";
 
 import HeaderHome from "./Layout/HeaderHome";

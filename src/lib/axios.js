@@ -91,55 +91,44 @@ const api = axios.create({
 });
 
 // ==== Request Interceptor ====
-api.interceptors.request.use(
-  async (config) => {
-    // Bỏ qua nếu đang ở trang login hoặc là request refresh-token
-    if (
-      window.location.pathname === "/login" ||
-      config.url?.includes("refresh-token") ||
-      config.url === API_URL.REFESH_TOKEN_URL
-    ) {
-      return config;
+api.interceptors.request.use(async (config) => {
+  // const requireAuth = config.requireAuth === true;
+
+  // if (!requireAuth) {
+  //   // 👉 API public, bỏ qua toàn bộ auth logic
+  //   return config;
+  // }
+
+  let token = localStorage.getItem("idToken");
+
+  if (!token) {
+    // ❗ CHƯA LOGIN → KHÔNG REFRESH, KHÔNG LOGOUT
+    return Promise.reject({
+      status: 401,
+      message: "Not authenticated",
+    });
+  }
+
+  if (isTokenExpired(token)) {
+    if (!isRefreshing) {
+      isRefreshing = true;
+      refreshPromise = refreshIdToken();
     }
 
-    let token = localStorage.getItem("idToken");
+    token = await refreshPromise;
 
-    if (!token || isTokenExpired(token)) {
-      if (isRefreshing && refreshPromise) {
-        try {
-          token = await refreshPromise;
-        } catch (error) {
-          handleLogout();
-          return Promise.reject(new Error("Token refresh failed"));
-        }
-      } else if (!isRefreshing) {
-        isRefreshing = true;
-        refreshPromise = refreshIdToken();
+    isRefreshing = false;
+    refreshPromise = null;
 
-        try {
-          token = await refreshPromise;
-          if (!token) {
-            handleLogout();
-            return Promise.reject(new Error("Token refresh failed"));
-          }
-        } catch (error) {
-          handleLogout();
-          return Promise.reject(error);
-        } finally {
-          isRefreshing = false;
-          refreshPromise = null;
-        }
-      }
+    if (!token) {
+      handleLogout();
+      return Promise.reject(new Error("Token refresh failed"));
     }
+  }
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+  config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 // ==== Response Interceptor ====
 api.interceptors.response.use(

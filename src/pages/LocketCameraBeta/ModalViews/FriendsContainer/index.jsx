@@ -1,12 +1,12 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { useApp } from "@/context/AppContext";
 import { RefreshCcw, X } from "lucide-react";
 import { FaUserFriends, FaSearchPlus } from "react-icons/fa";
 import {
   FindFriendByUserName,
-  refreshFriends,
   removeFriend,
   toggleHiddenFriend,
+  AcceptRequestToFriend,
 } from "@/services";
 import LoadingRing from "@/components/ui/Loading/ring";
 import FriendItem from "./FriendItem";
@@ -20,19 +20,24 @@ import {
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
 import OutgoingRequest from "./OutgoingRequest";
-import {
-  setFriendDetail,
-  deleteFriendDetail,
-  deleteFriendId,
-  setFriendIds,
-} from "@/cache/friendsDB";
-import { useFriendStore } from "@/stores/useFriendStore";
+import { useFriendStoreV2 } from "@/stores";
 
 const FriendsContainer = () => {
   const popupRef = useRef(null);
   const { navigation } = useApp();
 
-  const { friendDetails, loading, setFriendDetails } = useFriendStore();
+  const {
+    friendDetailsMap,
+    loading,
+    loadFriends,
+    removeFriendLocal,
+    addFriendLocal,
+  } = useFriendStoreV2();
+
+  const friendList = useMemo(
+    () => Object.values(friendDetailsMap),
+    [friendDetailsMap]
+  );
 
   const { isFriendsTabOpen, setFriendsTabOpen, isPWA } = navigation;
 
@@ -45,7 +50,6 @@ const FriendsContainer = () => {
 
   const [isFocused, setIsFocused] = useState(null);
   const [isFocusedFind, setIsFocusedFind] = useState(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   //Khoá cuộn màn hình cho thẻ body
   useEffect(() => {
@@ -63,27 +67,16 @@ const FriendsContainer = () => {
 
   const handleRefreshFriends = async () => {
     try {
-      setIsRefreshing(true);
-      const result = await refreshFriends();
+      await loadFriends();
 
-      if (result) {
-        SonnerSuccess("Cập nhật thành công", "Đã làm mới danh sách bạn bè!");
+      const updatedAt = new Date().toISOString();
+      localStorage.setItem("friendsUpdatedAt", updatedAt);
+      setLastUpdated(updatedAt);
 
-        // ✅ update DB
-        await setFriendIds(result.friends);
-        await setFriendDetail(result.friendDetails);
-
-        // ✅ update state + localStorage
-        setFriendDetails(result.friendDetails);
-        setLastUpdated(result.updatedAt);
-      } else {
-        SonnerError("⚠️ Không thể làm mới danh sách bạn bè.");
-      }
+      SonnerSuccess("Cập nhật thành công", "Đã làm mới danh sách bạn bè!");
     } catch (error) {
       console.error("❌ Lỗi khi làm mới bạn bè:", error);
       SonnerError("Có lỗi xảy ra khi làm mới danh sách.");
-    } finally {
-      setIsRefreshing(false);
     }
   };
 
@@ -91,11 +84,7 @@ const FriendsContainer = () => {
     try {
       const result = await removeFriend(uid);
       if (result === uid) {
-        // ✅ update state
-        await deleteFriendDetail(uid);
-        await deleteFriendId(uid);
-        const updatedFriends = friendDetails.filter((f) => f.uid !== uid);
-        setFriendDetails(updatedFriends);
+        removeFriendLocal(uid);
         // ✅ update DB + localStorage
         SonnerSuccess("Đã xoá bạn thành công.");
       } else {
@@ -104,6 +93,28 @@ const FriendsContainer = () => {
     } catch (error) {
       console.error("❌ Lỗi khi xoá bạn:", error);
       SonnerError("Có lỗi xảy ra khi xoá bạn.");
+    }
+  };
+
+  const handleAcceptRequest = async (uid) => {
+    try {
+      const data = await AcceptRequestToFriend(uid);
+      if (data) {
+        addFriendLocal(data);
+        // ✅ Hiển thị thông báo
+        SonnerSuccess(
+          "Thông báo từ Locket Dio",
+          `Đã chấp nhận ${data.firstName}`
+        );
+      } else {
+        SonnerError(
+          "Thông báo từ Locket Dio",
+          "Không tìm thấy lời mời để chấp nhận."
+        );
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi chấp nhận lời mời:", error.message || error);
+      SonnerError("❌ Chấp nhận lời mời thất bại!");
     }
   };
 
@@ -120,7 +131,7 @@ const FriendsContainer = () => {
 
       SonnerSuccess("Chức năng này đang phát triển!");
     } catch {
-      setFriendDetails(prev);
+      // setFriendDetails(prev);
       SonnerError("Không thể cập nhật trạng thái");
     }
   };
@@ -137,7 +148,7 @@ const FriendsContainer = () => {
   };
 
   // Filter bạn bè theo tên hoặc username
-  const filteredFriends = friendDetails.filter((friend) => {
+  const filteredFriends = friendList.filter((friend) => {
     const fullName = `${friend.firstName} ${friend.lastName}`.toLowerCase();
     const username = (friend.username || "").toLowerCase();
     const term = searchTerm.toLowerCase();
@@ -187,7 +198,7 @@ const FriendsContainer = () => {
               </button>
             </div>
             <h1 className="text-2xl font-semibold text-base-content">
-              ❤️‍🔥 {friendDetails.length} người bạn
+              ❤️‍🔥 {friendList.length} người bạn
             </h1>
             <h2 className="text-md font-semibold text-base-content">
               Tìm kiếm và thêm bạn thân
@@ -247,12 +258,12 @@ const FriendsContainer = () => {
                 />
                 <button
                   className={`btn btn-base-200 text-sm flex items-center gap-2 ${
-                    isRefreshing ? "opacity-50 cursor-not-allowed" : ""
+                    loading ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                   onClick={handleRefreshFriends}
-                  disabled={isRefreshing}
+                  disabled={loading}
                 >
-                  {isRefreshing ? (
+                  {loading ? (
                     <>
                       <LoadingRing size={20} stroke={2} />
                       <span>Đang làm mới...</span>
@@ -304,7 +315,7 @@ const FriendsContainer = () => {
             </div>
 
             {/* Requests */}
-            <IncomingFriendRequests />
+            <IncomingFriendRequests handleAcpFriend={handleAcceptRequest} />
             <OutgoingRequest />
           </div>
         </div>

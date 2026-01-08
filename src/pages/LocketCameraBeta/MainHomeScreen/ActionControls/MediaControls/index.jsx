@@ -10,7 +10,7 @@ import {
   SonnerSuccess,
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
-import { enqueuePayload, getQueuePayloads } from "@/process/uploadQueue.js";
+import { useUploadQueueStore } from "@/stores";
 
 const MediaControls = () => {
   const { navigation, post, useloading, camera } = useApp();
@@ -23,8 +23,6 @@ const MediaControls = () => {
     setSelectedFile,
     isSizeMedia,
     setSizeMedia,
-    recentPosts,
-    setRecentPosts,
     postOverlay,
     setPostOverlay,
     audience,
@@ -33,12 +31,13 @@ const MediaControls = () => {
     setSelectedRecipients,
     maxImageSizeMB,
     maxVideoSizeMB,
-    setuploadPayloads,
   } = post;
   const { setCameraActive } = camera;
 
   //Nhap hooks
   const { storage_limit_mb } = getMaxUploads();
+
+  const enqueueUploadItem = useUploadQueueStore((s) => s.enqueueUploadItem);
 
   // State để quản lý hiệu ứng loading và success
   const [isSuccess, setIsSuccess] = useState(false);
@@ -101,8 +100,8 @@ const MediaControls = () => {
         throw new Error("Không tạo được payload. Hủy tiến trình tải lên.");
       }
 
-      // Lưu payload vào memory
-      await enqueuePayload(payload);
+      // Lưu payload vào memory và start
+      enqueueUploadItem(payload);
 
       // Kết thúc loading và hiển thị success
       setUploadLoading(false);
@@ -112,10 +111,6 @@ const MediaControls = () => {
         "Thêm vào hàng đợi!", // Title
         "Bài viết đang được xử lý..." // Body
       );
-
-      // Cập nhật danh sách payloads từ IndexedDB
-      const currentPayloads = await getQueuePayloads();
-      setuploadPayloads(currentPayloads);
       // Reset success state sau 1 giây
       setTimeout(() => {
         setIsSuccess(false);

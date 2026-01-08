@@ -8,15 +8,14 @@ import {
 import { useApp } from "@/context/AppContext";
 import { Check } from "lucide-react";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
-import { useFriendStore } from "@/stores/useFriendStore";
-import { useAuth } from "@/context/AuthLocket";
+import { useAuthStore, useFriendStoreV2 } from "@/stores";
 
 const IncomingFriendRequests = () => {
-  const { user } = useAuth()
+  const { user } = useAuthStore();
   const { navigation } = useApp();
   const { isFriendsTabOpen } = navigation;
   const [friends, setFriends] = useState([]);
-  const { addFriend } = useFriendStore();
+  const addFriendLocal = useFriendStoreV2((s) => s.addFriendLocal);
   const [nextPageToken, setNextPageToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -50,9 +49,7 @@ const IncomingFriendRequests = () => {
     try {
       const data = await AcceptRequestToFriend(uid);
       if (data) {
-        await addFriend(data);
-        setFriends((prev) => prev.filter((f) => f.uid !== uid));
-
+        addFriendLocal(data);
         // ✅ Hiển thị thông báo
         SonnerSuccess(
           "Thông báo từ Locket Dio",

@@ -1,8 +1,7 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import React, { lazy, Suspense } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import LoadingPage from "../components/pages/LoadingPage";
 import Sidebar from "@/components/Sidebar";
 
 const FloatingActions = lazy(() => import("@/components/ui/FloatingWidget"));
@@ -12,31 +11,16 @@ const CropImageStudio = lazy(() =>
 
 const DefaultLayout = ({ children }) => {
   const location = useLocation();
-  const [isLoading, setIsLoading] = useState(false);
-
   // Các route cần ẩn FloatingActions
   const hiddenFloatingRoutes = ["/tools"];
   const shouldHideFloating = hiddenFloatingRoutes.some((path) =>
     location.pathname.startsWith(path)
   );
 
-  // Handle loading state on route change
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, [location.pathname]);
-
   return (
     <div className="grid grid-rows-[auto_1fr_auto]">
       {/* Fixed Header */}
       <Header />
-
-      {isLoading && (
-        <div className="absolute inset-0 z-20">
-          <LoadingPage />
-        </div>
-      )}
 
       {/* Main Content with Scroll */}
       <main className="overflow-hidden bg-base-200 text-base-content relative">

@@ -1,9 +1,7 @@
 import React, {
-  useState,
   useRef,
   useCallback,
   useEffect,
-  useContext,
 } from "react";
 import {
   FolderOpen,
@@ -22,21 +20,19 @@ import Hourglass from "@/components/ui/Loading/hourglass.jsx";
 import MediaSizeInfo from "@/components/ui/MediaSizeInfo/index.jsx";
 import { defaultPostOverlay } from "@/stores/usePost.js";
 import { getMaxUploads } from "@/hooks/useFeature.js";
-import { AuthContext } from "@/context/AuthLocket.jsx";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge.jsx";
-import { savePostedMoment } from "@/process/uploadQueue.js";
 import {
   SonnerError,
   SonnerInfo,
   SonnerSuccess,
 } from "@/components/ui/SonnerToast";
 import { useNavigate } from "react-router-dom";
-import { useStreakStore } from "@/stores";
+import { useAuthStore, useStreakStore, useUploadQueueStore } from "@/stores";
 
 const RestoreStreak = () => {
   const { post, useloading } = useApp();
   const navigate = useNavigate();
-  const { uploadStats } = useContext(AuthContext);
+  const { uploadStats } = useAuthStore();;
   const { sendLoading, setSendLoading, uploadLoading } = useloading;
 
   const {
@@ -52,8 +48,6 @@ const RestoreStreak = () => {
     setSizeMedia,
     postOverlay,
     setPostOverlay,
-    recentPosts,
-    setRecentPosts,
     maxImageSizeMB,
     maxVideoSizeMB,
     setImageToCrop,
@@ -62,6 +56,8 @@ const RestoreStreak = () => {
   } = post;
   const { storage_limit_mb } = getMaxUploads();
   const fileInputRef = useRef(null);
+  const savePostedMoment = useUploadQueueStore((s) => s.savePostedMoment);
+  
   const { fetchStreak } = useStreakStore();
 
   // Đồng bộ caption và màu từ postOverlay → state
@@ -139,14 +135,11 @@ const RestoreStreak = () => {
       // Chỉ lưu khi có dữ liệu chuẩn hoá
       if (normalizedNewData.length > 0) {
         savePostedMoment(payload, normalizedNewData);
+        SonnerSuccess(restoreStreak.name, "Hãy kiểm tra chuỗi của bạn!");
       } else {
         console.warn("Dữ liệu upload trả về rỗng hoặc không hợp lệ");
+        SonnerError(restoreStreak.name, "Thất bại không có dữ liệu trả về!");
       }
-
-      SonnerSuccess(
-        "Đăng tải thành công!",
-        `${preview.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
-      );
 
       fetchStreak();
 
@@ -154,10 +147,6 @@ const RestoreStreak = () => {
       setSelectedFile(null);
       setPostOverlay(defaultPostOverlay);
       setRestoreStreak(null);
-
-      if (restoreStreak?.name) {
-        SonnerSuccess(restoreStreak.name, "Hãy kiểm tra chuỗi của bạn!");
-      }
 
       goToRestoreStreakTab();
     } catch (error) {

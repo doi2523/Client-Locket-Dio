@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
-import { AuthContext } from "@/context/AuthLocket";
 import { PlusIcon, Trash2, X } from "lucide-react";
 import LoadingRing from "@/components/ui/Loading/ring";
 import { showError, showSuccess } from "@/components/Toast";
+import { useAuthStore } from "@/stores";
 
 export default function ImageCaptionSelector({ title }) {
   const navigate = useNavigate();
-  const { userPlan } = useContext(AuthContext);
+  const { userPlan } = useAuthStore();
   const { navigation, post } = useApp();
   const { isFilterOpen, setIsFilterOpen } = navigation;
   const { postOverlay, setPostOverlay } = post;

@@ -1,6 +1,5 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import * as DioService from "@/services/LocketDioServices";
-import { AuthContext } from "@/context/AuthLocket";
 import * as utils from "@/utils";
 import LoadingRing from "@/components/ui/Loading/ring";
 import StatusServer from "@/components/ui/StatusServer";
@@ -15,9 +14,10 @@ import {
 import { CONFIG } from "@/config";
 import RotatingCircleText from "./RotatingCircleText";
 import { ensureDBOwner } from "@/cache/configDB";
+import { useAuthStore } from "@/stores";
 
 const Login = () => {
-  const { setUser, setAuthTokens } = useContext(AuthContext);
+  const { init } = useAuthStore();
   const [captchaToken, setCaptchaToken] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -62,19 +62,14 @@ const Login = () => {
 
       const { idToken, localId } = res.data;
 
-      // ⚡️ Lưu refreshToken theo rememberMe
       // Khi login thành công:
       utils.saveToken({ idToken, localId }, rememberMe);
       await ensureDBOwner(localId);
-      // ⚡️ Lưu user data toàn bộ (gồm thông tin cá nhân)
-      utils.saveUser(res.data);
-      setAuthTokens(utils.getToken());
-      setUser(res.data);
-
       SonnerSuccess(
         "Đăng nhập thành công!",
         `Xin chào ${res.data?.displayName || "người dùng"}!`
       );
+      init();
     } catch (error) {
       if (error.status) {
         const { status, message } = error;
