@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   X,
@@ -32,7 +32,6 @@ import { AuthButton } from "./AuthButton";
 import ThemeToggle from "./ThemeToggle";
 import PlanBadge from "../ui/PlanBadge/PlanBadge";
 import { SonnerError, SonnerSuccess } from "../ui/SonnerToast";
-import { clearAllData } from "@/utils/SyncData/clearAllData";
 import { CONFIG } from "@/config";
 import { useAuthStore } from "@/stores";
 
@@ -52,7 +51,6 @@ const Sidebar = () => {
   const handleLogout = async () => {
     try {
       clearAndlogout();
-      await clearAllData();
       SonnerSuccess(
         "Đăng xuất thành công!",
         `Tạm biệt ${user?.displayName || "người dùng"}!`

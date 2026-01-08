@@ -40,7 +40,7 @@ export default function ManageCaption() {
   return (
     <div className="p-6 mx-auto min-h-screen">
       {/* Tiêu đề */}
-      <h1 className="text-3xl font-bold mb-2">Locket Dio x Caption Kanade</h1>
+      <h1 className="text-3xl md:text-4xl font-bold mb-2">Locket Dio x Caption Kanade</h1>
       <p className="text-sm text-gray-600">
         Bạn có ID của caption do bạn bè gửi hoặc lấy được? Hãy dán nó vào đây để
         tải caption đó về máy của bạn.
@@ -116,7 +116,7 @@ export default function ManageCaption() {
                 className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center shadow-md hover:shadow-lg transition"
                 style={{
                   background: `linear-gradient(to bottom, ${preset.colortop}, ${preset.colorbottom})`,
-                  color: preset.color_text || "#fff",
+                  color: preset.color || "#fff",
                 }}
               >
                 <span className="text-xl flex items-center gap-2">

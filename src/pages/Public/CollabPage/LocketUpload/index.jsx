@@ -2,7 +2,7 @@ export default function LocketUpload() {
   return (
     <div className="p-4 mx-auto min-h-screen max-w-3xl text-base-content space-y-4">
       {/* Tiêu đề chính */}
-      <h1 className="text-3xl font-bold text-primary">
+      <h1 className="text-3xl md:text-4xl font-bold">
         Locket Dio x Locket Upload
       </h1>
 

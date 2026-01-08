@@ -17,7 +17,7 @@ import { ensureDBOwner } from "@/cache/configDB";
 import { useAuthStore } from "@/stores";
 
 const Login = () => {
-  const { init } = useAuthStore();
+  const { hydrate, init } = useAuthStore();
   const [captchaToken, setCaptchaToken] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -70,6 +70,7 @@ const Login = () => {
         `Xin chào ${res.data?.displayName || "người dùng"}!`
       );
       init();
+      hydrate();
     } catch (error) {
       if (error.status) {
         const { status, message } = error;
