@@ -4,6 +4,7 @@ import {
   logout,
   updateUserInfo,
 } from "@/services";
+import { removeToken } from "@/utils";
 import { create } from "zustand";
 
 const CACHE_KEY = "userData";
@@ -111,6 +112,7 @@ export const useAuthStore = create((set) => ({
 
   clearAndlogout: async () => {
     await logout();
+    removeToken();
     localStorage.removeItem(CACHE_KEY); // xóa cache khi logout
     set({
       user: null,
