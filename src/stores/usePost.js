@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { getMaxUploads } from "../hooks/useFeature";
-import { useAuthStore } from "./useAuthStore";
+import { useState } from "react";
 
 export const defaultPostOverlay = {
   overlay_id: "standard",
@@ -13,7 +11,6 @@ export const defaultPostOverlay = {
 };
 
 export const usePost = () => {
-  const { userPlan } = useAuthStore();
   const [selectedColors, setSelectedColors] = useState({
     top: "", // Trong suốt
     bottom: "", // Trong suốt
@@ -31,18 +28,6 @@ export const usePost = () => {
 
   const [audience, setAudience] = useState("all"); // "all" | "selected"
   const [selectedRecipients, setSelectedRecipients] = useState([]); // array userId hoặc object bạn bè
-
-  const [maxImageSizeMB, setMaxImageSizeMB] = useState(""); // Giới hạn ảnh: 9MB
-  const [maxVideoSizeMB, setMaxVideoSizeMB] = useState(""); // Giới hạn video: 30MB
-
-  const { image, video } = getMaxUploads();
-
-  useEffect(() => {
-    if (userPlan) {
-      setMaxImageSizeMB(image);
-      setMaxVideoSizeMB(video);
-    }
-  }, [userPlan]);
 
   const [selectedMoment, setSelectedMoment] = useState(null);
   const [selectedMomentId, setSelectedMomentId] = useState(null);
@@ -81,10 +66,6 @@ export const usePost = () => {
     setAudience,
     selectedRecipients,
     setSelectedRecipients,
-    maxImageSizeMB,
-    setMaxImageSizeMB,
-    maxVideoSizeMB,
-    setMaxVideoSizeMB,
     selectedMoment,
     setSelectedMoment,
     selectedMomentId,

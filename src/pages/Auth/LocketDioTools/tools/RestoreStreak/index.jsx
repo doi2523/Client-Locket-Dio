@@ -1,17 +1,18 @@
 import React, { useState, useMemo, useEffect } from "react";
 import LoadingRing from "@/components/ui/Loading/ring";
 import { useFeatureVisible } from "@/hooks/useFeature";
-import { useApp } from "@/context/AppContext";
 import { Link } from "react-router-dom";
-import { formatYYYYMMDD } from "@/utils";
-import { useStreakStore } from "@/stores";
+import { formatYYYYMMDD, addDaysToYYYYMMDD } from "@/utils"; // addDaysToYYYYMMDD là helper tăng ngày
+import { usePostStore, useStreakStore } from "@/stores";
+import { WarningBlock } from "./WarningBlock";
 
 export default function RestoreStreak() {
   const hasAccess = useFeatureVisible("restore_streak_tool");
   const [confirmDeletedToday, setConfirmDeletedToday] = useState(false);
   const { streak } = useStreakStore();
-  const { restoreStreak, setRestoreStreak } = useApp().post;
+  const { setRestoreStreak, restoreStreak } = usePostStore();
   const [mode, setMode] = useState("restore"); // "restore" | "continue"
+  const [useSuggestedDate, setUseSuggestedDate] = useState(false);
 
   const currentDate = useMemo(() => formatYYYYMMDD(), []);
   const previousDate = useMemo(() => {
@@ -20,11 +21,20 @@ export default function RestoreStreak() {
     return formatYYYYMMDD(d);
   }, []);
 
-  const restoreStreakDate = mode === "restore" ? previousDate : currentDate;
+  const suggestedDate = useMemo(() => {
+    if (!streak?.past_streak?.last_updated_yyyymmdd) return null;
+    return addDaysToYYYYMMDD(streak.past_streak.last_updated_yyyymmdd, 1);
+  }, [streak]);
+
+  const restoreStreakDate = useMemo(() => {
+    if (useSuggestedDate && suggestedDate) return suggestedDate;
+    return mode === "restore" ? previousDate : currentDate;
+  }, [mode, previousDate, currentDate, useSuggestedDate, suggestedDate]);
 
   // ✅ Xác định xem chuỗi hôm nay đã cập nhật chưa
   const isTodayStreak = streak?.last_updated_yyyymmdd === currentDate;
   const canRestore = !isTodayStreak || confirmDeletedToday;
+
   useEffect(() => {
     setConfirmDeletedToday(false);
   }, [isTodayStreak]);
@@ -102,7 +112,7 @@ export default function RestoreStreak() {
       </div>
 
       {/* MODE SELECT */}
-      <div className="p-5 border rounded-xl bg-base-200">
+      <div className="p-5 border rounded-xl bg-base-200 space-y-4">
         <h3 className="font-semibold text-lg mb-3">📅 Ngày liên quan</h3>
         <div className="space-y-2 text-sm">
           <p>
@@ -111,6 +121,37 @@ export default function RestoreStreak() {
           <p>
             <b>Ngày trước đó:</b> {previousDate}
           </p>
+          {suggestedDate && (
+            <WarningBlock title="⚠️ Ngày khôi phục đề xuất">
+              <label className="flex flex-col items-start gap-2 cursor-pointer">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-warning checkbox-sm"
+                    checked={useSuggestedDate}
+                    onChange={(e) => setUseSuggestedDate(e.target.checked)}
+                  />
+                  <span className="font-medium">
+                    Chọn ngày khôi phục đề xuất
+                  </span>
+                </div>
+                <span className="bg-base-300 p-2 rounded-xl w-full text-center font-mono">
+                  <b>{suggestedDate}</b>
+                </span>
+                <ul className="list-disc list-inside text-sm opacity-90 mt-1 space-y-1">
+                  <li>
+                    Bạn nên chọn giá trị này nếu đã hiểu rõ cách hoạt động của
+                    chuỗi và nếu muốn khôi phục chuỗi cho ngày cách hiện tại
+                    nhiều ngày.
+                  </li>
+                  <li>
+                    Nếu chuỗi mới có số ngày quá cao ví dụ 3 hoặc 4 thì tỉ lệ
+                    khôi phục thành công chuỗi quá khứ sẽ giảm xuống.
+                  </li>
+                </ul>
+              </label>
+            </WarningBlock>
+          )}
         </div>
 
         <div className="mt-5 space-y-3">
@@ -147,7 +188,7 @@ export default function RestoreStreak() {
           </fieldset>
         </div>
 
-        <div className="mt-5 p-3 bg-base-100 rounded-lg border text-sm">
+        <div className="mt-5 p-3 bg-base-100 rounded-lg border text-base">
           <p className="opacity-70">
             📦 Giá trị <b>restoreStreakDate</b> được chọn:
           </p>
@@ -161,11 +202,7 @@ export default function RestoreStreak() {
           </div>
         )}
         {isTodayStreak && (
-          <div className="mt-4 p-4 rounded-xl border border-warning bg-warning/10">
-            <h4 className="font-semibold text-sm mb-2 text-warning">
-              ⚠️ Xác nhận trước khi khôi phục
-            </h4>
-
+          <WarningBlock title="⚠️ Xác nhận trước khi khôi phục">
             <label className="flex items-start gap-3 cursor-pointer text-sm">
               <input
                 type="checkbox"
@@ -180,7 +217,7 @@ export default function RestoreStreak() {
                 này không chính xác.
               </span>
             </label>
-          </div>
+          </WarningBlock>
         )}
       </div>
 
@@ -195,13 +232,13 @@ export default function RestoreStreak() {
           </li>
           <li>
             <b>Mô tả hoạt động</b>: Khi bật chế độ này, hệ thống sẽ tính bài
-            đăng ở <u>ngày hôm qua</u> như một bài đăng hợp lệ để khôi phục
-            chuỗi.
+            đăng ở <u>ngày hôm qua</u> hoặc ngày gợi ý như một bài đăng hợp lệ
+            để khôi phục chuỗi.
           </li>
           <li>
-            <b>Cần hỗ trợ?</b> Chuỗi có thể khôi phục vô hạn số lần chỉ với
-            điều kiện thực hiện đúng cách, nếu đã đăng bài hiện lên chuỗi 1 hoặc
-            2 thì hãy liên hệ quản trị viên để được giúp đỡ.
+            <b>Cần hỗ trợ?</b> Chuỗi có thể khôi phục vô hạn số lần chỉ với điều
+            kiện thực hiện đúng cách, nếu đã đăng bài hiện lên chuỗi 1 hoặc 2
+            thì hãy liên hệ quản trị viên để được giúp đỡ.
           </li>
         </ul>
       </div>

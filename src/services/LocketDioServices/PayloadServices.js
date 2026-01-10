@@ -118,8 +118,12 @@ export const createRequestPayloadV4 = async (
       audience, // Gắn audience vào options luôn
       recipients: determineRecipients(audience, selectedRecipients, localId),
       music: postOverlay?.music || "",
-      restoreStreakDate: restoreStreak,
     };
+
+    // Chỉ thêm restoreStreakDate nếu mode là "restore"
+    if (restoreStreak?.mode === "restore") {
+      optionsData.restoreStreakDate = restoreStreak;
+    }
 
     // Tạo payload cuối cùng
     const payload = {

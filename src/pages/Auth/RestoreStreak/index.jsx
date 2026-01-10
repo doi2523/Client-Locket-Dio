@@ -1,8 +1,4 @@
-import React, {
-  useRef,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import {
   FolderOpen,
   RotateCcw,
@@ -27,12 +23,17 @@ import {
   SonnerSuccess,
 } from "@/components/ui/SonnerToast";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore, useStreakStore, useUploadQueueStore } from "@/stores";
+import {
+  useAuthStore,
+  usePostStore,
+  useStreakStore,
+  useUploadQueueStore,
+} from "@/stores";
 
 const RestoreStreak = () => {
   const { post, useloading } = useApp();
   const navigate = useNavigate();
-  const { uploadStats } = useAuthStore();;
+  const { uploadStats } = useAuthStore();
   const { sendLoading, setSendLoading, uploadLoading } = useloading;
 
   const {
@@ -48,17 +49,15 @@ const RestoreStreak = () => {
     setSizeMedia,
     postOverlay,
     setPostOverlay,
-    maxImageSizeMB,
-    maxVideoSizeMB,
     setImageToCrop,
-    restoreStreak,
-    setRestoreStreak,
   } = post;
-  const { storage_limit_mb } = getMaxUploads();
+  const { maxImageSizeMB, maxVideoSizeMB, storage_limit_mb } = getMaxUploads();
+
   const fileInputRef = useRef(null);
   const savePostedMoment = useUploadQueueStore((s) => s.savePostedMoment);
-  
+
   const { fetchStreak } = useStreakStore();
+  const { setRestoreStreak, restoreStreak } = usePostStore();
 
   // Đồng bộ caption và màu từ postOverlay → state
   useEffect(() => {
@@ -131,9 +130,12 @@ const RestoreStreak = () => {
       const normalizedNewData = response?.data
         ? utils.normalizeMoment(response.data)
         : [];
+      const hasData = Array.isArray(normalizedNewData)
+        ? normalizedNewData.length > 0
+        : Object.keys(normalizedNewData).length > 0;
 
       // Chỉ lưu khi có dữ liệu chuẩn hoá
-      if (normalizedNewData.length > 0) {
+      if (hasData) {
         savePostedMoment(payload, normalizedNewData);
         SonnerSuccess(restoreStreak.name, "Hãy kiểm tra chuỗi của bạn!");
       } else {
