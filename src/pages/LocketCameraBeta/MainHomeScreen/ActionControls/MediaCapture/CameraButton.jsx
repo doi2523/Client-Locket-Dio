@@ -2,10 +2,10 @@ import React, { useEffect, useRef } from "react";
 import { useApp } from "@/context/AppContext";
 import { RefreshCcw } from "lucide-react";
 import UploadFile from "./UploadFile";
-import { showError } from "@/components/Toast";
 import { getVideoRecordLimit } from "@/hooks/useFeature";
 import { CAMERA_CONFIG } from "@/config/configAlias";
 import { detectAppEnvironment } from "@/utils/logic/checkIfRunningAsPWA";
+import { SonnerInfo } from "@/components/ui/SonnerToast";
 
 const CameraButton = () => {
   const { camera, post, useloading } = useApp();
@@ -63,8 +63,9 @@ const CameraButton = () => {
 
       const video = videoRef.current;
       if (!video || video.readyState < 2) {
-        showError("Camera chưa sẵn sàng, vui lòng chờ giây lát...");
+        SonnerInfo("Camera chưa sẵn sàng, vui lòng chờ giây lát...");
         isTryingToRecordRef.current = false;
+        setIsHolding(false);
         return;
       }
 
@@ -188,7 +189,10 @@ const CameraButton = () => {
         }
 
         // Kiểm tra frame rate cho PWA
-        if (detectAppEnvironment() && currentTime - lastFrameTime < frameInterval) {
+        if (
+          detectAppEnvironment() &&
+          currentTime - lastFrameTime < frameInterval
+        ) {
           if (recorder.state === "recording") {
             requestAnimationFrame(drawFrame);
           }
@@ -371,7 +375,7 @@ const CameraButton = () => {
           // Thêm các event cho iOS
           onTouchCancel={endHold}
           onContextMenu={(e) => e.preventDefault()} // Prevent long press menu on iOS
-          className="relative flex items-center justify-center w-22 h-22"
+          className="relative flex items-center justify-center w-24 h-24"
           style={{
             touchAction: "manipulation", // Improve touch response on iOS
             userSelect: "none",
@@ -379,13 +383,13 @@ const CameraButton = () => {
           }}
         >
           <div
-            className={`absolute w-22 h-22 border-5 border-base-content/50 rounded-full z-10 ${
-              isHolding ? "animate-lightPulse" : ""
+            className={`absolute w-20 h-20 outline-5 outline-base-content/50 rounded-full z-10 ${
+              isHolding ? "animate-outlinePulse" : ""
             }`}
           ></div>
           <div
-            className={`absolute rounded-full btn w-18 h-18 outline-accent bg-base-content z-0 ${
-              isHolding ? "animate-pulseBeat" : ""
+            className={`absolute rounded-full btn w-19 h-19 bg-base-content z-0 transition-transform duration-500 ${
+              isHolding ? "scale-77 opacity-90" : "scale-100 opacity-100"
             }`}
           ></div>
         </button>

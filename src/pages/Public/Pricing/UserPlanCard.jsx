@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useApp } from "@/context/AppContext";
 import PlanBadge from "@/components/UI/PlanBadge/PlanBadge";
 import { RefreshCw } from "lucide-react";
+import { getMaxUploads } from "@/hooks/useFeature";
 
 // Optimized UserPlanCard Component with memoization
 export const UserPlanCard = React.memo(
   ({ userPlan, uploadStats, onRefresh, loading }) => {
-    const { post } = useApp();
-    const { maxImageSizeMB, maxVideoSizeMB } = post;
+    const { maxImageSizeMB, maxVideoSizeMB } = getMaxUploads();
     const [timeLeft, setTimeLeft] = useState("");
 
     // Memoize the time calculation function

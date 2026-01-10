@@ -18,8 +18,8 @@ export const getMaxUploads = () => {
   const uploads = userPlan?.plan_info?.feature_flags?.max_uploads || {};
   const storage_limit_mb = userPlan?.plan_info?.storage_limit_mb || null;
   return {
-    image: uploads.image ?? null,
-    video: uploads.video ?? null,
+    maxImageSizeMB: uploads.image ?? null,
+    maxVideoSizeMB: uploads.video ?? null,
     storage_limit_mb: storage_limit_mb,
   };
 };

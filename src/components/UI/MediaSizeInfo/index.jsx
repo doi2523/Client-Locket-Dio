@@ -2,11 +2,12 @@ import React from "react";
 import { TbMoodCrazyHappy } from "react-icons/tb";
 import { RiEmotionHappyLine } from "react-icons/ri";
 import { useApp } from "@/context/AppContext";
+import { getMaxUploads } from "@/hooks/useFeature";
 
 const MediaSizeInfo = () => {
   const { post } = useApp();
-  const { preview, isSizeMedia, maxImageSizeMB, maxVideoSizeMB } = post;
-
+  const { preview, isSizeMedia } = post;
+  const { maxImageSizeMB, maxVideoSizeMB, storage_limit_mb } = getMaxUploads();
   const isImage = preview?.type === "image";
   const isVideo = preview?.type === "video";
   const isTooBig = isImage

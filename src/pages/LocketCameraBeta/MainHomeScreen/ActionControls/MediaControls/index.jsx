@@ -7,6 +7,7 @@ import UploadStatusIcon from "./UploadStatusIcon.jsx";
 import { getMaxUploads } from "@/hooks/useFeature.js";
 import {
   SonnerError,
+  SonnerInfo,
   SonnerSuccess,
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
@@ -29,14 +30,11 @@ const MediaControls = () => {
     setAudience,
     selectedRecipients,
     setSelectedRecipients,
-    maxImageSizeMB,
-    maxVideoSizeMB,
   } = post;
   const { setCameraActive } = camera;
 
   //Nhap hooks
-  const { storage_limit_mb } = getMaxUploads();
-
+  const { maxImageSizeMB, maxVideoSizeMB, storage_limit_mb } = getMaxUploads();
   const enqueueUploadItem = useUploadQueueStore((s) => s.enqueueUploadItem);
 
   // State để quản lý hiệu ứng loading và success
@@ -73,8 +71,16 @@ const MediaControls = () => {
       SonnerWarning("Video quá nhẹ hoặc không hợp lệ (dưới 0.2MB).");
       return;
     }
+    if (!maxFileSize) {
+      SonnerInfo(
+        "Không tìm thấy dữ liệu người dùng.",
+        "Hãy truy cập lại web để làm mới!"
+      );
+      return;
+    }
     if (isSizeMedia > maxFileSize) {
       SonnerWarning(
+        "Nâng cấp gói để tăng giới hạn!",
         `${
           isImage ? "Ảnh" : "Video"
         } vượt quá dung lượng. Tối đa ${maxFileSize}MB.`
@@ -140,7 +146,7 @@ const MediaControls = () => {
         </button>
         <button
           onClick={handleSubmit}
-          className={`rounded-full w-22 h-22 duration-500 outline-base-300 backdrop-blur-4xl mx-2.5 text-center flex items-center justify-center disabled:opacity-50 transition-all ease-in-out ${
+          className={`rounded-full w-24 h-24 duration-500 outline-base-300 backdrop-blur-4xl mx-2.5 text-center flex items-center justify-center disabled:opacity-50 transition-all ease-in-out ${
             isSuccess
               ? "bg-green-500/20"
               : uploadLoading

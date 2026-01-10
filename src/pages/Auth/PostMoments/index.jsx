@@ -48,11 +48,9 @@ const PostMoments = () => {
     setSizeMedia,
     postOverlay,
     setPostOverlay,
-    maxImageSizeMB,
-    maxVideoSizeMB,
     setImageToCrop,
   } = post;
-  const { storage_limit_mb } = getMaxUploads();
+  const { maxImageSizeMB, maxVideoSizeMB, storage_limit_mb } = getMaxUploads();
   const savePostedMoment = useUploadQueueStore((s) => s.savePostedMoment)
   const fileInputRef = useRef(null);
 
