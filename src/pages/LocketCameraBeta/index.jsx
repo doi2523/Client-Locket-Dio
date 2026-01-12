@@ -35,7 +35,6 @@ export default function LocketCameraBeta() {
   useEffect(() => {
     import("./LeftHomeScreen");
     import("./RightHomeScreen");
-    TestCrash()
   }, []);
 
   return (
