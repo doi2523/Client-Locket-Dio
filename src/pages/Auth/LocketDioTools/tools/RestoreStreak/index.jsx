@@ -12,7 +12,17 @@ export default function RestoreStreak() {
   const { streak } = useStreakStore();
   const { setRestoreStreak, restoreStreak } = usePostStore();
   const [mode, setMode] = useState("restore"); // "restore" | "continue"
-  const [useSuggestedDate, setUseSuggestedDate] = useState(false);
+  const [suggestType, setSuggestType] = useState(null);
+
+  const suggestedPastDate = useMemo(() => {
+    if (!streak?.past_streak?.last_updated_yyyymmdd) return null;
+    return addDaysToYYYYMMDD(streak.past_streak.last_updated_yyyymmdd, 1);
+  }, [streak]);
+
+  const suggestedCurrentDate = useMemo(() => {
+    if (!streak?.last_updated_yyyymmdd) return null;
+    return addDaysToYYYYMMDD(streak.last_updated_yyyymmdd, 1);
+  }, [streak]);
 
   const currentDate = useMemo(() => formatYYYYMMDD(), []);
   const previousDate = useMemo(() => {
@@ -21,15 +31,29 @@ export default function RestoreStreak() {
     return formatYYYYMMDD(d);
   }, []);
 
-  const suggestedDate = useMemo(() => {
-    if (!streak?.past_streak?.last_updated_yyyymmdd) return null;
-    return addDaysToYYYYMMDD(streak.past_streak.last_updated_yyyymmdd, 1);
-  }, [streak]);
+  useEffect(() => {
+    if (suggestedPastDate && !suggestedCurrentDate) {
+      setSuggestType("past");
+    } else if (!suggestedPastDate && suggestedCurrentDate) {
+      setSuggestType("current");
+    }
+  }, [suggestedPastDate, suggestedCurrentDate]);
 
   const restoreStreakDate = useMemo(() => {
-    if (useSuggestedDate && suggestedDate) return suggestedDate;
+    if (suggestType === "past" && suggestedPastDate) return suggestedPastDate;
+
+    if (suggestType === "current" && suggestedCurrentDate)
+      return suggestedCurrentDate;
+
     return mode === "restore" ? previousDate : currentDate;
-  }, [mode, previousDate, currentDate, useSuggestedDate, suggestedDate]);
+  }, [
+    suggestType,
+    suggestedPastDate,
+    suggestedCurrentDate,
+    mode,
+    previousDate,
+    currentDate,
+  ]);
 
   // ✅ Xác định xem chuỗi hôm nay đã cập nhật chưa
   const isTodayStreak = streak?.last_updated_yyyymmdd === currentDate;
@@ -112,7 +136,7 @@ export default function RestoreStreak() {
       </div>
 
       {/* MODE SELECT */}
-      <div className="p-5 border rounded-xl bg-base-200 space-y-4">
+      <div className="p-4 border rounded-xl bg-base-200 space-y-4">
         <h3 className="font-semibold text-lg mb-3">📅 Ngày liên quan</h3>
         <div className="space-y-2 text-sm">
           <p>
@@ -121,35 +145,60 @@ export default function RestoreStreak() {
           <p>
             <b>Ngày trước đó:</b> {previousDate}
           </p>
-          {suggestedDate && (
+          {(suggestedPastDate || suggestedCurrentDate) && (
             <WarningBlock title="⚠️ Ngày khôi phục đề xuất">
-              <label className="flex flex-col items-start gap-2 cursor-pointer">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-warning checkbox-sm"
-                    checked={useSuggestedDate}
-                    onChange={(e) => setUseSuggestedDate(e.target.checked)}
-                  />
-                  <span className="font-medium">
-                    Chọn ngày khôi phục đề xuất
-                  </span>
-                </div>
-                <span className="bg-base-300 p-2 rounded-xl w-full text-center font-mono">
-                  <b>{suggestedDate}</b>
-                </span>
-                <ul className="list-disc list-inside text-sm opacity-90 mt-1 space-y-1">
-                  <li>
-                    Bạn nên chọn giá trị này nếu đã hiểu rõ cách hoạt động của
-                    chuỗi và nếu muốn khôi phục chuỗi cho ngày cách hiện tại
-                    nhiều ngày.
-                  </li>
+              <div className="space-y-3 text-sm">
+                {suggestedPastDate && (
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="suggest_type"
+                      className="radio radio-warning radio-sm mt-1"
+                      checked={suggestType === "past"}
+                      onChange={() => setSuggestType("past")}
+                    />
+                    <div>
+                      <p className="font-medium">Khôi phục chuỗi quá khứ</p>
+                      <p className="opacity-70">
+                        Dựa trên chuỗi trước đó đã kết thúc
+                      </p>
+                      <div className="mt-1 bg-base-300 p-2 rounded-lg font-mono text-center">
+                        {suggestedPastDate}
+                      </div>
+                    </div>
+                  </label>
+                )}
+
+                {suggestedCurrentDate && (
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="suggest_type"
+                      className="radio radio-warning radio-sm mt-1"
+                      checked={suggestType === "current"}
+                      onChange={() => setSuggestType("current")}
+                    />
+                    <div>
+                      <p className="font-medium">
+                        Khôi phục chuỗi hiện tại + 1
+                      </p>
+                      <p className="opacity-70">Tiếp nối từ chuỗi đang có</p>
+                      <div className="mt-1 bg-base-300 p-2 rounded-lg font-mono text-center">
+                        {suggestedCurrentDate}
+                      </div>
+                    </div>
+                  </label>
+                )}
+
+                <ul className="list-disc list-inside text-xs opacity-80 mt-2 space-y-1">
+                  <li>Chỉ chọn khi bạn hiểu rõ cách hoạt động của chuỗi.</li>
                   <li>
                     Nếu chuỗi mới có số ngày quá cao ví dụ 3 hoặc 4 thì tỉ lệ
                     khôi phục thành công chuỗi quá khứ sẽ giảm xuống.
                   </li>
+                  <li>Nếu không hiểu thì hãy liên hệ quản trị viên nhé.</li>
                 </ul>
-              </label>
+              </div>
             </WarningBlock>
           )}
         </div>
