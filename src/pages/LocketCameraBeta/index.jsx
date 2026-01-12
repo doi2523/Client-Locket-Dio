@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 import MainHomeScreen from "./MainHomeScreen";
 import { MusicPlayer } from "./Widgets/MusicPlayer";
@@ -32,22 +32,41 @@ export default function LocketCameraBeta() {
   const { canvasRef } = camera;
   const { postOverlay } = post;
 
+  useEffect(() => {
+    import("./LeftHomeScreen");
+    import("./RightHomeScreen");
+    TestCrash()
+  }, []);
+
+  function TestCrash() {
+  throw new Error("TEST ErrorBoundary");
+  return <div>Không bao giờ render</div>;
+}
+
   return (
     <>
-      <Snowfall />
+      <Suspense fallback={null}>
+        <Snowfall />
+      </Suspense>
       <MainHomeScreen />
       {/* Page Views */}
-      <LeftHomeScreen setIsProfileOpen={setIsProfileOpen} />
-      <RightHomeScreen setIsHomeOpen={setIsHomeOpen} />
+      <Suspense fallback={null}>
+        <LeftHomeScreen setIsProfileOpen={setIsProfileOpen} />
+        <RightHomeScreen setIsHomeOpen={setIsHomeOpen} />
+      </Suspense>
+
       {/* Modal Views */}
-      <FriendsContainer />
-      <CropImageStudio />
-      <ScreenCustomeStudio />
-      <EmojiPicker />
-      <OptionMoment
-        setOptionModalOpen={setOptionModalOpen}
-        isOptionModalOpen={isOptionModalOpen}
-      />
+      <Suspense fallback={null}>
+        <FriendsContainer />
+        <CropImageStudio />
+        <ScreenCustomeStudio />
+        <EmojiPicker />
+        <OptionMoment
+          setOptionModalOpen={setOptionModalOpen}
+          isOptionModalOpen={isOptionModalOpen}
+        />
+      </Suspense>
+
       {/* Canvas for capturing image/video */}
       <canvas ref={canvasRef} className="hidden" />
       {/* Audio Music */}

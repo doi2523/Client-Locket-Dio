@@ -98,9 +98,10 @@ function AppContent() {
     setMeta("meta[name='twitter:title']", document.title);
   }, [location.pathname]);
 
-  if (loading) return <LoadingPageMain isLoading={true} />;
+  // if (loading) return <LoadingPageMain isLoading={true} />;
 
   return (
+    <>
     <Suspense fallback={<LoadingPageMain isLoading={true} />}>
       <Routes>
         {(isAuth ? privateRoutes : publicRoutes).map(
@@ -139,6 +140,8 @@ function AppContent() {
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
+    <LoadingPageMain isLoading={loading} />
+    </>
   );
 }
 

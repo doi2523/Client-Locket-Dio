@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import React, { lazy, Suspense } from "react";
 import { useApp } from "@/context/AppContext";
 
 import HeaderHome from "./Layout/HeaderHome";
@@ -57,7 +57,9 @@ export default function MainHomeScreen() {
         >
           <div className="w-full h-full overflow-y-auto">
             <div className="h-16" />
-            <BottomHomeScreen />
+            <Suspense fallback={null}>
+              <BottomHomeScreen />
+            </Suspense>
           </div>
           {/* Click để đóng lịch sử */}
           <BottomMenu
