@@ -1,25 +1,23 @@
 import { useState, useEffect } from "react";
-import * as DioService from "@/services/LocketDioServices";
 import * as utils from "@/utils";
 import LoadingRing from "@/components/ui/Loading/ring";
 import StatusServer from "@/components/ui/StatusServer";
 import { useApp } from "@/context/AppContext";
-import Turnstile from "react-turnstile";
 import { Link } from "react-router-dom";
-import {
-  SonnerError,
-  SonnerInfo,
-  SonnerSuccess,
-} from "@/components/ui/SonnerToast";
+import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 import { CONFIG } from "@/config";
 import RotatingCircleText from "./RotatingCircleText";
 import { ensureDBOwner } from "@/cache/configDB";
 import { useAuthStore } from "@/stores";
+import TurnstileCaptcha from "./TurnstileCaptcha";
+import { Lock, Mail, Phone } from "lucide-react";
+import { loginWithEmail, loginWithPhone } from "@/services";
 
 const Login = () => {
   const { hydrate, init } = useAuthStore();
   const [captchaToken, setCaptchaToken] = useState(null);
-  const [email, setEmail] = useState("");
+  const [loginMethod, setLoginMethod] = useState("email"); // "email" hoặc "phone"
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(() => {
@@ -40,41 +38,60 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     if (CONFIG.keys.turnstileKey && !captchaToken) {
       SonnerError("Vui lòng xác minh bạn không phải robot");
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      SonnerError("Email không hợp lệ!");
-      return;
+    // Validate
+    if (loginMethod === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(identifier)) {
+        SonnerError("Email không hợp lệ!");
+        return;
+      }
+    } else {
+      const phoneRegex = /^(0|\+84)[0-9]{9}$/;
+      if (!phoneRegex.test(identifier)) {
+        SonnerError("Số điện thoại không hợp lệ!");
+        return;
+      }
     }
 
     setIsLoginLoading(true);
+
     try {
-      const res = await DioService.loginV2({
-        email: email,
-        password: password,
-        captchaToken: captchaToken,
-      });
-      if (!res) throw new Error("Lỗi: Server không trả về dữ liệu!");
+      const res =
+        loginMethod === "email"
+          ? await loginWithEmail({
+              email: identifier,
+              password,
+              captchaToken,
+            })
+          : await loginWithPhone({
+              phone: identifier,
+              password,
+              captchaToken,
+            });
+
+      if (!res?.data) throw new Error("Server không trả về dữ liệu");
 
       const { idToken, localId } = res.data;
 
-      // Khi login thành công:
       utils.saveToken({ idToken, localId }, rememberMe);
       await ensureDBOwner(localId);
+
       SonnerSuccess(
         "Đăng nhập thành công!",
         `Xin chào ${res.data?.displayName || "người dùng"}!`
       );
+
       init();
       hydrate();
     } catch (error) {
-      if (error.status) {
-        const { status, message } = error;
-        switch (status) {
+      if (error?.status) {
+        switch (error.status) {
           case 400:
             SonnerError("Tài khoản hoặc mật khẩu không đúng!");
             break;
@@ -82,32 +99,24 @@ const Login = () => {
             SonnerError("Phiên đăng nhập đã hết. Vui lòng đăng nhập lại!");
             break;
           case 429:
-            SonnerError(
-              "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 15 phút!"
-            );
-            setEmail("");
-            setPassword("");
+            SonnerError("Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau!");
             break;
           case 403:
             SonnerError("Bạn không có quyền truy cập.");
-            setEmail("");
-            setPassword("");
             window.location.href = "/login";
             break;
           case 500:
             SonnerError("Lỗi hệ thống, vui lòng thử lại sau!");
             break;
           default:
-            SonnerError(message || "Đăng nhập thất bại!");
-            setEmail("");
-            setPassword("");
+            SonnerError(error.message || "Đăng nhập thất bại!");
         }
       } else {
-        SonnerError(
-          "Lỗi kết nối!",
-          error.message || "Vui lòng kiểm tra lại mạng."
-        );
+        SonnerError("Lỗi kết nối! Vui lòng kiểm tra mạng.");
       }
+
+      setIdentifier("");
+      setPassword("");
     } finally {
       setIsLoginLoading(false);
     }
@@ -117,30 +126,60 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
+  const toggleLoginMethod = () => {
+    setLoginMethod(loginMethod === "email" ? "phone" : "email");
+    setIdentifier("");
+    setPassword("");
+  };
+
+  const isActiveLogin =
+    isStatusServer !== true ||
+    isLoginLoading ||
+    (CONFIG.keys.turnstileKey && !captchaToken);
+
   return (
     <>
       <div className="flex items-center justify-center h-[84vh] bg-base-200 px-6">
         <div className="relative w-full max-w-md p-6 shadow-lg overflow-hidden rounded-xl bg-opacity-50 backdrop-blur-3xl bg-base-100 border-base-300 text-base-content">
           <RotatingCircleText />
-          <h1 className="text-3xl font-bold text-center">Đăng Nhập Locket</h1>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <h1 className="text-3xl font-bold text-center mb-6">
+            Đăng Nhập Locket
+          </h1>
+
+          <div className="space-y-4">
+            {/* Input Email hoặc SĐT */}
             <div>
-              <legend className="fieldset-legend">Email</legend>
-              <input
-                type="email"
-                className="w-full px-4 py-2 border rounded-lg input input-ghost border-base-content"
-                placeholder="Nhập email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <legend className="fieldset-legend">
+                {loginMethod === "email" ? "Email" : "Số điện thoại"}
+              </legend>
+              <div className="relative">
+                {loginMethod === "email" ? (
+                  <Mail className="absolute z-10 left-3 top-1/2 -translate-y-1/2 w-5 h-5 opacity-80" />
+                ) : (
+                  <Phone className="absolute z-10 left-3 top-1/2 -translate-y-1/2 w-5 h-5 opacity-80" />
+                )}
+
+                <input
+                  type={loginMethod === "email" ? "email" : "tel"}
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder={
+                    loginMethod === "email" ? "example@email.com" : "0912345678"
+                  }
+                  required
+                  className="w-full pl-10 pr-4 py-5 rounded-lg input input-ghost border border-base-content transition text-base font-semibold placeholder:font-normal placeholder:italic placeholder:opacity-70"
+                />
+              </div>
             </div>
+
+            {/* Input Mật khẩu */}
             <div>
               <legend className="fieldset-legend">Mật khẩu</legend>
               <div className="relative">
+                <Lock className="absolute z-10 left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-base-content opacity-80" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="w-full px-4 py-2 pr-12 rounded-lg input input-ghost border-base-content"
+                  className="w-full p-5 pl-10 pr-12 rounded-lg input input-ghost border-base-content font-semibold text-base placeholder:font-normal placeholder:italic placeholder:opacity-70"
                   placeholder="Nhập mật khẩu"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -190,12 +229,13 @@ const Login = () => {
                 </button>
               </div>
             </div>
+
+            {/* Remember me & Forgot password */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <input
                   id="rememberMe"
                   type="checkbox"
-                  disabled
                   className="checkbox checkbox-primary checkbox-sm"
                   checked={rememberMe}
                   onChange={() => setRememberMe(!rememberMe)}
@@ -208,32 +248,26 @@ const Login = () => {
                 </label>
               </div>
 
-              {/* ✅ Thêm link Quên mật khẩu */}
               <Link
                 to={"/forgot-password"}
-                className="text-sm text-blue-500 hover:underline"
+                className="text-sm text-primary hover:underline"
               >
                 Quên mật khẩu?
               </Link>
             </div>
 
+            {/* Button đăng nhập */}
             <button
-              type="submit"
+              onClick={handleLogin}
               className={`
-    w-full btn btn-primary py-2 text-lg font-semibold rounded-lg transition flex items-center justify-center gap-2
-    ${
-      isStatusServer !== true ||
-      isLoginLoading ||
-      (CONFIG.keys.turnstileKey && !captchaToken)
-        ? "bg-blue-400 cursor-not-allowed opacity-80"
-        : ""
-    }
-  `}
-              disabled={
-                isStatusServer !== true ||
-                isLoginLoading ||
-                (CONFIG.keys.turnstileKey && !captchaToken)
-              }
+                w-full btn btn-primary py-2 text-lg font-semibold rounded-lg transition flex items-center justify-center gap-2
+                ${
+                  isActiveLogin
+                    ? "bg-blue-400 cursor-not-allowed opacity-80"
+                    : ""
+                }
+              `}
+              disabled={isActiveLogin}
             >
               {isLoginLoading ? (
                 <>
@@ -245,21 +279,32 @@ const Login = () => {
               )}
             </button>
 
-            {CONFIG.keys.turnstileKey && (
-              <Turnstile
-                sitekey={CONFIG.keys.turnstileKey}
-                onVerify={(token) => setCaptchaToken(token)}
-                onExpire={() => {
-                  setCaptchaToken(null);
-                  SonnerInfo("Turnstile đã hết hạn. Vui lòng xác minh lại.");
-                }}
-                className="mt-2"
-              />
-            )}
+            {/* Link chuyển đổi phương thức đăng nhập */}
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={toggleLoginMethod}
+                className="text-sm text-base-content opacity-70 hover:opacity-100 hover:underline transition-opacity inline-flex items-center gap-1"
+              >
+                {loginMethod === "email" ? (
+                  <>
+                    <Phone className="w-4 h-4" />
+                    Đăng nhập bằng số điện thoại?
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-4 h-4" />
+                    Đăng nhập bằng email?
+                  </>
+                )}
+              </button>
+            </div>
+
+            <TurnstileCaptcha onVerify={setCaptchaToken} />
 
             <span className="text-xs">Vui lòng chờ Server02 khởi động.</span>
             <StatusServer />
-          </form>
+          </div>
         </div>
       </div>
     </>
