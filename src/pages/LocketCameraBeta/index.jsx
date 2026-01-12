@@ -38,11 +38,6 @@ export default function LocketCameraBeta() {
     TestCrash()
   }, []);
 
-  function TestCrash() {
-  throw new Error("TEST ErrorBoundary");
-  return <div>Không bao giờ render</div>;
-}
-
   return (
     <>
       <Suspense fallback={null}>
