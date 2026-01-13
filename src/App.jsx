@@ -120,22 +120,24 @@ function AppContent() {
           )}
 
           {/* Điều hướng khi chưa đăng nhập cố vào route cần auth */}
-          {!isAuth &&
+          {!loading &&
+            !isAuth &&
             privateRoutes.map(({ path }) => (
               <Route
                 key={path}
                 path={path}
-                element={<Navigate to="/login" />}
+                element={<Navigate to="/login" replace />}
               />
             ))}
 
           {/* Điều hướng ngược lại khi đã đăng nhập mà cố vào public route */}
-          {isAuth &&
+          {!loading &&
+            isAuth &&
             publicRoutes.map(({ path }) => (
               <Route
                 key={path}
                 path={path}
-                element={<Navigate to="/locket-beta" />}
+                element={<Navigate to="/locket-beta" replace />}
               />
             ))}
 
