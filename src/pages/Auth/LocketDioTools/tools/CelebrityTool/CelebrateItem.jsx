@@ -9,6 +9,9 @@ export default function CelebrateItem({ user, slotdata, onAdd }) {
       ? Math.min((slotdata.friend_count / slotdata.max_friends) * 100, 100)
       : 0;
 
+  const isFullSlot =
+    slotdata?.max_friends && slotdata?.friend_count >= slotdata?.max_friends;
+
   const handleCopyUsername = () => {
     if (!user?.username) return;
     const url = `https://locket.cam/${user.username}`;
@@ -75,29 +78,38 @@ export default function CelebrateItem({ user, slotdata, onAdd }) {
           </div>
         </div>
 
-        {/* Bên phải: render theo friendship_status */}
+        {/* Bên phải: ưu tiên hiển thị nút Thêm nếu còn slot */}
         {user.friendship_status === "friends" ? (
           <div className="flex flex-row items-center gap-1 text-white bg-primary px-2 py-1 rounded-2xl">
             <UserRoundCheck className="w-5 h-5" />
             <span className="text-sm font-semibold">Bạn bè</span>
           </div>
-        ) : user.friendship_status === "follower-waitlist" ? (
-          <div className="text-white text-sm bg-primary px-2 py-1 rounded-2xl font-semibold">
-            Đang xếp hàng
-          </div>
-        ) : user.friendship_status === "outgoing-follow-request" ? (
-          <div className="text-white text-sm bg-primary px-2 py-1 rounded-2xl font-semibold">
-            Đang chờ chấp nhận
-          </div>
-        ) : (
+        ) : !isFullSlot ? (
           <button
-            className="flex items-center bg-cyan-300 gap-1 text-blue-500 hover:text-blue-600 px-2 py-1 rounded-2xl font-semibold"
+            className="flex items-center gap-1 px-2 py-1 rounded-2xl font-semibold
+      bg-cyan-300 text-blue-500 hover:text-blue-600"
             onClick={(e) => {
               e.stopPropagation();
               onAdd(user.uid);
             }}
           >
             <Plus className="w-5 h-5" /> Thêm
+          </button>
+        ) : user.friendship_status === "outgoing-follow-request" ? (
+          <div className="text-white text-sm bg-primary px-2 py-1 rounded-2xl font-semibold">
+            Đang chờ chấp nhận
+          </div>
+        ) : user.friendship_status === "follower-waitlist" ? (
+          <div className="text-white text-sm bg-primary px-2 py-1 rounded-2xl font-semibold">
+            Đang xếp hàng
+          </div>
+        ) : (
+          <button
+            disabled
+            className="flex items-center gap-1 px-2 py-1 rounded-2xl font-semibold
+      bg-gray-300 text-gray-400 cursor-not-allowed"
+          >
+            <Plus className="w-5 h-5" /> Hết slot
           </button>
         )}
       </div>

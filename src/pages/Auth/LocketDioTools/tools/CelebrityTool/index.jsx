@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { CONFIG } from "@/config";
-import { fetchUserById, getListCelebrity } from "@/services";
+import {
+  fetchUserById,
+  getListCelebrity,
+  SendRequestToCelebrity,
+} from "@/services";
 import CelebrateItem from "./CelebrateItem";
 import {
   SonnerError,
@@ -97,14 +101,20 @@ export default function CelebrateTool() {
   }, [celebrateList, isCelebrityFeature]);
 
   const handleAddUid = async (uid) => {
-    if (!uid.trim()) return SonnerInfo("⚠️ Nhập UID trước đã!");
+    if (!uid || !uid.trim()) {
+      return SonnerInfo("Nhập UID trước đã!");
+    }
+
     try {
-      // await api.post(`/locket/sendFriendRequestV2`, {
-      //   data: { friendUid: uid },
-      // });
-      SonnerWarning("Thông báo", "Chức năng này đang được phát triển!");
+      const res = await SendRequestToCelebrity(uid);
+
+      if (res?.success) {
+        SonnerSuccess("Đã gửi yêu cầu thành công!");
+      } else {
+        SonnerWarning("UID không hợp lệ hoặc đã tồn tại!");
+      }
     } catch (err) {
-      SonnerWarning("❌ Thêm UID thất bại.");
+      SonnerError("❌ Thêm UID thất bại.");
     }
   };
 
@@ -256,7 +266,8 @@ export default function CelebrateTool() {
       </div>
       <p className="mb-3 text-sm opacity-80">
         Công cụ này giúp bạn xem được thông tin celebrity hoặc tình trạng slot
-        của họ. Click vào username để copy link kết bạn.
+        của họ. Click vào username để copy link kết bạn. Bấm thêm để gửi kết bạn
+        tới họ nhé!
       </p>
 
       {/* Tabs → Chuyển thành nút */}
