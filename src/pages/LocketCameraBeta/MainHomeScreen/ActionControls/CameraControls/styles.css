@@ -1,0 +1,21 @@
+.outline-camera-custome {
+    outline-width: 5px;
+    outline-style: solid;
+}
+
+@keyframes outlinePulse {
+  0%,
+  100% {
+    outline-width: 5px;
+    opacity: 1;
+  }
+  50% {
+    outline-width: 7px;
+    opacity: 0.8;
+  }
+}
+.animate-outlinePulse {
+  outline-style: solid;
+  outline-width: 5px;
+  animation: outlinePulse 1s infinite ease-in-out;
+}

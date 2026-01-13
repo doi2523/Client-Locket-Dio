@@ -1,12 +1,12 @@
 import React, { lazy, Suspense, useEffect, useRef } from "react";
 // import { CircleHelpIcon } from "lucide-react";
 import MediaSizeInfo from "@/components/ui/MediaSizeInfo";
-import { showInfo } from "@/components/Toast";
 import { getAvailableCameras, isIOS } from "@/utils";
 const AutoResizeCaption = lazy(() => import("../CaptionViews"));
 import { useApp } from "@/context/AppContext";
 import { CONFIG } from "@/config";
 import BorderProgress from "../../Widgets/SquareProgress";
+import { SonnerInfo } from "@/components/ui/SonnerToast";
 
 const MediaPreview = () => {
   const { post, useloading, camera } = useApp();
@@ -165,7 +165,7 @@ const MediaPreview = () => {
       setCameraActive(false);
       setTimeout(() => setCameraActive(true), 300);
     } else {
-      showInfo("Không tìm thấy camera phù hợp để chuyển zoom");
+      SonnerInfo("Không tìm thấy camera phù hợp để chuyển zoom");
     }
   };
 
@@ -196,7 +196,7 @@ const MediaPreview = () => {
           <>
             <div className="absolute inset-0 top-7 px-7 z-30 pointer-events-none flex justify-between text-base-content text-xs font-semibold">
               <button
-                onClick={() => showInfo("Chức năng này sẽ sớm có mặt!")}
+                onClick={() => SonnerInfo("Chức năng này sẽ sớm có mặt!")}
                 className="pointer-events-auto w-7 h-7 p-1.5 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center"
               >
                 <img src="/icons/bolt.fill.png" alt="Icon sấm sét" />

@@ -1,6 +1,6 @@
 import { Send, Check } from "lucide-react";
 import LoadingRing from "@/components/UI/Loading/ring";
-import "./UploadStatusIcon.css";
+import "./styles.css";
 
 const UploadStatusIcon = ({ loading = false, success = false }) => {
   return (

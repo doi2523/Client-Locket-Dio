@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { PlusIcon, Trash2, X } from "lucide-react";
 import LoadingRing from "@/components/ui/Loading/ring";
-import { showError, showSuccess } from "@/components/Toast";
 import { useAuthStore } from "@/stores";
+import { SonnerSuccess, SonnerWarning } from "@/components/ui/SonnerToast";
 
 export default function ImageCaptionSelector({ title }) {
   const navigate = useNavigate();
@@ -143,10 +143,10 @@ export default function ImageCaptionSelector({ title }) {
       setShowUpload(false);
       fileInputRef.current.value = null;
 
-      showSuccess("Tạo caption thành công!");
+      SonnerSuccess("Tạo caption thành công!");
     } catch (error) {
       console.error("Lỗi tạo caption:", error);
-      showError("Lỗi khi tạo caption. Vui lòng thử lại.");
+      SonnerWarning("Lỗi khi tạo caption. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }

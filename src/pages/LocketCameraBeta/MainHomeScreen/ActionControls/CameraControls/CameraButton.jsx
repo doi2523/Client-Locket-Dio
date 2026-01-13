@@ -1,11 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { useApp } from "@/context/AppContext";
-import { RefreshCcw } from "lucide-react";
-import UploadFile from "./UploadFile";
 import { getVideoRecordLimit } from "@/hooks/useFeature";
 import { CAMERA_CONFIG } from "@/config/configAlias";
 import { detectAppEnvironment } from "@/utils/logic/checkIfRunningAsPWA";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
+import "./styles.css"
 
 const CameraButton = () => {
   const { camera, post, useloading } = useApp();
@@ -326,31 +325,6 @@ const CameraButton = () => {
     }, 100);
   };
 
-  const handleRotateCamera = async () => {
-    setRotation((prev) => prev - 180);
-    const newMode = cameraMode === "user" ? "environment" : "user";
-    setCameraMode(newMode);
-    // ✅ Reset deviceId để tránh bị giữ lại cam cũ (zoom cam)
-    setZoomLevel("1x");
-    setDeviceId(null);
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-    }
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: newMode },
-        audio: false,
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-    } catch (error) {
-      console.error("Lỗi khi đổi camera:", error);
-    }
-  };
-
   // Cleanup khi component unmount
   useEffect(() => {
     return () => {
@@ -364,43 +338,33 @@ const CameraButton = () => {
 
   return (
     <>
-      <div className="flex gap-4 w-full max-w-md justify-evenly items-center">
-        <UploadFile />
-        <button
-          onMouseDown={startHold}
-          onMouseUp={endHold}
-          onMouseLeave={endHold}
-          onTouchStart={startHold}
-          onTouchEnd={endHold}
-          // Thêm các event cho iOS
-          onTouchCancel={endHold}
-          onContextMenu={(e) => e.preventDefault()} // Prevent long press menu on iOS
-          className="relative flex items-center justify-center w-24 h-24"
-          style={{
-            touchAction: "manipulation", // Improve touch response on iOS
-            userSelect: "none",
-            WebkitUserSelect: "none",
-          }}
-        >
-          <div
-            className={`absolute w-20 h-20 outline-5 outline-base-content/50 rounded-full z-10 ${
-              isHolding ? "animate-outlinePulse" : ""
-            }`}
-          ></div>
-          <div
-            className={`absolute rounded-full btn w-19 h-19 bg-base-content z-0 transition-transform duration-500 ${
-              isHolding ? "scale-77 opacity-90" : "scale-100 opacity-100"
-            }`}
-          ></div>
-        </button>
-        <button className="cursor-pointer" onClick={handleRotateCamera}>
-          <RefreshCcw
-            size={35}
-            className="transition-transform duration-500"
-            style={{ transform: `rotate(${rotation}deg)` }}
-          />
-        </button>
-      </div>
+      <button
+        onMouseDown={startHold}
+        onMouseUp={endHold}
+        onMouseLeave={endHold}
+        onTouchStart={startHold}
+        onTouchEnd={endHold}
+        // Thêm các event cho iOS
+        onTouchCancel={endHold}
+        onContextMenu={(e) => e.preventDefault()} // Prevent long press menu on iOS
+        className="relative flex items-center justify-center w-24 h-24 active:scale-97"
+        style={{
+          touchAction: "manipulation", // Improve touch response on iOS
+          userSelect: "none",
+          WebkitUserSelect: "none",
+        }}
+      >
+        <div
+          className={`absolute w-20 h-20 outline-camera-custome outline-base-content/50 rounded-full z-10 ${
+            isHolding ? "animate-outlinePulse" : ""
+          }`}
+        ></div>
+        <div
+          className={`absolute rounded-full btn w-19 h-19 bg-base-content z-0 transition-transform duration-500 ${
+            isHolding ? "scale-77 opacity-90" : "scale-100 opacity-100"
+          }`}
+        ></div>
+      </button>
     </>
   );
 };

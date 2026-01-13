@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useApp } from "@/context/AppContext.jsx";
-import MediaControls from "./MediaControls/index.jsx";
-import MediaCapture from "./MediaCapture/index.jsx";
+import { useApp } from "@/context/AppContext";
+import MediaControls from "./MediaControls";
+import CameraControls from "./CameraControls";
 
 const ActionControls = () => {
   const { post } = useApp();
@@ -28,19 +28,17 @@ const ActionControls = () => {
     return () => clearTimeout(timer);
   }, [targetView, view]);
 
-  const animationClass = isAnimating
-    ? "opacity-0"
-    : "opacity-100";
+  const animationClass = isAnimating ? "opacity-0" : "opacity-100";
 
   return (
-    <div className="relative flex w-full max-w-md justify-evenly items-center overflow-hidden">
+    <div className="relative flex flex-row max-w-md justify-center items-center w-full overflow-hidden">
       <div
-        className={`w-full
+        className={`w-full flex flex-row max-w-md justify-evenly items-center gap-4
           transition-all duration-300 
           ${animationClass}
         `}
       >
-        {view === "controls" ? <MediaControls /> : <MediaCapture />}
+        {view === "controls" ? <MediaControls /> : <CameraControls />}
       </div>
     </div>
   );

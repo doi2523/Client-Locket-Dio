@@ -136,40 +136,38 @@ const MediaControls = () => {
 
   return (
     <>
-      <div className="flex gap-4 w-full max-w-md justify-evenly items-center">
-        <button
-          className="cursor-pointer"
-          onClick={handleDelete}
-          disabled={sendLoading || uploadLoading}
-        >
-          <X size={35} />
-        </button>
-        <button
-          onClick={handleSubmit}
-          className={`rounded-full w-24 h-24 duration-500 outline-base-300 backdrop-blur-4xl mx-2.5 text-center flex items-center justify-center disabled:opacity-50 transition-all ease-in-out ${
-            isSuccess
-              ? "bg-green-500/20"
-              : uploadLoading
-              ? "bg-blue-500/20"
-              : "bg-base-300/50 hover:bg-base-300/70"
-          }`}
-          disabled={uploadLoading}
-          style={{
-            animation: isSuccess ? "success-pulse 1s ease-in-out" : "none",
-          }}
-        >
-          <UploadStatusIcon loading={uploadLoading} success={isSuccess} />
-        </button>
-        <button
-          className="cursor-pointer"
-          onClick={() => {
-            setIsFilterOpen(true);
-          }}
-          disabled={uploadLoading}
-        >
-          <Sparkles size={35} />
-        </button>
-      </div>
+      <button
+        className="cursor-pointer active:scale-95"
+        onClick={handleDelete}
+        disabled={sendLoading || uploadLoading}
+      >
+        <X size={35} />
+      </button>
+      <button
+        onClick={handleSubmit}
+        className={`rounded-full w-24 h-24 duration-500 outline-base-300 backdrop-blur-4xl text-center flex items-center justify-center disabled:opacity-50 transition-all ease-in-out active:scale-95 ${
+          isSuccess
+            ? "bg-green-500/20"
+            : uploadLoading
+            ? "bg-blue-500/20"
+            : "bg-base-300/50 hover:bg-base-300/70"
+        }`}
+        disabled={uploadLoading}
+        style={{
+          animation: isSuccess ? "success-pulse 1s ease-in-out" : "none",
+        }}
+      >
+        <UploadStatusIcon loading={uploadLoading} success={isSuccess} />
+      </button>
+      <button
+        className="cursor-pointer active:scale-95"
+        onClick={() => {
+          setIsFilterOpen(true);
+        }}
+        disabled={uploadLoading}
+      >
+        <Sparkles size={35} />
+      </button>
     </>
   );
 };

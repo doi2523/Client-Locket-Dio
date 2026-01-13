@@ -1,4 +1,5 @@
 import React from "react";
+import "./SquareProgress.css"
 import { useApp } from "@/context/AppContext";
 import { getVideoRecordLimit } from "@/hooks/useFeature";
 
@@ -12,10 +13,10 @@ const BorderProgress = () => {
   return (
     <>
       <svg
-        className="absolute w-full h-full z-50 border-none"
+        className="absolute w-full h-full z-50 border-none overflow-hidden rounded-[30px]"
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
-        style={{ borderRadius: "30px", overflow: "hidden" }}
+        // style={{ borderRadius: "30px", overflow: "hidden" }}
       >
         <defs>
           <clipPath id="roundedClip">
@@ -57,12 +58,6 @@ const BorderProgress = () => {
           }}
         />
       </svg>
-
-      <style>{`
-        @keyframes pathProgress {
-          to { stroke-dashoffset: 0; }
-        }
-      `}</style>
     </>
   );
 };

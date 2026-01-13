@@ -1,9 +1,9 @@
 import axios from "axios";
 import * as utils from "@/utils";
-import { showError } from "@/components/Toast";
 import api from "@/lib/axios";
 import { instanceLocketV2 } from "@/lib/axios.locket";
 import { chunkArray } from "@/helpers/chunkArray";
+import { SonnerWarning } from "@/components/ui/SonnerToast";
 
 //lấy toàn bộ danh sách bạn bè (uid, createdAt) từ API
 export const getListIdFriends = async () => {
@@ -102,7 +102,7 @@ export const refreshFriends = async () => {
 
     const { idToken, localId } = utils.getToken() || {};
     if (!idToken || !localId) {
-      showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+      SonnerWarning("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
       return null;
     }
     const friendDetails = await loadFriendDetailsV3(friends);

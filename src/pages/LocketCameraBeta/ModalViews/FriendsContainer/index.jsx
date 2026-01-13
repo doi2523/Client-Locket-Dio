@@ -11,11 +11,11 @@ import {
 import LoadingRing from "@/components/ui/Loading/ring";
 import FriendItem from "./FriendItem";
 import SearchInput from "@/components/ui/Input/SearchInput";
-import { showError } from "@/components/Toast";
 import FriendFind from "./FriendFind";
 import IncomingFriendRequests from "./IncomingRequests";
 import {
   SonnerError,
+  SonnerInfo,
   SonnerSuccess,
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
@@ -143,7 +143,7 @@ const FriendsContainer = () => {
     } catch (error) {
       console.error("❌ Lỗi khi tìm bạn:", error);
       setFoundUser(null);
-      showError(error.message || "Người dùng không tồn tại");
+      SonnerInfo(error.message || "Người dùng không tồn tại");
     }
   };
 

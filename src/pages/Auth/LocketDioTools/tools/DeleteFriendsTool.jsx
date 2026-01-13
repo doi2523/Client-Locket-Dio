@@ -6,8 +6,7 @@ import {
 import { useFeatureVisible } from "@/hooks/useFeature";
 import { formatDateTime } from "@/utils/Formats";
 import LoadingRing from "@/components/ui/Loading/ring";
-import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
-import { showInfo } from "@/components/Toast";
+import { SonnerError, SonnerInfo, SonnerSuccess } from "@/components/ui/SonnerToast";
 
 export default function DeleteFriendsTool() {
   const isFeatureVisible = useFeatureVisible("invite_cleanup_tool");
@@ -54,7 +53,7 @@ export default function DeleteFriendsTool() {
   // 🧹 Xoá theo số lượng nhập
   const handleDeleteBatch = async () => {
     const batch = invites.slice(0, deleteCount);
-    if (batch.length === 0) return showInfo("📭 Không còn lời mời để xoá.");
+    if (batch.length === 0) return SonnerInfo("📭 Không còn lời mời để xoá.");
 
     setDeleting(true);
     try {

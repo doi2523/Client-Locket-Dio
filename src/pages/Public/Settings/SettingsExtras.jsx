@@ -1,4 +1,4 @@
-import { showWarning } from "@/components/Toast";
+import { SonnerInfo } from "@/components/ui/SonnerToast";
 import { CONFIG } from "@/config/webConfig";
 import { Wrench } from "lucide-react";
 
@@ -112,7 +112,7 @@ export default function SettingsExtras() {
               className="input input-bordered flex-grow max-w-full"
             />
             <button
-              onClick={() => showWarning("Lưu cấu hình API (demo)")}
+              onClick={() => SonnerInfo("Lưu cấu hình API (demo)")}
               className="btn btn-secondary whitespace-nowrap"
               type="button"
               disabled

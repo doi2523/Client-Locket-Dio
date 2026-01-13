@@ -6,9 +6,9 @@ import BottomMenu from "../BottomHomeScreen/Layout/BottomMenu";
 import HistoryArrow from "./Layout/HistoryButton";
 import ActionControls from "./ActionControls";
 import MediaPreview from "./Layout/MediaPreview";
-import SelectFriendsList from "./Layout/SelectFriends";
 
 const BottomHomeScreen = lazy(() => import("../BottomHomeScreen"));
+const SelectFriendsList = lazy(() => import("./Layout/SelectFriends"));
 
 export default function MainHomeScreen() {
   const { navigation, camera, useloading, post } = useApp();
@@ -88,7 +88,9 @@ export default function MainHomeScreen() {
               }
             `}
             >
-              <SelectFriendsList />
+              <Suspense fallback={null}>
+                <SelectFriendsList />
+              </Suspense>
             </div>
 
             {/* HistoryArrow */}

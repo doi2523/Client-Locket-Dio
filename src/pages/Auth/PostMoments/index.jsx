@@ -1,8 +1,4 @@
-import React, {
-  useRef,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import {
   FolderOpen,
   RotateCcw,
@@ -11,7 +7,6 @@ import {
   Pencil,
   FileImage,
 } from "lucide-react";
-import { showError, showToast } from "@/components/Toast/index.jsx";
 import * as utils from "@/utils";
 import * as services from "@/services";
 import LoadingRing from "@/components/ui/Loading/ring.jsx";
@@ -24,9 +19,11 @@ import { getMaxUploads } from "@/hooks/useFeature.js";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge.jsx";
 import StorageUsageBar from "./StorageUsageBar.jsx";
 import {
+  SonnerError,
   SonnerInfo,
   SonnerSuccess,
-} from "@/components/ui/SonnerToast/index.jsx";
+  SonnerWarning,
+} from "@/components/ui/SonnerToast";
 import { useAuthStore } from "@/stores/useAuthStore.js";
 import { useUploadQueueStore } from "@/stores";
 
@@ -51,7 +48,7 @@ const PostMoments = () => {
     setImageToCrop,
   } = post;
   const { maxImageSizeMB, maxVideoSizeMB, storage_limit_mb } = getMaxUploads();
-  const savePostedMoment = useUploadQueueStore((s) => s.savePostedMoment)
+  const savePostedMoment = useUploadQueueStore((s) => s.savePostedMoment);
   const fileInputRef = useRef(null);
 
   // Đồng bộ caption và màu từ postOverlay → state
@@ -71,7 +68,7 @@ const PostMoments = () => {
       : null;
 
     if (!fileType) {
-      showToast("error", "Chỉ hỗ trợ ảnh và video.");
+      SonnerInfo("Chỉ hỗ trợ ảnh và video.");
       return;
     }
     const fileSizeInMB = rawFile.size / (1024 * 1024);
@@ -86,20 +83,16 @@ const PostMoments = () => {
     setSelectedFile(rawFile);
   }, []);
 
-  // const handleSubmit = async () => {
-  //   showError("Server quá tải...")
-  // };
-
   const handleSubmit = async () => {
     if (!selectedFile) {
-      showToast("error", "Không có dữ liệu để tải lên.");
+      SonnerInfo("Vui lòng chọn file để tải lên.");
       return;
     }
     if (
       storage_limit_mb !== -1 &&
       uploadStats?.total_storage_used_mb > storage_limit_mb
     ) {
-      showError("Dung lượng sử dụng vượt quá giới hạn của gói hiện tại!");
+      SonnerWarning("Dung lượng sử dụng vượt quá giới hạn của gói hiện tại!");
       return;
     }
 
@@ -137,7 +130,7 @@ const PostMoments = () => {
     } catch (error) {
       const errorMessage =
         error?.response?.data?.message || error.message || "Lỗi không xác định";
-      showToast("error", `Lỗi khi tải lên: ${errorMessage}`);
+      SonnerError("Lỗi khi tải lên", errorMessage);
       console.error("Lỗi khi gửi bài:", error);
     } finally {
       setSendLoading(false);

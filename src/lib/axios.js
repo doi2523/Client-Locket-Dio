@@ -1,8 +1,8 @@
 import axios from "axios";
 import { API_URL, clearLocalData, removeToken, removeUser } from "../utils";
-import { showInfo } from "../components/Toast";
 import { CONFIG } from "@/config";
 import { parseJwt } from "@/utils/auth";
+import { SonnerInfo } from "@/components/ui/SonnerToast";
 
 // ==== Kiểm tra token sắp hết hạn (dưới 5 phút) ====
 let cachedExp = null;
@@ -57,9 +57,9 @@ async function refreshIdToken() {
     if (status === 401) {
       handleLogout();
     } else if (status === 429) {
-      showInfo("Bạn đang thao tác quá nhanh. Vui lòng thử lại sau.");
+      SonnerInfo("Bạn đang thao tác quá nhanh. Vui lòng thử lại sau.");
     } else {
-      showInfo("Lỗi máy chủ. Vui lòng thử lại sau.");
+      SonnerInfo("Lỗi máy chủ. Vui lòng thử lại sau.");
     }
 
     console.error("Không thể refresh idToken:", err);
@@ -175,42 +175,42 @@ api.interceptors.response.use(
         }
       } else {
         handleLogout();
-        showInfo("Phiên đăng nhập đã hết. Vui lòng đăng nhập lại.");
+        SonnerInfo("Phiên đăng nhập đã hết. Vui lòng đăng nhập lại.");
         return Promise.reject(error);
       }
     }
 
     if (status === 403) {
-      showInfo(message || "Bạn không có quyền truy cập!");
+      SonnerInfo(message || "Bạn không có quyền truy cập!");
     }
 
     if (status === 404) {
-      showInfo(message || "Không tìm thấy nội dung yêu cầu.");
+      SonnerInfo(message || "Không tìm thấy nội dung yêu cầu.");
     }
     if (status === 429) {
-      showInfo(
+      SonnerInfo(
         message || "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau."
       );
     }
 
     if (status === 500) {
-      showInfo(message || "Lỗi máy chủ. Vui lòng thử lại sau.");
+      SonnerInfo(message || "Lỗi máy chủ. Vui lòng thử lại sau.");
     }
 
     if (status === 502) {
-      showInfo(
+      SonnerInfo(
         message || "Máy chủ phản hồi không hợp lệ. Vui lòng thử lại sau."
       );
     }
 
     if (status === 503) {
-      showInfo(
+      SonnerInfo(
         message || "Dịch vụ hiện không khả dụng. Vui lòng quay lại sau."
       );
     }
 
     if (status === 504) {
-      showInfo(
+      SonnerInfo(
         message || "Hết thời gian phản hồi từ máy chủ. Vui lòng thử lại sau."
       );
     }

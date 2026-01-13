@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useApp } from "@/context/AppContext";
-import { showToast } from "@/components/Toast";
 import { ImageUp } from "lucide-react";
+import { SonnerInfo } from "@/components/ui/SonnerToast";
 
 const UploadFile = () => {
   const { post, useloading, camera } = useApp();
@@ -32,7 +32,7 @@ const UploadFile = () => {
       : null;
 
     if (!fileType) {
-      showToast("error", "Chỉ hỗ trợ ảnh và video.");
+      SonnerInfo("Chỉ hỗ trợ ảnh và video.");
       return;
     }
 
@@ -56,7 +56,7 @@ const UploadFile = () => {
         className="hidden"
         id="file-upload"
       />
-      <label htmlFor="file-upload" className="cursor-pointer">
+      <label htmlFor="file-upload" className="cursor-pointer active:scale-95">
         <ImageUp size={35} />
       </label>
     </>

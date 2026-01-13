@@ -1,7 +1,7 @@
-import { showError } from "@/components/Toast";
 import { getToken } from "@/utils";
 import { uploadFileAndGetInfoR2 } from "./StorageServices";
 import { useStreakStore } from "@/stores";
+import { SonnerWarning } from "@/components/ui/SonnerToast";
 
 // Hàm con xác định recipients
 const determineRecipients = (audience, selectedRecipients, localId) => {
@@ -23,7 +23,7 @@ export const createRequestPayloadV5 = async (
     const isStreakToday = useStreakStore.getState().isStreakUpdatedToday();
 
     if (!localId) {
-      showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+      SonnerWarning("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
       return null;
     }
     // Upload file & chuẩn bị thông tin media
@@ -86,7 +86,7 @@ export const createRequestPayloadV4 = async (
     const { localId } = getToken() || {};
 
     if (!localId) {
-      showError("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+      SonnerWarning("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
       return null;
     }
     // Upload file & chuẩn bị thông tin media

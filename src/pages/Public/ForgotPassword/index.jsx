@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { showToast } from "@/components/Toast";
 import * as DioService from "@/services/LocketDioServices";
 import LoadingRing from "@/components/ui/Loading/ring";
 import { Link } from "react-router-dom";
-import { SonnerError, SonnerSuccess, SonnerWarning } from "@/components/ui/SonnerToast";
+import { SonnerError, SonnerInfo, SonnerSuccess, SonnerWarning } from "@/components/ui/SonnerToast";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -24,7 +23,7 @@ const ForgotPassword = () => {
     e.preventDefault();
 
     if (cooldown > 0) {
-      showToast("info", `Vui lòng chờ ${cooldown}s trước khi gửi lại.`);
+      SonnerInfo(`Vui lòng chờ ${cooldown}s trước khi gửi lại.`);
       return;
     }
 

@@ -1,9 +1,9 @@
+import "./styles.css";
 import { lazy, Suspense, useState } from "react";
 import { Download, UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
-import "./styles.css";
-import { CONFIG } from "@/config";
-import StatsSection from "./StatsSection";
+import { COMMUNITY_CONFIG } from "@/config";
+const StatsSection = lazy(() => import("./StatsSection"));
 const NotificationPrompt = lazy(() =>
   import("@/components/ui/NotificationPrompt")
 );
@@ -63,18 +63,6 @@ const Home = () => {
                 </Link>
                 .
               </span>
-              {/* <span className="block">
-                • Danh sách cá nhân được uỷ quyền{" "}
-                <a
-                  href={CONFIG.app.docs.personal_authorization}
-                  rel="noopener noreferrer"
-                  target="__blank"
-                  className="underline"
-                >
-                  Tìm hiểu thêm
-                </a>
-                .
-              </span> */}
             </p>
 
             <div className="flex flex-wrap gap-3 mt-2 animate-fade-in delay-400">
@@ -85,9 +73,9 @@ const Home = () => {
                   rounded-full
                   font-semibold
                   text-base-content
-                  bg-base-100/70
+                  bg-base-100/20
                   border border-base-content/10
-                  backdrop-blur-md
+                  backdrop-blur-[2px]
                   shadow-sm
                   transition-all duration-300
                   hover:-translate-y-0.5
@@ -147,9 +135,10 @@ const Home = () => {
       <Suspense fallback={null}>
         <StepsSection />{" "}
       </Suspense>
-
       {/* Stats Section */}
-      <StatsSection />
+      <Suspense fallback={null}>
+        <StatsSection />
+      </Suspense>
 
       {/* CTA Section */}
       <section className="py-6 px-4">
@@ -164,15 +153,15 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to={"/download"}
-              className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+              className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-3xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
             >
               <Download className="w-5 h-5" />
               Cài đặt miễn phí
             </Link>
             <a
-              href="https://discord.gg/47buy9nMGc"
+              href={COMMUNITY_CONFIG.discord}
               target="_blank"
-              className="px-8 py-4 bg-base-200 text-base-content font-bold rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-sm"
+              className="px-8 py-4 bg-base-100/20 backdrop-blur-[2px] border-base-content/10 border text-base-content font-bold rounded-3xl transition-all duration-300 flex items-center justify-center gap-2"
             >
               <UserPlus className="w-5 h-5" />
               Tham gia Discord

@@ -11,7 +11,6 @@ import {
 import { publicRoutes, authRoutes, locketRoutes } from "./routes";
 import { ThemeProvider } from "./context/ThemeContext";
 import { AppProvider } from "./context/AppContext";
-import ToastProvider from "./components/Toast";
 import getLayout from "./layouts";
 import NotFoundPage from "./components/pages/NotFoundPage";
 import { Toaster } from "sonner";
@@ -21,10 +20,10 @@ import {
   useFriendStoreV2,
   useStreakStore,
   useUploadQueueStore,
+  useOverlayStore,
 } from "./stores";
 import { showDevWarning } from "./utils/logging/devConsole";
 import LoadingPageMain from "./components/pages/LoadPageMain";
-import { useOverlayStore } from "./stores/useOverlayStore";
 
 function App() {
   return (
@@ -34,7 +33,6 @@ function App() {
           <Router>
             <AppContent />
           </Router>
-          <ToastProvider />
           <Toaster />
         </AppProvider>
       </SocketProvider>
@@ -102,45 +100,49 @@ function AppContent() {
 
   return (
     <>
-    <Suspense fallback={<LoadingPageMain isLoading={true} />}>
-      <Routes>
-        {(isAuth ? privateRoutes : publicRoutes).map(
-          ({ path, component: Component }) => {
-            const Layout = getLayout(path);
-            return (
+      <Suspense fallback={<LoadingPageMain isLoading={true} />}>
+        <Routes>
+          {(isAuth ? privateRoutes : publicRoutes).map(
+            ({ path, component: Component }) => {
+              const Layout = getLayout(path);
+              return (
+                <Route
+                  key={path}
+                  path={path}
+                  element={
+                    <Layout>
+                      <Component />
+                    </Layout>
+                  }
+                />
+              );
+            }
+          )}
+
+          {/* Điều hướng khi chưa đăng nhập cố vào route cần auth */}
+          {!isAuth &&
+            privateRoutes.map(({ path }) => (
               <Route
                 key={path}
                 path={path}
-                element={
-                  <Layout>
-                    <Component />
-                  </Layout>
-                }
+                element={<Navigate to="/login" />}
               />
-            );
-          }
-        )}
+            ))}
 
-        {/* Điều hướng khi chưa đăng nhập cố vào route cần auth */}
-        {!isAuth &&
-          privateRoutes.map(({ path }) => (
-            <Route key={path} path={path} element={<Navigate to="/login" />} />
-          ))}
+          {/* Điều hướng ngược lại khi đã đăng nhập mà cố vào public route */}
+          {isAuth &&
+            publicRoutes.map(({ path }) => (
+              <Route
+                key={path}
+                path={path}
+                element={<Navigate to="/locket-beta" />}
+              />
+            ))}
 
-        {/* Điều hướng ngược lại khi đã đăng nhập mà cố vào public route */}
-        {isAuth &&
-          publicRoutes.map(({ path }) => (
-            <Route
-              key={path}
-              path={path}
-              element={<Navigate to="/locket-beta" />}
-            />
-          ))}
-
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </Suspense>
-    <LoadingPageMain isLoading={loading} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
+      <LoadingPageMain isLoading={loading} />
     </>
   );
 }

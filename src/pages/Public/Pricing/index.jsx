@@ -4,14 +4,13 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { showInfo } from "@/components/Toast";
 import { GetListInfoPlans } from "@/services";
 import { UserPlanCard } from "./UserPlanCard";
 import PlanListSection from "./PlanListSection";
 import MemberPlanIntro from "./MemberPlanIntro";
 import PlanEmptyNotice from "./PlanEmptyNotice";
 import { useAuthStore } from "@/stores";
-import { SonnerSuccess } from "@/components/ui/SonnerToast";
+import { SonnerInfo, SonnerSuccess } from "@/components/ui/SonnerToast";
 
 export default function PricingPage() {
   const { loading, user, userPlan, uploadStats, init } = useAuthStore();
@@ -29,7 +28,7 @@ export default function PricingPage() {
       SonnerSuccess("Làm mới thông tin thành công!");
     } catch (err) {
       console.error("❌ Lỗi khi cập nhật gói hoặc thống kê:", err);
-      showInfo("⚠️ Đã xảy ra lỗi khi cập nhật thông tin người dùng.");
+      SonnerInfo("⚠️ Đã xảy ra lỗi khi cập nhật thông tin người dùng.");
     }
   }, [user, lastRefreshTime]);
 

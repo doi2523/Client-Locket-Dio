@@ -115,8 +115,8 @@ const Login = () => {
         SonnerError("Lỗi kết nối! Vui lòng kiểm tra mạng.");
       }
 
-      setIdentifier("");
-      setPassword("");
+      // setIdentifier("");
+      // setPassword("");
     } finally {
       setIsLoginLoading(false);
     }
