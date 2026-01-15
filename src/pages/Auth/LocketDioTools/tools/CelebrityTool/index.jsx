@@ -109,7 +109,10 @@ export default function CelebrateTool() {
       const res = await SendRequestToCelebrity(uid);
 
       if (res?.success) {
-        SonnerSuccess("Đã gửi yêu cầu thành công!");
+        SonnerSuccess(
+          "Đã gửi yêu cầu thành công!",
+          "Làm mới để xem sự thay đổi"
+        );
       } else {
         SonnerWarning("UID không hợp lệ hoặc đã tồn tại!");
       }

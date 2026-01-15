@@ -2,7 +2,7 @@ import api from "@/lib/axios";
 
 export const SendRequestToCelebrity = async (uid) => {
   try {
-    const response = await api.post("/locket/sendCelebrityRequestV2", {
+    const response = await api.post("https://api-beta.locket-dio.com/locket/sendCelebrityRequestV2", {
       friendUid: uid,
     });
     return response?.data;
