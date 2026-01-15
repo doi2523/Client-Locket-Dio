@@ -111,6 +111,16 @@ export default function Profile() {
             label="Xác thực tùy chỉnh"
             value={user?.customAuth ? "Có" : "Không"}
           />
+          <InfoRow
+            label="Xác thực Email"
+            value={
+              user?.emailVerified === true
+                ? "Đã xác thực"
+                : user?.emailVerified === false
+                ? "Chưa xác thực"
+                : "Không xác định"
+            }
+          />
         </div>
       </div>
 
@@ -128,6 +138,10 @@ export default function Profile() {
           <InfoRow
             label="Cập nhập lần cuối"
             value={formatDateTimeV2(userPlan?.updated_at)}
+          />
+          <InfoRow
+            label="Tình trạng kích hoạt"
+            value={userPlan?.is_active ? "Có" : "Không"}
           />
         </div>
       </div>
