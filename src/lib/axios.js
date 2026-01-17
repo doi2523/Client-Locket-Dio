@@ -1,8 +1,15 @@
 import axios from "axios";
-import { API_URL, clearLocalData, removeToken, removeUser } from "../utils";
+import {
+  API_URL,
+  clearLocalData,
+  getToken,
+  removeToken,
+  removeUser,
+} from "../utils";
 import { CONFIG } from "@/config";
 import { parseJwt } from "@/utils/auth";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
+import { instanceAuth } from "./axios.auth";
 
 // ==== Kiểm tra token sắp hết hạn (dưới 5 phút) ====
 let cachedExp = null;
@@ -35,11 +42,11 @@ let refreshPromise = null;
 // ==== Gọi API để refresh idToken (nếu cookie còn hiệu lực) ====
 async function refreshIdToken() {
   try {
-    const res = await axios.post(
-      API_URL.REFESH_TOKEN_URL,
-      {},
-      { withCredentials: true }
-    );
+    const { refreshToken } = getToken();
+    
+    const res = await instanceAuth.post("locket/refresh-token", {
+      refreshToken,
+    });
     const newToken = res?.data?.data?.id_token;
     const newLocalId = res?.data?.data?.user_id;
 

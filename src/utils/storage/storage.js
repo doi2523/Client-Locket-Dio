@@ -45,7 +45,7 @@ const storage = {
 
 // Lưu rememberMe vào localStorage để tái sử dụng
 export function saveToken(
-  { idToken, localId },
+  { idToken, localId, refreshToken },
   rememberMe
 ) {
   const finalRememberMe = rememberMe ?? (storage.get("rememberMe") === "true");
@@ -56,15 +56,15 @@ export function saveToken(
   }
 
   storage.set("idToken", idToken, finalRememberMe);
-  // storage.set("refreshToken", refreshToken, finalRememberMe);
+  storage.set("refreshToken", refreshToken, finalRememberMe);
   storage.set("localId", localId, finalRememberMe);
 }
 
 export function getToken() {
   const idToken = storage.get("idToken"); // có thể null nếu hết hạn
-  // const refreshToken = storage.get("refreshToken");
+  const refreshToken = storage.get("refreshToken");
   const localId = storage.get("localId");
-  return { idToken, localId }; // ⚠️ idToken có thể null (hợp lệ)
+  return { idToken, localId, refreshToken }; // ⚠️ idToken có thể null (hợp lệ)
 }
 
 export function removeToken() {

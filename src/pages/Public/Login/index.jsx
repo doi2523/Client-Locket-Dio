@@ -77,9 +77,9 @@ const Login = () => {
 
       if (!res?.data) throw new Error("Server không trả về dữ liệu");
 
-      const { idToken, localId } = res.data;
+      const { idToken, localId, refreshToken } = res.data;
 
-      utils.saveToken({ idToken, localId }, rememberMe);
+      utils.saveToken({ idToken, localId, refreshToken }, rememberMe);
       await ensureDBOwner(localId);
 
       SonnerSuccess(
@@ -139,8 +139,8 @@ const Login = () => {
 
   return (
     <>
-      <div className="flex items-center justify-center h-[84vh] bg-base-200 px-6">
-        <div className="relative w-full max-w-md p-6 shadow-lg overflow-hidden rounded-xl bg-opacity-50 backdrop-blur-3xl bg-base-100 border-base-300 text-base-content">
+      <div className="flex items-center justify-center h-[84vh] px-6">
+        <div className="relative w-full max-w-md p-6 shadow-lg overflow-hidden rounded-3xl backdrop-blur-3xl bg-base-100 border-base-300 text-base-content">
           <RotatingCircleText />
           <h1 className="text-3xl font-bold text-center mb-6">
             Đăng Nhập Locket
@@ -148,10 +148,10 @@ const Login = () => {
 
           <div className="space-y-4">
             {/* Input Email hoặc SĐT */}
-            <div>
-              <legend className="fieldset-legend">
+            <div className="space-y-1">
+              <label className="label">
                 {loginMethod === "email" ? "Email" : "Số điện thoại"}
-              </legend>
+              </label>
               <div className="relative">
                 {loginMethod === "email" ? (
                   <Mail className="absolute z-10 left-3 top-1/2 -translate-y-1/2 w-5 h-5 opacity-80" />
@@ -170,11 +170,30 @@ const Login = () => {
                   className="w-full pl-10 pr-4 py-5 rounded-lg input input-ghost border border-base-content transition text-base font-semibold placeholder:font-normal placeholder:italic placeholder:opacity-70"
                 />
               </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={toggleLoginMethod}
+                  className="text-xs text-base-content opacity-80 hover:opacity-100 underline inline-flex items-center gap-1"
+                >
+                  {loginMethod === "email" ? (
+                    <>
+                      <Phone className="w-4 h-4" />
+                      Đăng nhập bằng số điện thoại?
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="w-4 h-4" />
+                      Đăng nhập bằng email?
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Input Mật khẩu */}
-            <div>
-              <legend className="fieldset-legend">Mật khẩu</legend>
+            <div className="space-y-1">
+              <label className="label">Mật khẩu</label>
               <div className="relative">
                 <Lock className="absolute z-10 left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-base-content opacity-80" />
                 <input
@@ -228,6 +247,14 @@ const Login = () => {
                   )}
                 </button>
               </div>
+              <div className="flex justify-end">
+                <Link
+                  to="/forgot-password"
+                  className="text-xs tracking-wide opacity-80 hover:opacity-100 underline"
+                >
+                  Quên mật khẩu?
+                </Link>
+              </div>
             </div>
 
             {/* Remember me & Forgot password */}
@@ -236,6 +263,7 @@ const Login = () => {
                 <input
                   id="rememberMe"
                   type="checkbox"
+                  disabled
                   className="checkbox checkbox-primary checkbox-sm"
                   checked={rememberMe}
                   onChange={() => setRememberMe(!rememberMe)}
@@ -247,13 +275,6 @@ const Login = () => {
                   Ghi nhớ đăng nhập
                 </label>
               </div>
-
-              <Link
-                to={"/forgot-password"}
-                className="text-sm text-primary hover:underline"
-              >
-                Quên mật khẩu?
-              </Link>
             </div>
 
             {/* Button đăng nhập */}
@@ -278,27 +299,6 @@ const Login = () => {
                 "Đăng Nhập"
               )}
             </button>
-
-            {/* Link chuyển đổi phương thức đăng nhập */}
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={toggleLoginMethod}
-                className="text-sm text-base-content opacity-70 hover:opacity-100 hover:underline transition-opacity inline-flex items-center gap-1"
-              >
-                {loginMethod === "email" ? (
-                  <>
-                    <Phone className="w-4 h-4" />
-                    Đăng nhập bằng số điện thoại?
-                  </>
-                ) : (
-                  <>
-                    <Mail className="w-4 h-4" />
-                    Đăng nhập bằng email?
-                  </>
-                )}
-              </button>
-            </div>
 
             <TurnstileCaptcha onVerify={setCaptchaToken} />
 
