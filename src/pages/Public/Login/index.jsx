@@ -10,8 +10,9 @@ import RotatingCircleText from "./RotatingCircleText";
 import { ensureDBOwner } from "@/cache/configDB";
 import { useAuthStore } from "@/stores";
 import TurnstileCaptcha from "./TurnstileCaptcha";
-import { Lock, Mail, Phone } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import { loginWithEmail, loginWithPhone } from "@/services";
+import { PhoneInput } from "./PhoneInput";
 
 const Login = () => {
   const { hydrate, init } = useAuthStore();
@@ -52,13 +53,12 @@ const Login = () => {
         return;
       }
     } else {
-      const phoneRegex = /^(0|\+84)[0-9]{9}$/;
+      const phoneRegex = /^\+[1-9]\d{6,14}$/;
       if (!phoneRegex.test(identifier)) {
         SonnerError("Số điện thoại không hợp lệ!");
         return;
       }
     }
-
     setIsLoginLoading(true);
 
     try {
@@ -146,29 +146,26 @@ const Login = () => {
             Đăng Nhập Locket
           </h1>
 
-          <div className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
             {/* Input Email hoặc SĐT */}
             <div className="space-y-1">
-              <label className="label">
+              <label className="label flex gap-1 items-center">
                 {loginMethod === "email" ? "Email" : "Số điện thoại"}
+                <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 {loginMethod === "email" ? (
-                  <Mail className="absolute z-10 left-3 top-1/2 -translate-y-1/2 w-5 h-5 opacity-80" />
+                  <input
+                    type={"email"}
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    placeholder={"example@email.com"}
+                    required
+                    className="w-full py-5 rounded-lg input input-ghost border border-base-content transition text-base font-semibold placeholder:font-normal placeholder:italic placeholder:opacity-70"
+                  />
                 ) : (
-                  <Phone className="absolute z-10 left-3 top-1/2 -translate-y-1/2 w-5 h-5 opacity-80" />
+                  <PhoneInput phone={identifier} onChange={setIdentifier} />
                 )}
-
-                <input
-                  type={loginMethod === "email" ? "email" : "tel"}
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder={
-                    loginMethod === "email" ? "example@email.com" : "0912345678"
-                  }
-                  required
-                  className="w-full pl-10 pr-4 py-5 rounded-lg input input-ghost border border-base-content transition text-base font-semibold placeholder:font-normal placeholder:italic placeholder:opacity-70"
-                />
               </div>
               <div className="flex justify-end">
                 <button
@@ -193,12 +190,14 @@ const Login = () => {
 
             {/* Input Mật khẩu */}
             <div className="space-y-1">
-              <label className="label">Mật khẩu</label>
+              <label className="label flex gap-1 items-center">
+                Mật khẩu
+                <span className="text-red-500">*</span>
+              </label>
               <div className="relative">
-                <Lock className="absolute z-10 left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-base-content opacity-80" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="w-full p-5 pl-10 pr-12 rounded-lg input input-ghost border-base-content font-semibold text-base placeholder:font-normal placeholder:italic placeholder:opacity-70"
+                  className="w-full pr-5 rounded-lg input input-ghost border-base-content font-semibold text-base placeholder:font-normal placeholder:italic placeholder:opacity-70"
                   placeholder="Nhập mật khẩu"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -279,9 +278,9 @@ const Login = () => {
 
             {/* Button đăng nhập */}
             <button
-              onClick={handleLogin}
+              type="submit"
               className={`
-                w-full btn btn-primary py-2 text-lg font-semibold rounded-lg transition flex items-center justify-center gap-2
+                w-full btn btn-primary py-3 text-lg font-semibold rounded-lg transition flex items-center justify-center gap-2
                 ${
                   isActiveLogin
                     ? "bg-blue-400 cursor-not-allowed opacity-80"
@@ -304,7 +303,7 @@ const Login = () => {
 
             <span className="text-xs">Vui lòng chờ Server02 khởi động.</span>
             <StatusServer />
-          </div>
+          </form>
         </div>
       </div>
     </>
