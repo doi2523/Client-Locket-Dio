@@ -44,30 +44,27 @@ export const ActivityModal = ({
       className={`fixed inset-0 z-60 flex items-end bg-base-100/30 backdrop-blur-[4px] duration-500 transition-all ${
         animate ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
-      onClick={onClose}
     >
       <div
-        className={`relative w-full h-2/3 bg-base-100 rounded-t-3xl shadow-lg p-4 transform transition-transform duration-500 border-t border-base-300 ${
+        className={`relative w-full h-2/3 bg-base-100 rounded-t-3xl shadow-lg p-4 transform transition-transform duration-500 border-t border-base-300 text-base-content ${
           animate ? "translate-y-0" : "translate-y-full"
         } flex flex-col`}
       >
         {/* Header - fixed */}
-        <div className="sticky top-0 z-10 border-b border-gray-200 pb-3 dark:border-gray-700">
+        <div className="sticky top-0 z-10 border-b border-base-300">
           <div className="relative flex items-center">
-            <h2 className="text-lg font-bold text-center flex-1 text-base-content">
-              Hoạt động
-            </h2>
+            <h2 className="text-lg font-bold text-center flex-1">Hoạt động</h2>
             <button
               onClick={onClose}
-              className="absolute right-0 p-2 rounded-full text-base-content"
+              className="absolute right-0 p-2 rounded-full"
             >
-              <X className="w-6 h-6 text-base-content" />
+              <X className="w-6 h-6" />
             </button>
           </div>
 
           {/* Tổng kết */}
           {!isLoading && activity.length > 0 && (
-            <div className="mt-3 text-sm text-base-content space-y-1">
+            <div className="mt-3 text-sm space-y-1">
               <p>
                 - 👁️ Tổng người xem:{" "}
                 <span className="font-semibold">
@@ -85,7 +82,7 @@ export const ActivityModal = ({
         </div>
 
         {/* Nội dung cuộn */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto mt-1">
           {isLoading ? (
             <ul className="space-y-2">
               {[1, 2, 3, 4, 5].map((i) => (
@@ -105,7 +102,7 @@ export const ActivityModal = ({
                     className="w-12 h-12 rounded-full border-[2.5px] p-0.5 border-amber-400"
                   />
                   <div className="flex flex-col flex-1">
-                    <span className="text-base text-base-content font-semibold">
+                    <span className="text-base font-semibold">
                       {item.user?.firstName} {item.user?.lastName}
                     </span>
                     {item.reaction ? (
