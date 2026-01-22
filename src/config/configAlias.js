@@ -35,6 +35,14 @@ export const CONTACT_CONFIG = {
   supportEmail: CONFIG.app.contact.supportEmail,
 };
 
+export const MYBANK_CONFIG = {
+  bankCode: CONFIG.app.bankInfo.bankCode,
+  urlImg: CONFIG.app.bankInfo.urlImg,
+  bankName: CONFIG.app.bankInfo.bankName,
+  accountNumber: CONFIG.app.bankInfo.accountNumber,
+  accountName: CONFIG.app.bankInfo.accountName,
+};
+
 export const SPONSORS_CONFIG = {
   accountName: CONFIG.app.sponsors.accountName,
   accountNumber: CONFIG.app.sponsors.accountNumber,

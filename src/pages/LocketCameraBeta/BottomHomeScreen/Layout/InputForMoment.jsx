@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useContext } from "react";
 import { ArrowUp, SmilePlus } from "lucide-react";
 import clsx from "clsx";
 import { useApp } from "@/context/AppContext";
-import { GetInfoMoment, SendMessageMoment, SendReactMoment } from "@/services";
+import { GetInfoMoment, GetViewsMoment, SendMessageMoment, SendReactMoment } from "@/services";
 import { getMomentById } from "@/cache/momentDB";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 import { getFriendDetail } from "@/cache/friendsDB";
@@ -156,16 +156,17 @@ const InputForMoment = () => {
         try {
           setIsLoadingActivity(true);
           const info = await GetInfoMoment(selectedMomentId);
-          const { views = [], reactions = [] } = info;
+          const views = await GetViewsMoment(selectedMomentId)
+          const { reactions = [] } = info;
           // Map qua từng view, gắn thêm userInfo + reaction (nếu có)
           const merged = await Promise.all(
-            views.map(async (view) => {
+            views?.moment_views.map(async (view) => {
               const userInfo = await getFriendDetail(view.user);
               const reaction = reactions.find((r) => r.user === view.user);
 
               return {
                 user: userInfo,
-                viewedAt: view.viewedAt,
+                viewedAt: view.viewed_at,
                 reaction: reaction
                   ? {
                       emoji: reaction.emoji,

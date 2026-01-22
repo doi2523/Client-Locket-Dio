@@ -78,6 +78,7 @@ export const CONFIG = {
       accountName: "DAO VAN DOI",
     },
     bankInfo: {
+      bankCode: "MB",
       urlImg: "https://cdn.locket-dio.com/v1/images/qr/dio-mbbank-qr.jpg",
       bankName: "Ngân hàng MBBank (MB)",
       accountNumber: "66222222222266",

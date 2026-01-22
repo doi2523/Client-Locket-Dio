@@ -52,6 +52,21 @@ export const GetInfoMoment = async (idMoment) => {
   }
 };
 
+export const GetViewsMoment = async (idMoment) => {
+  try {
+    const body = {
+      data: {
+        moment_uid: idMoment
+      }
+    }
+    const res = await instanceLocketV2.post("getMomentViews", body);
+    const moments = res.data.result?.data;
+    return moments;
+  } catch (err) {
+    console.warn("❌ React Failed", err);
+  }
+};
+
 export const GetLastestMoment = async () => {
   try {
     const body = {

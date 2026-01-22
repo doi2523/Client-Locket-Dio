@@ -6,27 +6,45 @@ import { instanceMain } from "@/lib/axios.main";
 //Login
 export const loginWithEmail = async ({ email, password, captchaToken }) => {
   try {
+    const data = await ValidateEmailAddress(email);
+
+    if (data?.result?.status === 601) {
+      const err = new Error("Tài khoản với email này không tồn tại!");
+      err.status = 404;
+      throw err;
+    }
+
     const res = await instanceAuth.post("locket/loginV2", {
       email,
       password,
       captchaToken,
     });
 
-    // Kiểm tra nếu API trả về lỗi nhưng vẫn có status 200
     if (res.data?.success === false) {
-      console.error("Login failed:", res.data.message);
-      return null;
+      const err = new Error(res.data.message || "Đăng nhập thất bại");
+      err.status = res.data.status || 400;
+      throw err;
     }
 
-    return res.data; // Trả về dữ liệu từ server
+    return res.data;
   } catch (error) {
-    if (error.response && error.response.data?.error) {
-      throw error.response.data.error; // ⬅️ Ném lỗi từ `error.response.data.error`
+    // Axios error
+    if (error.response) {
+      const err = new Error(
+        error.response.data?.message ||
+          "Đăng nhập thất bại, vui lòng thử lại"
+      );
+      err.status = error.response.status;
+      throw err;
     }
-    console.error("❌ Network Error:", error.message);
-    throw new Error(
-      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút."
-    );
+
+    // Error đã được throw ở trên
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    // Fallback
+    throw new Error("Có sự cố khi kết nối đến hệ thống");
   }
 };
 
@@ -111,6 +129,30 @@ export const forgotPassword = async (email) => {
       body
     );
 
+    return res.data;
+  } catch (error) {
+    console.log(error);
+
+    if (error.response && error.response.data?.error) {
+      throw error.response.data.error; // ⬅️ Ném lỗi từ `error.response.data.error`
+    }
+    console.error("❌ Network Error:", error.message);
+    throw new Error(
+      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút."
+    );
+  }
+};
+
+export const ValidateEmailAddress = async (email) => {
+  try {
+    const body = {
+      data: {
+        email: email,
+        operation: "sign_in",
+        platform: "ios",
+      },
+    };
+    const res = await instanceLocketV2.post("validateEmailAddress", body);
     return res.data;
   } catch (error) {
     console.log(error);

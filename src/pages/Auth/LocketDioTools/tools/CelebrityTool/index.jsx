@@ -15,6 +15,7 @@ import {
 import { Copy, RefreshCcw } from "lucide-react";
 import { useFeatureVisible, useGetCode } from "@/hooks/useFeature";
 import { PiExport } from "react-icons/pi";
+import LockedFeature from "../../Layout/LockedFeature";
 
 export default function CelebrateTool() {
   const isCelebrityFeature = useFeatureVisible("celebrity_tool");
@@ -171,76 +172,13 @@ export default function CelebrateTool() {
 
   // Nếu không có quyền truy cập
   if (!isCelebrityFeature) {
-    const handleCopy = (text) => {
-      navigator.clipboard.writeText(text);
-      SonnerSuccess("Đã copy vào clipboard");
-    };
-
     return (
-      <div className="flex flex-col items-center justify-center text-center space-y-4">
-        <div className="text-6xl">🔒</div>
-        <h3 className="text-xl font-semibold">Tính năng bị khóa</h3>
-        <p className="text-sm opacity-70 max-w-md">
-          Bạn không có quyền truy cập vào <b>Celebrity Tool</b>. Để mở khóa, vui
-          lòng quét mã QR hoặc chuyển khoản theo thông tin bên dưới.
-        </p>
-        <p className="text-sm opacity-70 max-w-md">
-          {" "}
-          <span className="block">
-            • Vui lòng nhập đúng nội dung yêu cầu.
-          </span>{" "}
-          <span className="block">• Gói sẽ được kích hoạt sau 1–2 phút.</span>{" "}
-          <span className="block">• Hỗ trợ qua trang liên hệ.</span>{" "}
-        </p>
-
-        {/* QR code */}
-        <img
-          src={CONFIG.app.bankInfo.urlImg}
-          alt="QR Thanh toán"
-          className="w-40 h-40 border rounded-lg shadow-md"
-        />
-
-        {/* Thông tin chuyển khoản */}
-        <div className="bg-base-200 rounded-lg p-3 text-sm leading-relaxed w-80 space-y-2 text-left">
-          <div className="flex items-center justify-between">
-            <p>
-              <b>Ngân hàng:</b> {CONFIG.app.bankInfo.bankName}
-            </p>
-          </div>
-          <div className="flex items-center justify-between">
-            <p>
-              <b>Số tài khoản:</b> {CONFIG.app.bankInfo.accountNumber}
-            </p>
-            <button
-              onClick={() => handleCopy(CONFIG.app.bankInfo.accountNumber)}
-              className="p-1 hover:bg-base-300 rounded"
-            >
-              <Copy className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="flex items-center justify-between">
-            <p>
-              <b>Chủ tài khoản:</b> {CONFIG.app.bankInfo.accountName}
-            </p>
-          </div>
-          <div className="flex items-center justify-between">
-            <p>
-              <b>Nội dung:</b> {codeUser} CT
-            </p>
-            <button
-              onClick={() => handleCopy(`${codeUser} CT`)}
-              className="p-1 hover:bg-base-300 rounded"
-            >
-              <Copy className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="flex items-center justify-between">
-            <p>
-              <b>Số tiền:</b> 5.000 VND
-            </p>
-          </div>
-        </div>
-      </div>
+      <LockedFeature
+        toolName="Celebrity Tool"
+        price="5000"
+        note="CT"
+        codeUser={codeUser}
+      />
     );
   }
 
