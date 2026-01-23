@@ -9,7 +9,13 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+
+    "build:goldonblack": "VITE_BRAND=goldonblack vite build --outDir dist-goldonblack",
+    "build:pastel3dpink": "VITE_BRAND=pastel3dpink vite build --outDir dist-pastel3dpink",
+    "build:gembgmono": "VITE_BRAND=gembgmono vite build --outDir dist-gembgmono",
+
+    "build:all": "npm run build:goldonblack && npm run build:pastel3dpink && npm run build:gembgmono"
   },
   "dependencies": {
     "@tailwindcss/vite": "4.1.13",

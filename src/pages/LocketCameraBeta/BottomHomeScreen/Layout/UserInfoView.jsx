@@ -29,7 +29,7 @@ const UserInfo = ({ user: userId, date }) => {
           src={
             displayUser?.profilePicture ||
             displayUser?.profilePic ||
-            "./prvlocket.png"
+            "/images/default_profile.png"
           }
           alt={fullName}
           className="w-10 h-10 rounded-full object-cover"

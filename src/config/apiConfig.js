@@ -26,5 +26,6 @@ export const PUBLIC_API = {
   notifications: "v1/public/notification",
   plans: "v1/public/dio-plans",
   themes: "v1/public/themes",
-  incidents: "v1/public/getAllIncident"
+  incidents: "v1/public/getAllIncident",
+  collection: "v1/public/getAllCollections"
 };

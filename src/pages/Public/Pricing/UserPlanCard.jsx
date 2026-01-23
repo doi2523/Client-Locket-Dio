@@ -71,7 +71,7 @@ export const UserPlanCard = React.memo(
               <div className="flex items-center gap-3 lg:gap-4">
                 <div className="relative">
                   <img
-                    src={userPlan.profile_picture || "./prvlocket.png"}
+                    src={userPlan.profile_picture || "/images/default_profile.png"}
                     alt="Avatar"
                     className="w-16 h-16 lg:w-16 lg:h-16 rounded-full object-cover p-[2px] outline-accent outline-3 shadow-lg"
                   />

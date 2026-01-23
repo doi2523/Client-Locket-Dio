@@ -121,3 +121,17 @@ export const getAllOverlayCaption = async () => {
     return null;
   }
 };
+
+export const getAllCollections = async () => {
+  try {
+    const res = await instanceBaseData.get(PUBLIC_API.collection);
+    if (!res?.data) {
+      console.error("❌ Không có dữ liệu hợp lệ", res?.data);
+      return [];
+    }
+    return res.data;
+  } catch (error) {
+    console.error("🚨 Lỗi khi gọi API:", error.message);
+    return [];
+  }
+};

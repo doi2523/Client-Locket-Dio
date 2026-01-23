@@ -59,7 +59,11 @@ const manifestForPlugIn = {
   },
 };
 
+const brand = process.env.VITE_BRAND;
+const publicDir = brand ? `public-${brand}` : "public";
+
 export default defineConfig({
+  publicDir,
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   server: {
     host: true,

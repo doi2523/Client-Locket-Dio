@@ -10,6 +10,7 @@ glite-debug.log*
 
 node_modules
 dist
+dist-*
 dist-ssr
 *.local
 

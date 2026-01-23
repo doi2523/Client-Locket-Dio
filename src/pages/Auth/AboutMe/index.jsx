@@ -137,7 +137,7 @@ const AboutMe = () => {
               rel="noopener noreferrer"
               className="hover:text-black transition"
             >
-              <img src="/prvlocket.png" className="w-6 h-6 rounded-md" />
+              <img src="/apple-touch-icon.png" className="w-6 h-6 rounded-md" />
             </a>
           </div>
         </div>
