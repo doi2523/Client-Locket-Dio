@@ -1,22 +1,7 @@
-// components/FriendItem.jsx
 import React from "react";
 import { Plus } from "lucide-react";
-import { SendRequestToFriend } from "@/services";
-import { SonnerWarning } from "@/components/ui/SonnerToast";
 
-export default function FriendFind({ friend }) {
-  // 👉 Tách hàm xử lý ra ngoài
-  const handleAddFriend = async (e) => {
-    e.stopPropagation();
-    if (friend.username) {
-      console.log(friend);
-      SonnerWarning("Chưa hỗ trợ tính năng này!")
-      // await SendRequestToFriend(friend.uid);
-    } else {
-      console.warn("❌ Không có username để điều hướng");
-    }
-  };
-
+export default function NormalItemFriend({ friend, handleAddFriend }) {
   return (
     <div
       key={friend.uid}

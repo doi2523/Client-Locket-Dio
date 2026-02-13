@@ -5,6 +5,7 @@ const ThemeSelector = lazy(() => import("@/components/Theme/ThemeSelector"));
 const ThemeSelect = lazy(() => import("@/components/Theme/ThemeViewSelect"));
 const SettingsExtras = lazy(() => import("./SettingsExtras"));
 const CameraFrameSelector = lazy(() => import("./CameraFrameSelector"));
+const CameraBackground = lazy(() => import("./CameraBackground"));
 
 export default function Settings() {
   return (
@@ -28,6 +29,19 @@ export default function Settings() {
             </div>
           </Suspense>
 
+
+          <Suspense
+            fallback={
+              <div className="bg-base-300 rounded-2xl shadow-md p-4 h-[200px] flex items-center justify-center">
+                <span className="loading loading-spinner text-primary"></span>
+              </div>
+            }
+          >
+            <div className="bg-base-300 rounded-2xl shadow-md p-4 h-full flex flex-col">
+              <CameraBackground />
+            </div>
+          </Suspense>
+          
           <Suspense
             fallback={
               <div className="bg-base-300 rounded-2xl shadow-md p-4 h-[200px] flex items-center justify-center">

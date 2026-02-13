@@ -133,6 +133,92 @@ export const useMomentsStoreV2 = create((set, get) => ({
     }
   },
 
+  reloadMoments: async (selectedFriendUid = null) => {
+    const key = selectedFriendUid ?? "all";
+    get().ensureBucket(key);
+
+    // loading = true
+    set((state) => {
+      const bucket = state.momentsByUser[key] ?? defaultBucket();
+      return {
+        momentsByUser: {
+          ...state.momentsByUser,
+          [key]: {
+            ...bucket,
+            loading: true,
+            hasMore: true,
+            visibleCount: initialVisible,
+          },
+        },
+      };
+    });
+
+    try {
+      /* ---------- Local DB ---------- */
+      const localData = selectedFriendUid
+        ? await getMomentsByUser(selectedFriendUid)
+        : await getAllMoments();
+
+      if (localData?.length) {
+        set((state) => {
+          const bucket = state.momentsByUser[key] ?? defaultBucket();
+          return {
+            momentsByUser: {
+              ...state.momentsByUser,
+              [key]: {
+                ...bucket,
+                items: [...localData].sort(
+                  (a, b) => b.createTime - a.createTime
+                ),
+              },
+            },
+          };
+        });
+      }
+
+      /* ---------- API sync ---------- */
+      const apiData = await GetAllMoments({
+        timestamp: Math.floor(Date.now() / 1000),
+        friendId: selectedFriendUid,
+        limit: initialVisible,
+      });
+
+      if (apiData?.length) {
+        set((state) => {
+          const bucket = state.momentsByUser[key] ?? defaultBucket();
+          return {
+            momentsByUser: {
+              ...state.momentsByUser,
+              [key]: {
+                ...bucket,
+                items: [...apiData].sort((a, b) => b.createTime - a.createTime),
+              },
+            },
+          };
+        });
+
+        // cache lại local
+        await bulkAddMoments(apiData);
+      }
+    } catch (err) {
+      console.error("❌ fetchMoments error:", err);
+    } finally {
+      set((state) => {
+        const bucket = state.momentsByUser[key];
+        if (!bucket) return state;
+        return {
+          momentsByUser: {
+            ...state.momentsByUser,
+            [key]: {
+              ...bucket,
+              loading: false,
+            },
+          },
+        };
+      });
+    }
+  },
+
   /* --------------------------------------------------
    * 2️⃣ Load more older
    * -------------------------------------------------- */

@@ -26,6 +26,7 @@ const Contact = React.lazy(() => import("../pages/Public/Contact"));
 const PrivacyPolicy = React.lazy(() => import("../pages/Public/PrivacyPolicy"));
 const BirthdayPage = React.lazy(() => import("../pages/Public/BirthdayPage"));
 const LocketUpload = React.lazy(() => import("@/pages/Public/CollabPage/LocketUpload"));
+const LocketGold = React.lazy(() => import("@/pages/Public/CollabPage/LocketGold"));
 
 const APP_NAME = CONFIG.app.fullName;
 
@@ -51,6 +52,7 @@ export const authRoutes = [
   { path: "/tools", component: ToolsLocket, title: `Công cụ mở rộng | ${APP_NAME}` },
   { path: "/collab/caption-kanade", component: ManageCaption, title: `Web hợp tác Caption Kanade | ${APP_NAME}` },
   { path: "/collab/locket-upload", component: LocketUpload, title: `Web hợp tác Locket Upload | ${APP_NAME}` },
+  { path: "/collab/locket-gold", component: LocketGold, title: `Web hợp tác LocketGold.click | ${APP_NAME}` },
   { path: "/diary", component: DiaryPage, title: `Nhật ký Locket | ${APP_NAME}` },
 
   { path: "/settings", component: Settings, title: `Cài đặt | ${APP_NAME}` },

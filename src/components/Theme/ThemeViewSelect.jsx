@@ -1,17 +1,26 @@
+import "swiper/css";
+import "swiper/css/effect-coverflow";
 import { CONFIG } from "@/config";
+import { useEffect, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css/effect-coverflow";
 import { EffectCoverflow } from "swiper/modules";
-import "swiper/css";
 
 const ThemeSelector = () => {
   const { theme, changeTheme } = useTheme();
   const activeIndex = CONFIG.ui.themes.indexOf(theme);
 
+  const [swiper, setSwiper] = useState(null);
+
+  useEffect(() => {
+    if (swiper && activeIndex >= 0) {
+      swiper.slideTo(activeIndex);
+    }
+  }, [activeIndex, swiper]);
+
   return (
     <div className="w-full flex justify-center overflow-hidden">
-      <div className="h-full max-w-2xl">
+      <div className="h-full max-w-md">
         <h1 className="font-lovehouse text-base-content text-center text-3xl font-semibold">
           Setting Theme
         </h1>
@@ -20,6 +29,7 @@ const ThemeSelector = () => {
           direction="horizontal"
           modules={[EffectCoverflow]}
           effect={"coverflow"}
+          onSwiper={setSwiper}
           initialSlide={activeIndex}
           centeredSlides={true}
           coverflowEffect={{
@@ -29,7 +39,7 @@ const ThemeSelector = () => {
             modifier: 1,
             slideShadows: false,
           }}
-          slidesPerView={3}
+          slidesPerView={2}
           spaceBetween={20}
           className="w-full mt-4 px-3"
         >
@@ -40,10 +50,10 @@ const ThemeSelector = () => {
               <SwiperSlide key={t}>
                 <div
                   onClick={() => {
-                    if (!isActive) changeTheme(t);
+                    changeTheme(t);
                   }}
                   data-theme={t}
-                  className={`
+                  className={`relative 
                     flex flex-col justify-between items-center
                     aspect-[9/16] gap-3 space-y-3 w-full py-1
                     rounded-3xl
@@ -51,8 +61,8 @@ const ThemeSelector = () => {
                     transition-all duration-300
                     ${
                       isActive
-                        ? "outline-2 outline-primary scale-95 opacity-70 cursor-not-allowed"
-                        : "cursor-pointer hover:scale-[0.98]"
+                        ? "outline-2 outline-primary scale-95 opacity-80"
+                        : "cursor-not-allowed"
                     }
                   `}
                 >
@@ -72,8 +82,8 @@ const ThemeSelector = () => {
                   {/* ===== ACTION BAR ===== */}
                   <div className="w-full flex flex-row justify-between items-center px-6">
                     <div className="w-6 h-6 bg-base-300 rounded-full" />
-                    <div className="w-10 h-10 rounded-full border-2 border-base-content/50 flex items-center justify-center">
-                      <div className="w-8 h-8 rounded-full bg-base-content" />
+                    <div className="w-9 h-9 rounded-full ring-2 text-primary flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full camera-inner-circle" />
                     </div>
                     <div className="w-6 h-6 bg-base-300 rounded-full" />
                   </div>

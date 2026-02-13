@@ -78,10 +78,11 @@ export const CONFIG = {
       accountName: "DAO VAN DOI",
     },
     bankInfo: {
-      bankCode: "MB",
+      bankCode: "ICB",
+      short_name: "VietinBank",
       urlImg: "https://cdn.locket-dio.com/v1/images/qr/dio-mbbank-qr.jpg",
-      bankName: "Ngân hàng MBBank (MB)",
-      accountNumber: "66222222222266",
+      bankName: "Ngân hàng TMCP Công thương Việt Nam",
+      accountNumber: "999964715555",
       accountName: "DAO VAN DOI",
     },
     myInfo: {

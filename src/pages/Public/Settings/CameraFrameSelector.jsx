@@ -1,12 +1,13 @@
 import { Camera, Check } from "lucide-react";
-import { useApp } from "@/context/AppContext";
 import { useEffect, useState } from "react";
 import { getAllFrameCamera } from "@/services";
+import { useUIStore } from "@/stores/useUIStore";
 
 export default function CameraFrameSelector() {
-  const { camera } = useApp();
-  const { selectedFrame, setSelectedFrame } = camera;
   const [frames, setFrames] = useState([]);
+
+  const setCameraFrame = useUIStore((s) => s.setCameraFrame);
+  const cameraFrame = useUIStore((s) => s.cameraFrame);
 
   useEffect(() => {
     const fetchFrames = async () => {
@@ -46,11 +47,11 @@ export default function CameraFrameSelector() {
           </div>
 
           {/* Frame overlay nếu có */}
-          {selectedFrame?.imageSrc && (
+          {cameraFrame?.imageSrc && (
             <div className="absolute inset-0 pointer-events-none">
               <img
-                src={selectedFrame.imageSrc}
-                alt={selectedFrame.name}
+                src={cameraFrame.imageSrc}
+                alt={cameraFrame.name}
                 className="w-full h-full object-cover rounded-3xl"
                 onError={(e) => (e.target.style.display = "none")}
               />
@@ -62,7 +63,7 @@ export default function CameraFrameSelector() {
       {/* Tên frame hiện tại */}
       <div className="text-center mb-4">
         <span className="text-sm font-medium text-base-content/80">
-          {selectedFrame?.name || "Chưa chọn khung"}
+          {cameraFrame?.name || "Chưa chọn khung"}
         </span>
       </div>
 
@@ -71,11 +72,11 @@ export default function CameraFrameSelector() {
         {frames.map((frame) => (
           <button
             key={frame.id}
-            onClick={() => setSelectedFrame(frame)}
+            onClick={() => setCameraFrame(frame)}
             className={`
               relative group p-2 rounded-xl transition-all duration-200
               ${
-                selectedFrame?.id === frame.id
+                cameraFrame?.id === frame.id
                   ? "bg-blue-100 ring-2 ring-blue-500 scale-105"
                   : "hover:bg-gray-100 hover:scale-105"
               }
@@ -102,7 +103,7 @@ export default function CameraFrameSelector() {
             </div>
 
             {/* Selected indicator */}
-            {selectedFrame?.id === frame.id && (
+            {cameraFrame?.id === frame.id && (
               <div className="absolute -top-1 -right-1 bg-blue-500 text-white rounded-full p-1">
                 <Check className="w-3 h-3" />
               </div>

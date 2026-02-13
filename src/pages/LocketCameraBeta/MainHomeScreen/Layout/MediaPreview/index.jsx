@@ -1,12 +1,11 @@
 import React, { lazy, Suspense, useEffect, useRef } from "react";
-// import { CircleHelpIcon } from "lucide-react";
-import MediaSizeInfo from "@/components/ui/MediaSizeInfo";
 import { getAvailableCameras, isIOS } from "@/utils";
 const AutoResizeCaption = lazy(() => import("../CaptionViews"));
 import { useApp } from "@/context/AppContext";
 import { CONFIG } from "@/config";
 import BorderProgress from "../../Widgets/SquareProgress";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
+import { useUIStore } from "@/stores/useUIStore";
 
 const MediaPreview = () => {
   const { post, useloading, camera } = useApp();
@@ -21,12 +20,14 @@ const MediaPreview = () => {
     setZoomLevel,
     deviceId,
     setDeviceId,
-    selectedFrame,
   } = camera;
   const { setSendLoading } = useloading;
 
   const cameraInitialized = useRef(false);
   const lastCameraMode = useRef(cameraMode);
+
+  const cameraFrame = useUIStore((s) => s.cameraFrame);
+
   const iosDevice = isIOS();
   const stopCamera = () => {
     if (streamRef.current) {
@@ -209,10 +210,10 @@ const MediaPreview = () => {
                 {zoomLevel}
               </button>
             </div>
-            {selectedFrame?.imageSrc && (
+            {cameraFrame?.imageSrc && (
               <div className="absolute inset-0 z-20 pointer-events-none">
                 <img
-                  src={selectedFrame.imageSrc}
+                  src={cameraFrame.imageSrc}
                   loading="lazy"
                   alt="Khung viền camera"
                   className="w-full h-full object-cover"
@@ -266,10 +267,6 @@ const MediaPreview = () => {
         <div className="absolute inset-0 z-50 pointer-events-none">
           <BorderProgress />
         </div>
-      </div>
-
-      <div className="text-sm flex items-center justify-center pl-3">
-        <MediaSizeInfo />
       </div>
     </>
   );

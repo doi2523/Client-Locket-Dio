@@ -31,9 +31,7 @@ export function useLocationWeather() {
         try {
           const { latitude, longitude } = position.coords;
 
-          const res = await getInfoWeather({ lat: latitude, lon: longitude });
-
-          const data = res?.data?.data;
+          const data = await getInfoWeather({ lat: latitude, lon: longitude });
 
           if (data) {
             setLocation(data.location);

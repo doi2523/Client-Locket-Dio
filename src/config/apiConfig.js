@@ -22,6 +22,7 @@ export const PUBLIC_API = {
   donations: "v1/public/donations",
   timelines: "v1/public/timelines",
   frames: "v1/public/myframes",
+  backgroundList: "v1/public/getAllbackgrounds",
   celebrates: "v1/public/getAllCelebrate",
   notifications: "v1/public/notification",
   plans: "v1/public/dio-plans",

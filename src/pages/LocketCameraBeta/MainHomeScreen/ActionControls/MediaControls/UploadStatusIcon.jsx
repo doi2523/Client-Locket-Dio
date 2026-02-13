@@ -1,14 +1,28 @@
-import { Send, Check } from "lucide-react";
+import { Send, Check, AlertTriangle } from "lucide-react";
 import LoadingRing from "@/components/UI/Loading/ring";
 import "./styles.css";
 
-const UploadStatusIcon = ({ loading = false, success = false }) => {
+const UploadStatusIcon = ({
+  loading = false,
+  success = false,
+  overLimit = false,
+}) => {
   return (
     <div className="relative w-10 h-10 flex items-center justify-center">
+      <div
+        className={`absolute inset-0 transition-all duration-500 ease-in-out ${
+          overLimit
+            ? "opacity-100 scale-100 rotate-0"
+            : "opacity-0 scale-75 rotate-180"
+        }`}
+      >
+        <AlertTriangle size={40} className="text-red-500" />
+      </div>
+
       {/* Loading Ring */}
       <div
         className={`absolute inset-0 transition-all duration-500 ease-in-out ${
-          loading
+          loading && !overLimit
             ? "opacity-100 scale-100 rotate-0"
             : "opacity-0 scale-75 rotate-180"
         }`}
@@ -19,7 +33,7 @@ const UploadStatusIcon = ({ loading = false, success = false }) => {
       {/* Success Check Icon */}
       <div
         className={`absolute inset-0 transition-all duration-500 ease-in-out ${
-          success
+          success && !overLimit
             ? "opacity-100 scale-100 rotate-0"
             : "opacity-0 scale-75 -rotate-90"
         }`}
@@ -37,7 +51,7 @@ const UploadStatusIcon = ({ loading = false, success = false }) => {
       {/* Default Send Icon */}
       <div
         className={`absolute inset-0 transition-all duration-500 ease-in-out ${
-          !loading && !success
+          !loading && !success && !overLimit
             ? "opacity-100 scale-100 rotate-0"
             : "opacity-0 scale-75 rotate-45"
         }`}

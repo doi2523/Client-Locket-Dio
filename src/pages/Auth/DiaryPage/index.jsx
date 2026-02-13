@@ -8,7 +8,7 @@ const NEW_DAYS = 7 * 24 * 60 * 60 * 1000;
 
 export default function DiaryPage() {
   const { user } = useAuthStore();
-  const { friendDetailsMap, friendshipMap } = useFriendStoreV2();
+  const { friendDetailsMap, friendRelationsMap } = useFriendStoreV2();
 
   const [removedUsers, setRemovedUsers] = useState([]);
   const [newFriends, setNewFriends] = useState([]);
@@ -19,13 +19,13 @@ export default function DiaryPage() {
   useEffect(() => {
     const now = Date.now();
 
-    const list = Object.entries(friendshipMap)
+    const list = Object.entries(friendRelationsMap)
       .filter(([_, meta]) => now - meta.createdAt <= NEW_DAYS)
       .map(([uid]) => friendDetailsMap[uid])
       .filter(Boolean);
 
     setNewFriends(list);
-  }, [friendshipMap, friendDetailsMap]);
+  }, [friendRelationsMap, friendDetailsMap]);
 
   // -------------------------
   // ❌ REMOVED FRIENDS

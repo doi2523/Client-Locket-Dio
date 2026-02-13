@@ -13,19 +13,27 @@ import { diffFriendIds } from "./friend.diff";
 export const syncFriendsWithServer = async () => {
   let localDetails = await getAllFriendDetails();
 
+  // [{ uid, hidden, sharedHistoryOn, isCelebrity, createdAt, updatedAt }]
   const apiFriends = await getListIdFriends();
+
   if (!apiFriends || apiFriends.length === 0) {
     return {
       details: localDetails,
-      friendshipMap: {},
+      friendRelationsMap: {},
     };
   }
 
-  // 👉 build friendshipMap
-  const friendshipMap = Object.fromEntries(
+  // 👉 build friendRelationsMap full data
+  const friendRelationsMap = Object.fromEntries(
     apiFriends.map((f) => [
       f.uid,
-      { createdAt: f.createdAt },
+      {
+        hidden: f.hidden ?? false,
+        sharedHistoryOn: f.sharedHistoryOn ?? null,
+        isCelebrity: f.isCelebrity ?? false,
+        createdAt: f.createdAt,
+        updatedAt: f.updatedAt,
+      },
     ])
   );
 
@@ -40,9 +48,15 @@ export const syncFriendsWithServer = async () => {
     }
 
     const removedSet = new Set(removedIds.map((f) => f.uid));
+
     localDetails = localDetails.filter(
       (f) => !removedSet.has(f.uid)
     );
+
+    // remove khỏi relation map luôn cho sạch
+    for (const uid of removedSet) {
+      delete friendRelationsMap[uid];
+    }
   }
 
   // ADD
@@ -58,7 +72,6 @@ export const syncFriendsWithServer = async () => {
 
   return {
     details: localDetails,
-    friendshipMap,
+    friendRelationsMap,
   };
 };
-

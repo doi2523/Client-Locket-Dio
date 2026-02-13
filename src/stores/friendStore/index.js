@@ -4,13 +4,21 @@ import {
   getAllFriendDetails,
   addFriendToCache,
   removeFriendToCache,
+  putInfobyID,
 } from "@/cache/friendsDB";
 import { syncFriendsWithServer } from "./friend.sync";
 import { addRemovedFriend } from "@/cache/diaryDB";
 
-export const useFriendStoreV2 = create((set) => ({
+const sortCelebFirst = (list) =>
+  [...list].sort((a, b) => {
+    if (a.isCelebrity === b.isCelebrity) return 0;
+    return a.isCelebrity ? -1 : 1;
+  });
+
+export const useFriendStoreV2 = create((set, get) => ({
+  friendList: [],
   friendDetailsMap: {},
-  friendshipMap: {},
+  friendRelationsMap: {},
   loading: false,
 
   // -------------------------
@@ -20,17 +28,28 @@ export const useFriendStoreV2 = create((set) => ({
     set({ loading: true });
 
     try {
-      // 1️⃣ Render local trước
+      // 1️⃣ Load local
       const local = await getAllFriendDetails();
+      const sortedLocal = sortCelebFirst(local);
+
       set({
-        friendDetailsMap: Object.fromEntries(local.map((f) => [f.uid, f])),
+        friendList: sortedLocal,
+        friendDetailsMap: Object.fromEntries(
+          sortedLocal.map((f) => [f.uid, f]),
+        ),
       });
 
       // 2️⃣ Sync server
-      const { details, friendshipMap } = await syncFriendsWithServer();
+      const { details, friendRelationsMap } = await syncFriendsWithServer();
+
+      const sortedServer = sortCelebFirst(details);
+
       set({
-        friendDetailsMap: Object.fromEntries(details.map((f) => [f.uid, f])),
-        friendshipMap,
+        friendList: sortedServer, // ✅ QUAN TRỌNG
+        friendDetailsMap: Object.fromEntries(
+          sortedServer.map((f) => [f.uid, f]),
+        ),
+        friendRelationsMap: friendRelationsMap,
       });
     } finally {
       set({ loading: false });
@@ -38,30 +57,56 @@ export const useFriendStoreV2 = create((set) => ({
   },
 
   // -------------------------
-  // MANUAL ADD (SYNC STATE + CACHE)
+  // MANUAL ADD
   // -------------------------
   addFriendLocal: async (friend) => {
     if (!friend?.uid) return;
 
     const createdAt = friend.createdAt || Date.now();
 
-    // 1️⃣ Save to cache (ID + detail)
     await addFriendToCache({
       ...friend,
       createdAt,
     });
 
-    // 2️⃣ Sync to Zustand state
-    set((state) => ({
-      friendDetailsMap: {
+    set((state) => {
+      const updatedMap = {
         ...state.friendDetailsMap,
         [friend.uid]: friend,
-      },
-      friendshipMap: {
-        ...state.friendshipMap,
-        [friend.uid]: { createdAt },
+      };
+
+      const updatedList = sortCelebFirst(Object.values(updatedMap));
+
+      return {
+        friendDetailsMap: updatedMap,
+        friendList: updatedList, // ✅ đồng bộ list
+        friendRelationsMap: {
+          ...state.friendRelationsMap,
+          [friend.uid]: { createdAt },
+        },
+      };
+    });
+  },
+
+  // -------------------------
+  // MANUAL HIDDEN
+  // -------------------------
+  hiddenUserState: async (uid, hidden) => {
+    if (!uid) return;
+
+    set((state) => ({
+      friendRelationsMap: {
+        ...state.friendRelationsMap,
+        [uid]: {
+          ...state.friendRelationsMap[uid],
+          hidden,
+        },
       },
     }));
+    await putInfobyID({
+      uid: uid,
+      hidden: hidden,
+    });
   },
 
   // -------------------------
@@ -70,11 +115,23 @@ export const useFriendStoreV2 = create((set) => ({
   removeFriendLocal: async (uid) => {
     await removeFriendToCache(uid);
     await addRemovedFriend(uid);
+
     set((state) => {
       const { [uid]: _, ...rest } = state.friendDetailsMap;
-      return { friendDetailsMap: rest };
+
+      const updatedList = sortCelebFirst(Object.values(rest));
+
+      return {
+        friendDetailsMap: rest,
+        friendList: updatedList, // ✅ update luôn
+      };
     });
   },
 
-  clearFriends: () => set({ friendDetailsMap: {} }),
+  clearFriends: () =>
+    set({
+      friendList: [],
+      friendDetailsMap: {},
+      friendRelationsMap: {},
+    }),
 }));

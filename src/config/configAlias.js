@@ -38,6 +38,7 @@ export const CONTACT_CONFIG = {
 export const MYBANK_CONFIG = {
   bankCode: CONFIG.app.bankInfo.bankCode,
   urlImg: CONFIG.app.bankInfo.urlImg,
+  bankShortname : CONFIG.app.bankInfo.short_name,
   bankName: CONFIG.app.bankInfo.bankName,
   accountNumber: CONFIG.app.bankInfo.accountNumber,
   accountName: CONFIG.app.bankInfo.accountName,

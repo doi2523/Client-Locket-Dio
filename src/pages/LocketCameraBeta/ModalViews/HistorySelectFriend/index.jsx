@@ -162,8 +162,14 @@ function HistorySelectFriend({
                   >
                     <div className="flex items-center gap-3">
                       <img
-                        src={user?.profilePicture}
+                        src={
+                          user?.profilePicture || "/images/default_profile.png"
+                        }
                         alt="Bạn"
+                        onError={(e) => {
+                          e.target.onerror = null; // tránh loop
+                          e.target.src = "/images/default_profile.png";
+                        }}
                         className="w-10 h-10 rounded-full border-[2.5px] p-0.5 border-base-300 object-cover"
                       />
                       <span className="text-base font-medium">Bạn</span>

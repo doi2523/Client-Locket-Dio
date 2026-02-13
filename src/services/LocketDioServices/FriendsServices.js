@@ -2,26 +2,72 @@ import axios from "axios";
 import * as utils from "@/utils";
 import api from "@/lib/axios";
 import { instanceLocketV2 } from "@/lib/axios.locket";
-import { chunkArray } from "@/helpers/chunkArray";
 import { SonnerWarning } from "@/components/ui/SonnerToast";
+import { instanceMain } from "@/lib/axios.main";
 
 //lấy toàn bộ danh sách bạn bè (uid, createdAt) từ API
+// {
+//     "uid": "",
+//     "createdAt": 1753470386025,
+//     "updatedAt": 1753470389669,
+//     "sharedHistoryOn": 1753470389647
+//     "hidden": true
+// }
 export const getListIdFriends = async () => {
   try {
     const res = await api.post("locket/getAllFriendsV2");
 
     const allFriends = res?.data?.data || [];
 
-    const cleanedFriends = allFriends.map((friend) => ({
-      uid: friend.uid,
-      createdAt: friend.date,
-    }));
-
-    return cleanedFriends;
+    return allFriends;
   } catch (err) {
     console.error("❌ Lỗi khi gọi API get-friends:", err);
     return null;
   }
+};
+export const loadFriendDetailsV4 = async (friends) => {
+  if (!friends || friends.length === 0) return [];
+
+  const batchSize = 20;
+  const allResults = [];
+
+  for (let i = 0; i < friends.length; i += batchSize) {
+    const batch = friends.slice(i, i + batchSize);
+
+    try {
+      const results = await Promise.allSettled(
+        batch.map(async (friend) => {
+          const res = await fetchUser(friend.uid);
+
+          const normalized = utils.normalizeFriendData(res.data);
+
+          // 🔥 merge meta friend vào profile
+          return {
+            ...normalized,
+            createdAt: friend.createdAt ?? 0,
+            updatedAt: friend.updatedAt ?? 0,
+            hidden: friend.hidden ?? false,
+            sharedHistoryOn: friend.sharedHistoryOn ?? null,
+            isCelebrity: friend.isCelebrity ?? false,
+          };
+        }),
+      );
+
+      const successResults = results
+        .filter((r) => r.status === "fulfilled" && r.value)
+        .map((r) => r.value);
+
+      allResults.push(...successResults);
+
+      if (i + batchSize < friends.length) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    } catch (err) {
+      console.error("❌ Lỗi khi xử lý batch:", err);
+    }
+  }
+
+  return allResults;
 };
 
 export const loadFriendDetailsV3 = async (friends) => {
@@ -39,9 +85,9 @@ export const loadFriendDetailsV3 = async (friends) => {
       const results = await Promise.allSettled(
         batch.map((friend) =>
           fetchUser(friend?.uid).then((res) =>
-            utils.normalizeFriendData(res.data)
-          )
-        )
+            utils.normalizeFriendData(res.data),
+          ),
+        ),
       );
 
       const successResults = results
@@ -79,7 +125,7 @@ export const fetchUser = async (user_uid) => {
         Authorization: `Bearer ${idToken}`,
         "Content-Type": "application/json",
       },
-    }
+    },
   );
 };
 
@@ -121,141 +167,6 @@ export const refreshFriends = async () => {
   }
 };
 
-export const getAllRequestFriend = async (pageToken = null, limit = 100) => {
-  try {
-    const res = await api.post("/locket/getAllRequestsV2", {
-      pageToken,
-      limit,
-    });
-
-    const { success, message, data, nextPageToken } = res.data;
-
-    if (!success) {
-      return {
-        friends: [],
-        nextPageToken: null,
-        errorMessage: message || "Lỗi khi lấy danh sách lời mời",
-      };
-    }
-
-    const cleanedFriends = (data || []).map((friend) => ({
-      uid: friend.uid,
-      createdAt: friend.date,
-    }));
-
-    return {
-      friends: cleanedFriends,
-      nextPageToken: nextPageToken || null,
-      errorMessage: null,
-    };
-  } catch (err) {
-    console.error("❌ Lỗi khi gọi API getListRequestFriend:", err);
-
-    const errorMessage =
-      err?.response?.data?.message ||
-      err?.response?.data?.error ||
-      err.message ||
-      "Lỗi không xác định";
-
-    return {
-      friends: [],
-      nextPageToken: null,
-      errorMessage,
-    };
-  }
-};
-
-export const getListRequestFriendV2 = async (pageToken = null, limit = 10) => {
-  try {
-    const res = await api.post("/locket/getIncomingFriendRequestsV2", {
-      pageToken,
-      limit,
-    });
-
-    const { success, message, data, nextPageToken } = res.data;
-
-    if (!success) {
-      return {
-        friends: [],
-        nextPageToken: null,
-        errorMessage: message || "Lỗi khi lấy danh sách lời mời",
-      };
-    }
-
-    const cleanedFriends = (data || []).map((friend) => ({
-      uid: friend.uid,
-      createdAt: friend.date,
-    }));
-
-    return {
-      friends: cleanedFriends,
-      nextPageToken: nextPageToken || null,
-      errorMessage: null,
-    };
-  } catch (err) {
-    console.error("❌ Lỗi khi gọi API getListRequestFriend:", err);
-
-    const errorMessage =
-      err?.response?.data?.message ||
-      err?.response?.data?.error ||
-      err.message ||
-      "Lỗi không xác định";
-
-    return {
-      friends: [],
-      nextPageToken: null,
-      errorMessage,
-    };
-  }
-};
-
-export const getOutgoingRequestFriend = async (
-  pageToken = null,
-  limit = 100
-) => {
-  try {
-    const res = await api.post("/locket/getOutgoingFriendRequestsV2", {
-      pageToken,
-      limit,
-    });
-
-    const { success, message, data, nextPageToken } = res.data;
-
-    if (!success) {
-      return {
-        friends: [],
-        nextPageToken: null,
-        errorMessage: message || "Lỗi khi lấy danh sách lời mời",
-      };
-    }
-
-    const cleanedFriends = (data || []).map((friend) => ({
-      uid: friend.to,
-      createdAt: friend.date,
-    }));
-
-    return {
-      friends: cleanedFriends,
-      nextPageToken: nextPageToken || null,
-      errorMessage: null,
-    };
-  } catch (err) {
-    console.error("❌ Lỗi khi gọi API getListRequestFriend:", err);
-
-    const errorMessage =
-      err?.response?.data?.message ||
-      err?.response?.data?.error ||
-      err.message ||
-      "Lỗi không xác định";
-
-    return {
-      friends: [],
-      nextPageToken: null,
-      errorMessage,
-    };
-  }
-};
-
 export const loadFriendDetails = async (friends) => {
   // Ưu tiên lấy dữ liệu từ localStorage trước
   const savedDetails = localStorage.getItem("friendDetails");
@@ -283,9 +194,9 @@ export const loadFriendDetails = async (friends) => {
       const results = await Promise.allSettled(
         batch.map((friend) =>
           fetchUser(friend?.uid).then((res) =>
-            utils.normalizeFriendData(res.data)
-          )
-        )
+            utils.normalizeFriendData(res.data),
+          ),
+        ),
       );
 
       const successResults = results
@@ -326,9 +237,9 @@ export const loadFriendDetailsV2 = async (friends) => {
       const results = await Promise.allSettled(
         batch.map((friend) =>
           fetchUser(friend?.uid).then((res) =>
-            utils.normalizeFriendData(res.data)
-          )
-        )
+            utils.normalizeFriendData(res.data),
+          ),
+        ),
       );
 
       const successResults = results
@@ -347,63 +258,6 @@ export const loadFriendDetailsV2 = async (friends) => {
   }
 
   return allResults;
-};
-
-export const rejectMultipleFriendRequests = async (
-  uidList,
-  direction = "incoming",
-  batchSize = 50
-) => {
-  try {
-    const batches = chunkArray(uidList, batchSize);
-
-    let successCount = 0;
-    let successUidList = [];
-
-    for (const batch of batches) {
-      const promises = batch.map((uid) => {
-        const body = { data: { user_uid: uid, direction } };
-        return instanceLocketV2
-          .post("deleteFriendRequest", body)
-          .then(() => uid); // nếu thành công thì trả lại uid
-      });
-
-      const responses = await Promise.allSettled(promises);
-
-      responses.forEach((r) => {
-        if (r.status === "fulfilled") {
-          successCount++;
-          successUidList.push(r.value);
-        }
-      });
-
-      // tránh spam server
-      await new Promise((r) => setTimeout(r, 500));
-    }
-
-    return { successCount, successUidList, total: uidList.length };
-  } catch (error) {
-    console.error("❌ Lỗi khi xoá lời mời:", error.message);
-    return { successCount: 0, successUidList: [], total: uidList.length };
-  }
-};
-
-export const rejectFriendRequests = async (uid, direction = "outgoing") => {
-  try {
-    const body = {
-      data: {
-        user_uid: uid,
-        direction: direction,
-      },
-    };
-
-    const response = await instanceLocketV2.post("deleteFriendRequest", body);
-
-    return response; // giả sử response trả về dữ liệu thành công
-  } catch (error) {
-    console.error("Lỗi khi xoá lời mời:", error.message);
-    return [];
-  }
 };
 
 export const removeFriend = async (uid) => {
@@ -441,59 +295,13 @@ export const toggleHiddenFriend = async (uid) => {
 export const FindFriendByUserName = async (eqfriend) => {
   try {
     const body = {
-      data: {
-        username: eqfriend,
-      },
+      username: eqfriend,
     };
-    const response = await instanceLocketV2.post("getUserByUsername", body);
+    const response = await instanceMain.post("https://api-beta.locket-dio.com/locket/getUserByData", body);
 
-    return response.data?.result?.data;
+    return response.data;
   } catch (error) {
     console.error("❌ Lỗi khi tìm bạn:", error.response?.data || error.message);
     throw error;
-  }
-};
-
-// Hàm tìm bạn qua username
-export const SendRequestToFriend = async (uid) => {
-  try {
-    const response = await api.post(
-      "/locket/sendFriendRequestV2",
-      {
-        data: { friendUid: uid },
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return response.data?.result?.data;
-  } catch (error) {
-    console.error("❌ Lỗi khi tìm bạn:", error.response?.data || error.message);
-    throw error;
-  }
-};
-
-export const AcceptRequestToFriend = async (uid) => {
-  try {
-    const body = { data: { user_uid: uid } };
-
-    const response = await instanceLocketV2.post("acceptFriendRequest", body);
-
-    const acceptedUid = response?.data?.result?.data?.user_uid || uid;
-    if (!acceptedUid) throw new Error("Không nhận được UID hợp lệ từ server");
-    // ✅ Lấy chi tiết user từ API
-    const newFriend = await fetchUserV2(acceptedUid);
-    // ✅ Chuẩn hoá dữ liệu friend
-    const normalized = utils.normalizeFriendDataV2(newFriend);
-    // ✅ Trả về kết quả đồng nhất
-    return normalized;
-  } catch (error) {
-    console.error(
-      "❌ Lỗi khi chấp nhận lời mời:",
-      error.response?.data || error.message
-    );
-    return null; // fallback an toàn
   }
 };

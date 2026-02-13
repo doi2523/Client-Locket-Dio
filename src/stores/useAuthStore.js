@@ -1,3 +1,4 @@
+import { clearAllDB } from "@/cache/configDB";
 import {
   GetUserDataV2,
   GetUserLocket,
@@ -91,7 +92,7 @@ export const useAuthStore = create((set) => ({
         userInfo = await GetUserLocket();
         localStorage.setItem(
           CACHE_KEY,
-          JSON.stringify({ data: userInfo, timestamp: now })
+          JSON.stringify({ data: userInfo, timestamp: now }),
         );
         set({ user: userInfo }); // cập nhật store khi fetch xong
       }
@@ -110,9 +111,27 @@ export const useAuthStore = create((set) => ({
     }
   },
 
+  fetchUserData: async () => {
+    try {
+      set({ loading: true });
+
+      const planRes = await GetUserDataV2();
+
+      set({
+        userPlan: planRes,
+        uploadStats: planRes?.upload_stats,
+        loading: false,
+      });
+    } catch (err) {
+      console.error("fetchUserData error:", err);
+      set({ loading: false });
+    }
+  },
+
   clearAndlogout: async () => {
     await logout();
     removeToken();
+    await clearAllDB();
     localStorage.removeItem(CACHE_KEY); // xóa cache khi logout
     set({
       user: null,

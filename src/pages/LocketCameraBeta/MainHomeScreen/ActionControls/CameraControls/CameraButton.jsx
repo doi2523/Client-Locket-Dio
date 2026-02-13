@@ -1,10 +1,10 @@
+import "./styles.css";
 import React, { useEffect, useRef } from "react";
 import { useApp } from "@/context/AppContext";
 import { getVideoRecordLimit } from "@/hooks/useFeature";
 import { CAMERA_CONFIG } from "@/config/configAlias";
 import { detectAppEnvironment } from "@/utils/logic/checkIfRunningAsPWA";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
-import "./styles.css"
 
 const CameraButton = () => {
   const { camera, post, useloading } = useApp();
@@ -355,12 +355,12 @@ const CameraButton = () => {
         }}
       >
         <div
-          className={`absolute w-20 h-20 outline-camera-custome outline-base-content/50 rounded-full z-10 ${
-            isHolding ? "animate-outlinePulse" : ""
+          className={`absolute w-20 h-20 border-camera-custome text-primary/80 rounded-full z-10 ${
+            isHolding ? "animate-borderExpand" : ""
           }`}
         ></div>
         <div
-          className={`absolute rounded-full btn w-19 h-19 bg-base-content z-0 transition-transform duration-500 ${
+          className={`absolute rounded-full btn w-19 h-19 camera-inner-circle z-0 transition-all duration-500 ${
             isHolding ? "scale-77 opacity-90" : "scale-100 opacity-100"
           }`}
         ></div>

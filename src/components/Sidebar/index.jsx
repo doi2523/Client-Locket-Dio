@@ -25,6 +25,7 @@ import {
   Newspaper,
   CalendarClock,
   SquareArrowDown,
+  CircleStar,
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { MenuItem } from "./MenuItem";
@@ -36,7 +37,9 @@ import { CONFIG } from "@/config";
 import { useAuthStore } from "@/stores";
 
 const Sidebar = () => {
-  const { user, clearAndlogout } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
+  const clearAndLogout = useAuthStore((state) => state.clearAndLogout);
+  
   const navigate = useNavigate();
   const { navigation } = useApp();
   const { isSidebarOpen, setIsSidebarOpen } = navigation;
@@ -50,10 +53,10 @@ const Sidebar = () => {
   const { startYear } = CONFIG.app;
   const handleLogout = async () => {
     try {
-      clearAndlogout();
+      clearAndLogout();
       SonnerSuccess(
         "Đăng xuất thành công!",
-        `Tạm biệt ${user?.displayName || "người dùng"}!`
+        `Tạm biệt ${user?.displayName || "người dùng"}!`,
       );
       navigate("/login");
     } catch (error) {
@@ -109,6 +112,11 @@ const Sidebar = () => {
           icon: SquareArrowDown,
           text: "Locket Upload",
         },
+        {
+          to: "/collab/locket-gold",
+          icon: CircleStar,
+          text: "LocketGold.click",
+        },
       ],
     },
     {
@@ -156,6 +164,11 @@ const Sidebar = () => {
           to: "/collab/locket-upload",
           icon: SquareArrowDown,
           text: "Locket Upload",
+        },
+        {
+          to: "/collab/locket-gold",
+          icon: CircleStar,
+          text: "LocketGold.click",
         },
       ],
     },

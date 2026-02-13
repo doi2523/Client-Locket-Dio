@@ -22,6 +22,14 @@ export const getFriendIds = async () => {
 export const putNewFriendId = async (newFriends) => {
   await friendDB.friendIds.bulkPut(newFriends);
 }
+
+export const putInfobyID = async (newFriends) => {
+  try {
+    await friendDB.friendIds.put(newFriends);
+  } catch (err) {
+    console.error("❌ Lỗi khi lưu moment:", err);
+  }
+};
 // ===== Friend Details =====
 export const setFriendDetail = async (friend) => {
   try {

@@ -26,7 +26,7 @@ function showToast(type, message, body = "", options = {}) {
       toast.warning(message, {
         ...baseConfig,
         duration: 3500,
-        closeButton: true,
+        // closeButton: true,
       });
       break;
     case "info":

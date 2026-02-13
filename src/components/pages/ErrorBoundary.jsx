@@ -14,8 +14,49 @@ export default class ErrorBoundary extends React.Component {
     console.error("Error caught by ErrorBoundary:", error, errorInfo);
   }
 
-  handleReload = () => {
-    window.location.reload();
+  handleReload = async () => {
+    try {
+      // 1. Clear local + session storage
+      // localStorage.clear();
+      // sessionStorage.clear();
+
+      // 2. Clear Cache API (PWA cache nếu có)
+      if ("caches" in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map((name) => caches.delete(name)));
+      }
+
+      // 3. Clear IndexedDB
+      // if ("indexedDB" in window) {
+      //   const databases = await indexedDB.databases?.();
+      //   if (databases) {
+      //     await Promise.all(
+      //       databases.map((db) => {
+      //         if (db.name) {
+      //           return new Promise((resolve) => {
+      //             const request = indexedDB.deleteDatabase(db.name);
+      //             request.onsuccess = resolve;
+      //             request.onerror = resolve;
+      //             request.onblocked = resolve;
+      //           });
+      //         }
+      //       }),
+      //     );
+      //   }
+      // }
+
+      // 4. Unregister Service Workers
+      if ("serviceWorker" in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((reg) => reg.unregister()));
+      }
+
+      // 5. Reload
+      window.location.reload();
+    } catch (err) {
+      console.error("Lỗi khi reset app:", err);
+      window.location.reload();
+    }
   };
 
   render() {

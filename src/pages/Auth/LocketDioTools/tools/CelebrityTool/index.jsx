@@ -16,10 +16,12 @@ import { Copy, RefreshCcw } from "lucide-react";
 import { useFeatureVisible, useGetCode } from "@/hooks/useFeature";
 import { PiExport } from "react-icons/pi";
 import LockedFeature from "../../Layout/LockedFeature";
+import { useAuthStore } from "@/stores";
 
 export default function CelebrateTool() {
   const isCelebrityFeature = useFeatureVisible("celebrity_tool");
   const codeUser = useGetCode();
+  const fetchUserData = useAuthStore((s) => s.fetchUserData)
   const [celebrateList, setCelebrateList] = useState([]);
   const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -176,8 +178,9 @@ export default function CelebrateTool() {
       <LockedFeature
         toolName="Celebrity Tool"
         price="5000"
-        note="CT"
+        note="LDT1M"
         codeUser={codeUser}
+        onReload={fetchUserData}
       />
     );
   }

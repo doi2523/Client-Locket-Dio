@@ -72,7 +72,7 @@ export default function MainHomeScreen() {
             isBottomOpen ? "fixed -translate-y-full" : "translate-x-0"
           }`}
         >
-          <div className="h-8" />
+          <div className="h-10" />
           <MediaPreview />
           <ActionControls />
           {/* Click để mở lịch sử */}

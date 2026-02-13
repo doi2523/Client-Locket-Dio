@@ -9,7 +9,30 @@ const LockedFeature = ({
   note = "CT",
   codeUser = "",
   description,
+  onReload,
 }) => {
+  if (!codeUser) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center space-y-4">
+        <div className="text-6xl">⚠️</div>
+
+        <h3 className="text-xl font-semibold">Chưa có dữ liệu người dùng</h3>
+
+        <p className="text-sm opacity-70 max-w-md">
+          Không có dữ liệu người dùng. Vui lòng tải lại để tiếp tục. Hoặc vui
+          lòng thử lại sau ít phút...
+        </p>
+
+        <button
+          onClick={onReload}
+          className="px-4 py-2 rounded-lg bg-primary text-white hover:opacity-90 transition"
+        >
+          Tải lại
+        </button>
+      </div>
+    );
+  }
+
   const handleCopy = async (text) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -21,12 +44,17 @@ const LockedFeature = ({
 
   const amountText = useMemo(
     () => Number(price).toLocaleString("vi-VN"),
-    [price]
+    [price],
   );
 
-  const urlQr = useMemo(() => {
-    const addInfo = encodeURIComponent(`${codeUser} ${note}`);
-    return `https://img.vietqr.io/image/${MYBANK_CONFIG.bankCode}-${MYBANK_CONFIG.accountNumber}-compact.png?amount=${price}&addInfo=${addInfo}`;
+  // const urlQr = useMemo(() => {
+  //   const addInfo = encodeURIComponent(`${codeUser} ${note}`);
+  //   return `https://img.vietqr.io/image/${MYBANK_CONFIG.bankCode}-${MYBANK_CONFIG.accountNumber}-compact.png?amount=${price}&addInfo=${addInfo}`;
+  // }, [price, codeUser, note]);
+
+  const urlQrSepay = useMemo(() => {
+    const addInfo = encodeURIComponent(`SEVQR ${codeUser} ${note}`);
+    return `https://qr.sepay.vn/img?acc=${MYBANK_CONFIG.accountNumber}&bank=${MYBANK_CONFIG.bankShortname}&amount=${price}&des=${addInfo}`;
   }, [price, codeUser, note]);
 
   return (
@@ -43,7 +71,7 @@ const LockedFeature = ({
 
       {/* QR */}
       <img
-        src={urlQr}
+        src={urlQrSepay}
         alt="QR Thanh toán"
         className="w-48 h-48 rounded-lg shadow-md"
       />
@@ -72,10 +100,10 @@ const LockedFeature = ({
 
         <div className="flex items-center justify-between">
           <p>
-            <b>Nội dung:</b> {codeUser} {note}
+            <b>Nội dung:</b> SEVQR {codeUser} {note}
           </p>
           <button
-            onClick={() => handleCopy(`${codeUser} ${note}`)}
+            onClick={() => handleCopy(`SEVQR ${codeUser} ${note}`)}
             className="p-1 hover:bg-base-300 rounded"
           >
             <Copy className="w-4 h-4" />
@@ -90,8 +118,18 @@ const LockedFeature = ({
       <p className="text-sm opacity-70 max-w-md">
         <span className="block">• Vui lòng nhập đúng nội dung yêu cầu.</span>
         <span className="block">• Gói sẽ được kích hoạt sau 1–2 phút.</span>
+        <span className="block">
+          • Nếu thanh toán thành công vui lòng bấm làm mới.
+        </span>
         <span className="block">• Hỗ trợ qua trang liên hệ.</span>
       </p>
+
+      <button
+        onClick={onReload}
+        className="px-4 py-2 rounded-lg bg-primary text-white hover:opacity-90 transition"
+      >
+        Làm mới
+      </button>
     </div>
   );
 };

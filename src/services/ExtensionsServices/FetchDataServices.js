@@ -68,6 +68,17 @@ export const getAllFrameCamera = async () => {
     return null;
   }
 };
+
+export const getAllBackgroundCamera = async () => {
+  try {
+    const res = await instanceBaseData.get(PUBLIC_API.backgroundList);
+    return res.data;
+  } catch (error) {
+    console.error("🚨 Lỗi khi gọi API:", error.message);
+    return null;
+  }
+};
+
 export const getListCelebrity = async () => {
   try {
     const res = await instanceBaseData.get(PUBLIC_API.celebrates);

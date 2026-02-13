@@ -50,8 +50,8 @@ const BottomMenu = ({ setIsBottomOpen, setOptionModalOpen }) => {
               onClick={handleReturnHome}
               className="relative flex items-center justify-center w-20 h-20"
             >
-              <div className="absolute w-20 h-20 border-4 border-base-content/30 rounded-full z-10"></div>
-              <div className="absolute rounded-full w-16 h-16 bg-base-content z-0 hover:scale-105 transition-transform"></div>
+              <div className="absolute w-17 h-17 ring-4 text-primary/80 rounded-full z-10"></div>
+              <div className="absolute rounded-full w-16 h-16 camera-inner-circle z-0 hover:scale-105 transition-transform"></div>
             </button>
           </div>
 

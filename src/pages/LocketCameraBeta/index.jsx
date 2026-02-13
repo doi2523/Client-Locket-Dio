@@ -2,7 +2,9 @@ import React, { lazy, Suspense, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 import MainHomeScreen from "./MainHomeScreen";
 import { MusicPlayer } from "./Widgets/MusicPlayer";
-const Snowfall = lazy(() => import("@/components/Effects/SnowBanner"));
+import { useUIStore } from "@/stores/useUIStore";
+// const Snowfall = lazy(() => import("@/components/Effects/SnowBanner"));
+const BgLocketDio = lazy(() => import("@/components/Effects/BgLocketDio"));
 
 const LeftHomeScreen = lazy(() => import("./LeftHomeScreen"));
 const RightHomeScreen = lazy(() => import("./RightHomeScreen"));
@@ -31,6 +33,7 @@ export default function LocketCameraBeta() {
   } = navigation;
   const { canvasRef } = camera;
   const { postOverlay } = post;
+  const background = useUIStore((s) => s.background);
 
   useEffect(() => {
     import("./LeftHomeScreen");
@@ -40,8 +43,9 @@ export default function LocketCameraBeta() {
   return (
     <>
       <Suspense fallback={null}>
-        <Snowfall />
+        <BgLocketDio bgSrc={background?.url}/>
       </Suspense>
+
       <MainHomeScreen />
       {/* Page Views */}
       <Suspense fallback={null}>

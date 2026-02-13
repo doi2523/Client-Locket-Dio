@@ -29,6 +29,7 @@ const AddToHomeScreenGuide = React.lazy(() => import("../pages/Public/AddToScree
 const ErrorReferencePage = React.lazy(() => import("../pages/Public/ErrorReferencePage"));
 const ReferencePage = React.lazy(() => import("../pages/Public/APIDocs"));
 const BirthdayPage = React.lazy(() => import("../pages/Public/BirthdayPage"));
+const LocketGold = React.lazy(() => import("@/pages/Public/CollabPage/LocketGold"));
 
 const APP_NAME = CONFIG.app.fullName;
 
@@ -63,6 +64,7 @@ export const publicRoutes = [
 
   { path: "/collab/caption-kanade", component: ManageCaption, title: `Web hợp tác Caption Kanade | ${APP_NAME}` },
   { path: "/collab/locket-upload", component: LocketUpload, title: `Web hợp tác Locket Upload | ${APP_NAME}` },
+  { path: "/collab/locket-gold", component: LocketGold, title: `Web hợp tác LocketGold.click | ${APP_NAME}` },
   { path: "/happy-birthday", component: BirthdayPage, title: `Chúc mừng sinh nhật Dio | ${APP_NAME}` },
 
   // { path: "/wt", component: WhitePage, title: `White Page for Development | ${APP_NAME}` },
