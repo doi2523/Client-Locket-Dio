@@ -13,7 +13,7 @@ import { useAuthStore } from "@/stores";
 import { SonnerInfo, SonnerSuccess } from "@/components/ui/SonnerToast";
 
 export default function PricingPage() {
-  const { loading, user, userPlan, uploadStats, init } = useAuthStore();
+  const { loading, user, userPlan, uploadStats, fetchUserData } = useAuthStore();
   const [loadingplans, setLoadingPlans] = useState(false);
   const [tab, setTab] = useState("all");
   const [lastRefreshTime, setLastRefreshTime] = useState(0);
@@ -24,7 +24,7 @@ export default function PricingPage() {
 
     setLastRefreshTime(now);
     try {
-      init();
+      fetchUserData();
       SonnerSuccess("Làm mới thông tin thành công!");
     } catch (err) {
       console.error("❌ Lỗi khi cập nhật gói hoặc thống kê:", err);

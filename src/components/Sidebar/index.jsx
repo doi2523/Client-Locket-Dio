@@ -38,7 +38,7 @@ import { useAuthStore } from "@/stores";
 
 const Sidebar = () => {
   const user = useAuthStore((state) => state.user);
-  const clearAndLogout = useAuthStore((state) => state.clearAndLogout);
+  const clearAndlogout = useAuthStore((state) => state.clearAndlogout);
   
   const navigate = useNavigate();
   const { navigation } = useApp();
@@ -53,7 +53,7 @@ const Sidebar = () => {
   const { startYear } = CONFIG.app;
   const handleLogout = async () => {
     try {
-      clearAndLogout();
+      clearAndlogout();
       SonnerSuccess(
         "Đăng xuất thành công!",
         `Tạm biệt ${user?.displayName || "người dùng"}!`,

@@ -1,10 +1,9 @@
 import { useState } from "react";
 import LoadingRing from "@/components/ui/Loading/ring";
-import { useAuthStore, useMembershipInfo } from "@/stores";
+import { useAuthStore } from "@/stores";
 
 export default function Profile() {
   const { user, userPlan } = useAuthStore();
-  const memebership = useMembershipInfo()
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const formatDateTime = (timestamp) => {
@@ -129,7 +128,7 @@ export default function Profile() {
         <h2 className="text-xl font-semibold pb-2">Thông tin trên web:</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-1 rounded-md p-3 card-body">
           <InfoRow label="Số người dùng" value={userPlan?.customer_code} />
-          <InfoRow label="Thông tin gói" value={memebership?.name} />
+          <InfoRow label="Thông tin gói" value={userPlan?.plan_info?.name} />
           <InfoRow label="Ngày bắt đầu" value={userPlan?.start_date} />
           <InfoRow label="Ngày hết hạn" value={userPlan?.end_date} />
           <InfoRow
