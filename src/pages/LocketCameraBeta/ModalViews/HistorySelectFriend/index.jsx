@@ -127,6 +127,27 @@ function HistorySelectFriend({
                     </div>
                     <ChevronRight className="w-5 h-5 text-base-content" />
                   </div>
+                  {/* Bạn */}
+                  <div
+                    onClick={() => handleSelectMe()}
+                    className="flex bg-base-200 p-2 items-center justify-between hover:bg-base-200 rounded-2xl transition cursor-pointer active:scale-97 select-none"
+                  >
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={
+                          user?.profilePicture || "/images/default_profile.png"
+                        }
+                        alt="Bạn"
+                        onError={(e) => {
+                          e.target.onerror = null; // tránh loop
+                          e.target.src = "/images/default_profile.png";
+                        }}
+                        className="w-10 h-10 rounded-full border-[2.5px] p-0.5 border-base-300 object-cover"
+                      />
+                      <span className="text-base font-medium">Bạn</span>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-base-content" />
+                  </div>
 
                   {/* Danh sách bạn bè */}
                   {filteredFriends.map((friend) => (
@@ -154,28 +175,6 @@ function HistorySelectFriend({
                       <ChevronRight className="w-5 h-5 text-base-content" />
                     </div>
                   ))}
-
-                  {/* Bạn */}
-                  <div
-                    onClick={() => handleSelectMe()}
-                    className="flex bg-base-200 p-2 items-center justify-between hover:bg-base-200 rounded-2xl transition cursor-pointer active:scale-97 select-none"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={
-                          user?.profilePicture || "/images/default_profile.png"
-                        }
-                        alt="Bạn"
-                        onError={(e) => {
-                          e.target.onerror = null; // tránh loop
-                          e.target.src = "/images/default_profile.png";
-                        }}
-                        className="w-10 h-10 rounded-full border-[2.5px] p-0.5 border-base-300 object-cover"
-                      />
-                      <span className="text-base font-medium">Bạn</span>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-base-content" />
-                  </div>
                 </>
               ) : (
                 <div className="text-gray-400 italic text-sm text-center mt-6">

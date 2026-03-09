@@ -2,11 +2,7 @@ import React from "react";
 import { useAuthStore } from "@/stores";
 
 const PlanBadge = ({ className = "" }) => {
-  const { userPlan } = useAuthStore();
-
-  const badge = userPlan?.plan_info?.ui?.badge;
-  const gradient = userPlan?.plan_info?.ui?.gradient;
-
+  const badge = useAuthStore((s) => s.userPlan?.plan?.badge);
   if (!badge) return null; // Không có badge thì không hiển thị
 
   const combinedClasses =
@@ -17,11 +13,11 @@ const PlanBadge = ({ className = "" }) => {
     <span
       className={combinedClasses}
       style={{
-        background: gradient,
-        color: userPlan?.plan_info?.ui?.highlight_color,
+        background: badge?.gradient,
+        color: badge?.highlight_color,
       }}
     >
-      {badge}
+      {badge?.text}
     </span>
   );
 };

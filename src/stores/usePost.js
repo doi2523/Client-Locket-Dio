@@ -22,7 +22,11 @@ export const usePost = () => {
   const [caption, setCaption] = useState("");
   const [preview, setPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+
   const [imageToCrop, setImageToCrop] = useState(null);
+  const [videoCrop, setVideoCrop] = useState(null);
+  const [videoCropArea, setVideoCropArea] = useState(null)
+
   const [isTextColor, setTextColor] = useState(null);
   const [isSizeMedia, setSizeMedia] = useState(null);
 
@@ -79,6 +83,8 @@ export const usePost = () => {
     setReactionInfo,
     showEmojiPicker,
     setShowEmojiPicker,
-    restoreStreak, setRestoreStreak
+    restoreStreak, setRestoreStreak,
+    videoCrop, setVideoCrop,
+    videoCropArea, setVideoCropArea
   };
 };

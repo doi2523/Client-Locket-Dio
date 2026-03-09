@@ -14,6 +14,8 @@ const CropImageStudio = () => {
     setSizeMedia,
     imageToCrop,
     setImageToCrop,
+    videoCrop,
+    setVideoCrop
   } = useApp().post;
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);

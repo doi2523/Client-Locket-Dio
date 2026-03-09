@@ -1,62 +1,49 @@
-import { useState, useEffect } from "react";
-import * as DioService from "@/services/LocketDioServices";
+import { useState } from "react";
 import LoadingRing from "@/components/ui/Loading/ring";
 import { Link } from "react-router-dom";
-import { SonnerError, SonnerInfo, SonnerSuccess, SonnerWarning } from "@/components/ui/SonnerToast";
+import {
+  SonnerError,
+  SonnerSuccess,
+  SonnerWarning,
+} from "@/components/ui/SonnerToast";
+import { forgotPassword, ValidateEmailAddress } from "@/services";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [cooldown, setCooldown] = useState(0); // thời gian chờ tính bằng giây
-
-  useEffect(() => {
-    let timer;
-    if (cooldown > 0) {
-      timer = setInterval(() => {
-        setCooldown((prev) => prev - 1);
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [cooldown]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (cooldown > 0) {
-      SonnerInfo(`Vui lòng chờ ${cooldown}s trước khi gửi lại.`);
-      return;
-    }
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      SonnerWarning("error", "Email không hợp lệ!");
+      SonnerWarning("Email không hợp lệ!");
       return;
     }
 
     setLoading(true);
     try {
-      await DioService.forgotPassword(email);
+      const res = await ValidateEmailAddress(email);
+
+      if (res?.result?.status === 601) {
+        SonnerWarning("Tài khoản với email này không tồn tại!");
+        return;
+      }
+
+      await forgotPassword(email);
+
       SonnerSuccess(
         "Thông báo từ Locket Dio",
-        "Link đặt lại mật khẩu đã được gửi đến email của bạn!"
+        "Link đặt lại mật khẩu đã được gửi đến email của bạn!",
       );
+
       setEmail("");
-      setCooldown(180); // Bắt đầu đếm ngược 3 phút
     } catch (error) {
       console.log(error);
-      
       SonnerError("Có lỗi xảy ra, vui lòng thử lại sau!");
-      setCooldown(180); // Cũng bắt cooldown để tránh spam ngay cả khi lỗi
     } finally {
       setLoading(false);
     }
-  };
-
-  // Hàm format thời gian mm:ss
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s < 10 ? "0" + s : s}`;
   };
 
   return (
@@ -82,9 +69,9 @@ const ForgotPassword = () => {
 
           <button
             type="submit"
-            disabled={loading || cooldown > 0}
+            disabled={loading}
             className={`w-full btn btn-primary py-2 text-lg font-semibold rounded-lg transition flex items-center justify-center gap-2 ${
-              loading || cooldown > 0 ? "opacity-70 cursor-not-allowed" : ""
+              loading ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >
             {loading ? (
@@ -92,12 +79,15 @@ const ForgotPassword = () => {
                 <LoadingRing size={20} stroke={3} speed={2} color="white" />
                 Đang gửi...
               </>
-            ) : cooldown > 0 ? (
-              `Gửi lại sau ${formatTime(cooldown)}`
             ) : (
               "Gửi"
             )}
           </button>
+
+          <div className="text-center mt-3 text-xs text-base-content/70">
+            Nếu bạn không thấy email, vui lòng kiểm tra trong mục Thư rác (Spam)
+            hoặc Thư quảng cáo.
+          </div>
 
           <div className="text-center mt-4">
             <Link

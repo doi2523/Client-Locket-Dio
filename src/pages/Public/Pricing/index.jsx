@@ -18,6 +18,8 @@ export default function PricingPage() {
   const [tab, setTab] = useState("all");
   const [lastRefreshTime, setLastRefreshTime] = useState(0);
 
+  const subscription = userPlan?.subscription;
+
   // Memoize the refresh handler with debouncing
   const handleRefreshPlan = useCallback(async () => {
     const now = Date.now();
@@ -95,7 +97,7 @@ export default function PricingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             {/* Left: User Plan */}
             <div className="order-1 lg:order-1">
-              {hasValidPlan ? (
+              {userPlan ? (
                 <UserPlanCard
                   userPlan={userPlan}
                   uploadStats={uploadStats}
@@ -121,6 +123,8 @@ export default function PricingPage() {
             <PlanListSection
               tab={tab}
               setTab={setTab}
+              planCurrent={subscription?.plan_id}
+              isActive={subscription?.is_active}
               filteredPlans={filteredPlans}
               userPlan={userPlan}
               isLoading={loadingplans}

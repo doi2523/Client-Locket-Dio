@@ -15,7 +15,8 @@ import { loginWithEmail, loginWithPhone } from "@/services";
 import { PhoneInput } from "./PhoneInput";
 
 const Login = () => {
-  const { hydrate, init } = useAuthStore();
+  const init = useAuthStore((s) => s.init);
+  const hydrate = useAuthStore((s) => s.hydrate);
   const [captchaToken, setCaptchaToken] = useState(null);
   const [loginMethod, setLoginMethod] = useState("email"); // "email" hoặc "phone"
   const [identifier, setIdentifier] = useState("");

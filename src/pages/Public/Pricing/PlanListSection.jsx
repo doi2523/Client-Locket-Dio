@@ -6,7 +6,9 @@ export default function PlanListSection({
   tab,
   setTab,
   filteredPlans,
+  isActive,
   userPlan,
+  planCurrent,
   isLoading = false,
 }) {
   const navigate = useNavigate();
@@ -71,16 +73,16 @@ export default function PlanListSection({
           : filteredPlans.map((plan) => {
               const discountPercent = calculateDiscount(
                 plan.original_price,
-                plan.price
+                plan.price,
               );
 
               const hasDiscount = discountPercent > 0;
-
+              const activeNow = planCurrent === plan.id && isActive;
               return (
                 <div
                   key={plan.id}
                   className={`relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group ${
-                    userPlan?.plan_id === plan.id
+                    activeNow
                       ? "outline-4 outline-purple-400 shadow-purple-200"
                       : "hover:scale-[1.02]"
                   } ${
@@ -156,21 +158,22 @@ export default function PlanListSection({
                     </div>
                     <button
                       className={`w-full flex flex-row justify-center items-center py-3 rounded-2xl font-semibold text-sm sm:text-base transition-all duration-200 ${
-                        userPlan?.plan_id === plan.id
+                        activeNow
                           ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                           : plan.price === 0
-                          ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl"
-                          : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl"
+                            ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl"
+                            : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl"
                       }`}
                       onClick={() => navigate(`/pricing/${plan.id}`)}
-                      disabled={userPlan?.plan_id === plan.id}
+                      disabled={activeNow}
                     >
-                      {userPlan?.plan_id === plan.id
+                      {activeNow
                         ? "✓ Đang sử dụng"
                         : plan.price === 0
-                        ? "🚀 Bắt đầu miễn phí"
-                        : "💎 Chọn gói này"}
-                      {userPlan?.plan_id !== plan.id && <ArrowUpRight />}
+                          ? "🚀 Bắt đầu miễn phí"
+                          : "💎 Chọn gói này"}
+
+                      {!activeNow && <ArrowUpRight />}
                     </button>
                   </div>
                 </div>

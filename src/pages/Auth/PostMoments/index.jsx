@@ -29,7 +29,7 @@ import { useUploadQueueStore } from "@/stores";
 
 const PostMoments = () => {
   const { post, useloading } = useApp();
-  const { uploadStats } = useAuthStore();
+  const uploadStats = useAuthStore((s) => s.uploadStats);
   const { sendLoading, setSendLoading, uploadLoading } = useloading;
 
   const {

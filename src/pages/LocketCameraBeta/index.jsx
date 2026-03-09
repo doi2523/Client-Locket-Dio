@@ -3,6 +3,7 @@ import { useApp } from "@/context/AppContext";
 import MainHomeScreen from "./MainHomeScreen";
 import { MusicPlayer } from "./Widgets/MusicPlayer";
 import { useUIStore } from "@/stores/useUIStore";
+// import CropVideoStudio from "./ModalViews/CropVideoStudio";
 // const Snowfall = lazy(() => import("@/components/Effects/SnowBanner"));
 const BgLocketDio = lazy(() => import("@/components/Effects/BgLocketDio"));
 
@@ -58,6 +59,7 @@ export default function LocketCameraBeta() {
         <FriendsContainer />
         <CropImageStudio />
         <ScreenCustomeStudio />
+        {/* <CropVideoStudio /> */}
         <EmojiPicker />
         <OptionMoment
           setOptionModalOpen={setOptionModalOpen}

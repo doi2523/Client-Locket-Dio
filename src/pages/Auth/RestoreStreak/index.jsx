@@ -33,7 +33,7 @@ import {
 const RestoreStreak = () => {
   const { post, useloading } = useApp();
   const navigate = useNavigate();
-  const { uploadStats } = useAuthStore();
+  const uploadStats = useAuthStore((s) => s.uploadStats);
   const { sendLoading, setSendLoading, uploadLoading } = useloading;
 
   const {

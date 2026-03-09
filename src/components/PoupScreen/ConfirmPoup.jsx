@@ -68,7 +68,7 @@ const ConfirmPoup = ({
         )}
 
         {/* Actions */}
-        <div className="w-full mt-6 flex flex-col sm:flex-row gap-3">
+        <div className="w-full mt-6 flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={onConfirm}
             disabled={loading}

@@ -13,6 +13,8 @@ const UploadFile = () => {
     setSizeMedia,
     imageToCrop,
     setImageToCrop,
+    videoCrop, setVideoCrop,
+    videoCropArea, setVideoCropArea
   } = post;
   const { uploadLoading, setUploadLoading, setIsCaptionLoading } = useloading;
   const { cameraActive, setCameraActive } = camera;
@@ -21,7 +23,9 @@ const UploadFile = () => {
   const handleFileChange = useCallback(async (event) => {
     setCameraActive(false);
     setSelectedFile(null);
+    setVideoCropArea(null);
     setImageToCrop(null);
+    setVideoCrop(null);
     const rawFile = event.target.files[0];
     if (!rawFile) return;
     const localPreviewUrl = URL.createObjectURL(rawFile);
@@ -44,9 +48,14 @@ const UploadFile = () => {
       setImageToCrop(localPreviewUrl);
       return;
     }
+    // if (fileType === "video") {
+    //   setVideoCrop(localPreviewUrl);
+    //   return;
+    // }
     setPreview({ type: fileType, data: localPreviewUrl }); // Preview local ngay
     setSelectedFile(rawFile); // Lưu file đã chọn
   }, []);
+
   return (
     <>
       <input

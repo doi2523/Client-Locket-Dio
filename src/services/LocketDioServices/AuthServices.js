@@ -196,7 +196,7 @@ export const GetUserData = async () => {
 
 export const GetUserDataV2 = async () => {
   try {
-    const res = await api.get("/api/me");
+    const res = await api.get("/api/po");
     return res.data?.data;
   } catch (error) {
     console.error(
