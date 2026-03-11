@@ -112,11 +112,6 @@ const Sidebar = () => {
           icon: SquareArrowDown,
           text: "Locket Upload",
         },
-        {
-          to: "/collab/locket-gold",
-          icon: CircleStar,
-          text: "LocketGold.click",
-        },
       ],
     },
     {
@@ -164,11 +159,6 @@ const Sidebar = () => {
           to: "/collab/locket-upload",
           icon: SquareArrowDown,
           text: "Locket Upload",
-        },
-        {
-          to: "/collab/locket-gold",
-          icon: CircleStar,
-          text: "LocketGold.click",
         },
       ],
     },
