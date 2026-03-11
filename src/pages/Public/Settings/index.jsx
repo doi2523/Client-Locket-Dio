@@ -3,7 +3,7 @@ import React, { Suspense, lazy } from "react";
 // Lazy load components
 const ThemeSelector = lazy(() => import("@/components/Theme/ThemeSelector"));
 const ThemeSelect = lazy(() => import("@/components/Theme/ThemeViewSelect"));
-const SettingsExtras = lazy(() => import("./SettingsExtras"));
+const SettingsExtras = lazy(() => import("./SettingExtras"));
 const CameraFrameSelector = lazy(() => import("./CameraFrameSelector"));
 const CameraBackground = lazy(() => import("./CameraBackground"));
 
