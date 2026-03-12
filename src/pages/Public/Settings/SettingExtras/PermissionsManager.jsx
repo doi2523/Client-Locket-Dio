@@ -22,6 +22,7 @@ export default function PermissionsManager() {
 
   const getSubscription = async () => {
     try {
+      SonnerInfo("Hello");
       if (!("serviceWorker" in navigator)) return;
 
       const registration = await navigator.serviceWorker.ready;
@@ -180,7 +181,6 @@ export default function PermissionsManager() {
       return (
         <div className="text-xs opacity-70 text-left flex flex-col gap-1">
           <p>Quyền thông báo đã được cấp.</p>
-          <p>Thiết bị đã đăng ký nhận push từ hệ thống.</p>
           <p>Bạn sẽ nhận được thông báo khi có cập nhật mới.</p>
         </div>
       );
@@ -253,10 +253,7 @@ export default function PermissionsManager() {
 
   return (
     <div className="flex-1 bg-base-100 rounded-lg p-4 shadow-sm flex flex-col gap-4">
-      <h3
-        className="font-semibold text-lg text-center cursor-default"
-        onClick={(e) => e.altKey && getSubscription()}
-      >
+      <h3 className="font-semibold text-lg text-center">
         Quản lý quyền truy cập
       </h3>
 
@@ -314,6 +311,10 @@ export default function PermissionsManager() {
       </div>
 
       {renderLocationGuide()}
+
+      <button className="text-left opacity-0" onClick={getSubscription}>
+        Click to show
+      </button>
     </div>
   );
 }
