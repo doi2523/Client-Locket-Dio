@@ -21,7 +21,7 @@ import { useAuthStore } from "@/stores";
 export default function CelebrateTool() {
   const isCelebrityFeature = useFeatureVisible("celebrity_tool");
   const codeUser = useGetCode();
-  const fetchUserData = useAuthStore((s) => s.fetchUserData)
+  const fetchUserData = useAuthStore((s) => s.fetchUserData);
   const [celebrateList, setCelebrateList] = useState([]);
   const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -58,7 +58,7 @@ export default function CelebrateTool() {
         JSON.stringify({
           result,
           timestamp: Date.now(),
-        })
+        }),
       );
     } catch (err) {
       SonnerError("Không thể tải danh sách Celebrate.");
@@ -76,13 +76,13 @@ export default function CelebrateTool() {
     setLoading(true);
     try {
       const details = await Promise.all(
-        list.map((item) => fetchUserById(item?.uid))
+        list.map((item) => fetchUserById(item?.uid)),
       );
       setUserDetails(details.filter(Boolean));
     } catch (err) {
       SonnerError(
         "Phiên đăng nhập hết hạn",
-        "Vui lòng xoá tab và truy cập lại."
+        "Vui lòng xoá tab và truy cập lại.",
       );
     } finally {
       setLoading(false);
@@ -109,16 +109,16 @@ export default function CelebrateTool() {
     }
 
     try {
-      const res = await SendRequestToCelebrity(uid);
-
-      if (res?.success) {
-        SonnerSuccess(
-          "Đã gửi yêu cầu thành công!",
-          "Làm mới để xem sự thay đổi"
-        );
-      } else {
-        SonnerWarning("UID không hợp lệ hoặc đã tồn tại!");
-      }
+      // const res = await SendRequestToCelebrity(uid);
+      // if (res?.success) {
+      // SonnerSuccess(
+      //   "Đã gửi yêu cầu thành công!",
+      //   "Làm mới để xem sự thay đổi"
+      // );
+      // } else {
+      // SonnerWarning("UID không hợp lệ hoặc đã tồn tại!");
+      // }
+      SonnerWarning("Không còn hỗ trợ gửi yêu cầu!");
     } catch (err) {
       SonnerError("❌ Thêm UID thất bại.");
     }
@@ -146,16 +146,16 @@ export default function CelebrateTool() {
     all: userDetails,
     friends: userDetails.filter((u) => u?.friendship_status === "friends"),
     waitlist: userDetails.filter(
-      (u) => u?.friendship_status === "follower-waitlist"
+      (u) => u?.friendship_status === "follower-waitlist",
     ),
     waitaccept: userDetails.filter(
-      (u) => u?.friendship_status === "outgoing-follow-request"
+      (u) => u?.friendship_status === "outgoing-follow-request",
     ),
     hasSlot: userDetails.filter(
-      (u) => u?.celebrity_data.friend_count < u?.celebrity_data.max_friends
+      (u) => u?.celebrity_data.friend_count < u?.celebrity_data.max_friends,
     ),
     noSlot: userDetails.filter(
-      (u) => u?.celebrity_data.friend_count >= u?.celebrity_data.max_friends
+      (u) => u?.celebrity_data.friend_count >= u?.celebrity_data.max_friends,
     ),
   };
 
