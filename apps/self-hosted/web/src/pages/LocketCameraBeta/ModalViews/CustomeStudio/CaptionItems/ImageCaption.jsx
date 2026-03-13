@@ -8,7 +8,6 @@ import { SonnerSuccess, SonnerWarning } from "@/components/ui/SonnerToast";
 
 export default function ImageCaptionSelector({ title }) {
   const navigate = useNavigate();
-  const { userPlan } = useAuthStore();
   const { navigation, post } = useApp();
   const { isFilterOpen, setIsFilterOpen } = navigation;
   const { postOverlay, setPostOverlay } = post;

@@ -5,7 +5,11 @@ const MAX_IMAGE_COUNT = 1;
 const MAX_VIDEO_COUNT = 1;
 
 const locketController = require("../controllers/locket.controller.js");
+const { verifyIdToken } = require("../middlewares/verifyToken.js");
+
 router.post("/login", locketController.login);
+router.get("/logout", locketController.logout);
+router.post("/getAllFriendsV2", verifyIdToken, locketController.getAllFriends);
 
 router.post(
     "/upload-media",

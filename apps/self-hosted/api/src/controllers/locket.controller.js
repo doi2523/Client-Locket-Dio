@@ -5,7 +5,27 @@ class LocketController {
         try {
             const { email, password } = req.body;
             const user = await locketService.login(email, password);
-            return res.status(200).json({ user });
+            return res.status(200).json({ data: user, success: true, message: "ok" });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async logout(req, res, next) {
+        try {
+            await locketService.logout();
+            return res.status(200).json({ success: true, message: "ok" });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAllFriends(req, res, next) {
+        try {
+            const { idToken, localId } = req.user;
+
+            const data = await locketService.getAllFriends(idToken, localId);
+            return res.status(200).json({ data: data, success: true, message: "ok" });
         } catch (error) {
             next(error);
         }

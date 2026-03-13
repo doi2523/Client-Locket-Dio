@@ -126,8 +126,8 @@ const FriendsContainer = () => {
             />
 
             {/* Requests */}
-            <IncomingFriendRequests handleAcpFriend={handleAcceptRequest} />
-            <OutgoingRequest />
+            {/* <IncomingFriendRequests handleAcpFriend={handleAcceptRequest} /> */}
+            {/* <OutgoingRequest /> */}
           </div>
         </div>
       </div>

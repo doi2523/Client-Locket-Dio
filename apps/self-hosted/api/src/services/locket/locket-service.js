@@ -4,40 +4,169 @@ const { logInfo, logError } = require("../logger.service.js");
 const crypto = require("crypto");
 
 const videoService = require("./video-service.js");
-const { decryptLoginData } = require("./security-service.js");
+const { createGoogleInstance } = require("../../libs/instanceGoogleBase.js");
+const { instanceFirestore } = require("../../libs/instanceFirestore.js");
 
 const login = async (email, password) => {
   logInfo("login Locket", "Start");
-  const { decryptedEmail, decryptedPassword } = decryptLoginData(
-    email,
-    password,
-  );
 
-  const requestData = JSON.stringify({
-    email: decryptedEmail,
-    password: decryptedPassword,
+  const body = {
+    email: email,
+    password: password,
     returnSecureToken: true,
     clientType: "CLIENT_TYPE_IOS",
-  });
+  };
 
   try {
-    const response = await fetch(constants.LOGIN_URL, {
-      method: "POST",
-      headers: constants.LOGIN_HEADERS,
-      body: requestData,
-    });
+    const firebaseAuthApi = createGoogleInstance("auth");
 
-    if (!response.ok) {
+    const response = await firebaseAuthApi.post("verifyPassword", body);
+
+    if (!response.data) {
       throw new Error(`Login failed: ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.data;
 
     logInfo("login Locket", "End");
     return data;
   } catch (error) {
     logError("login Locket", error.message);
     throw error;
+  }
+};
+
+const logout = async () => {
+  logInfo("logout Locket", "Start");
+
+  try {
+    logInfo("logout Locket", "End");
+    return null;
+  } catch (error) {
+    logError("logout Locket", error.message);
+    throw error;
+  }
+};
+
+const getAllFriends = async (idToken, localId) => {
+  const GET_ACCOUNT_INFO_URL_V2 = process.env.FIRESTORE_DEFAULT;
+
+  const baseUrl = `${GET_ACCOUNT_INFO_URL_V2}${localId}/friends`;
+  console.log(baseUrl);
+
+  let pageToken = null;
+  const allFriends = [];
+
+  try {
+    do {
+      const url = pageToken
+        ? `${baseUrl}?pageSize=100&pageToken=${pageToken}`
+        : `${baseUrl}?pageSize=100`;
+
+      const response = await instanceFirestore.get(url, { meta: { idToken } });
+      const documents = response.data.documents || [];
+
+      const parsedFriends = documents.map((doc) => ({
+        uid: doc.fields?.user?.stringValue,
+        date: doc.createTime,
+      }));
+
+      allFriends.push(...parsedFriends);
+      pageToken = response.data.nextPageToken || null;
+    } while (pageToken);
+
+    return allFriends;
+  } catch (error) {
+    console.error(
+      "❌ Lỗi khi lấy danh sách bạn bè:",
+      error.response?.data || error.message,
+    );
+    return []; // Trả về mảng rỗng nếu lỗi
+  }
+};
+
+const getLocketMoments = async (
+  idToken,
+  userId,
+  pageToken,
+  userUid,
+  limit = 20
+) => {
+  const headers = {
+    Authorization: `Bearer ${idToken}`,
+    Accept: "application/json",
+  };
+
+  const params = {
+    orderBy: "date desc",
+    pageSize: pageToken ? 100 : limit,
+  };
+  if (pageToken) params.pageToken = pageToken;
+
+  try {
+    const response = await axios.get(url, { headers, params });
+    const documents = response.data.documents || [];
+
+    // ✅ Chuẩn hoá ngay tại server
+    const moments = documents
+      .map((doc) => {
+        const moment = normalizeMoment(doc);
+        if (userUid && moment?.user !== userUid) return null;
+        return moment;
+      })
+      .filter(Boolean);
+
+    return {
+      moments,
+      nextPageToken: response.data.nextPageToken || null,
+    };
+  } catch (error) {
+    console.error(
+      "❌ Lỗi khi lấy moments:",
+      error.response?.data || error.message
+    );
+    return {
+      moments: [],
+      nextPageToken: null,
+    };
+  }
+};
+
+const getAllMessages = async (idToken, userId, pageToken, limit = 20) => {
+
+  const headers = {
+    ...LOGIN_HEADERS,
+    Authorization: `Bearer ${idToken}`,
+    Accept: "application/json",
+  };
+
+  const params = {
+    pageSize: limit,
+    orderBy: "last_updated desc", // hoặc "updateTime desc"
+  };
+
+  if (pageToken) params.pageToken = pageToken;
+
+  try {
+    const response = await axios.get(url, { headers, params });
+
+    const documents = response.data.documents || [];
+    // Chuẩn hoá dữ liệu Firestore -> plain object
+    const conversations = documents.map((doc) => normalizeMessage(doc));
+
+    return {
+      messages: conversations,
+      nextPageToken: response.data.nextPageToken || null,
+    };
+  } catch (error) {
+    console.error(
+      "❌ Lỗi khi lấy mess:",
+      error.response?.data || error.message
+    );
+    return {
+      messages: [],
+      nextPageToken: null,
+    };
   }
 };
 
@@ -423,8 +552,113 @@ const postVideo = async (userId, idToken, video, caption) => {
 
 //#endregion
 
+function normalizeMoment(doc) {
+  if (!doc || !doc.fields) return null;
+
+  const f = doc.fields;
+  const overlays = f.overlays?.arrayValue?.values || [];
+
+  // chỉ lấy overlay đầu tiên (nếu có)
+  const overlay = overlays[0]?.mapValue?.fields || {};
+  const overlayData = overlay.data?.mapValue?.fields || {};
+
+  const backgroundFields = overlayData.background?.mapValue?.fields || {};
+
+  const getIsPublic = (f) => {
+    const sentToAll = parseFirestoreValue(f.sent_to_all);
+    const sentToSelfOnly = parseFirestoreValue(f.sent_to_self_only);
+
+    // Ưu tiên sent_to_self_only nếu có true
+    if (sentToSelfOnly) return false;
+    if (sentToAll) return true;
+    return false;
+  };
+
+  return {
+    id: f.canonical_uid?.stringValue || doc.name.split("/").pop(),
+    caption: f.caption?.stringValue || overlay.alt_text?.stringValue || "",
+    user: f.user?.stringValue || null,
+    thumbnailUrl: replaceFirebaseWithCDN(f.thumbnail_url?.stringValue),
+    videoUrl: replaceFirebaseWithCDN(f.video_url?.stringValue),
+    md5: f.md5?.stringValue || null,
+    date: f.date?.timestampValue || doc.createTime || null,
+    isPublic: getIsPublic(f),
+    overlays: {
+      id: overlay.overlay_id?.stringValue || null,
+      type: overlay.overlay_type?.stringValue || null,
+      text: overlayData.text?.stringValue || null,
+      textColor: overlayData.text_color?.stringValue || null,
+      maxLines: overlayData.max_lines?.integerValue
+        ? parseInt(overlayData.max_lines.integerValue, 10)
+        : null,
+      background: {
+        materialBlur:
+          overlayData.background?.mapValue?.fields?.material_blur
+            ?.stringValue || null,
+        colors: parseFirestoreValue(backgroundFields.colors) || [],
+      },
+      icon: parseFirestoreValue(overlayData.icon),
+      payload: parseFirestoreValue(overlayData.payload),
+    },
+    createTime: doc.createTime || null,
+    updateTime: doc.updateTime || null,
+  };
+}
+
+function normalizeMessage(doc) {
+  if (!doc || !doc.fields) return null;
+
+  const f = doc.fields;
+
+  return {
+    id: f.uid?.stringValue || doc.name?.split("/").pop(),
+    members: f.members?.arrayValue?.values?.map((v) => v.stringValue) || [],
+    unreadCount: parseInt(f.unread_count?.integerValue || "0", 10),
+    isRead: f.is_read?.booleanValue || false,
+
+    lastReadAt: f.last_read_at?.timestampValue || null,
+    otherLastReadAt: f.other_last_read_at?.timestampValue || null,
+    lastUpdated: f.last_updated?.timestampValue || null,
+
+    sender: f.latest_message.mapValue.fields.sender?.stringValue || "",
+
+    // Tin nhắn mới nhất
+    latestMessage: f.latest_message?.mapValue?.fields
+      ? {
+          body: f.latest_message.mapValue.fields.body?.stringValue || "",
+          sender: f.latest_message.mapValue.fields.sender?.stringValue || "",
+          createdAt:
+            f.latest_message.mapValue.fields.created_at?.timestampValue || null,
+          replyMoment:
+            f.latest_message.mapValue.fields.reply_moment?.stringValue || null,
+          thumbnailUrl: replaceFirebaseWithCDN(
+            f.latest_message.mapValue.fields.thumbnail_url?.stringValue
+          ),
+        }
+      : null,
+
+    otherLastDeliveredAt: f.other_last_delivered_at?.timestampValue || null,
+    otherLastDeliveredMessageCreatedAt:
+      f.other_last_delivered_message_created_at?.timestampValue || null,
+
+    createTime: doc.createTime || null,
+    updateTime: doc.updateTime || null,
+  };
+}
+
+function replaceFirebaseWithCDN(url) {
+  if (!url) return null; // hoặc "" nếu bạn muốn
+  return url.replace(
+    "https://firebasestorage.googleapis.com",
+    "https://cdn.locketcamera.com"
+  );
+}
+
 module.exports = {
   login,
+  logout,
+  getAllFriends,
+  getLocketMoments,
   uploadImageToFirebaseStorage,
   postImage,
   uploadVideoToFirebaseStorage,

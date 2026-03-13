@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Download, Trash2, X } from "lucide-react";
-import PlanBadge from "@/components/ui/PlanBadge/PlanBadge";
 import { useApp } from "@/context/AppContext";
 import { SonnerSuccess, SonnerWarning, SonnerInfo } from "@/components/ui/SonnerToast";
 import Modal from "@/components/ui/Modal";
@@ -110,7 +109,6 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
             <div className="text-2xl font-lovehouse mt-1.5 font-semibold">
               Option Moment
             </div>
-            <PlanBadge />
           </div>
           <button
             onClick={() => setOptionModalOpen(false)}

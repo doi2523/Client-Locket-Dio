@@ -14,7 +14,7 @@ export const loginWithEmail = async ({ email, password, captchaToken }) => {
       throw err;
     }
 
-    const res = await instanceAuth.post("locket/loginV2", {
+    const res = await instanceAuth.post("locket/login", {
       email,
       password,
       captchaToken,
