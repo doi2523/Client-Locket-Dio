@@ -1,9 +1,7 @@
 // src/components/UI/NotificationPrompt.js
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { API_URL, urlBase64ToUint8Array } from "@/utils";
 import { SonnerSuccess } from "../SonnerToast";
-import { CONFIG } from "@/config/webConfig";
+import { subscribePush } from "@/services";
 
 const isRunningAsPWA = () => {
   try {
@@ -48,23 +46,16 @@ const NotificationPrompt = () => {
 
   const subscribeUser = async () => {
     setShowAsk(false);
+
     try {
-      if (!("Notification" in window)) return;
-      if (!("serviceWorker" in navigator)) return;
+      const subscription = await subscribePush();
 
-      const permission = await Notification.requestPermission();
-      if (permission === "granted") {
-        const registration = await navigator.serviceWorker.ready;
-        if (!registration.pushManager) return;
+      if (!subscription) return;
 
-        const subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(CONFIG.keys.vapidPublicKey),
-        });
-
-        await axios.post(API_URL.REGISTER_PUSH_URL, { subscription });
-        SonnerSuccess("Đăng ký thành công", "Bạn sẽ nhận được thông báo mới nhất từ Locket Dio.");
-      }
+      SonnerSuccess(
+        "Đăng ký thành công",
+        "Bạn sẽ nhận được thông báo mới nhất từ Locket Dio.",
+      );
     } catch (error) {
       console.error("Subscribe user error:", error);
     }
