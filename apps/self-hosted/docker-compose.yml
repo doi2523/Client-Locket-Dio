@@ -1,0 +1,26 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: locketdio-api
+    env_file:
+      - ./api/.env.production
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "5001:5001"
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: locketdio-web
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    restart: unless-stopped

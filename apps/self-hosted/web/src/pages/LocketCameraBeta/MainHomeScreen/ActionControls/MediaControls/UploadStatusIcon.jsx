@@ -1,5 +1,5 @@
 import { Send, Check, AlertTriangle } from "lucide-react";
-import LoadingRing from "@/components/UI/Loading/ring";
+import LoadingRing from "@/components/ui/Loading/ring.jsx";
 import "./styles.css";
 
 const UploadStatusIcon = ({
