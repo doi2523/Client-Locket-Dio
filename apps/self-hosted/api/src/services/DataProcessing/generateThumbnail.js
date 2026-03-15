@@ -3,7 +3,7 @@ const path = require("path");
 const ffmpeg = require("fluent-ffmpeg");
 const ffmpegPath = require("ffmpeg-static");
 const ffprobePath = require("ffprobe-static").path;
-const { logInfo, logError } = require("../logger.service.js");
+const { logInfo, logError } = require("../../utils/logEventUtils.js");
 const { createFolderIfNotExist } = require("../../helpers/utils.js");
 
 ffmpeg.setFfmpegPath(ffmpegPath);

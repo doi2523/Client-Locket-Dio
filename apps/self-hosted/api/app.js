@@ -9,7 +9,7 @@ const envFile =
 dotenv.config({ path: envFile });
 
 const cors = require("cors");
-const { logInfo } = require("./src/services/logger.service.js");
+const { logInfo } = require("./src/utils/logEventUtils.js");
 
 // Routers
 const routes = require("./src/routes/index.js");

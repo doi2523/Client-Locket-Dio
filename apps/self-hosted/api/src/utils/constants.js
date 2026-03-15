@@ -1,17 +1,6 @@
 require("dotenv").config();
 
-const API_KEY = process.env.FIREBASE_API_KEY;
-
 const constants = {
-  LOGIN_URL: `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=${API_KEY}`,
-    LOGIN_URL: `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${API_KEY}`,
-
-  REFESH_URL: `https://securetoken.googleapis.com/v1/token?key=${API_KEY}`,
-
-  GET_ACCOUNT_INFO_URL: `https://www.googleapis.com/identitytoolkit/v3/relyingparty/getAccountInfo?key=${API_KEY}`,
-
-  GET_ACCOUNT_INFO_URL_V2: `https://firestore.googleapis.com/v1/projects/locket-4252a/databases/(default)/documents/users/`,
-
   USER_AGENT:
     "FirebaseAuth.iOS/10.23.1 com.locket.Locket/1.82.0 iPhone/18.0 hw/iPhone12_1",
   IOS_BUNDLE_ID: "com.locket.Locket",
@@ -87,71 +76,6 @@ const constants = {
     Connection: "keep-alive",
     "Content-Type": "application/json",
   },
-  locketAnalytics: {
-    ios_version: "2.8.0.1",
-    amplitude: {
-      device_id: "75D0035E-9C8E-4704-B02D-96976A512DD7",
-      session_id: {
-        value: "1766294565599",
-        "@type": "type.googleapis.com/google.protobuf.Int64Value",
-      },
-    },
-    experiments: {
-      flag_8: {
-        "@type": "type.googleapis.com/google.protobuf.Int64Value",
-        value: "500",
-      },
-      flag_10: {
-        "@type": "type.googleapis.com/google.protobuf.Int64Value",
-        value: "505",
-      },
-      flag_22: {
-        "@type": "type.googleapis.com/google.protobuf.Int64Value",
-        value: "1203",
-      },
-      flag_9: {
-        "@type": "type.googleapis.com/google.protobuf.Int64Value",
-        value: "11",
-      },
-      flag_3: {
-        "@type": "type.googleapis.com/google.protobuf.Int64Value",
-        value: "600",
-      },
-      flag_6: {
-        "@type": "type.googleapis.com/google.protobuf.Int64Value",
-        value: "2000",
-      },
-      flag_18: {
-        "@type": "type.googleapis.com/google.protobuf.Int64Value",
-        value: "1203",
-      },
-      flag_4: {
-        "@type": "type.googleapis.com/google.protobuf.Int64Value",
-        value: "43",
-      },
-      flag_7: {
-        value: "800",
-        "@type": "type.googleapis.com/google.protobuf.Int64Value",
-      },
-      flag_15: {
-        "@type": "type.googleapis.com/google.protobuf.Int64Value",
-        value: "501",
-      },
-      flag_14: {
-        value: "502",
-        "@type": "type.googleapis.com/google.protobuf.Int64Value",
-      },
-    },
-    google_analytics: {
-      app_instance_id: "01AD606783C24E3C86AD6A12375E565B",
-    },
-    platform: "ios",
-  },
-  CREATE_POST_URL: "https://api.locketcamera.com/postMomentV2",
-  GET_LASTEST_URL: "https://api.locketcamera.com/getLatestMomentV2",
-  CHANGE_PROFILE_URL: "https://api.locketcamera.com/changeProfileInfo",
-  CHECK_PLAN_URL: "https://server-admin-xi.vercel.app/locketpro/user-plans",
-  REACT_TO_MOMENT_URL: "https://api.locketcamera.com/reactToMoment",
   STORAGE_URL: process.env.STORAGE_API_URL,
 };
 
