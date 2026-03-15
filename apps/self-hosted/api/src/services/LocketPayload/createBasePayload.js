@@ -1,7 +1,7 @@
 const crypto = require("crypto");
-const { getYYYYMMDD } = require("../../utils/format/formatDay");
 const { logInfo } = require("../../utils/logEventUtils");
 const { createAnalytics } = require("../LocketAnalytics");
+const { getYYYYMMDD } = require("../../utils/formatDay");
 
 const getMd5Hash = (str) => {
   return crypto.createHash("md5").update(str).digest("hex");

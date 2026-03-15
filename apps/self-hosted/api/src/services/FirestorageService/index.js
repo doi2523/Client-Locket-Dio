@@ -1,8 +1,8 @@
-const { uploadImageToFirebaseStorage } = require("./uploadImage.js");
+const { uploadImageToFirebaseStorage } = require("./uploadImage");
 const {
   uploadVideoToFirebaseStorage,
   uploadThumbnailFromVideo,
-} = require("./uploadVideo.js");
+} = require("./uploadVideo");
 
 module.exports = {
   uploadImageToFirebaseStorage,

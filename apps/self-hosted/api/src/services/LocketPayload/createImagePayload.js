@@ -25,3 +25,58 @@ exports.imagePostPayloadDefault = ({ imageUrl, optionsData }) => {
   }
   return { data };
 };
+
+exports.imagePostPayloadDecorative = ({ imageUrl, optionsData }) => {
+  const { overlay_id, caption, text_color, color_top, color_bottom, icon } =
+    optionsData;
+  const data = createBaseImagePayload({ imageUrl, optionsData });
+
+  data.overlays.push({
+    data: {
+      text: caption,
+      text_color,
+      type: "static_content",
+      icon: { type: "emoji", data: icon },
+      max_lines: {
+        "@type": "type.googleapis.com/google.protobuf.Int64Value",
+        value: "4",
+      },
+      background: {
+        material_blur: "ultra_thin",
+        colors: [color_top, color_bottom],
+      },
+    },
+    alt_text: caption,
+    overlay_id: `caption:${overlay_id}`,
+    overlay_type: "caption",
+  });
+
+  return { data };
+};
+
+exports.imagePostPayloadCustome = ({ imageUrl, optionsData }) => {
+  const { caption, text_color, color_top, color_bottom, icon } = optionsData;
+  const data = createBaseImagePayload({ imageUrl, optionsData });
+
+  data.overlays.push({
+    data: {
+      text: caption,
+      text_color,
+      type: "static_content",
+      icon: { type: "emoji", data: icon },
+      max_lines: {
+        "@type": "type.googleapis.com/google.protobuf.Int64Value",
+        value: "4",
+      },
+      background: {
+        material_blur: "ultra_thin",
+        colors: [color_top, color_bottom],
+      },
+    },
+    alt_text: caption,
+    overlay_id: "caption:miss_you",
+    overlay_type: "caption",
+  });
+
+  return { data };
+};

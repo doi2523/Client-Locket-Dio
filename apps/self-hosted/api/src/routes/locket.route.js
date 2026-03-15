@@ -6,15 +6,25 @@ const MAX_VIDEO_COUNT = 1;
 
 const locketController = require("../controllers/locket.controller.js");
 const { verifyIdToken } = require("../middlewares/verifyToken.js");
+const saveUploadFile = require("../middlewares/save-upload-files.js");
 
 router.post("/login", locketController.login);
 router.get("/logout", locketController.logout);
+router.post("/refresh-token", locketController.refreshToken);
+
 router.post("/getAllFriendsV2", verifyIdToken, locketController.getAllFriends);
 
-router.post(
-    "/upload-media",
-    handleUpload(MAX_IMAGE_COUNT, MAX_VIDEO_COUNT),
-    locketController.uploadMedia
-);
+router.post("/getInfoUser", verifyIdToken, locketController.getInfoLocket);
+// router.post(
+//   "/upload-media",
+//   handleUpload(MAX_IMAGE_COUNT, MAX_VIDEO_COUNT),
+//   locketController.uploadMedia,
+// );
+
+//API bản V1 yêu cầu tải trực tiếp file trong request
+router.post("/postMomentV1", verifyIdToken, saveUploadFile, locketController.uploadMediaV1);
+
+//API bản V2 chính là công nghệ hiện tại Locket Dio đang sử dụng
+// router.post("/postMomentV2", verifyIdToken, locketController.uploadMediaV1);
 
 module.exports = router;

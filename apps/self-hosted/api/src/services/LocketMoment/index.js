@@ -1,7 +1,7 @@
-const { postImage } = require("./postImage");
-const { postVideo } = require("./postVideo");
+const { postImageToLocket } = require("./postImageMoment");
+const { postVideoToLocket } = require("./postVideoMoment");
 
 module.exports = {
-  postImage,
-  postVideo,
+  postImageToLocket,
+  postVideoToLocket,
 };
