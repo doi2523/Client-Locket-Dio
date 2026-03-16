@@ -38,7 +38,7 @@ const toolsList = [
 export default function ToolsLocket() {
   const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState(
-    window.location.hash.replace("#", "") || toolsList[0].key
+    window.location.hash.replace("#", "") || toolsList[0].key,
   );
 
   // Đồng bộ hash khi activeTab thay đổi
@@ -61,14 +61,20 @@ export default function ToolsLocket() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-[84vh] w-full p-3">
+    <div className="flex flex-col min-h-[84vh] w-full p-3 pb-24 md:pb-3">
       {/* Title */}
       <h1 className="text-3xl font-bold text-primary text-center">
         🧰 ToolsLocket by Dio
       </h1>
+      <div className="text-sm text-center mt-1 text-base-content">
+        Đăng nhập dưới tên:{" "}
+        <strong>
+          {user?.firstName} {user?.lastName}
+        </strong>
+      </div>
 
       {/* Layout */}
-      <div className="flex flex-col md:flex-row w-full mx-auto gap-6 py-3">
+      <div className="relative flex flex-col md:flex-row w-full mx-auto gap-6 py-3">
         {/* Sidebar */}
         <div className="hidden md:block w-1/4">
           <div className="flex flex-col gap-2 bg-base-100 p-4 rounded-xl shadow-md border">
@@ -96,22 +102,14 @@ export default function ToolsLocket() {
             <div>🔍 Không tìm thấy nội dung</div>
           )}
         </div>
-      </div>
 
-      {/* Footer */}
-      <div className="text-sm text-center mt-6 text-base-content">
-        Đăng nhập dưới tên:{" "}
-        <strong>
-          {user?.firstName} {user?.lastName}
-        </strong>
+        {/* Mobile Bottom Toolbar */}
+        <BottomToolBar
+          tools={toolsList}
+          activeKey={activeTab}
+          onChange={setActiveTab}
+        />
       </div>
-
-      {/* Mobile Bottom Toolbar */}
-      <BottomToolBar
-        tools={toolsList}
-        activeKey={activeTab}
-        onChange={setActiveTab}
-      />
     </div>
   );
 }
