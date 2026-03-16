@@ -78,8 +78,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          react: ["react", "react-dom"],
-          ui: ["lucide-react", "sonner", "react-icons", "react-fast-marquee", "swiper"],
+          icons: ["lucide-react", "react-icons"],
+          swiper: ["swiper"],
+          tour: ["driver.js"],
+          marquee: ["react-fast-marquee"],
+          toast: ["sonner"],
           crop: ["react-easy-crop"],
           vendor: ["axios", "zustand", "dexie"]
         },
