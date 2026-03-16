@@ -1,11 +1,32 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: all;
+  themes:
+    [ "light",
+    "dark",
+    "cupcake",
+    "bumblebee",
+    "emerald",
+    "corporate",
+    "synthwave",
+    "retro",
+    "valentine",
+    "halloween",
+    "garden",
+    "forest",
+    "lofi",
+    "pastel",
+    "fantasy",
+    "wireframe",
+    "black",
+    "luxury",
+    "dracula",
+    "cmyk",
+    "autumn",
+    "business",
+    "acid",
+    "lemonade",
+    "night",
+    "coffee",
+    "winter",
+    ];
 }
-@plugin "daisyui/theme" {
-  name: "light";
-  default: true;
-  --color-primary: blue;
-  --color-secondary: teal;
-}
-
