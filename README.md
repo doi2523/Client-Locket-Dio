@@ -104,7 +104,7 @@
 
 ---
 
-## 📋 Cài đặt
+## 🛠️ Cài đặt
 
 Hãy tham khảo trong [Hướng dẫn](./apps/README.md)
 
