@@ -5,6 +5,7 @@ Cảm ơn bạn đã quan tâm đến dự án! Dưới đây là một số hư
 - [1. Bắt Đầu](#bắt-đầu)
 - [2. Issues](#issues)
 - [3. Pull Requests](#pull-requests)
+- [4. Contributors](#contributors)
 
 ## Bắt Đầu
 
@@ -33,6 +34,13 @@ Trước khi gửi PR, hãy kiểm tra:
 - Đảm bảo tuân theo quy ước [Conventional Commits](https://www.conventionalcommits.org/) khi đặt tên commit.
 
 ---
+
+## Contributors
+<a href="https://github.com/doi2523/Client-Locket-Dio/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=doi2523/Client-Locket-Dio" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
 
 <div align="center">
 
