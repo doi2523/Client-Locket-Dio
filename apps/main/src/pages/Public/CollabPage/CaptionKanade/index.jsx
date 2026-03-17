@@ -58,12 +58,12 @@ export default function ManageCaption() {
       <p className="text-sm text-gray-600 mb-6">
         Truy cập{" "}
         <a
-          href="https://captionkanade.chisadin.site/"
+          href="https://captionkanade.site/"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-500 underline"
         >
-          https://captionkanade.chisadin.site/
+          https://captionkanade.site/
         </a>{" "}
         để tạo và lưu caption.
       </p>
@@ -86,7 +86,7 @@ export default function ManageCaption() {
             style={{ maxHeight: "400px" }}
           >
             <source
-              src="https://captionkanade.chisadin.site/locketdio.mp4"
+              src="https://cdn.chisadin.site/locketdio.mp4"
               type="video/mp4"
             />
             Trình duyệt của bạn không hỗ trợ video.
@@ -134,7 +134,7 @@ export default function ManageCaption() {
           Tìm kiếm
         </button>
         <a
-          href="https://captionkanade.chisadin.site/"
+          href="https://captionkanade.site/"
           target="_blank"
           rel="noopener noreferrer"
           className="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg font-medium shadow-md transition whitespace-nowrap text-center"
@@ -151,12 +151,12 @@ export default function ManageCaption() {
           <p>
             Truy cập{" "}
             <a
-              href="https://captionkanade.chisadin.site/"
+              href="https://captionkanade.site/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 underline"
             >
-              https://captionkanade.chisadin.site/
+              https://captionkanade.site/
             </a>{" "}
             để tạo và lưu caption.
           </p>
