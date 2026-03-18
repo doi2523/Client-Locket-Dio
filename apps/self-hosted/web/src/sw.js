@@ -3,9 +3,6 @@ import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching";
 import { registerRoute, NavigationRoute } from "workbox-routing";
 import { createHandlerBoundToURL } from "workbox-precaching";
 
-import { CacheFirst } from "workbox-strategies";
-import { ExpirationPlugin } from "workbox-expiration";
-
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
 });
@@ -23,37 +20,6 @@ cleanupOutdatedCaches();
 
 // Điều hướng fallback cho SPA
 registerRoute(new NavigationRoute(createHandlerBoundToURL("index.html")));
-registerRoute(
-  ({ url, request }) =>
-    url.origin === "https://cdn.locket-dio.com" &&
-    request.destination === "font" &&
-    url.pathname.startsWith("/v1/fonts/"),
-  new CacheFirst({
-    cacheName: "dio-fonts-v1",
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 20,
-        maxAgeSeconds: 365 * 24 * 60 * 60,
-      }),
-    ],
-  })
-);
-
-registerRoute(
-  ({ url, request }) =>
-    url.origin === "https://cdn.locket-dio.com" &&
-    request.destination === "image" &&
-    url.pathname.startsWith("/v1/images/"),
-  new CacheFirst({
-    cacheName: "dio-images-v1",
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 300,
-        maxAgeSeconds: 7 * 24 * 60 * 60,
-      }),
-    ],
-  })
-);
 
 // Push Notification handler
 self.addEventListener("push", (event) => {
