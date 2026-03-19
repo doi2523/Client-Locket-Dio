@@ -20,7 +20,7 @@ export const getMaxUploads = () => {
 
   return {
     maxImageSizeMB: 5,
-    maxVideoSizeMB: 5,
+    maxVideoSizeMB: 20,
     storage_limit_mb: -1,
   };
 };
