@@ -33,11 +33,11 @@
     "node-request-context": "^1.0.5",
     "os": "^0.1.2",
     "request-promise": "^4.2.6",
-    "sharp": "^0.34.5"
+    "sharp": "^0.34.5",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "nodemon": "^3.1.4",
-    "uuid": "^10.0.0"
+    "nodemon": "^3.1.4"
   }
 }
