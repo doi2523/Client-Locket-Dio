@@ -151,6 +151,52 @@ Content-Type: multipart/form-data
 
 ---
 
+#### `POST /locket/postMomentV2` — Upload ảnh/video
+
+> 🔒 Yêu cầu xác thực
+
+```http
+POST /locket/postMomentV2
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "model": "Version-UploadmediaV3.1",
+  "mediaInfo": {
+    "url": "https://cdn.example.com/path/to/file.jpg",
+    "path": "user_uploads/abc123.jpg",
+    "name": "abc123.jpg",
+    "size": 194203,
+    "contentType": "image/jpeg",
+    "timeCreated": "2025-07-24T14:30:00Z",
+    "type": "image"
+  },
+  "options": {
+    "caption": "Caption tuỳ chọn",
+    "overlay_id": "abc123",
+    "type": "caption_theme",
+    "icon": "❤️",
+    "text_color": "#FFFFFF",
+    "color_top": "#000000",
+    "color_bottom": "#FF0000",
+    "audience": "selected",
+    "recipients": ["uid1", "uid2"],
+    "music": "https://cdn.example.com/music.mp3"
+  }
+}
+```
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "message": "Upload media successfully",
+  "data": {}
+}
+```
+
+---
+
 ### 👤 Users — Người Dùng
 
 #### `GET /locket/getInfoUser` — Lấy thông tin cá nhân
