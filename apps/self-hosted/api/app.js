@@ -39,5 +39,5 @@ app.use(errorHandler);
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-  logInfo("main.js", `Server backend is running at localhost:${PORT}`);
+  logInfo("SERVER", `Server backend is running at localhost:${PORT}`);
 });

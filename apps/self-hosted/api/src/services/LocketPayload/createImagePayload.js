@@ -80,3 +80,30 @@ exports.imagePostPayloadCustome = ({ imageUrl, optionsData }) => {
 
   return { data };
 };
+
+exports.imagePostPayloadIcon = ({ imageUrl, optionsData }) => {
+  const { caption, text_color, color_top, color_bottom, icon } = optionsData;
+  const data = createBaseImagePayload({ imageUrl, optionsData });
+
+  data.overlays.push({
+    data: {
+      text: caption,
+      text_color,
+      type: "static_content",
+      icon: { type: "image", data: icon },
+      max_lines: {
+        "@type": "type.googleapis.com/google.protobuf.Int64Value",
+        value: "4",
+      },
+      background: {
+        material_blur: "ultra_thin",
+        colors: [],
+      },
+    },
+    alt_text: caption,
+    overlay_id: "caption:ootd",
+    overlay_type: "caption",
+  });
+
+  return { data };
+};

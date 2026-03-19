@@ -84,3 +84,30 @@ exports.videoPostPayloadCustome = ({ videoUrl, thumbnailUrl, optionsData }) => {
 
   return { data };
 };
+
+exports.videoPostPayloadIcon = ({ videoUrl, thumbnailUrl, optionsData }) => {
+  const { caption, text_color, color_top, color_bottom, icon } = optionsData;
+  const data = createBaseVideoPayload({ videoUrl, thumbnailUrl, optionsData });
+
+  data.overlays.push({
+    data: {
+      text: caption,
+      text_color: text_color,
+      type: "static_content",
+      max_lines: 1,
+      icon: {
+        type: "image",
+        data: icon,
+      },
+      background: {
+        material_blur: "ultra_thin",
+        colors: [],
+      },
+    },
+    alt_text: caption,
+    overlay_id: "caption:miss_you",
+    overlay_type: "caption",
+  });
+
+  return { data };
+};

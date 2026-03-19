@@ -1,4 +1,19 @@
-const { postServices, authServices, friendServices } = require("../services");
+const {
+  postServices,
+  authServices,
+  friendServices,
+  processServices,
+  chatServices,
+} = require("../services");
+const { formatFileSize } = require("../utils/formatFileSize");
+const {
+  logWarning,
+  logTable,
+  logLoading,
+  logInfo,
+} = require("../utils/logEventUtils");
+
+const MAX_SIZE_MB_UPLOAD = 20; //MB
 
 class LocketController {
   async login(req, res, next) {
@@ -46,6 +61,41 @@ class LocketController {
 
       const data = await friendServices.getAllFriends(idToken, localId);
       return res.status(200).json({ data: data, success: true, message: "ok" });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getMoments(req, res, next) {
+    try {
+      const { idToken, localId } = req.user;
+
+      const data = await postServices.getLocketMoments(idToken, localId);
+      return res
+        .status(200)
+        .json({
+          data: data.moments,
+          nextPageToken: data.nextPageToken,
+          success: true,
+          message: "ok",
+        });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async getMessages(req, res, next) {
+    try {
+      const { idToken, localId } = req.user;
+
+      const data = await chatServices.getAllMessages(idToken, localId);
+      return res
+        .status(200)
+        .json({
+          data: data?.messages,
+          nextPageToken: data?.nextPageToken,
+          success: true,
+          message: "ok",
+        });
     } catch (error) {
       next(error);
     }
@@ -154,6 +204,115 @@ class LocketController {
       });
     } catch (error) {
       next(error);
+    }
+  }
+
+  //Function upload với thông tin media là url
+  async uploadMediaV2(req, res, next) {
+    let mediaPath;
+
+    try {
+      const { options, optionsData: optionsDataRaw, mediaInfo } = req.body;
+
+      const optionsData = options ?? optionsDataRaw;
+      const { idToken, localId } = req.user;
+
+      const { type, url, name, size, path } = mediaInfo;
+
+      if (!path) {
+        return res.status(400).json({ error: "Missing file path" });
+      }
+
+      const sizeInMB = size / (1024 * 1024);
+      if (sizeInMB > MAX_SIZE_MB_UPLOAD) {
+        logWarning("uploadMediaV2", "🚫 Upload bị từ chối do vượt giới hạn");
+        return res.status(400).json({
+          success: false,
+          message: "File quá lớn",
+        });
+      }
+
+      logTable("uploadMediaV2", {
+        localId,
+        type,
+        name,
+        size: formatFileSize(size),
+      });
+
+      logLoading("uploadMediaV2", "Downloading media from S2");
+
+      const media = await processServices.downloadMediaOnStorage(
+        url,
+        type,
+        name,
+      );
+
+      if (!media) {
+        logWarning("uploadMediaV2", "Failed to download media buffer");
+        return res.status(404).json({
+          message: "Không thể tải media từ URL!",
+        });
+      }
+
+      const mediaBuffer = media.buffer;
+      mediaPath = media.path;
+
+      let processedBuffer;
+      let thumbBuffer;
+      let result;
+
+      if (type === "image") {
+        processedBuffer = await processServices.processImageBuffer({
+          imageBuffer: mediaBuffer,
+          maxSizeMB: 1,
+          resolution: 1440,
+        });
+
+        result = await postServices.postImageToLocketV2({
+          userId: localId,
+          idToken,
+          imageBuffer: processedBuffer,
+          optionsData,
+        });
+      } else if (type === "video") {
+        processedBuffer = await processServices.processVideoBuffer({
+          videoBuffer: mediaBuffer,
+          filename: name,
+          maxSizeMB: 5,
+        });
+
+        thumbBuffer = await processServices.generateThumbnail(
+          processedBuffer,
+          localId,
+        );
+
+        result = await postServices.postVideoToLocketV2({
+          userId: localId,
+          idToken,
+          videoBuffer: processedBuffer,
+          thumbBuffer,
+          optionsData,
+        });
+      }
+
+      await processServices.deleteFileFromStorageR2(mediaPath).catch(() => {});
+
+      logInfo("uploadMediaV2", "End - Success");
+
+      return res.status(200).json({
+        success: true,
+        message: "Upload media successfully",
+        data: result?.result?.data,
+      });
+    } catch (error) {
+      next(error);
+    } finally {
+      // cleanup an toàn
+      if (mediaPath) {
+        try {
+          deleteTempFile(mediaPath);
+        } catch {}
+      }
     }
   }
 }

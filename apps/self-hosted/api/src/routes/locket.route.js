@@ -15,16 +15,15 @@ router.post("/refresh-token", locketController.refreshToken);
 router.post("/getAllFriendsV2", verifyIdToken, locketController.getAllFriends);
 
 router.post("/getInfoUser", verifyIdToken, locketController.getInfoLocket);
-// router.post(
-//   "/upload-media",
-//   handleUpload(MAX_IMAGE_COUNT, MAX_VIDEO_COUNT),
-//   locketController.uploadMedia,
-// );
 
 //API bản V1 yêu cầu tải trực tiếp file trong request
 router.post("/postMomentV1", verifyIdToken, saveUploadFile, locketController.uploadMediaV1);
 
 //API bản V2 chính là công nghệ hiện tại Locket Dio đang sử dụng
-// router.post("/postMomentV2", verifyIdToken, locketController.uploadMediaV1);
+router.post("/postMomentV2", verifyIdToken, locketController.uploadMediaV2);
+
+
+router.post("/getMomentV2", verifyIdToken, locketController.getMoments);
+router.post("/getAllMessageV2", verifyIdToken, locketController.getMessages);
 
 module.exports = router;

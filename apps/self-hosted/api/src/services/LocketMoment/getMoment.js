@@ -1,3 +1,5 @@
+const { instanceFirestore } = require("../../libs");
+
 const getLocketMoments = async (
   idToken,
   userId,
@@ -5,19 +7,23 @@ const getLocketMoments = async (
   userUid,
   limit = 20,
 ) => {
-  const headers = {
-    Authorization: `Bearer ${idToken}`,
-    Accept: "application/json",
-  };
-
   const params = {
     orderBy: "date desc",
     pageSize: pageToken ? 100 : limit,
   };
+
   if (pageToken) params.pageToken = pageToken;
 
   try {
-    const response = await axios.get(url, { headers, params });
+    const response = await instanceFirestore.get(
+      `/locket/documents/history/${userId}/entries`,
+      {
+        params,
+        meta: {
+          idToken,
+        },
+      },
+    );
     const documents = response.data.documents || [];
 
     // ✅ Chuẩn hoá ngay tại server
@@ -44,7 +50,6 @@ const getLocketMoments = async (
     };
   }
 };
-
 
 function normalizeMoment(doc) {
   if (!doc || !doc.fields) return null;
@@ -106,3 +111,28 @@ function replaceFirebaseWithCDN(url) {
     "https://cdn.locketcamera.com",
   );
 }
+
+function parseFirestoreValue(v) {
+  if (!v) return null;
+  if (v.stringValue !== undefined) return v.stringValue;
+  if (v.integerValue !== undefined) return parseInt(v.integerValue, 10);
+  if (v.doubleValue !== undefined) return parseFloat(v.doubleValue);
+  if (v.booleanValue !== undefined) return v.booleanValue;
+  if (v.timestampValue !== undefined) return v.timestampValue;
+  if (v.mapValue !== undefined) {
+    const fields = v.mapValue.fields || {};
+    const obj = {};
+    for (const key in fields) {
+      obj[key] = parseFirestoreValue(fields[key]);
+    }
+    return obj;
+  }
+  if (v.arrayValue !== undefined) {
+    return (v.arrayValue.values || []).map(parseFirestoreValue);
+  }
+  return null;
+}
+
+module.exports = {
+  getLocketMoments,
+};

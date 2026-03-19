@@ -1,10 +1,6 @@
-const getAllMessages = async (idToken, userId, pageToken, limit = 20) => {
-  const headers = {
-    ...LOGIN_HEADERS,
-    Authorization: `Bearer ${idToken}`,
-    Accept: "application/json",
-  };
+const { instanceFirestore } = require("../../libs");
 
+const getAllMessages = async (idToken, userId, pageToken, limit = 20) => {
   const params = {
     pageSize: limit,
     orderBy: "last_updated desc", // hoặc "updateTime desc"
@@ -13,11 +9,18 @@ const getAllMessages = async (idToken, userId, pageToken, limit = 20) => {
   if (pageToken) params.pageToken = pageToken;
 
   try {
-    const response = await axios.get(url, { headers, params });
-
+    const response = await instanceFirestore.get(
+      `/(default)/documents/users/${userId}/conversations`,
+      {
+        params,
+        meta: {
+          idToken,
+        },
+      },
+    );
     const documents = response.data.documents || [];
     // Chuẩn hoá dữ liệu Firestore -> plain object
-    const conversations = documents.map((doc) => normalizeMessage(doc));
+    const conversations = documents.map((doc) => normalizeMessage(doc, userId));
 
     return {
       messages: conversations,
@@ -34,44 +37,63 @@ const getAllMessages = async (idToken, userId, pageToken, limit = 20) => {
     };
   }
 };
-function normalizeMessage(doc) {
+function normalizeMessage(doc, user_id) {
   if (!doc || !doc.fields) return null;
 
   const f = doc.fields;
 
+  const members = f.members?.arrayValue?.values || [];
+
+  const memberList = members.map((v) => v.stringValue);
+
+  const with_user = memberList.find((id) => id !== user_id);
+
+  const latest = f.latest_message?.mapValue?.fields;
+
+  const toSeconds = (ts) =>
+    ts ? Math.floor(new Date(ts).getTime() / 1000) : 0;
+
   return {
-    id: f.uid?.stringValue || doc.name?.split("/").pop(),
-    members: f.members?.arrayValue?.values?.map((v) => v.stringValue) || [],
+    uid: f.uid?.stringValue || doc.name?.split("/").pop(),
+
+    members: memberList,
+
     unreadCount: parseInt(f.unread_count?.integerValue || "0", 10),
+
     isRead: f.is_read?.booleanValue || false,
 
-    lastReadAt: f.last_read_at?.timestampValue || null,
-    otherLastReadAt: f.other_last_read_at?.timestampValue || null,
-    lastUpdated: f.last_updated?.timestampValue || null,
+    lastReadAt: toSeconds(f.last_read_at?.timestampValue),
 
-    sender: f.latest_message.mapValue.fields.sender?.stringValue || "",
+    otherLastReadAt: toSeconds(f.other_last_read_at?.timestampValue),
 
-    // Tin nhắn mới nhất
-    latestMessage: f.latest_message?.mapValue?.fields
+    lastUpdated: toSeconds(f.last_updated?.timestampValue),
+
+    // 👇 thêm field bị thiếu
+    update_time: toSeconds(latest?.created_at?.timestampValue),
+
+    latestMessage: latest
       ? {
-          body: f.latest_message.mapValue.fields.body?.stringValue || "",
-          sender: f.latest_message.mapValue.fields.sender?.stringValue || "",
-          createdAt:
-            f.latest_message.mapValue.fields.created_at?.timestampValue || null,
-          replyMoment:
-            f.latest_message.mapValue.fields.reply_moment?.stringValue || null,
+          body: latest.body?.stringValue || "",
+          sender: latest.sender?.stringValue || "",
+          createdAt: toSeconds(latest.created_at?.timestampValue),
+          replyMoment: latest.reply_moment?.stringValue || null,
           thumbnailUrl: replaceFirebaseWithCDN(
-            f.latest_message.mapValue.fields.thumbnail_url?.stringValue,
+            latest.thumbnail_url?.stringValue,
           ),
         }
       : null,
 
-    otherLastDeliveredAt: f.other_last_delivered_at?.timestampValue || null,
-    otherLastDeliveredMessageCreatedAt:
-      f.other_last_delivered_message_created_at?.timestampValue || null,
+    otherLastDeliveredAt: toSeconds(f.other_last_delivered_at?.timestampValue),
 
-    createTime: doc.createTime || null,
-    updateTime: doc.updateTime || null,
+    otherLastDeliveredMessageCreatedAt: toSeconds(
+      f.other_last_delivered_message_created_at?.timestampValue,
+    ),
+
+    with_user,
+
+    createTime: toSeconds(doc.createTime),
+
+    updateTime: toSeconds(doc.updateTime),
   };
 }
 function replaceFirebaseWithCDN(url) {
@@ -81,3 +103,7 @@ function replaceFirebaseWithCDN(url) {
     "https://cdn.locketcamera.com",
   );
 }
+
+module.exports = {
+  getAllMessages,
+};
