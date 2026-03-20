@@ -19,8 +19,6 @@ const Docs = React.lazy(() => import("../pages/Public/Docs"));
 const CollectionPage = React.lazy(() => import("@/pages/Public/CollectionPage"));
 const Contact = React.lazy(() => import("../pages/Public/Contact"));
 const PrivacyPolicy = React.lazy(() => import("../pages/Public/PrivacyPolicy"));
-const PricingPage = React.lazy(() => import("../pages/Public/Pricing"));
-const PlanDetailPage = React.lazy(() => import("../pages/Auth/PricingDetail"));
 const ToolsLocket = React.lazy(() => import("../pages/Auth/LocketDioTools"));
 const Settings = React.lazy(() => import("../pages/Public/Settings"));
 const DevPage = React.lazy(() => import("../pages/Public/DevPage"));
@@ -51,8 +49,7 @@ export const publicRoutes = [
   { path: "/locket-beta", component: LocketCameraBeta, title: `Locket Camera Beta | ${APP_NAME}` },
 
   { path: "/privacy", component: PrivacyPolicy, title: `Chính sách riêng tư | ${APP_NAME}` },
-  { path: "/pricing", component: PricingPage, title: `Đăng ký gói thành viên | ${APP_NAME}` },
-  { path: "/pricing/:planId", component: PlanDetailPage, title: `Chi tiết gói | ${APP_NAME}` },
+
   { path: "/locketdio-tools", component: ToolsLocket, title: `Công cụ mở rộng | ${APP_NAME}` },
 
   { path: "/settings", component: Settings, title: `Cài đặt | ${APP_NAME}` },

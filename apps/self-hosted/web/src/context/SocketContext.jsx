@@ -14,13 +14,13 @@ export function SocketProvider({ children }) {
     if (!idToken || !user?.uid) return;
 
     // ❗ Chỉ tạo socket nếu chưa có
-    if (!socketRef.current) {
-      socketRef.current = createSocket(idToken, {
-        onConnect: () => setIsConnected(true),
-        onDisconnect: () => setIsConnected(false),
-        onError: () => setIsConnected(false),
-      });
-    }
+    // if (!socketRef.current) {
+    //   socketRef.current = createSocket(idToken, {
+    //     onConnect: () => setIsConnected(true),
+    //     onDisconnect: () => setIsConnected(false),
+    //     onError: () => setIsConnected(false),
+    //   });
+    // }
 
     return () => {
       socketRef.current?.disconnect();

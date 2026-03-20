@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { SendReactMoment } from "@/services/LocketDioServices/ActionMoments";
 import { Laugh, X } from "lucide-react";
 import { allEmojis } from "@/constants/emojis";
-import PlanBadge from "@/components/ui/PlanBadge/PlanBadge";
 import { useApp } from "@/context/AppContext";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 
@@ -302,7 +301,6 @@ const EmojiPicker = () => {
             <div className="text-2xl font-lovehouse mt-1.5 font-semibold">
               Emoji studio
             </div>
-            <PlanBadge />
           </div>
           <button
             onClick={() => setShowEmojiPicker(false)}

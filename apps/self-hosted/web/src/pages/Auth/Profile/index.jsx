@@ -4,7 +4,6 @@ import { useAuthStore } from "@/stores";
 
 export default function Profile() {
   const user = useAuthStore((s) => s.user);
-  const userPlan = useAuthStore((s) => s.userPlan);
 
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -122,28 +121,6 @@ export default function Profile() {
                 ? "Chưa xác thực"
                 : "Không xác định"
             }
-          />
-        </div>
-      </div>
-
-      <div className="mt-6 bg-base-100 border-base-300 text-base-content p-6 rounded-2xl shadow-md w-full max-w-2xl">
-        <h2 className="text-xl font-semibold pb-2">Thông tin trên web:</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-1 rounded-md p-3 card-body">
-          <InfoRow label="Số người dùng" value={userPlan?.user?.customer_code} />
-          <InfoRow label="Thông tin gói" value={userPlan?.plan?.name} />
-          <InfoRow label="Ngày bắt đầu" value={formatDateTimeV2(userPlan?.subscription?.start_at)} />
-          <InfoRow label="Ngày hết hạn" value={formatDateTimeV2(userPlan?.subscription?.expires_at)} />
-          <InfoRow
-            label="Ngày tạo tài khoản"
-            value={formatDateTimeV2(userPlan?.user?.created_at)}
-          />
-          <InfoRow
-            label="Cập nhập lần cuối"
-            value={formatDateTimeV2(userPlan?.user?.updated_at)}
-          />
-          <InfoRow
-            label="Tình trạng kích hoạt"
-            value={userPlan?.user?.is_active ? "Có" : "Không"}
           />
         </div>
       </div>

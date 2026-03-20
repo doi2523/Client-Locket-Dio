@@ -9,7 +9,6 @@ export const clearLocalData = () => {
     // Xoá các key liên quan đến đăng nhập / context
     localStorage.removeItem("friendsList");
     localStorage.removeItem("friendDetails");
-    localStorage.removeItem("userPlan");
 
     // (Không nên xoá toàn bộ cookie nếu không thật cần)
     // Xoá cookie cụ thể nếu biết tên
