@@ -19,7 +19,7 @@ function InfoUser({ user }) {
           @{user?.username} <Link className="ml-2" size={18} />
         </a>
       </div>
-      <div className="avatar w-16 h-16 disable-select flex-shrink-0">
+      <div className="flex justify-center items-center avatar w-16 h-16 disable-select flex-shrink-0">
         <div className="rounded-full shadow-md border-3 border-amber-400 p-0.5">
           {!imageLoaded && (
             <div className="absolute inset-0 flex items-center justify-center">
@@ -29,7 +29,7 @@ function InfoUser({ user }) {
           <img
             src={user?.profilePicture || "/images/default_profile.png"}
             alt="Profile"
-            className={`w-16 h-16 rounded-full transition-opacity duration-300 ${
+            className={`w-13 h-13 rounded-full transition-opacity duration-300 ${
               imageLoaded ? "opacity-100" : "opacity-0"
             }`}
             onLoad={() => setImageLoaded(true)}

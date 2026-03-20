@@ -24,6 +24,7 @@ import {
 } from "./stores";
 import { showDevWarning } from "./utils/logging/devConsole";
 import LoadingPageMain from "./components/pages/LoadPageMain";
+import LayoutWithSidebar from "./layouts/baseLayout";
 
 function App() {
   return (
@@ -87,7 +88,7 @@ function AppContent() {
     (
       document.querySelector("link[rel='canonical']") ||
       document.head.appendChild(
-        Object.assign(document.createElement("link"), { rel: "canonical" })
+        Object.assign(document.createElement("link"), { rel: "canonical" }),
       )
     ).href = url;
 
@@ -110,13 +111,13 @@ function AppContent() {
                   key={path}
                   path={path}
                   element={
-                    <Layout>
+                    <LayoutWithSidebar Layout={Layout}>
                       <Component />
-                    </Layout>
+                    </LayoutWithSidebar>
                   }
                 />
               );
-            }
+            },
           )}
 
           {/* Điều hướng khi chưa đăng nhập cố vào route cần auth */}

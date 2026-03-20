@@ -54,25 +54,28 @@ export default function Profile() {
       </h1>
 
       {/* Thông tin cơ bản */}
-      <div className="flex flex-row items-center bg-base-100 border-base-300 text-base-content p-6 rounded-2xl shadow-lg w-full max-w-2xl">
-        <div className="avatar relative w-18 h-18  disable-select">
-          <div className=" rounded-full shadow-md outline-4 outline-amber-400 flex justify-items-center">
+      <div className="flex flex-row items-center bg-base-100 border-base-300 text-base-content p-4 rounded-2xl shadow-lg w-full max-w-2xl">
+        <div className="flex justify-center items-center avatar w-16 h-16 disable-select flex-shrink-0">
+          <div className="rounded-full shadow-md border-3 border-amber-400 p-0.5">
             {!imageLoaded && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <LoadingRing size={40} stroke={2} color="blue" />
               </div>
             )}
             <img
-              src={user?.profilePicture || "/default-avatar.png"}
+              src={user?.profilePicture || "/images/default_profile.png"}
               alt="Profile"
-              className={`w-24 h-24 transition-opacity duration-300 ${
+              className={`w-13 h-13 rounded-full transition-opacity duration-300 ${
                 imageLoaded ? "opacity-100" : "opacity-0"
               }`}
               onLoad={() => setImageLoaded(true)}
+              onError={(e) => {
+                e.currentTarget.src = "/images/default_profile.png";
+              }}
             />
           </div>
         </div>
-        <div className="flex flex-col pl-5 text-center items-start space-y-1">
+        <div className="flex flex-col pl-2 text-center items-start space-y-1">
           <h2 className="text-2xl font-semibold">
             {user?.firstName} {user?.lastName}
           </h2>
@@ -119,8 +122,8 @@ export default function Profile() {
               user?.emailVerified === true
                 ? "Đã xác thực"
                 : user?.emailVerified === false
-                ? "Chưa xác thực"
-                : "Không xác định"
+                  ? "Chưa xác thực"
+                  : "Không xác định"
             }
           />
         </div>
@@ -129,10 +132,19 @@ export default function Profile() {
       <div className="mt-6 bg-base-100 border-base-300 text-base-content p-6 rounded-2xl shadow-md w-full max-w-2xl">
         <h2 className="text-xl font-semibold pb-2">Thông tin trên web:</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-1 rounded-md p-3 card-body">
-          <InfoRow label="Số người dùng" value={userPlan?.user?.customer_code} />
+          <InfoRow
+            label="Số người dùng"
+            value={userPlan?.user?.customer_code}
+          />
           <InfoRow label="Thông tin gói" value={userPlan?.plan?.name} />
-          <InfoRow label="Ngày bắt đầu" value={formatDateTimeV2(userPlan?.subscription?.start_at)} />
-          <InfoRow label="Ngày hết hạn" value={formatDateTimeV2(userPlan?.subscription?.expires_at)} />
+          <InfoRow
+            label="Ngày bắt đầu"
+            value={formatDateTimeV2(userPlan?.subscription?.start_at)}
+          />
+          <InfoRow
+            label="Ngày hết hạn"
+            value={formatDateTimeV2(userPlan?.subscription?.expires_at)}
+          />
           <InfoRow
             label="Ngày tạo tài khoản"
             value={formatDateTimeV2(userPlan?.user?.created_at)}
