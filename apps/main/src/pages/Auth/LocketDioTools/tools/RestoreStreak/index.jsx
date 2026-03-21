@@ -4,7 +4,7 @@ import { useFeatureVisible, useGetCode } from "@/hooks/useFeature";
 import { Link } from "react-router-dom";
 import { formatYYYYMMDD, addDaysToYYYYMMDD } from "@/utils"; // addDaysToYYYYMMDD là helper tăng ngày
 import { usePostStore, useStreakStore } from "@/stores";
-import { WarningBlock } from "./WarningBlock";
+import { InfoBlock, WarningBlock } from "./WarningBlock";
 import LockedFeature from "../../Layout/LockedFeature";
 import ReviewFeature from "./ReviewFeature";
 
@@ -61,13 +61,12 @@ export default function RestoreStreak() {
   // ✅ Xác định xem chuỗi hôm nay đã cập nhật chưa
   const isTodayStreak = streak?.last_updated_yyyymmdd === currentDate;
 
-  // Chuỗi đã cập nhật đúng ngày hôm nay
-  const isStreakUpToDate = streak?.last_updated_yyyymmdd === currentDate;
+  const streakUpdated = streak?.last_updated_yyyymmdd === previousDate;
 
   // Chỉ cho khôi phục khi:
   // - Chuỗi chưa tới hôm nay
   // - Hoặc user xác nhận đã xoá bài hôm nay
-  const canRestore = !isStreakUpToDate || confirmDeletedToday;
+  const canRestore = confirmDeletedToday || (!streakUpdated && !isTodayStreak);
 
   useEffect(() => {
     setConfirmDeletedToday(false);
@@ -117,7 +116,7 @@ export default function RestoreStreak() {
       </div>
       <ReviewFeature />
       {/* STREAK INFO */}
-      <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
         <div
           data-tour="current-streak"
           className="p-3 border border-base-300 rounded-xl bg-base-200 shadow-sm"
@@ -161,14 +160,14 @@ export default function RestoreStreak() {
             <b>Ngày trước đó:</b> {previousDate}
           </p>
           {(suggestedPastDate || suggestedCurrentDate) && (
-            <WarningBlock title="⚠️ Ngày khôi phục đề xuất">
+            <InfoBlock title="⚠️ Ngày khôi phục đề xuất">
               <div className="space-y-3 text-sm">
                 {suggestedPastDate && (
                   <label className="flex items-start gap-3 cursor-pointer">
                     <input
                       type="radio"
                       name="suggest_type"
-                      className="radio radio-warning radio-sm mt-1"
+                      className="radio radio-info radio-sm mt-1"
                       checked={suggestType === "past"}
                       onChange={() => setSuggestType("past")}
                     />
@@ -189,7 +188,7 @@ export default function RestoreStreak() {
                     <input
                       type="radio"
                       name="suggest_type"
-                      className="radio radio-warning radio-sm mt-1"
+                      className="radio radio-info radio-sm mt-1"
                       checked={suggestType === "current"}
                       onChange={() => setSuggestType("current")}
                     />
@@ -214,11 +213,11 @@ export default function RestoreStreak() {
                   <li>Nếu không hiểu thì hãy liên hệ quản trị viên nhé.</li>
                 </ul>
               </div>
-            </WarningBlock>
+            </InfoBlock>
           )}
         </div>
 
-        <div className="mt-5 space-y-3">
+        {/* <div className="mt-5 space-y-3">
           <p className="font-medium">🧭 Chọn chế độ khôi phục:</p>
 
           <fieldset
@@ -250,7 +249,7 @@ export default function RestoreStreak() {
               </span>
             </label>
           </fieldset>
-        </div>
+        </div> */}
 
         <div className="mt-5 p-3 bg-base-100 rounded-lg border text-base">
           <p className="opacity-70">
@@ -262,12 +261,6 @@ export default function RestoreStreak() {
         </div>
 
         {isTodayStreak && (
-          <div className="mt-4 text-xs text-error font-medium">
-            ⚠️ Hôm nay bạn đã cập nhật chuỗi — không thể khôi phục hoặc thay
-            đổi.
-          </div>
-        )}
-        {isStreakUpToDate && (
           <WarningBlock title="⚠️ Chuỗi đã đúng ngày hiện tại">
             <p className="text-sm opacity-80">
               Chuỗi của bạn đã được cập nhật cho <b>ngày hôm nay</b>.
@@ -284,10 +277,39 @@ export default function RestoreStreak() {
             </p>
           </WarningBlock>
         )}
+
+        {isTodayStreak && (
+          <WarningBlock title="❗Bật chế độ khôi phục nâng cao?">
+            <p className="text-sm opacity-80">
+              Chuỗi của bạn đã cập nhật vào đúng ngày hôm nay. Nhưng vẫn có thể
+              bật chế độ này để cập nhật lại chuỗi vào{" "}
+              <b>ngày trước đó và trước đó nữa</b>.
+            </p>
+            <p className="text-sm opacity-80 mt-2">
+              Tôi xác nhận rằng <b>đã xoá toàn bộ bài đăng của ngày hôm nay</b>{" "}
+              và hiểu rằng việc khôi phục chuỗi có thể làm sai lệch dữ liệu nếu
+              thông tin này không chính xác.
+            </p>
+            <label className="flex items-center justify-start gap-2 cursor-pointer text-sm mt-2">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-warning checkbox-sm"
+                checked={confirmDeletedToday}
+                onChange={(e) => setConfirmDeletedToday(e.target.checked)}
+              />
+              <span className="opacity-80">
+                Tôi đồng ý và chấp nhận điều kiện
+              </span>
+            </label>
+          </WarningBlock>
+        )}
       </div>
 
       {/* CONDITIONS */}
-      <div data-tour="note-streak" className="p-5 border border-dashed rounded-xl bg-base-100 space-y-3">
+      <div
+        data-tour="note-streak"
+        className="p-5 border border-dashed rounded-xl bg-base-100 space-y-3"
+      >
         <h3 className="font-semibold text-lg">⚙️ Điều kiện & hướng dẫn</h3>
         <ul className="list-disc list-inside text-sm space-y-2 opacity-80">
           <li>

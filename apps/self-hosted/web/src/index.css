@@ -55,7 +55,7 @@
 }
 @font-face {
   font-family: "LoveHouse";
-  src: url("https://cdn.locket-dio.com/v1/fonts/LoveHouse.woff") format("woff2");
+  src: url("./assets//fonts/LoveHouse.otf") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -66,7 +66,7 @@
 }
 @font-face {
   font-family: 'Purrfect';
-  src: url("https://cdn.locket-dio.com/v1/fonts/Purrfect.woff2") format('woff2');
+  src: url("./assets//fonts/Pacifico.ttf") format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

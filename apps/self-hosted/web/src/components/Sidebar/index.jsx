@@ -31,7 +31,6 @@ import { useApp } from "@/context/AppContext";
 import { MenuItem } from "./MenuItem";
 import { AuthButton } from "./AuthButton";
 import ThemeToggle from "./ThemeToggle";
-import PlanBadge from "../ui/PlanBadge/PlanBadge";
 import { SonnerError, SonnerSuccess } from "../ui/SonnerToast";
 import { CONFIG } from "@/config";
 import { useAuthStore } from "@/stores";
@@ -72,18 +71,11 @@ const Sidebar = () => {
       items: [
         { to: "/home", icon: Home, text: "Trang chủ" },
         { to: "/about", icon: Info, text: "Locket Dio" },
-        { to: "/newsfeed", icon: Newspaper, text: "Bảng tin", badge: "New" },
-        {
-          to: "/download",
-          icon: SquareArrowOutUpRight,
-          text: "Cài đặt WebApp",
-        },
         { to: "/sponsors", icon: Heart, text: "Ủng hộ dự án" },
       ],
     },
     {
       title: "Tính năng",
-      badge: <PlanBadge />,
       items: [
         { to: "/postmoments", icon: Upload, text: "Đăng ảnh, video" },
         {
@@ -92,32 +84,12 @@ const Sidebar = () => {
           text: "Locket Camera",
           badge: "Beta",
         },
-        { to: "/tools", icon: Wrench, text: "Công cụ Locket" },
-        {
-          to: "/diary",
-          icon: CalendarClock,
-          text: "Nhật ký Locket",
-          badge: "New",
-        },
-        { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "Hot" },
         { to: "/profile", icon: UserRound, text: "Hồ sơ của bạn" },
-      ],
-    },
-    {
-      title: "Hợp tác",
-      items: [
-        { to: "/collab/caption-kanade", icon: Palette, text: "Caption Kanade" },
-        {
-          to: "/collab/locket-upload",
-          icon: SquareArrowDown,
-          text: "Locket Upload",
-        },
       ],
     },
     {
       title: "Hệ thống & Hỗ trợ",
       items: [
-        // { to: "/devpage", icon: Code2, text: "Trang lập trình", badge: "New" },
         { to: "/incidents", icon: Bug, text: "Trung tâm sự cố" },
         { to: "/contact", icon: LifeBuoy, text: "Liên hệ & Hỗ trợ" },
         { to: "/privacy", icon: ShieldCheck, text: "Chính sách bảo mật" },
@@ -133,33 +105,13 @@ const Sidebar = () => {
         { to: "/", icon: Home, text: "Trang chủ" },
         { to: "/about", icon: Info, text: "Locket Dio" },
         { to: "/about-dio", icon: UserCircle, text: "Về Dio" },
-        { to: "/newsfeed", icon: Newspaper, text: "Bảng tin", badge: "New" },
-        {
-          to: "/download",
-          icon: SquareArrowOutUpRight,
-          text: "Cài đặt WebApp",
-        },
       ],
     },
     {
       title: "Tài nguyên",
       items: [
-        { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "New" },
-        { to: "/collection", icon: Package, text: "Thư viện phiên bản" },
         { to: "/sponsors", icon: Heart, text: "Ủng hộ dự án" },
-        { to: "/timeline", icon: Clock, text: "Lịch sử Website" },
         { to: "/docs", icon: BookText, text: "Tài liệu" },
-      ],
-    },
-    {
-      title: "Hợp tác",
-      items: [
-        { to: "/collab/caption-kanade", icon: Palette, text: "Caption Kanade" },
-        {
-          to: "/collab/locket-upload",
-          icon: SquareArrowDown,
-          text: "Locket Upload",
-        },
       ],
     },
     {

@@ -1,0 +1,43 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: locketdio-api
+    env_file:
+      - ./api/.env.production
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "5001:5001"
+    restart: unless-stopped
+
+  storage:
+    build:
+      context: ./storage
+      dockerfile: dockerfile
+    container_name: locketdio-storage
+    env_file:
+      - ./storage/.env.production
+    environment:
+      - NODE_ENV=production
+      - PORT=5003
+    ports:
+      - "5003:5003"
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: locketdio-web
+    env_file:
+      - ./web/.env.production
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+      - storage
+    restart: unless-stopped

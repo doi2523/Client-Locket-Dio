@@ -16,7 +16,6 @@ import Hourglass from "@/components/ui/Loading/hourglass.jsx";
 import MediaSizeInfo from "@/components/ui/MediaSizeInfo/index.jsx";
 import { defaultPostOverlay } from "@/stores/usePost.js";
 import { getMaxUploads } from "@/hooks/useFeature.js";
-import PlanBadge from "@/components/ui/PlanBadge/PlanBadge.jsx";
 import StorageUsageBar from "./StorageUsageBar.jsx";
 import {
   SonnerError,
@@ -184,7 +183,7 @@ const PostMoments = () => {
           </p>
           <div className="mt-2">
             <StorageUsageBar
-              totalUsedMB={uploadStats.total_storage_used_mb}
+              totalUsedMB={uploadStats?.total_storage_used_mb || 0}
               storageLimitMB={storage_limit_mb}
             />
           </div>
@@ -258,7 +257,6 @@ const PostMoments = () => {
               <div className="flex flex-row items-center">
                 <Pencil size={20} className="mr-2" /> Caption
               </div>{" "}
-              <PlanBadge />
             </h3>
             <input
               type="text"

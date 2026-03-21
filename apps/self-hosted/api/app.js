@@ -9,7 +9,7 @@ const envFile =
 dotenv.config({ path: envFile });
 
 const cors = require("cors");
-const { logInfo } = require("./src/services/logger.service.js");
+const { logInfo } = require("./src/utils/logEventUtils.js");
 
 // Routers
 const routes = require("./src/routes/index.js");
@@ -18,7 +18,7 @@ const errorHandler = require("./src/helpers/error-handler.js");
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://locket-uploader.vercel.app"],
+    origin: ["http://localhost:5173"],
     methods: ["GET", "POST"],
 
     // Nhằm cho phép client gửi cookie lên server
@@ -39,5 +39,5 @@ app.use(errorHandler);
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-  logInfo("main.js", `Server backend is running at localhost:${PORT}`);
+  logInfo("SERVER", `Server backend is running at localhost:${PORT}`);
 });

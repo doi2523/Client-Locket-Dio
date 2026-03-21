@@ -13,8 +13,6 @@ const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 1 ngày
 
 export const useAuthStore = create((set) => ({
   user: null,
-  userPlan: null,
-  uploadStats: null,
   isAuth: false,
   loading: true,
 
@@ -55,8 +53,6 @@ export const useAuthStore = create((set) => ({
     if (!token) {
       set({
         user: null,
-        userPlan: null,
-        uploadStats: null,
         isAuth: false,
         loading: false,
       });
@@ -64,12 +60,6 @@ export const useAuthStore = create((set) => ({
     }
 
     try {
-      // 1️⃣ Lấy plan luôn
-      const planRes = await GetUserDataV2();
-      set({
-        userPlan: planRes,
-        uploadStats: planRes?.upload_stats,
-      });
 
       // 2️⃣ Hiển thị user từ cache ngay nếu có
       const now = Date.now();
@@ -97,14 +87,10 @@ export const useAuthStore = create((set) => ({
         set({ user: userInfo }); // cập nhật store khi fetch xong
       }
 
-      // 4️⃣ Cập nhật backend nếu cần
-      if (userInfo) await updateUserInfo(userInfo);
     } catch (err) {
       console.error("Auth init error:", err);
       set({
         user: null,
-        userPlan: null,
-        uploadStats: null,
         isAuth: false,
         // loading: false,
       });
@@ -118,8 +104,6 @@ export const useAuthStore = create((set) => ({
       const planRes = await GetUserDataV2();
 
       set({
-        userPlan: planRes,
-        uploadStats: planRes?.upload_stats,
         loading: false,
       });
     } catch (err) {
@@ -135,8 +119,6 @@ export const useAuthStore = create((set) => ({
     localStorage.removeItem(CACHE_KEY); // xóa cache khi logout
     set({
       user: null,
-      userPlan: null,
-      uploadStats: null,
       isAuth: false,
     });
   },
