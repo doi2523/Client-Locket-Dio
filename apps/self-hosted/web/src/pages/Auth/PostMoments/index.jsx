@@ -183,7 +183,7 @@ const PostMoments = () => {
           </p>
           <div className="mt-2">
             <StorageUsageBar
-              totalUsedMB={uploadStats.total_storage_used_mb}
+              totalUsedMB={uploadStats?.total_storage_used_mb || 0}
               storageLimitMB={storage_limit_mb}
             />
           </div>

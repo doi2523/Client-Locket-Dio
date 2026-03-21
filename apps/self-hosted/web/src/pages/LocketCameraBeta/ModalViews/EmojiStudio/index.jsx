@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { SendReactMoment } from "@/services/LocketDioServices/ActionMoments";
+import { SendReactMoment } from "@/services";
 import { Laugh, X } from "lucide-react";
 import { allEmojis } from "@/constants/emojis";
 import { useApp } from "@/context/AppContext";

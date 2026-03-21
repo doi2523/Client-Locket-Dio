@@ -3,6 +3,7 @@ import api from "@/lib/axios";
 import { instanceAuth } from "@/lib/axios.auth";
 import { instanceLocketV2 } from "@/lib/axios.locket";
 import { instanceMain } from "@/lib/axios.main";
+import { ValidateEmailAddress } from "../LocketServices";
 //Login
 export const loginWithEmail = async ({ email, password, captchaToken }) => {
   try {
@@ -143,30 +144,6 @@ export const forgotPassword = async (email) => {
   }
 };
 
-export const ValidateEmailAddress = async (email) => {
-  try {
-    const body = {
-      data: {
-        email: email,
-        operation: "sign_in",
-        platform: "ios",
-      },
-    };
-    const res = await instanceLocketV2.post("validateEmailAddress", body);
-    return res.data;
-  } catch (error) {
-    console.log(error);
-
-    if (error.response && error.response.data?.error) {
-      throw error.response.data.error; // ⬅️ Ném lỗi từ `error.response.data.error`
-    }
-    console.error("❌ Network Error:", error.message);
-    throw new Error(
-      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút."
-    );
-  }
-};
-
 //Logout
 export const logout = async () => {
   try {
@@ -209,10 +186,7 @@ export const GetUserDataV2 = async () => {
 
 export const GetUserLocket = async () => {
   try {
-    const res = await api.get(
-      "https://auth.locket-dio.com/locket/getInfoUser",
-      { withCredentials: true }
-    );
+    const res = await instanceAuth.get("/locket/getInfoUser");
     return res.data?.data;
   } catch (error) {
     console.error(
