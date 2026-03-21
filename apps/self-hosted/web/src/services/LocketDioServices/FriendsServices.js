@@ -25,6 +25,50 @@ export const getListIdFriends = async () => {
     return null;
   }
 };
+export const loadFriendDetailsV4 = async (friends) => {
+  if (!friends || friends.length === 0) return [];
+
+  const batchSize = 20;
+  const allResults = [];
+
+  for (let i = 0; i < friends.length; i += batchSize) {
+    const batch = friends.slice(i, i + batchSize);
+
+    try {
+      const results = await Promise.allSettled(
+        batch.map(async (friend) => {
+          const res = await fetchUser(friend.uid);
+
+          const normalized = utils.normalizeFriendData(res.data);
+
+          // 🔥 merge meta friend vào profile
+          return {
+            ...normalized,
+            createdAt: friend.createdAt ?? 0,
+            updatedAt: friend.updatedAt ?? 0,
+            hidden: friend.hidden ?? false,
+            sharedHistoryOn: friend.sharedHistoryOn ?? null,
+            isCelebrity: friend.isCelebrity ?? false,
+          };
+        }),
+      );
+
+      const successResults = results
+        .filter((r) => r.status === "fulfilled" && r.value)
+        .map((r) => r.value);
+
+      allResults.push(...successResults);
+
+      if (i + batchSize < friends.length) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    } catch (err) {
+      console.error("❌ Lỗi khi xử lý batch:", err);
+    }
+  }
+
+  return allResults;
+};
 
 export const loadFriendDetailsV3 = async (friends) => {
   if (!friends || friends.length === 0) {
@@ -123,6 +167,61 @@ export const refreshFriends = async () => {
   }
 };
 
+export const loadFriendDetails = async (friends) => {
+  // Ưu tiên lấy dữ liệu từ localStorage trước
+  const savedDetails = localStorage.getItem("friendDetails");
+
+  if (savedDetails) {
+    try {
+      const parsedDetails = JSON.parse(savedDetails);
+      return parsedDetails;
+    } catch (error) {
+      console.error("❌ Parse friendDetails error:", error);
+      // Tiếp tục fetch nếu lỗi
+    }
+  }
+
+  if (!friends || friends.length === 0) {
+    return []; // Không fetch nếu không có bạn bè
+  }
+
+  const batchSize = 10;
+  const allResults = [];
+
+  for (let i = 0; i < friends.length; i += batchSize) {
+    const batch = friends.slice(i, i + batchSize);
+    try {
+      const results = await Promise.allSettled(
+        batch.map((friend) =>
+          fetchUser(friend?.uid).then((res) =>
+            utils.normalizeFriendData(res.data),
+          ),
+        ),
+      );
+
+      const successResults = results
+        .filter((r) => r.status === "fulfilled" && r.value)
+        .map((r) => r.value);
+
+      allResults.push(...successResults);
+
+      if (i + batchSize < friends.length) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    } catch (err) {
+      console.error("❌ Lỗi khi xử lý batch:", err);
+    }
+  }
+
+  try {
+    localStorage.setItem("friendDetails", JSON.stringify(allResults));
+  } catch (error) {
+    console.error("❌ Lỗi khi lưu vào localStorage:", error);
+  }
+
+  return allResults;
+};
+
 export const loadFriendDetailsV2 = async (friends) => {
   if (!friends || friends.length === 0) {
     return []; // Không fetch nếu không có bạn bè
@@ -159,6 +258,37 @@ export const loadFriendDetailsV2 = async (friends) => {
   }
 
   return allResults;
+};
+
+export const removeFriend = async (uid) => {
+  try {
+    const body = {
+      data: {
+        user_uid: uid,
+      },
+    };
+
+    const response = await instanceLocketV2.post("removeFriend", body);
+    return response.data?.result?.data?.user_uid;
+  } catch (error) {
+    console.error("❌ Lỗi khi xoá bạn:", error);
+    throw error;
+  }
+};
+
+export const toggleHiddenFriend = async (uid) => {
+  const body = {
+    data: {
+      user_uid: uid,
+    },
+  };
+
+  const response = await instanceLocketV2.post("toggleFriendHidden", body);
+
+  return {
+    success: response.status === 200,
+    uid,
+  };
 };
 
 // Hàm tìm bạn qua username

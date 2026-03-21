@@ -8,4 +8,6 @@ export * from "./PayloadServices";
 export * from "./ApplyCoupon";
 export * from "./ActionMoments";
 export * from "./ChatServices";
+export * from "./RollcallServices";
+export * from "./FetchUserServices"
 export * from "./RequestServices";
