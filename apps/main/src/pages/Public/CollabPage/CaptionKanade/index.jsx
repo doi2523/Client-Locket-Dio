@@ -10,8 +10,8 @@ export default function ManageCaption() {
   const [captionId, setCaptionId] = useState("");
 
   const KANADE_DOMAIN = "https://captionkanade.site";
-  const VIDEO_DESKTOP_URL = "https://cdn.chisadin.site/locketdio.mp4";
-  const VIDEO_MOBILE_URL = "https://cdn.chisadin.site/Screenrecorder-2026-01-22-22-12-58-939.mp4";
+  const VIDEO_DESKTOP_URL = "https://cdn.captionkanade.site/locketdio.mp4";
+  const VIDEO_MOBILE_URL = "https://cdn.captionkanade.site/Screenrecorder-2026-01-22-22-12-58-939.mp4";
 
   const userCaptions = useOverlayStore((s) => s.userCaptions);
   const addUserCaptionById = useOverlayStore((s) => s.addUserCaptionById);
