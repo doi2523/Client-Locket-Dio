@@ -43,7 +43,7 @@ function App() {
 
 function AppContent() {
   const navigate = useNavigate();
-  const { loading, isAuth, user, hydrate, init } = useAuthStore();
+  const { loading, isAuth, user, hydrateAuth, initAuth } = useAuthStore();
   const syncStreak = useStreakStore((s) => s.syncStreak);
   const fetchCaptionOverlays = useOverlayStore((s) => s.fetchCaptionOverlays);
   const hydrateUploadQueue = useUploadQueueStore((s) => s.hydrateUploadQueue);
@@ -60,8 +60,8 @@ function AppContent() {
   }
   useEffect(() => {
     import("./styles/animation.css");
-    hydrate();
-    init();
+    hydrateAuth();
+    initAuth();
     showDevWarning();
     fetchCaptionOverlays();
   }, []);

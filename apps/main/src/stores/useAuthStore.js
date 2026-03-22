@@ -21,7 +21,7 @@ export const useAuthStore = create((set) => ({
   // =========================
   // 1️⃣ HYDRATE – sync, render ngay
   // =========================
-  hydrate: () => {
+  hydrateAuth: () => {
     const token = localStorage.getItem("idToken");
     const cached = localStorage.getItem(CACHE_KEY);
 
@@ -49,7 +49,7 @@ export const useAuthStore = create((set) => ({
     set({ isAuth: true, loading: false });
   },
 
-  init: async () => {
+  initAuth: async () => {
     const token = localStorage.getItem("idToken");
 
     if (!token) {
