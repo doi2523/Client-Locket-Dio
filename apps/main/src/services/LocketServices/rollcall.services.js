@@ -1,4 +1,4 @@
-import { instanceLocketV2 } from "@/lib/axios.locket";
+import { instanceLocketV2 } from "@/libs";
 import { getISOWeek } from "@/utils";
 
 export const getRollcallPosts = async ({ selectWeek, selectYear }) => {

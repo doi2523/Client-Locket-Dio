@@ -1,6 +1,4 @@
-import axios from "axios";
 import {
-  API_URL,
   clearLocalData,
   getToken,
   removeToken,
@@ -9,7 +7,8 @@ import {
 import { CONFIG } from "@/config";
 import { parseJwt } from "@/utils/auth";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
-import { instanceAuth } from "./axios.auth";
+import { instanceAuth } from "./instanceAuth";
+import { createHttpClient } from "./createBase";
 
 // ==== Kiểm tra token sắp hết hạn (dưới 5 phút) ====
 let cachedExp = null;
@@ -43,7 +42,7 @@ let refreshPromise = null;
 async function refreshIdToken() {
   try {
     const { refreshToken } = getToken();
-    
+
     const res = await instanceAuth.post("locket/refresh-token", {
       refreshToken,
     });
@@ -92,10 +91,7 @@ function handleLogout() {
 }
 
 // ==== Khởi tạo axios instance ====
-const api = axios.create({
-  baseURL: CONFIG.api.baseUrl,
-  withCredentials: true,
-});
+const api = createHttpClient(CONFIG.api.baseUrl);
 
 // ==== Request Interceptor ====
 api.interceptors.request.use(async (config) => {
@@ -196,7 +192,7 @@ api.interceptors.response.use(
     }
     if (status === 429) {
       SonnerInfo(
-        message || "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau."
+        message || "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.",
       );
     }
 
@@ -206,24 +202,24 @@ api.interceptors.response.use(
 
     if (status === 502) {
       SonnerInfo(
-        message || "Máy chủ phản hồi không hợp lệ. Vui lòng thử lại sau."
+        message || "Máy chủ phản hồi không hợp lệ. Vui lòng thử lại sau.",
       );
     }
 
     if (status === 503) {
       SonnerInfo(
-        message || "Dịch vụ hiện không khả dụng. Vui lòng quay lại sau."
+        message || "Dịch vụ hiện không khả dụng. Vui lòng quay lại sau.",
       );
     }
 
     if (status === 504) {
       SonnerInfo(
-        message || "Hết thời gian phản hồi từ máy chủ. Vui lòng thử lại sau."
+        message || "Hết thời gian phản hồi từ máy chủ. Vui lòng thử lại sau.",
       );
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

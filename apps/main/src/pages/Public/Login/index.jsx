@@ -15,8 +15,8 @@ import { loginWithEmail, loginWithPhone } from "@/services";
 import { PhoneInput } from "./PhoneInput";
 
 const Login = () => {
-  const init = useAuthStore((s) => s.init);
-  const hydrate = useAuthStore((s) => s.hydrate);
+  const initAuth = useAuthStore((s) => s.initAuth);
+  const hydrateAuth = useAuthStore((s) => s.hydrateAuth);
   const [captchaToken, setCaptchaToken] = useState(null);
   const [loginMethod, setLoginMethod] = useState("email"); // "email" hoặc "phone"
   const [identifier, setIdentifier] = useState("");
@@ -88,8 +88,8 @@ const Login = () => {
         `Xin chào ${res.data?.displayName || "người dùng"}!`
       );
 
-      init();
-      hydrate();
+      initAuth();
+      hydrateAuth();
     } catch (error) {
       if (error?.status) {
         switch (error.status) {

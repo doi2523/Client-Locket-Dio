@@ -5,11 +5,15 @@ import {
   logout,
   updateUserInfo,
 } from "@/services";
-import { removeToken } from "@/utils";
+import {
+  removeToken,
+  saveMemberToken,
+  clearMemberToken,
+  saveUserCache,
+  getUserCache,
+  clearUserCache,
+} from "@/utils";
 import { create } from "zustand";
-
-const CACHE_KEY = "userData";
-const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 1 ngày
 
 export const useAuthStore = create((set) => ({
   user: null,
@@ -23,7 +27,7 @@ export const useAuthStore = create((set) => ({
   // =========================
   hydrateAuth: () => {
     const token = localStorage.getItem("idToken");
-    const cached = localStorage.getItem(CACHE_KEY);
+    const cachedUser = getUserCache();
 
     if (!token) {
       set({
@@ -34,16 +38,13 @@ export const useAuthStore = create((set) => ({
       return;
     }
 
-    if (cached) {
-      try {
-        const { data } = JSON.parse(cached);
-        set({
-          user: data,
-          isAuth: true,
-          loading: false, // ✅ render ngay
-        });
-        return;
-      } catch {}
+    if (cachedUser) {
+      set({
+        user: cachedUser,
+        isAuth: true,
+        loading: false,
+      });
+      return;
     }
 
     set({ isAuth: true, loading: false });
@@ -64,40 +65,26 @@ export const useAuthStore = create((set) => ({
     }
 
     try {
-      // 1️⃣ Lấy plan luôn
       const planRes = await GetUserDataV2();
+
+      saveMemberToken(planRes?.session);
+
       set({
         userPlan: planRes,
         uploadStats: planRes?.upload_stats,
       });
 
-      // 2️⃣ Hiển thị user từ cache ngay nếu có
-      const now = Date.now();
-      let cached = localStorage.getItem(CACHE_KEY);
-      let userInfo = null;
+      // lấy user từ cache
+      let userInfo = getUserCache();
 
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        userInfo = parsed.data;
-        // Nếu cache chưa quá hạn thì dùng ngay
-        if (now - parsed.timestamp < CACHE_DURATION_MS) {
-          set({ user: userInfo }); // hiển thị nhanh
-        } else {
-          userInfo = null; // cache quá hạn, fetch lại
-        }
-      }
-
-      // 3️⃣ Nếu chưa có cache hoặc quá hạn → gọi GetUserLocket()
-      if (!userInfo) {
+      if (userInfo) {
+        set({ user: userInfo });
+      } else {
         userInfo = await GetUserLocket();
-        localStorage.setItem(
-          CACHE_KEY,
-          JSON.stringify({ data: userInfo, timestamp: now }),
-        );
-        set({ user: userInfo }); // cập nhật store khi fetch xong
+        saveUserCache(userInfo);
+        set({ user: userInfo });
       }
 
-      // 4️⃣ Cập nhật backend nếu cần
       if (userInfo) await updateUserInfo(userInfo);
     } catch (err) {
       console.error("Auth init error:", err);
@@ -106,7 +93,6 @@ export const useAuthStore = create((set) => ({
         userPlan: null,
         uploadStats: null,
         isAuth: false,
-        // loading: false,
       });
     }
   },
@@ -117,6 +103,8 @@ export const useAuthStore = create((set) => ({
 
       const planRes = await GetUserDataV2();
 
+      // lưu token
+      saveMemberToken(planRes?.session);
       set({
         userPlan: planRes,
         uploadStats: planRes?.upload_stats,
@@ -132,7 +120,10 @@ export const useAuthStore = create((set) => ({
     await logout();
     removeToken();
     await clearAllDB();
-    localStorage.removeItem(CACHE_KEY); // xóa cache khi logout
+
+    clearMemberToken();
+    clearUserCache();
+
     set({
       user: null,
       userPlan: null,

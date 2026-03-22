@@ -1,6 +1,5 @@
 import { getMomentById } from "@/cache/momentDB";
-import api from "@/lib/axios";
-import { instanceLocketV2 } from "@/lib/axios.locket";
+import { instanceLocketV2 } from "@/libs";
 import { getToken } from "@/utils";
 import { generateUUIDv4Upper } from "@/utils/generate/uuid";
 
@@ -28,9 +27,9 @@ export const GetViewsMoment = async (idMoment) => {
   try {
     const body = {
       data: {
-        moment_uid: idMoment
-      }
-    }
+        moment_uid: idMoment,
+      },
+    };
     const res = await instanceLocketV2.post("getMomentViews", body);
     const moments = res.data.result?.data;
     return moments;

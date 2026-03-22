@@ -1,10 +1,10 @@
 import { CONFIG } from "@/config/webConfig";
-import api from "@/lib/axios";
+import api from "@/libs/axios";
 
 export const uploadFileAndGetInfoR2 = async (
   file,
   previewType = "other",
-  localId
+  localId,
 ) => {
   if (!file) throw new Error("No file provided");
 

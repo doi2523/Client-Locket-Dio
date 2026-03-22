@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as utils from "@/utils";
-import api from "@/lib/axios";
+import api from "@/libs/axios";
 
 export const uploadMedia = async (formData, setUploadProgress) => {
   let timeOutId;
@@ -12,7 +12,7 @@ export const uploadMedia = async (formData, setUploadProgress) => {
       () => {
         console.log("⏳ Uploading is taking longer than expected...");
       },
-      fileType === "image" ? 5000 : 10000
+      fileType === "image" ? 5000 : 10000,
     );
 
     const response = await axios.post(
@@ -23,7 +23,7 @@ export const uploadMedia = async (formData, setUploadProgress) => {
         onUploadProgress: (progressEvent) => {
           if (setUploadProgress && typeof setUploadProgress === "function") {
             const percent = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
+              (progressEvent.loaded * 100) / progressEvent.total,
             );
             let currentProgress = 0;
             if (percent > currentProgress) {
@@ -38,7 +38,7 @@ export const uploadMedia = async (formData, setUploadProgress) => {
             }
           }
         },
-      }
+      },
     );
 
     clearTimeout(timeOutId);
@@ -83,7 +83,7 @@ export const uploadMediaV2 = async (payload) => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     clearTimeout(timeoutId); // Hủy timeout khi upload thành công
@@ -123,7 +123,7 @@ export const PostMoments = async (payload) => {
         headers: {
           "Content-Type": "application/json", // vẫn có thể custom nếu cần
         },
-      }
+      },
     );
 
     clearTimeout(timeoutId); // Hủy timeout khi upload thành công

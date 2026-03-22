@@ -1,4 +1,4 @@
-import { instanceLocketV2 } from "@/lib/axios.locket";
+import { instanceLocketV2 } from "@/libs";
 import { normalizeFriendDataV2 } from "@/utils";
 import { chunkArray } from "@/helpers/chunkArray";
 import { fetchUserById } from "./fetch.services";

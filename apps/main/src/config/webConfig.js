@@ -157,4 +157,14 @@ export const CONFIG = {
       { id: "tip", label: "Mẹo sử dụng", icon: "Lightbulb" },
     ],
   },
+  cache: {
+    keys: {
+      user: "userData",
+      memberToken: "memberToken",
+      memberHeader: "memberHeader",
+    },
+    ttl: {
+      user: 24 * 60 * 60 * 1000,
+    },
+  },
 };

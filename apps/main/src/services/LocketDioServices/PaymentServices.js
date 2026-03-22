@@ -1,5 +1,5 @@
 import axios from "axios";
-import api from "@/lib/axios";
+import api from "@/libs/axios";
 import { CONFIG } from "@/config";
 
 export const CreateNewOrder = async (planId, price, coupon) => {

@@ -1,5 +1,5 @@
 import { PUBLIC_API } from "@/config/apiConfig";
-import { instanceBaseData } from "@/lib/axios.data";
+import { instanceBaseData } from "@/libs";
 
 /**
  * Lấy danh sách hoặc chi tiết bài viết.
@@ -19,7 +19,7 @@ export const getListNewFeeds = async (slug) => {
     // Nếu là danh sách → sort theo published_at
     if (!slug && Array.isArray(res.data)) {
       return [...res.data].sort(
-        (a, b) => new Date(b.published_at) - new Date(a.published_at)
+        (a, b) => new Date(b.published_at) - new Date(a.published_at),
       );
     }
 

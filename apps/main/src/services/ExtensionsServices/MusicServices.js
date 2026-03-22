@@ -1,4 +1,4 @@
-import api from "@/lib/axios";
+import api from "@/libs/axios";
 
 export const getInfoMusicByUrl = async (url, platform) => {
   if (!url || !platform) {

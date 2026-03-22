@@ -1,9 +1,9 @@
 import axios from "axios";
 import * as utils from "@/utils";
-import api from "@/lib/axios";
-import { instanceLocketV2 } from "@/lib/axios.locket";
+import api from "@/libs/axios";
+import { instanceLocketV2 } from "@/libs/instanceLocket";
 import { SonnerWarning } from "@/components/ui/SonnerToast";
-import { instanceMain } from "@/lib/axios.main";
+import { instanceMain } from "@/libs/instanceMain";
 
 //lấy toàn bộ danh sách bạn bè (uid, createdAt) từ API
 // {
@@ -167,7 +167,10 @@ export const FindFriendByUserName = async (eqfriend) => {
     const body = {
       username: eqfriend,
     };
-    const response = await instanceMain.post("https://api-beta.locket-dio.com/locket/getUserByData", body);
+    const response = await instanceMain.post(
+      "https://api-beta.locket-dio.com/locket/getUserByData",
+      body,
+    );
 
     return response.data;
   } catch (error) {

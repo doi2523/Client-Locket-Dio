@@ -1,4 +1,4 @@
-import api from "@/lib/axios";
+import api from "@/libs/axios";
 
 export const GetAllMessage = async ({ timestamp = null, limit = 50 }) => {
   try {

@@ -1,4 +1,4 @@
-import api from "@/lib/axios";
+import api from "@/libs/axios";
 
 const LAST_UPDATE_KEY = "lastUserUpdate";
 const UPDATE_INTERVAL = 24 * 60 * 60 * 1000; // 24 giờ
