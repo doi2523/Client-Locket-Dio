@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./styles.css"
+import "./styles.css";
 import { PiClockFill } from "react-icons/pi";
 import { useApp } from "@/context/AppContext";
 import { StarRating } from "../../Widgets/StarRating/StarRating";
@@ -51,7 +51,7 @@ const useTextMeasurement = (text, ref, type, placeholder, parentRef) => {
     const minWidth = type === "image_icon" ? 200 : 120; // Minimum width for different types
     const adjustedWidth = Math.max(
       minWidth,
-      Math.min(finalWidth, maxAllowedWidth)
+      Math.min(finalWidth, maxAllowedWidth),
     );
 
     setWidth(adjustedWidth);
@@ -89,7 +89,7 @@ const ImageIconOverlay = ({
     textareaRef,
     "image_icon",
     placeholder,
-    parentRef
+    parentRef,
   );
 
   useAutoResize([textareaRef]);
@@ -144,8 +144,8 @@ const MusicOverlay = ({ postOverlay }) => {
               postOverlay.caption.length < 30
                 ? "9s"
                 : postOverlay.caption.length < 60
-                ? "15s"
-                : "17s",
+                  ? "15s"
+                  : "17s",
           }}
         >
           <span className="mr-4">{postOverlay.caption}</span>
@@ -200,7 +200,7 @@ const LocationOverlay = ({
     textareaRef,
     "location",
     placeholder,
-    parentRef
+    parentRef,
   );
 
   useAutoResize([textareaRef]);
@@ -245,6 +245,21 @@ const HeartOverlay = ({ postOverlay }) => {
   );
 };
 
+const StreakOverlay = ({ postOverlay }) => {
+  return (
+    <div
+      className="flex items-center gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 font-bold text-md"
+      style={{
+        background: `linear-gradient(to bottom, ${postOverlay.color_top}, ${postOverlay.color_bottom})`,
+        color: postOverlay.text_color,
+      }}
+    >
+      <img src="./icons/flame_fill.png" alt="" className="w-5 h-5 mr-0.5" />
+      <span>{postOverlay.caption}</span>
+    </div>
+  );
+};
+
 const BatteryOverlay = ({ postOverlay, setPostOverlay, parentRef }) => {
   const textareaRef = useRef(null);
   const displayValue =
@@ -257,7 +272,7 @@ const BatteryOverlay = ({ postOverlay, setPostOverlay, parentRef }) => {
     textareaRef,
     "battery",
     "0–100%",
-    parentRef
+    parentRef,
   );
 
   useAutoResize([textareaRef]);
@@ -357,7 +372,7 @@ const CustomeOverlay = ({
     textareaRef,
     "default",
     placeholder,
-    parentRef
+    parentRef,
   );
 
   useAutoResize([textareaRef]);
@@ -419,7 +434,7 @@ const SpecialOverlay = ({
     textareaRef,
     "default",
     placeholder,
-    parentRef
+    parentRef,
   );
 
   useAutoResize([textareaRef]);
@@ -496,7 +511,7 @@ const DefaultOverlay = ({
     textareaRef,
     "default",
     placeholder,
-    parentRef
+    parentRef,
   );
 
   useAutoResize([textareaRef]);
@@ -577,6 +592,8 @@ const AutoResizeCaption = () => {
 
       case "heart":
         return <HeartOverlay postOverlay={postOverlay} />;
+      case "streak":
+        return <StreakOverlay postOverlay={postOverlay} />;
 
       case "battery":
         return (

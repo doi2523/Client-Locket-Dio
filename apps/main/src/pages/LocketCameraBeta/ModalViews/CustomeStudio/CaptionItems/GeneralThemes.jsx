@@ -7,6 +7,8 @@ import { getInfoMusicByUrl } from "@/services";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 import FormMusicPoup from "@/components/PoupScreen/FormMusicPoup";
 import FormReviewPoup from "@/components/PoupScreen/FormReviewPoup";
+import { Flame } from "lucide-react";
+import { useStreakStore } from "@/stores";
 
 export default function GeneralThemes({ title }) {
   const { navigation, post } = useApp();
@@ -15,6 +17,8 @@ export default function GeneralThemes({ title }) {
   const { addressOptions } = useLocationOptions();
   const { weather } = useLocationWeather();
   const { level, charging } = useBatteryStatus();
+
+  const streak = useStreakStore((s) => s.streak);
 
   const [time, setTime] = useState(() => new Date());
   const [savedAddressOptions, setSavedAddressOptions] = useState([]);
@@ -163,6 +167,15 @@ export default function GeneralThemes({ title }) {
           caption: "inlove",
           type: "heart",
         });
+      case "streak":
+        handleCustomeSelect({
+          preset_id: "streak",
+          caption: streak?.count || "0",
+          type: "streak",
+          color_top: "#FFD25F",
+          color_bottom: "#EAA900",
+          text_color: "#00000099"
+        });
         break;
       default:
         break;
@@ -224,6 +237,13 @@ export default function GeneralThemes({ title }) {
       label: `${level || "50"}%`,
     },
     {
+      id: "streak",
+      icon: <img src="./icons/flame_fill.png" className="w-5 h-5 mr-0.5" />,
+      label: streak?.count || "0",
+      background: ["#FFD25F", "#EAA900"],
+      color: "#00000099",
+    },
+    {
       id: "location",
       icon: (
         <img
@@ -247,17 +267,20 @@ export default function GeneralThemes({ title }) {
 
         {/* --- BUTTON GRID --- */}
         <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
-          {buttons.map(({ id, icon, label }) => (
+          {buttons.map((btn) => (
             <button
-              key={id}
-              onClick={() => handleClick(id)}
-              className="flex flex-col whitespace-nowrap bg-base-200 dark:bg-white/30
-              backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto
-              rounded-3xl font-semibold justify-center"
+              key={btn.id}
+              onClick={() => handleClick(btn.id)}
+              style={getButtonStyle(btn)}
+              className={`flex flex-col whitespace-nowrap
+    backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto
+    rounded-3xl font-semibold justify-center
+    ${!btn.background ? "bg-base-200 dark:bg-white/30" : ""}
+    `}
             >
               <span className="text-base flex flex-row items-center gap-1">
-                {icon}
-                {id === "location" ? (
+                {btn.icon}
+                {btn.id === "location" ? (
                   <div className="relative w-max">
                     <div className="cursor-pointer select-none">
                       {savedAddressOptions[0] || "Vị trí"}
@@ -283,7 +306,7 @@ export default function GeneralThemes({ title }) {
                     </select>
                   </div>
                 ) : (
-                  label
+                  btn.label
                 )}
               </span>
             </button>
@@ -317,3 +340,28 @@ export default function GeneralThemes({ title }) {
     </>
   );
 }
+
+const getButtonStyle = (btn) => {
+  if (!btn.background) return {};
+
+  if (Array.isArray(btn.background)) {
+    return {
+      background: `linear-gradient(to bottom, ${btn.background[0]}, ${btn.background[1]})`,
+      color: btn.color || "#fff",
+    };
+  }
+
+  if (btn.background.startsWith("url")) {
+    return {
+      backgroundImage: btn.background,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      color: btn.color || "#fff",
+    };
+  }
+
+  return {
+    background: btn.background,
+    color: btn.color || "#fff",
+  };
+};
