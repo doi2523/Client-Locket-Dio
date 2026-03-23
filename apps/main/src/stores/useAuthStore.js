@@ -3,6 +3,7 @@ import {
   GetUserDataV2,
   GetUserLocket,
   logout,
+  syncPushSubscription,
   updateUserInfo,
 } from "@/services";
 import {
@@ -85,7 +86,10 @@ export const useAuthStore = create((set) => ({
         set({ user: userInfo });
       }
 
-      if (userInfo) await updateUserInfo(userInfo);
+      if (userInfo) {
+        updateUserInfo(userInfo).catch(() => {});
+        syncPushSubscription().catch(() => {});
+      }
     } catch (err) {
       console.error("Auth init error:", err);
       set({
