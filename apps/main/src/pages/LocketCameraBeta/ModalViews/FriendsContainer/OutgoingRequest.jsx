@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   getOutgoingRequestFriend,
-  loadFriendDetailsV2,
+  loadFriendDetailsV3,
   rejectFriendRequests,
 } from "@/services";
 import { useApp } from "@/context/AppContext";
@@ -37,7 +37,7 @@ const OutgoingRequest = () => {
     if (result?.errorMessage) {
       setErrorMessage(result.errorMessage);
     } else {
-      const frienddetails = await loadFriendDetailsV2(result?.friends);
+      const frienddetails = await loadFriendDetailsV3(result?.friends);
       setFriends((prev) => [...prev, ...frienddetails]);
       setNextPageToken(result.nextPageToken || null);
     }

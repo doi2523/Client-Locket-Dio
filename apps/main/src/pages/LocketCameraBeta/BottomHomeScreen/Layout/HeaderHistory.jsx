@@ -3,11 +3,10 @@ import { useState } from "react";
 import { HiUsers } from "react-icons/hi2";
 import { useApp } from "@/context/AppContext";
 import Avatar from "../../ExtendPage/Badge/Avatar";
-import { useFriendStore } from "@/stores/useFriendStore";
-import { useAuthStore } from "@/stores";
+import { useAuthStore, useFriendStoreV2 } from "@/stores";
 
 const HeaderHistory = () => {
-  const { friendDetails, loading, setFriendDetails } = useFriendStore();
+  const friendDetails = useFriendStoreV2((s) => s.friendList);
   const { user } = useAuthStore();
   const {
     selectedFriendUid,

@@ -2,7 +2,6 @@ export * from "./useCamera";
 export * from "./useLoading";
 export * from "./useNavigation";
 export * from "./usePost";
-export * from "./useFriendStore";
 export * from "./useMessagesStore";
 export * from "./useMomentsStoreV2";
 export * from "./useStreakStore";

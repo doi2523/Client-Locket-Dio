@@ -1,9 +1,7 @@
-import axios from "axios";
 import * as utils from "@/utils";
 import api from "@/libs/axios";
-import { instanceLocketV2 } from "@/libs/instanceLocket";
-import { SonnerWarning } from "@/components/ui/SonnerToast";
 import { instanceMain } from "@/libs/instanceMain";
+import { fetchUserById } from "../LocketServices";
 
 //lấy toàn bộ danh sách bạn bè (uid, createdAt) từ API
 // {
@@ -40,8 +38,8 @@ export const loadFriendDetailsV3 = async (friends) => {
     try {
       const results = await Promise.allSettled(
         batch.map((friend) =>
-          fetchUser(friend?.uid).then((res) =>
-            utils.normalizeFriendData(res.data),
+          fetchUserById(friend?.uid).then((res) =>
+            utils.normalizeFriendDataV2(res),
           ),
         ),
       );
@@ -53,103 +51,6 @@ export const loadFriendDetailsV3 = async (friends) => {
       allResults.push(...successResults);
 
       // Nghỉ một chút nếu còn batch
-      if (i + batchSize < friends.length) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
-    } catch (err) {
-      console.error("❌ Lỗi khi xử lý batch:", err);
-    }
-  }
-
-  return allResults;
-};
-
-//fetch dữ liệu chi tiết về user qua uid
-export const fetchUser = async (user_uid) => {
-  // Đợi lấy token & uid
-  const { idToken } = utils.getToken() || {};
-
-  return await axios.post(
-    "https://api.locketcamera.com/fetchUserV2",
-    {
-      data: {
-        user_uid,
-      },
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${idToken}`,
-        "Content-Type": "application/json",
-      },
-    },
-  );
-};
-
-export const fetchUserV2 = async (user_uid) => {
-  // Đợi lấy token & uid
-  const body = {
-    data: {
-      user_uid: user_uid,
-    },
-  };
-  const res = await instanceLocketV2.post("fetchUserV2", body);
-  return res?.data?.result?.data;
-};
-//Tích hợp 2 hàm getListfirend và fetchuser cho thuận tiện việc lấy dữ liệu
-export const refreshFriends = async () => {
-  try {
-    // Lấy danh sách bạn bè (uid, createdAt)
-    const friends = await getListIdFriends();
-    if (!friends.length) return;
-
-    const { idToken, localId } = utils.getToken() || {};
-    if (!idToken || !localId) {
-      SonnerWarning("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
-      return null;
-    }
-    const friendDetails = await loadFriendDetailsV3(friends);
-
-    // Lưu thời gian cập nhật
-    const updatedAt = new Date().toISOString();
-    localStorage.setItem("friendsUpdatedAt", updatedAt);
-    return {
-      friends,
-      friendDetails,
-      updatedAt,
-    };
-  } catch (error) {
-    console.error("❌ Lỗi khi làm mới danh sách bạn bè:", error);
-    return null;
-  }
-};
-
-export const loadFriendDetailsV2 = async (friends) => {
-  if (!friends || friends.length === 0) {
-    return []; // Không fetch nếu không có bạn bè
-  }
-
-  const batchSize = 10;
-  const allResults = [];
-
-  for (let i = 0; i < friends.length; i += batchSize) {
-    const batch = friends.slice(i, i + batchSize);
-
-    try {
-      const results = await Promise.allSettled(
-        batch.map((friend) =>
-          fetchUser(friend?.uid).then((res) =>
-            utils.normalizeFriendData(res.data),
-          ),
-        ),
-      );
-
-      const successResults = results
-        .filter((r) => r.status === "fulfilled" && r.value)
-        .map((r) => r.value);
-
-      allResults.push(...successResults);
-
-      // Thêm delay nhỏ để tránh spam server nếu quá nhiều user
       if (i + batchSize < friends.length) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }

@@ -3,7 +3,7 @@ import { FaStarOfLife } from "react-icons/fa";
 import {
   AcceptRequestToFriend,
   getListRequestFriendV2,
-  loadFriendDetailsV2,
+  loadFriendDetailsV3,
 } from "@/services";
 import { useApp } from "@/context/AppContext";
 import { Check } from "lucide-react";
@@ -38,7 +38,7 @@ const IncomingFriendRequests = () => {
     if (result?.errorMessage) {
       setErrorMessage(result.errorMessage);
     } else {
-      const frienddetails = await loadFriendDetailsV2(result?.friends);
+      const frienddetails = await loadFriendDetailsV3(result?.friends);
       setFriends((prev) => [...prev, ...frienddetails]);
       setNextPageToken(result.nextPageToken || null);
     }

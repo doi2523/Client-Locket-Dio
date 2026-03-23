@@ -1,4 +1,4 @@
-// src/store/friend/useFriendStore.js
+// src/store/friend/useFriendStoreV2.js
 import { create } from "zustand";
 import {
   getAllFriendDetails,
