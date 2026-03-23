@@ -1,5 +1,5 @@
 import { CONFIG } from "@/config/webConfig";
-import api from "@/libs/axios";
+import { instanceBaseStorage } from "@/libs";
 
 export const uploadFileAndGetInfoR2 = async (
   file,
@@ -14,14 +14,16 @@ export const uploadFileAndGetInfoR2 = async (
 
   const fileName = `locketdio_${timestamp}_${localId}_cli${CONFIG.app.clientVersion}.${extension}`;
 
-  // === Bước 1: Gọi BE để lấy Presigned URL
-  const res = await api.post(`${CONFIG.api.storage}/api/presignedV3`, {
+  const body = {
     filename: fileName,
     contentType: file.type,
     type: safeType,
     size: file.size,
     uploadedAt: new Date().toISOString(),
-  });
+  };
+
+  // === Bước 1: Gọi BE để lấy Presigned URL
+  const res = await instanceBaseStorage.post("/api/presignedV3", body);
 
   const { url, publicURL, key, expiresIn } = res.data.data;
 
