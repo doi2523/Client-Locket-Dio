@@ -27,6 +27,7 @@ export const PUBLIC_API = {
   notifications: "v1/public/notification",
   plans: "v1/public/dio-plans",
   themes: "v1/public/themes",
+  getOverlaysV2: "v1/public/getAllOverlaysV2",
   incidents: "v1/public/getAllIncident",
   collection: "v1/public/getAllCollections"
 };

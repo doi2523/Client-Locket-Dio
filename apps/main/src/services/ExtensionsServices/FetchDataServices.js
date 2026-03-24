@@ -133,6 +133,20 @@ export const getAllOverlayCaption = async () => {
   }
 };
 
+export const getAllOverlayCaptionV2 = async () => {
+  try {
+    const res = await instanceBaseData.get(PUBLIC_API.getOverlaysV2);
+    if (!res?.data) {
+      console.error("❌ Không có dữ liệu hợp lệ", res?.data);
+      return null;
+    }
+    return res.data;
+  } catch (error) {
+    console.error("🚨 Lỗi khi gọi API:", error.message);
+    return null;
+  }
+};
+
 export const getAllCollections = async () => {
   try {
     const res = await instanceBaseData.get(PUBLIC_API.collection);
