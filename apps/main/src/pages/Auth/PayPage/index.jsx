@@ -175,14 +175,14 @@ export default function PayPage() {
                 {/* Ngân hàng */}
                 <div className="flex items-center">
                   <img
-                    src="https://api.vietqr.io/img/MB.png"
+                    src={plan.bank_info?.bank_logo}
                     alt="logo"
                     className="h-8 w-auto"
                   />
                   <div>
                     <p className="text-xs text-gray-500">Ngân hàng</p>
                     <p className="text-sm font-medium">
-                      Ngân hàng TMCP Quân đội (MB Bank)
+                      {plan.bank_info?.bank_fullname}
                     </p>
                   </div>
                 </div>
@@ -324,7 +324,8 @@ export default function PayPage() {
         labelConfirm={"Huỷ đơn hàng"}
       >
         Sau khi huỷ đơn hàng, bạn có thể tạo lại đơn hàng mới để thanh toán.
-        Hành động này không thể hoàn tác. Các mã giảm giá đã sử dụng sẽ không được hoàn lại.
+        Hành động này không thể hoàn tác. Các mã giảm giá đã sử dụng sẽ không
+        được hoàn lại.
       </ConfirmPoup>
     </>
   );
