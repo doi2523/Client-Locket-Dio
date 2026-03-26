@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import { formatYYYYMMDD, addDaysToYYYYMMDD } from "@/utils"; // addDaysToYYYYMMDD là helper tăng ngày
 import { usePostStore, useStreakStore } from "@/stores";
 import { InfoBlock, WarningBlock } from "./WarningBlock";
-import LockedFeature from "../../Layout/LockedFeature";
 import ReviewFeature from "./ReviewFeature";
+import DisableFeature from "../../Layout/DisableFeature";
 
 export default function RestoreStreak() {
   const hasAccess = useFeatureVisible("restore_streak_tool");
@@ -83,11 +83,8 @@ export default function RestoreStreak() {
 
   if (!hasAccess) {
     return (
-      <LockedFeature
+      <DisableFeature
         toolName="Restore Streak Tool"
-        price="5000"
-        note="CT"
-        codeUser={codeUser}
         description="Vui lòng liên hệ quản trị viên để được cấp quyền."
       />
     );
