@@ -17,7 +17,7 @@ import {
   loadAllUploadItems,
   getPostedMoments,
   savePostedMomentToDB,
-} from "../cache/uploadMomentDB";
+} from "../../cache/uploadMomentDB";
 
 export const STATUS_UPLOAD_MOMENT = {
   QUEUED: "queued",
@@ -111,7 +111,7 @@ export const useUploadQueueStore = create((set, get) => ({
         "Đăng tải thành công!",
         `${
           item.contentType === "video" ? "Video" : "Hình ảnh"
-        } đã được tải lên!`
+        } đã được tải lên!`,
       );
       useStreakStore.getState().fetchStreakIfNeeded();
 
@@ -195,7 +195,7 @@ export const useUploadQueueStore = create((set, get) => ({
 
     set((state) => ({
       uploadItems: state.uploadItems.map((item) =>
-        item.id === id ? { ...item, ...patch } : item
+        item.id === id ? { ...item, ...patch } : item,
       ),
     }));
   },

@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { defaultPostOverlay } from "./defaultOverlay";
 
 export const usePostStore = create((set) => ({
   caption: "",
@@ -22,9 +21,6 @@ export const usePostStore = create((set) => ({
 
   isSizeMedia: null,
   setSizeMedia: (val) => set({ isSizeMedia: val }),
-
-  postOverlay: defaultPostOverlay,
-  setPostOverlay: (overlay) => set({ postOverlay: overlay }),
 
   audience: "all",
   setAudience: (val) => set({ audience: val }),
