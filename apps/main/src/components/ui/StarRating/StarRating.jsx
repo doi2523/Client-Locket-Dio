@@ -17,7 +17,7 @@ export function StarRating({ rating }) {
     stars.push(
       <StarProgress
         key={i}
-        size={24}
+        size={22}
         fillPercent={fillPercent}
         className="inline-block"
       />
