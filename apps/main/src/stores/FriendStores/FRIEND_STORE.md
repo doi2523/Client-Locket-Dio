@@ -62,7 +62,7 @@ FriendItem lấy data từ map bằng uid
 Dùng khi app start hoặc vào trang Friend.
 
 ```js
-const loadFriends = useFriendStoreV2(s => s.loadFriends);
+const loadFriends = useFriendStoreV3(s => s.loadFriends);
 
 useEffect(() => {
   loadFriends();
@@ -76,7 +76,7 @@ useEffect(() => {
 ⚠️ friendList chỉ là mảng UID, không phải object friend.
 
 ```js
-const friendIds = useFriendStoreV2(s => s.friendList);
+const friendIds = useFriendStoreV3(s => s.friendList);
 
 return friendIds.map(uid => (
   <FriendItem key={uid} uid={uid} />
@@ -89,8 +89,8 @@ return friendIds.map(uid => (
 
 ```js
 export default function FriendItem({ uid }) {
-  const friend = useFriendStoreV2(s => s.friendDetailsMap[uid]);
-  const relation = useFriendStoreV2(s => s.friendRelationsMap[uid] || {});
+  const friend = useFriendStoreV3(s => s.friendDetailsMap[uid]);
+  const relation = useFriendStoreV3(s => s.friendRelationsMap[uid] || {});
 
   const isHidden = relation.hidden;
   const createdAt = relation.createdAt;
@@ -102,7 +102,7 @@ export default function FriendItem({ uid }) {
 ## 6. Ẩn bạn bè
 
 ```js
-const hiddenUser = useFriendStoreV2(s => s.hiddenUserState);
+const hiddenUser = useFriendStoreV3(s => s.hiddenUserState);
 
 hiddenUser(uid, true);  // ẩn
 hiddenUser(uid, false); // bỏ ẩn
@@ -113,7 +113,7 @@ hiddenUser(uid, false); // bỏ ẩn
 ## 7. Thêm bạn bè
 
 ```js
-const addFriend = useFriendStoreV2(s => s.addFriendLocal);
+const addFriend = useFriendStoreV3(s => s.addFriendLocal);
 
 addFriend(friendObject);
 ```
@@ -123,7 +123,7 @@ addFriend(friendObject);
 ## 8. Xoá bạn bè
 
 ```js
-const removeFriend = useFriendStoreV2(s => s.removeFriendLocal);
+const removeFriend = useFriendStoreV3(s => s.removeFriendLocal);
 
 removeFriend(uid);
 ```

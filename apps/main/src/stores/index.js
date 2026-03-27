@@ -8,5 +8,5 @@ export * from "./useStreakStore";
 export * from "./useAuthStore";
 export * from "./useOverlayStore";
 export * from "./useUploadPostStore";
-export * from "./friendStore"
 export * from "./postStore";
+export * from "./FriendStores";
