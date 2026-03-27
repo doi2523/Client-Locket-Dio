@@ -8,7 +8,6 @@ import {
   Eye,
   CircleEllipsis,
 } from "lucide-react";
-import { useFriendStoreV2 } from "@/stores";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
 import ConfirmPoup from "@/components/PoupScreen/ConfirmPoup";
 
@@ -23,8 +22,7 @@ export default function FriendItem({ friend, onDelete, onHidden }) {
   const menuRefs = useRef({});
   const infoRefs = useRef({});
 
-  const friendRelationsMap = useFriendStoreV2((s) => s.friendRelationsMap);
-  const relation = friendRelationsMap[friend.uid] || {};
+  const relation = friend.relation;
 
   const isHidden = relation.hidden;
   const sharedHistoryOn = relation.sharedHistoryOn;

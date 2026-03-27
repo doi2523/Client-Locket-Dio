@@ -5,7 +5,7 @@ import { AcceptRequestToFriend } from "@/services";
 import IncomingFriendRequests from "./IncomingRequests";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 import OutgoingRequest from "./OutgoingRequest";
-import { useFriendStoreV2 } from "@/stores";
+import { useFriendList, useFriendStoreV3 } from "@/stores";
 import FindFriend from "./FindFriend";
 import FriendList from "./FriendList";
 
@@ -14,14 +14,14 @@ const FriendsContainer = () => {
   const { navigation } = useApp();
 
   const {
-    friendList,
     loading,
     loadFriends,
     removeFriendLocal,
     addFriendLocal,
     hiddenUserState,
-    friendRelationsMap,
-  } = useFriendStoreV2();
+  } = useFriendStoreV3();
+
+  const friendList = useFriendList();
 
   const { isFriendsTabOpen, setFriendsTabOpen, isPWA } = navigation;
   const [showAllFriends, setShowAllFriends] = useState(false);
@@ -115,12 +115,10 @@ const FriendsContainer = () => {
 
             {/* Danh sách bạn bè */}
             <FriendList
-              friendList={friendList}
               loading={loading}
               loadFriends={loadFriends}
               removeFriendLocal={removeFriendLocal}
               hiddenUserState={hiddenUserState}
-              friendRelationsMap={friendRelationsMap}
               showAllFriends={showAllFriends}
               setShowAllFriends={setShowAllFriends}
             />

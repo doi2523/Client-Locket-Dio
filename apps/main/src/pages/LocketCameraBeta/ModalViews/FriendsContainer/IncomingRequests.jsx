@@ -8,14 +8,14 @@ import {
 import { useApp } from "@/context/AppContext";
 import { Check } from "lucide-react";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
-import { useAuthStore, useFriendStoreV2 } from "@/stores";
+import { useAuthStore, useFriendStoreV3 } from "@/stores";
 
 const IncomingFriendRequests = () => {
   const { user } = useAuthStore();
   const { navigation } = useApp();
   const { isFriendsTabOpen } = navigation;
   const [friends, setFriends] = useState([]);
-  const addFriendLocal = useFriendStoreV2((s) => s.addFriendLocal);
+  const addFriendLocal = useFriendStoreV3((s) => s.addFriendLocal);
   const [nextPageToken, setNextPageToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);

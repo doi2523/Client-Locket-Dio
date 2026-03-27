@@ -7,12 +7,12 @@ import {
 } from "@/components/ui/SonnerToast";
 import { removeFriend, toggleHiddenFriend } from "@/services";
 import { RefreshCcw } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FaUserFriends } from "react-icons/fa";
 import FriendItem from "./FriendItem";
+import { useFriendObjects } from "@/stores";
 
 const FriendList = ({
-  friendList,
   loading,
   loadFriends,
   removeFriendLocal,
@@ -20,6 +20,8 @@ const FriendList = ({
   showAllFriends,
   setShowAllFriends,
 }) => {
+  const friendObjects = useFriendObjects();
+
   const [lastUpdated, setLastUpdated] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -74,16 +76,20 @@ const FriendList = ({
   };
 
   // Filter bạn bè theo tên hoặc username
-  const filteredFriends = friendList.filter((friend) => {
-    const fullName = `${friend.firstName} ${friend.lastName}`.toLowerCase();
-    const username = (friend.username || "").toLowerCase();
+  const filteredFriends = useMemo(() => {
     const term = searchTerm.toLowerCase();
-    return fullName.includes(term) || username.includes(term);
-  });
 
-  const visibleFriends = showAllFriends
-    ? filteredFriends
-    : filteredFriends.slice(0, 3);
+    return friendObjects.filter((friend) => {
+      const fullName = `${friend.firstName} ${friend.lastName}`.toLowerCase();
+      const username = (friend.username || "").toLowerCase();
+      return fullName.includes(term) || username.includes(term);
+    });
+  }, [friendObjects, searchTerm]);
+
+  const visibleFriends = useMemo(() => {
+    if (searchTerm) return filteredFriends;
+    return showAllFriends ? filteredFriends : filteredFriends.slice(0, 3);
+  }, [filteredFriends, showAllFriends, searchTerm]);
 
   return (
     <div>
@@ -145,7 +151,7 @@ const FriendList = ({
           />
         ))}
 
-        {filteredFriends.length > 3 && (
+        {!searchTerm && filteredFriends.length > 3 && (
           <div className="flex items-center gap-4 mt-4">
             <hr className="flex-grow border-t border-base-content" />
             <button

@@ -17,10 +17,10 @@ import { Toaster } from "sonner";
 import { SocketProvider } from "./context/SocketContext";
 import {
   useAuthStore,
-  useFriendStoreV2,
   useStreakStore,
   useUploadQueueStore,
   useOverlayStore,
+  useFriendStoreV3,
 } from "./stores";
 import { showDevWarning } from "./utils/logging/devConsole";
 import LoadingPageMain from "./components/pages/LoadPageMain";
@@ -47,7 +47,7 @@ function AppContent() {
   const syncStreak = useStreakStore((s) => s.syncStreak);
   const fetchCaptionOverlays = useOverlayStore((s) => s.fetchCaptionOverlays);
   const hydrateUploadQueue = useUploadQueueStore((s) => s.hydrateUploadQueue);
-  const loadFriendsV2 = useFriendStoreV2((s) => s.loadFriends);
+  const loadFriendsV3 = useFriendStoreV3((s) => s.loadFriends);
 
   const location = useLocation();
 
@@ -74,7 +74,8 @@ function AppContent() {
 
   useEffect(() => {
     if (user) {
-      loadFriendsV2();
+      // loadFriendsV2();
+      loadFriendsV3();
       syncStreak();
       hydrateUploadQueue();
     }

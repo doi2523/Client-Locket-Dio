@@ -1,11 +1,10 @@
 import { useApp } from "@/context/AppContext";
-import { useAuthStore } from "@/stores";
+import { useAuthStore, useFriendObjects } from "@/stores";
 import { ChevronRight } from "lucide-react";
 import React, { useState } from "react";
 import { FaUserFriends } from "react-icons/fa";
 
 function HistorySelectFriend({
-  friendList,
   isVisible,
   setIsVisible,
   setFriendName,
@@ -19,8 +18,9 @@ function HistorySelectFriend({
   const { user } = useAuthStore();
 
   const [searchTerm, setSearchTerm] = useState("");
+  const friendObjects = useFriendObjects();
 
-  const filteredFriends = friendList.filter((friend) => {
+  const filteredFriends = friendObjects.filter((friend) => {
     const fullName = `${friend.firstName} ${friend.lastName}`.toLowerCase();
     const username = (friend.username || "").toLowerCase();
     const term = searchTerm.toLowerCase();
