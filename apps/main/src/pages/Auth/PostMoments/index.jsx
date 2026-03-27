@@ -24,8 +24,7 @@ import {
   SonnerSuccess,
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
-import { useAuthStore } from "@/stores/useAuthStore.js";
-import { useUploadQueueStore } from "@/stores";
+import { useAuthStore, useUploadQueueStore } from "@/stores";
 
 const PostMoments = () => {
   const { post, useloading } = useApp();
@@ -64,8 +63,8 @@ const PostMoments = () => {
     const fileType = rawFile.type.startsWith("image/")
       ? "image"
       : rawFile.type.startsWith("video/")
-      ? "video"
-      : null;
+        ? "video"
+        : null;
 
     if (!fileType) {
       SonnerInfo("Chỉ hỗ trợ ảnh và video.");
@@ -101,7 +100,7 @@ const PostMoments = () => {
       const payload = await services.createRequestPayloadV5(
         selectedFile,
         preview.type,
-        postOverlay
+        postOverlay,
         // audience,
         // selectedRecipients
       );
@@ -121,7 +120,7 @@ const PostMoments = () => {
 
       SonnerSuccess(
         "Đăng tải thành công!",
-        `${preview.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`
+        `${preview.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`,
       );
 
       setPreview(null);

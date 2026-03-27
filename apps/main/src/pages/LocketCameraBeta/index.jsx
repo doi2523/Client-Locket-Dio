@@ -2,7 +2,7 @@ import React, { lazy, Suspense, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 import MainHomeScreen from "./MainHomeScreen";
 import { MusicPlayer } from "./Widgets/MusicPlayer";
-import { useUIStore } from "@/stores/useUIStore";
+import { useUIStore } from "@/stores";
 // import CropVideoStudio from "./ModalViews/CropVideoStudio";
 // const Snowfall = lazy(() => import("@/components/Effects/SnowBanner"));
 const BgLocketDio = lazy(() => import("@/components/Effects/BgLocketDio"));
@@ -44,7 +44,7 @@ export default function LocketCameraBeta() {
   return (
     <>
       <Suspense fallback={null}>
-        <BgLocketDio bgSrc={background?.url}/>
+        <BgLocketDio bgSrc={background?.url} />
       </Suspense>
 
       <MainHomeScreen />
