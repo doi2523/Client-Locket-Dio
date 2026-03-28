@@ -1,4 +1,4 @@
-export function setPWAIcon(iconName = "default") {
+export function setPWAIcon(iconName = "default", path = "pwa-icons") {
   const base = window.location.origin;
 
   const manifest = {
@@ -11,17 +11,17 @@ export function setPWAIcon(iconName = "default") {
     orientation: "portrait",
     icons: [
       {
-        src: `${base}/icons/${iconName}/android-chrome-192x192.png`,
+        src: `${base}/${path}/${iconName}/android-chrome-192x192.png`,
         sizes: "192x192",
         type: "image/png",
       },
       {
-        src: `${base}/icons/${iconName}/android-chrome-512x512.png`,
+        src: `${base}/${path}/${iconName}/android-chrome-512x512.png`,
         sizes: "512x512",
         type: "image/png",
       },
       {
-        src: `${base}/icons/${iconName}/maskable-icon-512x512.png`,
+        src: `${base}/${path}/${iconName}/maskable-icon-512x512.png`,
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
