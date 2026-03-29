@@ -44,15 +44,20 @@ export default function SettingAppIcon() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("pwa_icon") || "default";
-    setSelectedIcon(saved);
-
+    const saved = localStorage.getItem("pwa_icon");
     const running = isRunningPWA();
     setIsPWA(running);
 
-    if (!running) {
-      setPWAIcon(saved);
-      updateFavicons(saved);
+    if (saved) {
+      setSelectedIcon(saved);
+
+      if (!running) {
+        setPWAIcon(saved);
+        updateFavicons(saved);
+      }
+    } else {
+      // chưa có icon => dùng apple-touch-icon preview
+      setSelectedIcon("default");
     }
   }, []);
 

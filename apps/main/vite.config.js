@@ -22,7 +22,41 @@ const manifestForPlugIn = {
 
   includeAssets: ["favicon.ico", "apple-touch-icon.png", "maskable-icon-512x512.png"],
 
-  manifest: false,
+  manifest: {
+    name: "Locket Dio",
+    short_name: "Locket Dio",
+    description: "Locket Dio - Đăng ảnh & Video lên Locket",
+    display: "standalone",
+    scope: "/",
+    start_url: "/",
+    orientation: "portrait",
+    icons: [
+      {
+        src: "/android-chrome-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/android-chrome-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/maskable-icon-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any maskable",
+      },
+    ],
+  },
 };
 
 const brand = process.env.VITE_BRAND;
