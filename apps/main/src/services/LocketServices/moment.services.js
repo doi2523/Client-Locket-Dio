@@ -56,22 +56,6 @@ export const GetLastestMoment = async () => {
   }
 };
 
-export const getMomentViews = async (momentId) => {
-  try {
-    const body = {
-      data: {
-        moment_uid: momentId,
-      },
-    };
-
-    const res = await instanceLocketV2.post("getMomentViews", body); // 👈 thêm body
-    const moments = res.data.result;
-    return moments;
-  } catch (err) {
-    console.warn("❌ markMomentAsViewed Failed", err);
-  }
-};
-
 export const SendMessageMoment = async (message, selectedMomentId, uid) => {
   try {
     const body = {
