@@ -14,6 +14,8 @@ const CropImageStudio = () => {
     setSizeMedia,
     imageToCrop,
     setImageToCrop,
+    videoCrop,
+    setVideoCrop,
   } = useApp().post;
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -31,11 +33,22 @@ const CropImageStudio = () => {
       setPreview({ type: "image", data: localPreviewUrl });
       const fileSizeInMB = croppedFile.size / (1024 * 1024);
       setSizeMedia(fileSizeInMB.toFixed(2));
-      setCropError("");
+
       setImageToCrop(null); // ✅ Ẩn cropper sau khi cắt
     } catch (e) {
       console.error("Crop failed", e);
-      setCropError(`⚠️ Không thể cắt ảnh. Chi tiết lỗi: ${e?.message || e}`);
+
+      let msg = "Không thể cắt ảnh.";
+
+      if (e instanceof Error) {
+        msg = e.message;
+      } else if (typeof e === "object") {
+        msg = JSON.stringify(e);
+      } else {
+        msg = String(e);
+      }
+
+      setCropError(`⚠️ Không thể cắt ảnh. Chi tiết lỗi: ${msg}`);
     }
   }, [croppedAreaPixels, imageToCrop]);
 
@@ -70,30 +83,6 @@ const CropImageStudio = () => {
     return () => {
       document.body.classList.remove("overflow-hidden");
     };
-  }, [imageToCrop]);
-
-  const handleSkipCrop = useCallback(async () => {
-    try {
-      const res = await fetch(imageToCrop);
-      const blob = await res.blob();
-      const file = new File([blob], "original-image.jpg", {
-        type: blob.type,
-      });
-
-      const localPreviewUrl = URL.createObjectURL(file);
-
-      setSelectedFile(file);
-      setPreview({ type: "image", data: localPreviewUrl });
-
-      const fileSizeInMB = file.size / (1024 * 1024);
-      setSizeMedia(fileSizeInMB.toFixed(2));
-
-      setCropError("");
-      setImageToCrop(null);
-    } catch (e) {
-      console.error("Skip crop failed", e);
-      setCropError("⚠️ Không thể bỏ qua cắt ảnh.");
-    }
   }, [imageToCrop]);
 
   return (
@@ -135,14 +124,14 @@ const CropImageStudio = () => {
 
           {/* Footer Buttons */}
           <div className="w-full bg-base-200 -mt-6 pt-4 pb-5 px-4 shadow-lg z-10 relative rounded-t-3xl">
-            <h1 className="text-xl font-lovehouse text-center text-base-content">
+            <h1 className="text-xl font-lovehouse text-left text-base-content">
               🖼️ Crop Image Studio
             </h1>
-            <p className="text-sm text-center text-gray-600 mt-1">
+            <p className="text-sm text-left text-gray-600 mt-1">
               Kéo ảnh lên/xuống hoặc zoom để chọn vùng muốn cắt
             </p>
             {cropError && (
-              <p className="text-sm text-center text-red-500 font-medium mt-2 break-words">
+              <p className="text-sm text-left text-red-500 font-medium mt-2 break-words">
                 {cropError}
               </p>
             )}
@@ -154,15 +143,9 @@ const CropImageStudio = () => {
               >
                 <X className="mr-1" /> Huỷ
               </button>
-              {cropError ? (
-                <button onClick={handleSkipCrop} className="btn btn-warning">
-                  🔁 Bỏ qua
-                </button>
-              ) : (
-                <button onClick={handleCropConfirm} className="btn btn-primary">
-                  <Scissors className="mr-1" /> Cắt ảnh
-                </button>
-              )}
+              <button onClick={handleCropConfirm} className="btn btn-primary">
+                <Scissors className="mr-1" /> Cắt ảnh
+              </button>
             </div>
             <p className="text-xs italic text-center text-gray-400 mt-1">
               Nếu gặp lỗi, vui lòng báo với admin.

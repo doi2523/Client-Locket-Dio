@@ -13,7 +13,7 @@ const RightHomeScreen = lazy(() => import("./RightHomeScreen"));
 const FriendsContainer = lazy(() => import("./ModalViews/FriendsContainer"));
 const EmojiPicker = lazy(() => import("./ModalViews/EmojiStudio"));
 const ScreenCustomeStudio = lazy(() => import("./ModalViews/CustomeStudio"));
-const CropImageStudio = lazy(() => import("./ModalViews/CropImageStudio"));
+const CropImageStudio = lazy(() => import("@/features/EditorStudio/CropImageStudio"));
 const OptionMoment = lazy(() => import("./ModalViews/OptionMoment"));
 
 export default function LocketCameraBeta() {
