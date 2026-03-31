@@ -8,7 +8,7 @@ import { CONFIG } from "@/config";
 import { parseJwt } from "@/utils/auth";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
 import { instanceAuth } from "./instanceAuth";
-import { createHttpClient } from "./createBase";
+import { createUploadClient } from "./createBase";
 
 // ==== Kiểm tra token sắp hết hạn (dưới 5 phút) ====
 let cachedExp = null;
@@ -91,7 +91,7 @@ function handleLogout() {
 }
 
 // ==== Khởi tạo axios instance ====
-const api = createHttpClient(CONFIG.api.baseUrl);
+const api = createUploadClient(CONFIG.api.baseUrl);
 
 // ==== Request Interceptor ====
 api.interceptors.request.use(async (config) => {

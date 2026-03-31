@@ -44,10 +44,24 @@ export const createHttpClient = (baseURL) => {
     },
   });
 
-  instance.interceptors.request.use(
-    attachHeaders,
-    (error) => Promise.reject(error)
+  instance.interceptors.request.use(attachHeaders, (error) =>
+    Promise.reject(error),
   );
 
+  return instance;
+};
+
+export const createUploadClient = (baseURL) => {
+  const instance = axios.create({
+    baseURL,
+    timeout: 0, // upload không timeout
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": CONFIG.keys.apiKey,
+    },
+  });
+
+  instance.interceptors.request.use(attachHeaders);
   return instance;
 };

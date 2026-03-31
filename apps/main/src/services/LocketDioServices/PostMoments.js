@@ -14,12 +14,7 @@ export const uploadMediaV2 = async (payload) => {
       console.log("⏳ Uploading is taking longer than expected...");
     }, timeoutDuration);
 
-    const timeout =
-      fileType === "image" ? 60000 : fileType === "video" ? 180000 : 60000;
-
-    const response = await api.post("/locket/postMomentV2", payload, {
-      timeout: timeout,
-    });
+    const response = await api.post("/locket/postMomentV2", payload);
 
     clearTimeout(timeoutId); // Hủy timeout khi upload thành công
     console.log("✅ Upload thành công:", response.data);
@@ -50,12 +45,7 @@ export const PostMoments = async (payload) => {
       console.log("⏳ Uploading is taking longer than expected...");
     }, timeoutDuration);
 
-    const timeout =
-      fileType === "image" ? 60000 : fileType === "video" ? 180000 : 60000;
-
-    const response = await api.post("/locket/postMomentV2", payload, {
-      timeout: timeout,
-    });
+    const response = await api.post("/locket/postMomentV2", payload);
 
     clearTimeout(timeoutId); // Hủy timeout khi upload thành công
     console.log("✅ Upload thành công:", response.data);
