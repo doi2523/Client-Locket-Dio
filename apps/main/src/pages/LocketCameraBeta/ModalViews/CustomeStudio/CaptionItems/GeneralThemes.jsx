@@ -5,8 +5,8 @@ import { useBatteryStatus } from "@/utils";
 import { useLocationOptions, useLocationWeather } from "@/utils/enviroment";
 import { getInfoMusicByUrl } from "@/services";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
-import FormMusicPoup from "@/components/PoupScreen/FormMusicPoup";
-import FormReviewPoup from "@/components/PoupScreen/FormReviewPoup";
+import FormMusicPoup from "@/features/PoupScreen/FormMusicPoup";
+import FormReviewPoup from "@/features/PoupScreen/FormReviewPoup";
 import { Flame } from "lucide-react";
 import { useStreakStore } from "@/stores";
 
@@ -174,7 +174,7 @@ export default function GeneralThemes({ title }) {
           type: "streak",
           color_top: "#FFD25F",
           color_bottom: "#EAA900",
-          text_color: "#00000099"
+          text_color: "#00000099",
         });
         break;
       default:

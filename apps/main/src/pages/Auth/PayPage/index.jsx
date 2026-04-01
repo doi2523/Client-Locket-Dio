@@ -9,7 +9,7 @@ import {
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
 import QrCodeNew from "./QrCodeNew";
-import ConfirmPoup from "@/components/PoupScreen/ConfirmPoup";
+import ConfirmPoup from "@/features/PoupScreen/ConfirmPoup";
 
 export default function PayPage() {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);

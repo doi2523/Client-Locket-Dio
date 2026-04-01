@@ -9,7 +9,7 @@ import {
   CircleEllipsis,
 } from "lucide-react";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
-import ConfirmPoup from "@/components/PoupScreen/ConfirmPoup";
+import ConfirmPoup from "@/features/PoupScreen/ConfirmPoup";
 
 export default function FriendItem({ friend, onDelete, onHidden }) {
   const [openMenuUid, setOpenMenuUid] = useState(null);
