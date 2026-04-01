@@ -1,4 +1,4 @@
-import { getAllOverlayCaption } from "@/services";
+import { getAllOverlayCaptionV2 } from "@/services";
 import { create } from "zustand";
 
 /* Check overlay có đang active không */
@@ -38,7 +38,7 @@ export const useOverlayDataStore = create((set, get) => ({
         return;
       }
 
-      const result = await getAllOverlayCaption();
+      const result = await getAllOverlayCaptionV2();
 
       // filter theo thời gian
       const sections = result.map((section) => ({
