@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaUserFriends, FaLock } from "react-icons/fa";
-import { useApp } from "@/context/AppContext";
 import clsx from "clsx";
 import { getToken } from "@/utils";
 import FriendSelectItems from "./FriendSelectItems";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
-import { useNormalFriendIds } from "@/stores";
+import { useNormalFriendIds, usePostStore } from "@/stores";
 
 const SelectFriendsList = ({}) => {
   const friendIds = useNormalFriendIds();
 
-  const { post } = useApp();
-  const { audience, setAudience, setSelectedRecipients } = post;
+  const audience = usePostStore((s) => s.audience);
+  const setAudience = usePostStore((s) => s.setAudience);
+  const setSelectedRecipients = usePostStore((s) => s.setSelectedRecipients);
+  const selectedRecipients = usePostStore((s) => s.selectedRecipients);
 
   const [selectedFriends, setSelectedFriends] = useState([]);
 
@@ -32,21 +33,15 @@ const SelectFriendsList = ({}) => {
     });
   }, [audience, friendIds]);
 
-  // Đồng bộ với context + log
   useEffect(() => {
-    setSelectedRecipients((prev) => {
-      if (
-        prev.length === selectedFriends.length &&
-        prev.every((id) => selectedFriends.includes(id))
-      ) {
-        return prev;
-      }
-      // console.log(selectedFriends);
-      // console.log(audience);
+    const shouldUpdate =
+      selectedRecipients.length !== selectedFriends.length ||
+      !selectedRecipients.every((id) => selectedFriends.includes(id));
 
-      return selectedFriends;
-    });
-  }, [selectedFriends]);
+    if (shouldUpdate) {
+      setSelectedRecipients(selectedFriends);
+    }
+  }, [selectedFriends, selectedRecipients]);
 
   const handleToggle = (uid) => {
     setAudience("selected");

@@ -19,12 +19,12 @@ import {
   useAuthStore,
   useStreakStore,
   useUploadQueueStore,
-  useOverlayStore,
   useFriendStoreV3,
 } from "./stores";
 import { showDevWarning } from "./utils/logging/devConsole";
 import LoadingPageMain from "./components/pages/LoadPageMain";
 import LayoutWithSidebar from "./layouts/baseLayout";
+import { useOverlayDataStore } from "./stores/OverlayStores";
 
 function App() {
   return (
@@ -45,7 +45,7 @@ function AppContent() {
   const navigate = useNavigate();
   const { loading, isAuth, user, hydrateAuth, initAuth } = useAuthStore();
   const syncStreak = useStreakStore((s) => s.syncStreak);
-  const fetchCaptionOverlays = useOverlayStore((s) => s.fetchCaptionOverlays);
+  const fetchCaptionOverlays = useOverlayDataStore((s) => s.fetchCaptionOverlays);
   const hydrateUploadQueue = useUploadQueueStore((s) => s.hydrateUploadQueue);
   const loadFriendsV3 = useFriendStoreV3((s) => s.loadFriends);
 

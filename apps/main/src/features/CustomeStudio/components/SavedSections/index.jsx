@@ -1,3 +1,4 @@
+import { getCaptionStyle } from "@/helpers/styleHelpers";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -26,21 +27,18 @@ const SavedCaptions = ({ title = "Caption của bạn", captions = [], onSelect 
               key={cap.id}
               className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center shadow-md hover:shadow-lg transition"
               style={{
-                background: `linear-gradient(to bottom, ${cap.colortop}, ${cap.colorbottom})`,
-                color: cap.color || "#fff",
+                ...getCaptionStyle(cap.background, cap.text_color),
               }}
               onClick={() => onSelect(cap)}
             >
               <span className="text-base flex items-center gap-2">
-                {cap.type === "image_icon" || cap.type === "image_gif" ? (
+                {cap.type === "caption_icon" || cap.type === "image_gif" ? (
                   <img
-                    src={cap.icon_url}
+                    src={cap.icon.data}
                     alt="icon"
-                    className="w-5 h-5 rounded-full object-cover"
+                    className="w-5 h-5 object-contain"
                   />
-                ) : (
-                  <>{cap.icon_url}</>
-                )}
+                ): null}
                 {cap.text}
               </span>
             </button>

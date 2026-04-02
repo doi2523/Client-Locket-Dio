@@ -1,55 +1,26 @@
 import { create } from "zustand";
 
-export const usePostStore = create((set) => ({
-  caption: "",
-  setCaption: (c) => set({ caption: c }),
-
-  selectedColors: { top: "", bottom: "", text: "#FFFFFF" },
-  setSelectedColors: (colors) => set({ selectedColors: colors }),
-
+const defaultState = {
   selectedFile: null,
-  setSelectedFile: (file) => set({ selectedFile: file }),
-
   imageToCrop: null,
-  setImageToCrop: (img) => set({ imageToCrop: img }),
-
   preview: null,
-  setPreview: (p) => set({ preview: p }),
-
-  isTextColor: null,
-  setTextColor: (val) => set({ isTextColor: val }),
-
   isSizeMedia: null,
-  setSizeMedia: (val) => set({ isSizeMedia: val }),
-
   audience: "all",
-  setAudience: (val) => set({ audience: val }),
-
   selectedRecipients: [],
+  restoreStreak: null,
+};
+
+export const usePostStore = create((set) => ({
+  ...defaultState,
+
+  setSelectedFile: (file) => set({ selectedFile: file }),
+  setImageToCrop: (img) => set({ imageToCrop: img }),
+  setPreview: (p) => set({ preview: p }),
+  setSizeMedia: (val) => set({ isSizeMedia: val }),
+  setAudience: (val) => set({ audience: val }),
   setSelectedRecipients: (recipients) =>
     set({ selectedRecipients: recipients }),
-
-  selectedMoment: null,
-  setSelectedMoment: (moment) => set({ selectedMoment: moment }),
-
-  selectedMomentId: null,
-  setSelectedMomentId: (id) => set({ selectedMomentId: id }),
-
-  selectedQueue: null,
-  setSelectedQueue: (queue) => set({ selectedQueue: queue }),
-
-  selectedQueueId: null,
-  setSelectedQueueId: (id) => set({ selectedQueueId: id }),
-
-  selectedFriendUid: null,
-  setSelectedFriendUid: (uid) => set({ selectedFriendUid: uid }),
-
-  showEmojiPicker: false,
-  setShowEmojiPicker: (val) => set({ showEmojiPicker: val }),
-
-  reactionInfo: { emoji: "💛", moment_id: null, intensity: 1000 },
-  setReactionInfo: (info) => set({ reactionInfo: info }),
-
-  restoreStreak: null,
   setRestoreStreak: (val) => set({ restoreStreak: val }),
+
+  resetPostStore: () => set(defaultState),
 }));

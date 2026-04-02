@@ -1,6 +1,6 @@
 import { getToken } from "@/utils";
 import { uploadFileAndGetInfoR2 } from "./StorageServices";
-import { useStreakStore } from "@/stores";
+import { useOverlayEditorStore, usePostStore, useStreakStore } from "@/stores";
 import { SonnerWarning } from "@/components/ui/SonnerToast";
 
 // Hàm con xác định recipients
@@ -16,7 +16,7 @@ export const createRequestPayloadV5 = async (
   previewType,
   postOverlay,
   audience,
-  selectedRecipients
+  selectedRecipients,
 ) => {
   try {
     const { localId } = getToken() || {};
@@ -30,7 +30,7 @@ export const createRequestPayloadV5 = async (
     const fileInfo = await uploadFileAndGetInfoR2(
       selectedFile,
       previewType,
-      localId
+      localId,
     );
     // console.log(fileInfo);
 
@@ -80,7 +80,7 @@ export const createRequestPayloadV4 = async (
   postOverlay,
   restoreStreak,
   audience,
-  selectedRecipients
+  selectedRecipients,
 ) => {
   try {
     const { localId } = getToken() || {};
@@ -93,7 +93,7 @@ export const createRequestPayloadV4 = async (
     const fileInfo = await uploadFileAndGetInfoR2(
       selectedFile,
       previewType,
-      localId
+      localId,
     );
     // console.log(fileInfo);
 
@@ -132,6 +132,61 @@ export const createRequestPayloadV4 = async (
       model: "Version-UploadmediaV3.1",
       mediaInfo,
       contentType: previewType,
+    };
+
+    return payload;
+  } catch (error) {
+    console.error("Lỗi khi tạo payload:", error);
+    throw error;
+  }
+};
+
+export const createRequestPayloadV6 = async (selectedFile, previewType) => {
+  try {
+    const { localId } = getToken() || {};
+
+    const isStreakToday = useStreakStore.getState().isStreakUpdatedToday();
+
+    const overlayData = useOverlayEditorStore.getState().overlayData;
+
+    const audience = usePostStore.getState().audience;
+    const selectedRecipients = usePostStore.getState().selectedRecipients;
+
+    if (!localId) {
+      SonnerWarning("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+      return null;
+    }
+    // Upload file & chuẩn bị thông tin media
+    const fileInfo = await uploadFileAndGetInfoR2(
+      selectedFile,
+      previewType,
+      localId,
+    );
+    // console.log(fileInfo);
+
+    const mediaInfo = {
+      url: fileInfo.downloadURL,
+      path: fileInfo.metadata.path, // đường dẫn đầy đủ trong Storage
+      name: fileInfo.metadata.name, // tên file
+      size: fileInfo.metadata.size, // kích thước file (bytes)
+      uploadedAt: fileInfo.metadata.uploadedAt, // thời gian tạo
+      type: previewType,
+    };
+
+    // Chuẩn bị dữ liệu tùy chọn (caption, overlay, v.v.)
+    const optionsDataObj = {
+      ...overlayData,
+      audience, // Gắn audience vào options luôn
+      recipients: determineRecipients(audience, selectedRecipients, localId),
+      isStreaktoday: isStreakToday, //False khi chưa có đăng chuỗi ngày hôm nay
+    };
+
+    // Tạo payload cuối cùng
+    const payload = {
+      model: "Version-UploadmediaV3.1",
+      mediaInfo,
+      contentType: previewType,
+      optionsData: optionsDataObj, // Thêm optionsData vào payload
     };
 
     return payload;

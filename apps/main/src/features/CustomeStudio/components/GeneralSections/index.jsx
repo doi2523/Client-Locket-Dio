@@ -7,13 +7,11 @@ import { getInfoMusicByUrl } from "@/services";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 import FormMusicPoup from "@/features/PoupScreen/FormMusicPoup";
 import FormReviewPoup from "@/features/PoupScreen/FormReviewPoup";
-import { Flame } from "lucide-react";
-import { useStreakStore } from "@/stores";
+import { useOverlayEditorStore, useStreakStore } from "@/stores";
 
 export default function GeneralThemes({ title }) {
-  const { navigation, post } = useApp();
+  const { navigation } = useApp();
   const { setIsFilterOpen } = navigation;
-  const { setPostOverlay } = post;
   const { addressOptions } = useLocationOptions();
   const { weather } = useLocationWeather();
   const { level, charging } = useBatteryStatus();
@@ -48,17 +46,23 @@ export default function GeneralThemes({ title }) {
     minute: "2-digit",
   });
 
+  const updateOverlayEditor = useOverlayEditorStore(
+    (s) => s.updateOverlayEditor,
+  );
+  const resetOverlayEditor = useOverlayEditorStore((s) => s.resetOverlayEditor);
+
   // === Overlay Apply ===
   const handleCustomeSelect = (data) => {
-    setPostOverlay({
-      overlay_id: data.preset_id || "standard",
+    resetOverlayEditor();
+
+    updateOverlayEditor({
+      ...data,
       color_top: data.color_top || "",
       color_bottom: data.color_bottom || "",
       text_color: data.text_color || "#FFFFFF",
       icon: data.icon || "",
       caption: data.caption || "",
       type: data.type || "default",
-      ...(data.music && { music: data.music }),
     });
     setIsFilterOpen(false);
   };
@@ -85,10 +89,14 @@ export default function GeneralThemes({ title }) {
       );
 
       handleCustomeSelect({
-        preset_id: "music",
+        overlay_id: "music",
         caption: music.title,
+        text: music.title,
+        icon: { data: music.image, type: "image", source: "url" },
         type: "music",
-        music,
+        payload: {
+          ...music,
+        },
       });
 
       const musicType = formType === "apple" ? "Apple Music" : "Spotify";
@@ -115,10 +123,15 @@ export default function GeneralThemes({ title }) {
 
   const handleReviewSubmit = ({ rating, text }) => {
     handleCustomeSelect({
-      preset_id: "review",
-      icon: rating,
+      overlay_id: "review",
+      icon: {},
       caption: text,
+      text: text,
       type: "review",
+      payload: {
+        rating,
+        comment: text,
+      },
     });
 
     closeReviewForm();
@@ -141,39 +154,52 @@ export default function GeneralThemes({ title }) {
         break;
       case "time":
         handleCustomeSelect({
-          preset_id: "time",
+          overlay_id: "time",
+          icon: { color: "#FFFFFFCC", data: "clock.fill", type: "sf_symbol" },
           caption: formattedTime,
+          text: formattedTime,
           type: "time",
         });
         break;
       case "weather":
         handleCustomeSelect({
-          preset_id: "weather",
+          overlay_id: "weather",
           caption: weather || {},
+          payload: {
+            ...weather,
+            temperature: weather?.temperature,
+            cloud_cover: weather?.cloud_cover,
+            is_daylight: weather?.is_daylight,
+            wk_condition: weather?.wk_condition,
+          },
           type: "weather",
         });
         break;
       case "battery":
         handleCustomeSelect({
-          preset_id: "battery",
+          overlay_id: "battery",
           caption: level || "50",
           icon: charging,
+          text: `${level || "50"}%`,
           type: "battery",
         });
         break;
       case "heart":
         handleCustomeSelect({
-          preset_id: "heart",
+          overlay_id: "heart",
           caption: "inlove",
+          text: "inlove",
+          icon: { color: "#FF0000CC", data: "heart.fill", type: "sf_symbol" },
           type: "heart",
         });
       case "streak":
         handleCustomeSelect({
-          preset_id: "streak",
+          overlay_id: "streak",
+          icon: { color: "#00000099", data: "flame.fill", type: "sf_symbol" },
+          background: { colors: ["#FFD25F", "#EAA900"] },
           caption: streak?.count || "0",
+          text: String(streak?.count || "0"),
           type: "streak",
-          color_top: "#FFD25F",
-          color_bottom: "#EAA900",
           text_color: "#00000099",
         });
         break;
@@ -225,16 +251,6 @@ export default function GeneralThemes({ title }) {
         weather?.temp_c_rounded !== undefined
           ? `${weather.temp_c_rounded}°C`
           : "Thời tiết",
-    },
-    {
-      id: "battery",
-      icon: (
-        <img
-          src="https://img.icons8.com/?size=100&id=WDlpopZDVw4P&format=png&color=000000"
-          className="w-6 h-6 mr-1"
-        />
-      ),
-      label: `${level || "50"}%`,
     },
     {
       id: "streak",

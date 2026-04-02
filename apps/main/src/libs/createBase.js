@@ -54,7 +54,6 @@ export const createHttpClient = (baseURL) => {
 export const createUploadClient = (baseURL) => {
   const instance = axios.create({
     baseURL,
-    timeout: 0, // upload không timeout
     withCredentials: true,
     headers: {
       "Content-Type": "application/json",

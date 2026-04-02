@@ -1,6 +1,6 @@
 import React, { lazy, Suspense, useEffect, useRef } from "react";
 import { getAvailableCameras, isIOS } from "@/utils";
-const AutoResizeCaption = lazy(() => import("../CaptionViews"));
+const EditorCaption = lazy(() => import("@/features/EditorCaption"));
 import { useApp } from "@/context/AppContext";
 import { CONFIG } from "@/config";
 import BorderProgress from "../../Widgets/SquareProgress";
@@ -255,7 +255,7 @@ const MediaPreview = () => {
           }`}
         >
           <Suspense fallback={null}>
-            <AutoResizeCaption />
+            <EditorCaption />
           </Suspense>
         </div>
 

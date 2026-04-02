@@ -2,27 +2,31 @@ import { Palette, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import { useApp } from "@/context/AppContext";
-import CaptionIconSelector from "./CaptionItems/CaptionIconSelector";
-import GeneralThemes from "./CaptionItems/GeneralThemes";
-import ThemesCustomes from "./CaptionItems/ThemesCustomes";
-import ImageCaptionSelector from "./CaptionItems/ImageCaption";
+import GeneralThemes from "./components/GeneralSections";
+import ImageCaptionSelector from "./components/ImageSections";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge";
 import Footer from "@/components/Footer";
-import CaptionGifThemes from "./CaptionItems/CaptionGifThemes";
 import { useFeatureVisible } from "@/hooks/useFeature";
 import FeatureGate from "@/components/common/FeatureGate";
-import SavedCaptions from "./CaptionItems/SavedCaptions";
-import SpecialCaption from "./CaptionItems/SpecialCaption";
-import { useOverlayStore } from "@/stores";
+import SavedCaptions from "./components/SavedSections";
+import { useOverlayDataStore, useOverlayUserStore } from "@/stores/OverlayStores";
+import CaptionSections from "./components/OverlaySections";
+import { useOverlayEditorStore } from "@/stores";
+import { SonnerInfo } from "@/components/ui/SonnerToast";
 
 const ScreenCustomeStudio = () => {
   const navigate = useNavigate();
   const popupRef = useRef(null);
-  const { navigation, post } = useApp();
+  const { navigation } = useApp();
 
   const { isFilterOpen, setIsFilterOpen } = navigation;
-  const { setPostOverlay } = post;
-  const { captionOverlays, userCaptions } = useOverlayStore();
+  const { userCaptions } = useOverlayUserStore();
+  const sectionOverlays = useOverlayDataStore((s) => s.sectionOverlays);
+
+  const updateOverlayEditor = useOverlayEditorStore(
+    (s) => s.updateOverlayEditor,
+  );
+  const resetOverlayEditor = useOverlayEditorStore((s) => s.resetOverlayEditor);
 
   const canUseCaptionGif = useFeatureVisible("caption_gif");
   const canUseCaptionIcon = useFeatureVisible("caption_icon");
@@ -39,86 +43,25 @@ const ScreenCustomeStudio = () => {
     };
   }, [isFilterOpen]);
 
-  const handleCustomeSelect = (
-    preset_id,
-    icon,
-    color_top,
-    color_bottom,
-    caption,
-    text_color,
-    type
-  ) => {
-    // Cập nhật postOverlay
-    setPostOverlay({
-      overlay_id: preset_id || "standard",
-      color_top: color_top || "",
-      color_bottom: color_bottom || "",
-      text_color: text_color || "#FFFFFF",
-      icon: icon || "",
-      caption: caption || "",
-      type: type || "default",
-    });
-
-    // Log để kiểm tra dữ liệu dưới dạng bảng
-    console.table([
-      {
-        overlay_id: preset_id || "standard",
-        color_top: color_top || "",
-        color_bottom: color_bottom || "",
-        text_color: text_color || "#FFFFFF",
-        icon: icon || "",
-        caption: caption || "",
-        type: type || "default",
-      },
-    ]);
-
-    // Đóng bộ lọc
-    setIsFilterOpen(false);
-  };
-
-  const handleCustomeSelectTest = (preset) => {
-    // Kiểm tra xem preset có đủ thông tin cần thiết không
-    if (!preset) return;
-
-    // Log để kiểm tra dữ liệu dưới dạng bảng
-    console.table([
-      {
-        overlay_id: preset.preset_id || "standard",
-        color_top: preset.color_top || "",
-        color_bottom: preset.color_bottom || "",
-        text_color: preset.text_color || "#FFFFFF",
-        icon: preset.icon || "",
-        caption: preset.preset_caption || "",
-        type: preset.type || "image_link",
-      },
-    ]);
-    // Cập nhật postOverlay từ giá trị preset
-    setPostOverlay({
-      overlay_id: preset.preset_id || "standard",
-      color_top: preset.color_top || "",
-      color_bottom: preset.color_bottom || "",
-      text_color: preset.text_color || "#FFFFFF",
-      icon: preset.icon || "",
-      caption: preset.preset_caption || "",
-      type: preset.type || "image_link",
-      // type: "image_link",
-    });
-
-    setIsFilterOpen(false);
-  };
-
   const handleSelectCaption = (caption) => {
+    resetOverlayEditor();
     // console.log("Chọn caption:", caption);
-    // Cập nhật postOverlay từ giá trị preset
-    setPostOverlay({
+
+    updateOverlayEditor({
+      ...caption,
       overlay_id: caption?.id || "standard",
+
+      text_color: caption.text_color || "#FFFFFF",
+      text: caption?.text || "",
+      type: caption?.type || "default",
+
+      caption: caption?.text || "",
       color_top: caption.colortop || "",
       color_bottom: caption.colorbottom || "",
-      text_color: caption.color || "#FFFFFF",
-      icon: caption?.icon_url || "",
-      caption: caption?.text || "",
-      type: caption?.type || "default",
     });
+
+    // SonnerInfo("DATA", JSON.stringify(caption, null, 2));
+
     setIsFilterOpen(false);
     // Xử lý khi chọn caption
   };
@@ -162,45 +105,13 @@ const ScreenCustomeStudio = () => {
         </div>
         {/* Nội dung - Cuộn được */}
         <div className="flex-1 overflow-y-auto">
-          <GeneralThemes
-            title="🎨 General"
-            onSelect={handleCustomeSelectTest}
+          <GeneralThemes title="🎨 General" onSelect={handleSelectCaption} />
+
+          <CaptionSections
+            sections={sectionOverlays}
+            onSelect={handleSelectCaption}
           />
-          <ThemesCustomes
-            title="🎨 Suggest Theme"
-            presets={captionOverlays.background}
-            onSelect={handleCustomeSelect}
-          />
-          <SpecialCaption
-            title = "⭐ Caption đặc biệt"
-            presets={captionOverlays.special}
-            onSelect={handleCustomeSelect}
-          />
-          {/* Decorative by Locket */}
-          <ThemesCustomes
-            title="🎨 Decorative by Locket"
-            presets={captionOverlays.decorative}
-            onSelect={handleCustomeSelect}
-          />
-          <ThemesCustomes
-            title="🎨 Decorative by Dio"
-            presets={captionOverlays.custome}
-            onSelect={handleCustomeSelect}
-          />
-          <FeatureGate canUse={canUseCaptionIcon}>
-            <CaptionIconSelector
-              title="🎨 Caption Icon - Truy cập sớm"
-              captionThemes={captionOverlays}
-              onSelect={handleCustomeSelectTest}
-            />
-          </FeatureGate>
-          <FeatureGate canUse={canUseCaptionGif}>
-            <CaptionGifThemes
-              title="🎨 Caption Gif - Truy cập sớm"
-              captionThemes={captionOverlays}
-              onSelect={handleCustomeSelectTest}
-            />
-          </FeatureGate>
+
           <SavedCaptions
             title="🎨 Caption Kanade hợp tác"
             captions={userCaptions}
@@ -209,12 +120,6 @@ const ScreenCustomeStudio = () => {
           <FeatureGate canUse={canUseCaptionimage}>
             <ImageCaptionSelector title="🎨 Caption Ảnh - Truy cập sớm" />
           </FeatureGate>
-          <div className="px-4">
-            <h2 className="text-md font-semibold text-primary">
-              🎨 Caption Logo
-            </h2>
-            <p className="text-xs">Comming Soon?...</p>
-          </div>
           <div className="px-4 mt-2">
             <h2 className="text-md font-semibold text-primary mb-2">
               ✏️ Ghi chú

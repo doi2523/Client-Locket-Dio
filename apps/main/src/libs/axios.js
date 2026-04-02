@@ -1,9 +1,4 @@
-import {
-  clearLocalData,
-  getToken,
-  removeToken,
-  removeUser,
-} from "../utils";
+import { clearLocalData, getToken, removeToken, removeUser } from "../utils";
 import { CONFIG } from "@/config";
 import { parseJwt } from "@/utils/auth";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
@@ -140,8 +135,9 @@ api.interceptors.response.use(
     const status = error.response?.status || error.status;
     const message =
       error.response?.data?.message ||
-      error.response?.data?.error ||
-      error.response?.data?.error?.message;
+      error.response?.data?.error?.message ||
+      error.message ||
+      "Có lỗi xảy ra";
 
     const originalRequest = error.config;
 

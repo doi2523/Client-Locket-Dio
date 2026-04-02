@@ -4,7 +4,7 @@ export * from "./useNavigation";
 export * from "./usePost";
 export * from "./MessageStores";
 export * from "./MomentStores";
-export * from "./useOverlayStore";
+export * from "./OverlayStores";
 export * from "./PostStores";
 export * from "./FriendStores";
 export * from "./AuthStore";

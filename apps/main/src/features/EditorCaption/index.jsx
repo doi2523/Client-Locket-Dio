@@ -1,9 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./styles.css";
 import { PiClockFill } from "react-icons/pi";
-import { useApp } from "@/context/AppContext";
-import { StarRating } from "../../Widgets/StarRating/StarRating";
 import SnowEffect from "@/components/Effects/SnowEffect";
+import ReviewOverlay from "./components/ReviewOverlay";
+import { useOverlayEditorStore } from "@/stores";
+import DecorativeOverlay from "./components/DecorativeOverlay";
+import { getCaptionStyle } from "@/helpers/styleHelpers";
+import IconRenderer from "../OverlayRender/iconRenders";
+import StreakOverlay from "./components/StreakOverlay";
 
 // Custom Hooks
 const useTextMeasurement = (text, ref, type, placeholder, parentRef) => {
@@ -77,15 +81,16 @@ const useAutoResize = (refs) => {
 };
 
 // Overlay Components
-const ImageIconOverlay = ({
+const CaptionIconOverlay = ({
   postOverlay,
   setPostOverlay,
   placeholder,
   parentRef,
+  isEditable,
 }) => {
   const textareaRef = useRef(null);
   const { width, shouldWrap } = useTextMeasurement(
-    postOverlay.caption,
+    postOverlay.text,
     textareaRef,
     "image_icon",
     placeholder,
@@ -96,27 +101,26 @@ const ImageIconOverlay = ({
 
   return (
     <div
-      className="flex items-center bg-white/50 backdrop-blur-2xl py-2 pl-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2"
+      className="flex items-center bg-white/50 backdrop-blur-2xl py-2 pl-4 rounded-4xl"
       style={{
         width: `${width}px`,
-        background: `linear-gradient(to bottom, ${postOverlay.color_top}, ${postOverlay.color_bottom})`,
+        ...getCaptionStyle(postOverlay.background, postOverlay.text_color),
       }}
     >
-      <img src={postOverlay.icon} alt="Icon" className="w-6 h-6 object-cover" />
+      <IconRenderer icon={postOverlay.icon} />
       <textarea
         ref={textareaRef}
-        value={postOverlay.caption || ""}
+        value={postOverlay.text || ""}
         onChange={(e) =>
-          setPostOverlay((prev) => ({
-            ...prev,
-            caption: e.target.value,
-          }))
+          setPostOverlay({
+            text: e.target.value,
+          })
         }
         placeholder={placeholder}
         rows={1}
+        disabled={!isEditable}
         className="font-semibold outline-none flex-1 resize-none overflow-hidden transition-all px-3"
         style={{
-          color: postOverlay.text_color,
           whiteSpace: shouldWrap ? "pre-wrap" : "nowrap",
           minWidth: "0",
         }}
@@ -126,10 +130,10 @@ const ImageIconOverlay = ({
 };
 
 const MusicOverlay = ({ postOverlay }) => {
-  const music = postOverlay?.music || {};
+  const music = postOverlay?.payload || {};
 
   return (
-    <div className="flex w-auto items-center gap-2 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold bg-white/50 backdrop-blur-2xl max-w-[85%] overflow-hidden">
+    <div className="flex w-auto items-center gap-2 py-2 px-4 rounded-4xl text-white font-semibold bg-white/50 backdrop-blur-2xl max-w-[85%] overflow-hidden">
       <img
         src={music.image}
         alt="Cover"
@@ -141,15 +145,15 @@ const MusicOverlay = ({ postOverlay }) => {
           className="inline-block animate-marquee"
           style={{
             animationDuration:
-              postOverlay.caption.length < 30
+              postOverlay.text.length < 30
                 ? "9s"
-                : postOverlay.caption.length < 60
+                : postOverlay.text.length < 60
                   ? "15s"
                   : "17s",
           }}
         >
-          <span className="mr-4">{postOverlay.caption}</span>
-          <span className="mr-4 absolute">{postOverlay.caption}</span>
+          <span className="mr-4">{postOverlay.text}</span>
+          <span className="mr-4 absolute">{postOverlay.text}</span>
         </div>
       </div>
       {/* ✅ Chỉ hiện icon nếu platform là spotify */}
@@ -169,7 +173,7 @@ const MusicOverlay = ({ postOverlay }) => {
 
 const WeatherOverlay = ({ postOverlay }) => {
   return (
-    <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
+    <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl text-white font-semibold">
       <img
         src={
           postOverlay?.caption?.icon
@@ -207,7 +211,7 @@ const LocationOverlay = ({
 
   return (
     <div
-      className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold"
+      className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl text-white font-semibold"
       style={{ width: `${width}px` }}
     >
       <img
@@ -238,23 +242,8 @@ const LocationOverlay = ({
 
 const HeartOverlay = ({ postOverlay }) => {
   return (
-    <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
+    <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl text-white font-semibold">
       <img src="./svg/heart-icon.svg" alt="" className="w-6 h-6" />
-      <span>{postOverlay.caption}</span>
-    </div>
-  );
-};
-
-const StreakOverlay = ({ postOverlay }) => {
-  return (
-    <div
-      className="flex items-center gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 font-bold text-md"
-      style={{
-        background: `linear-gradient(to bottom, ${postOverlay.color_top}, ${postOverlay.color_bottom})`,
-        color: postOverlay.text_color,
-      }}
-    >
-      <img src="./icons/flame_fill.png" alt="" className="w-5 h-5 mr-0.5" />
       <span>{postOverlay.caption}</span>
     </div>
   );
@@ -288,7 +277,7 @@ const BatteryOverlay = ({ postOverlay, setPostOverlay, parentRef }) => {
 
   return (
     <div
-      className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold"
+      className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl text-white font-semibold"
       style={{ width: `${Math.max(width, 150)}px` }}
     >
       <img
@@ -318,39 +307,9 @@ const BatteryOverlay = ({ postOverlay, setPostOverlay, parentRef }) => {
 
 const TimeOverlay = ({ postOverlay, formattedTime }) => {
   return (
-    <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white font-semibold">
+    <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl text-white font-semibold">
       <PiClockFill className="w-6 h-6 rotate-270" />
       <span>{postOverlay.caption || formattedTime}</span>
-    </div>
-  );
-};
-
-const ReviewOverlay = ({ postOverlay }) => {
-  return (
-    <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-white/50 backdrop-blur-2xl rounded-4xl px-6 pt-2 flex flex-col items-center font-semibold max-w-[90vw] w-max">
-      <div className="flex gap-2 mb-1">
-        <StarRating rating={postOverlay.icon || 0} />
-      </div>
-
-      <div className="relative text-center text-sm leading-tight max-w-full px-4">
-        <span
-          className="absolute -top-2 left-0 text-xl select-none"
-          aria-hidden="true"
-        >
-          &ldquo;
-        </span>
-
-        <span
-          className="absolute -top-2 right-0 text-xl select-none"
-          aria-hidden="true"
-        >
-          &rdquo;
-        </span>
-
-        <span className="inline-block text-lg font-semibold text-white max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
-          {postOverlay.caption}
-        </span>
-      </div>
     </div>
   );
 };
@@ -363,9 +322,7 @@ const CustomeOverlay = ({
   parentRef,
 }) => {
   const textareaRef = useRef(null);
-  const combinedText = postOverlay.icon
-    ? `${postOverlay.icon} ${postOverlay.caption || ""}`.trim()
-    : postOverlay.caption || "";
+  const combinedText = postOverlay.text || postOverlay.caption || "";
 
   const { width, shouldWrap } = useTextMeasurement(
     combinedText,
@@ -384,15 +341,15 @@ const CustomeOverlay = ({
 
     if (inputValue.startsWith(prefix)) {
       const newCaption = inputValue.slice(prefix.length);
-      setPostOverlay((prev) => ({
-        ...prev,
+      setPostOverlay({
+        text: newCaption,
         caption: newCaption,
-      }));
+      });
     } else {
-      setPostOverlay((prev) => ({
-        ...prev,
+      setPostOverlay({
+        text: inputValue,
         caption: inputValue,
-      }));
+      });
     }
   };
 
@@ -403,13 +360,12 @@ const CustomeOverlay = ({
       onChange={handleChange}
       placeholder={placeholder}
       rows={1}
-      className="absolute z-10 text-white px-4 font-semibold duration-300 opacity-100 bottom-2 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl py-2 text-md outline-none resize-none overflow-hidden transition-all"
+      className="text-white px-4 font-semibold duration-300 opacity-100 transform backdrop-blur-2xl bg-white/50 rounded-4xl py-2 text-md outline-none resize-none overflow-hidden transition-all"
       style={{
-        color: postOverlay.text_color,
         width: `${width}px`,
         maxWidth: "90%",
         whiteSpace: shouldWrap ? "pre-wrap" : "nowrap",
-        background: `linear-gradient(to bottom, ${postOverlay.color_top}, ${postOverlay.color_bottom})`,
+        ...getCaptionStyle(postOverlay.background, postOverlay.text_color),
       }}
       disabled={!isEditable}
       wrap={shouldWrap ? "soft" : "off"}
@@ -460,7 +416,7 @@ const SpecialOverlay = ({
 
   return (
     <div
-      className="relative overflow-hidden rounded-4xl bottom-2 flex justify-center left-1/2 transform -translate-x-1/2 opacity-100 z-10"
+      className="relative overflow-hidden rounded-4xl flex justify-center opacity-100 z-10"
       style={{
         color: postOverlay.text_color,
         width: `${width}px`,
@@ -498,13 +454,10 @@ const DefaultOverlay = ({
   postOverlay,
   setPostOverlay,
   placeholder,
-  isEditable,
   parentRef,
 }) => {
   const textareaRef = useRef(null);
-  const combinedText = postOverlay.icon
-    ? `${postOverlay.icon} ${postOverlay.caption || ""}`.trim()
-    : postOverlay.caption || "";
+  const combinedText = postOverlay.text || postOverlay.caption || "";
 
   const { width, shouldWrap } = useTextMeasurement(
     combinedText,
@@ -523,15 +476,15 @@ const DefaultOverlay = ({
 
     if (inputValue.startsWith(prefix)) {
       const newCaption = inputValue.slice(prefix.length);
-      setPostOverlay((prev) => ({
-        ...prev,
+      setPostOverlay({
         caption: newCaption,
-      }));
+        text: newCaption,
+      });
     } else {
-      setPostOverlay((prev) => ({
-        ...prev,
+      setPostOverlay({
         caption: inputValue,
-      }));
+        text: inputValue,
+      });
     }
   };
 
@@ -542,25 +495,27 @@ const DefaultOverlay = ({
       onChange={handleChange}
       placeholder={placeholder}
       rows={1}
-      className="absolute z-10 text-white px-4 font-semibold duration-300 opacity-100 bottom-2 left-1/2 transform backdrop-blur-2xl -translate-x-1/2 bg-white/50 rounded-4xl py-2 text-md outline-none resize-none overflow-hidden transition-all"
+      className="text-white px-4 font-semibold duration-300 opacity-100 backdrop-blur-2xl bg-white/50 rounded-4xl py-2 text-md outline-none resize-none overflow-hidden transition-all"
       style={{
         width: `${width}px`,
         maxWidth: "90%",
         whiteSpace: shouldWrap ? "pre-wrap" : "nowrap",
       }}
-      disabled={!isEditable}
       wrap={shouldWrap ? "soft" : "off"}
     />
   );
 };
 
 // Main Component
-const AutoResizeCaption = () => {
+const EditorCaption = () => {
   const parentRef = useRef(null);
-  const { post } = useApp();
-  const { postOverlay, setPostOverlay } = post;
+  const overlayData = useOverlayEditorStore((s) => s.overlayData);
+
+  const updateOverlayEditor = useOverlayEditorStore(
+    (s) => s.updateOverlayEditor,
+  );
   const placeholder = "Nhập tin nhắn...";
-  const isEditable = !["decorative", "custome"].includes(postOverlay?.type);
+  const isEditable = overlayData?.is_editable;
 
   // Get formatted time (assuming it exists in the original context)
   const formattedTime = new Date().toLocaleTimeString("vi-VN", {
@@ -570,56 +525,56 @@ const AutoResizeCaption = () => {
 
   const renderOverlay = () => {
     const commonProps = {
-      postOverlay,
-      setPostOverlay,
+      postOverlay: overlayData,
+      setPostOverlay: updateOverlayEditor,
       placeholder,
       parentRef,
     };
 
-    switch (postOverlay.type) {
+    switch (overlayData.type) {
       case "image_icon":
       case "image_gif":
-        return <ImageIconOverlay {...commonProps} />;
+      case "caption_gif":
+      case "caption_image":
+        return <CaptionIconOverlay {...commonProps} isEditable={isEditable} />;
+
+      case "decorative":
+      case "template":
+        return <DecorativeOverlay overlayData={overlayData} />;
 
       case "music":
-        return <MusicOverlay postOverlay={postOverlay} />;
+        return <MusicOverlay postOverlay={overlayData} />;
 
       case "weather":
-        return <WeatherOverlay postOverlay={postOverlay} />;
+        return <WeatherOverlay postOverlay={overlayData} />;
 
       case "location":
         return <LocationOverlay {...commonProps} />;
 
       case "heart":
-        return <HeartOverlay postOverlay={postOverlay} />;
+        return <HeartOverlay postOverlay={overlayData} />;
       case "streak":
-        return <StreakOverlay postOverlay={postOverlay} />;
+        return <StreakOverlay postOverlay={overlayData} />;
 
       case "battery":
-        return (
-          <BatteryOverlay
-            postOverlay={postOverlay}
-            setPostOverlay={setPostOverlay}
-            parentRef={parentRef}
-          />
-        );
+        return <BatteryOverlay {...commonProps} />;
 
       case "time":
         return (
           <TimeOverlay
-            postOverlay={postOverlay}
+            postOverlay={overlayData}
             formattedTime={formattedTime}
           />
         );
 
       case "review":
-        return <ReviewOverlay postOverlay={postOverlay} />;
+        return <ReviewOverlay payload={overlayData?.payload} />;
 
       case "special":
         return <SpecialOverlay {...commonProps} isEditable={isEditable} />;
 
       case "default":
-        return <DefaultOverlay {...commonProps} isEditable={isEditable} />;
+        return <DefaultOverlay {...commonProps} />;
 
       default:
         return <CustomeOverlay {...commonProps} isEditable={isEditable} />;
@@ -627,10 +582,13 @@ const AutoResizeCaption = () => {
   };
 
   return (
-    <div ref={parentRef} className="relative w-full">
+    <div
+      ref={parentRef}
+      className="relative w-full bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center"
+    >
       {renderOverlay()}
     </div>
   );
 };
 
-export default AutoResizeCaption;
+export default EditorCaption;

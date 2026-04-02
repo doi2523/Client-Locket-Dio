@@ -2,7 +2,7 @@ import React, { lazy, Suspense, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 import MainHomeScreen from "./MainHomeScreen";
 import { MusicPlayer } from "./Widgets/MusicPlayer";
-import { useUIStore } from "@/stores";
+import { useOverlayEditorStore, useUIStore } from "@/stores";
 // import CropVideoStudio from "./ModalViews/CropVideoStudio";
 // const Snowfall = lazy(() => import("@/components/Effects/SnowBanner"));
 const BgLocketDio = lazy(() => import("@/components/Effects/BgLocketDio"));
@@ -12,12 +12,12 @@ const RightHomeScreen = lazy(() => import("./RightHomeScreen"));
 
 const FriendsContainer = lazy(() => import("./ModalViews/FriendsContainer"));
 const EmojiPicker = lazy(() => import("./ModalViews/EmojiStudio"));
-const ScreenCustomeStudio = lazy(() => import("./ModalViews/CustomeStudio"));
+const ScreenCustomeStudio = lazy(() => import("../../features/CustomeStudio"));
 const CropImageStudio = lazy(() => import("@/features/EditorStudio/CropImageStudio"));
 const OptionMoment = lazy(() => import("./ModalViews/OptionMoment"));
 
 export default function LocketCameraBeta() {
-  const { navigation, camera, post } = useApp();
+  const { navigation, camera } = useApp();
 
   const {
     isHomeOpen,
@@ -33,7 +33,8 @@ export default function LocketCameraBeta() {
     setOptionModalOpen,
   } = navigation;
   const { canvasRef } = camera;
-  const { postOverlay } = post;
+
+  const overlayData = useOverlayEditorStore((s) => s.overlayData);
   const background = useUIStore((s) => s.background);
 
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function LocketCameraBeta() {
       {/* Canvas for capturing image/video */}
       <canvas ref={canvasRef} className="hidden" />
       {/* Audio Music */}
-      {postOverlay.music && <MusicPlayer music={postOverlay.music} />}
+      {overlayData.type === "music" && <MusicPlayer music={overlayData.payload} />}
       <span className="fixed pointer-events-none z-60 bottom-3 right-4 text-xs text-gray-400 select-none">
         © Locket Dio
       </span>
