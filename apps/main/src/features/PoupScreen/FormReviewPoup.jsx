@@ -120,7 +120,7 @@ const FormReviewPoup = ({
               e.target.value.length <= 50 && setText(e.target.value)
             }
             placeholder="Tối đa 50 ký tự"
-            className="input input-lg input-ghost border border-base-content w-full rounded-2xl font-semibold"
+            className="input input-ghost w-full rounded-xl font-semibold bg-base-300"
           />
         </div>
 
