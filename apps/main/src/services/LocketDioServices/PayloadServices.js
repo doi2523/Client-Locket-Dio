@@ -145,7 +145,7 @@ export const createRequestPayloadV6 = async (selectedFile, previewType) => {
   try {
     const { localId } = getToken() || {};
 
-    const isStreakToday = useStreakStore.getState().isStreakUpdatedToday();
+    const streakData = useStreakStore.getState().getDayStreakToday();
 
     const overlayData = useOverlayEditorStore.getState().overlayData;
 
@@ -178,9 +178,12 @@ export const createRequestPayloadV6 = async (selectedFile, previewType) => {
       ...overlayData,
       audience, // Gắn audience vào options luôn
       recipients: determineRecipients(audience, selectedRecipients, localId),
-      isStreaktoday: isStreakToday, //False khi chưa có đăng chuỗi ngày hôm nay
     };
 
+    //Gửi dữ liệu streak (nếu có) để backend quyết định có Streak hay không
+    if (streakData) {
+      optionsDataObj.streakData = streakData;
+    }
     // Tạo payload cuối cùng
     const payload = {
       model: "Version-UploadmediaV3.1",
