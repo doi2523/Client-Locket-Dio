@@ -145,7 +145,7 @@ export const createRequestPayloadV6 = async (selectedFile, previewType) => {
   try {
     const { localId } = getToken() || {};
 
-    const streakData = useStreakStore.getState().getDayStreakToday();
+    const streakData = useStreakStore.getState().getTodayIfNotUpdated();
 
     const overlayData = useOverlayEditorStore.getState().overlayData;
 
