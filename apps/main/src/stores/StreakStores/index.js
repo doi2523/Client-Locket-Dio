@@ -103,4 +103,23 @@ export const useStreakStore = create((set, get) => ({
     if (!streak?.last_updated_yyyymmdd) return false;
     return streak.last_updated_yyyymmdd === formatYYYYMMDD();
   },
+
+  getDayStreakToday: () => {
+    const { streak } = get();
+    if (!streak?.last_updated_yyyymmdd) return null;
+
+    const today = formatYYYYMMDD();
+
+    // Tính ngày hôm qua
+    const yesterdayDate = new Date();
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterday = formatYYYYMMDD(yesterdayDate);
+
+    // Nếu last update là hôm qua → hôm nay là ngày tiếp streak
+    if (streak.last_updated_yyyymmdd === yesterday) {
+      return today;
+    }
+
+    return null;
+  },
 }));
