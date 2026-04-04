@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ActivityButton from "./ActivityButton";
 import PrivateButton from "./PrivateButton";
-import { ActivityModal } from "@/pages/LocketCameraBeta/ModalViews/ActivityModal";
+import { ActivityModal } from "@/features/ActivityModal";
 
 // ================= Parent Example =================
 export default function ActivitySection({ isPublic, activity, isLoading }) {

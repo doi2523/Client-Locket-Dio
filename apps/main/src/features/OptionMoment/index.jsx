@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Download, Trash2, X } from "lucide-react";
+import { Download, Repeat, Share, Trash2, X } from "lucide-react";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge";
 import { useApp } from "@/context/AppContext";
-import { SonnerSuccess, SonnerWarning, SonnerInfo } from "@/components/ui/SonnerToast";
+import {
+  SonnerSuccess,
+  SonnerWarning,
+  SonnerInfo,
+} from "@/components/ui/SonnerToast";
 import Modal from "@/components/ui/Modal";
 import { DeleteMoment } from "@/services";
 import { getMomentById } from "@/cache/momentDB";
@@ -123,12 +127,30 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
           Bạn có thể tải về hình ảnh/video của bạn bè hoặc xoá chúng khỏi lịch
           sử của bạn {selectedQueue}
         </p>
-        <div className="w-full flex flex-row justify-center items-center gap-3 mt-6">
+        <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-3 mt-6">
           <button
             onClick={handleDownload}
-            className="btn btn-neutral btn-outline rounded-3xl w-36 flex items-center justify-center gap-2"
+            className="btn btn-neutral rounded-3xl flex items-center justify-center gap-2"
           >
-            <Download size={24} /> Tải xuống
+            <Download size={20} /> Tải xuống
+          </button>
+
+          <button
+            onClick={() => SonnerInfo("Chức năng này sẽ sớm có mặt!")}
+            className="btn btn-secondary rounded-3xl w-full flex items-center justify-center gap-2"
+          >
+            {/* Icon repost */}
+            <Repeat size={20} />
+            Đăng lại
+          </button>
+
+          <button
+            onClick={() => SonnerInfo("Chức năng này sẽ sớm có mặt!")}
+            className="btn btn-info rounded-3xl w-full flex items-center justify-center gap-2"
+          >
+            {/* Icon share */}
+            <Share size={20} />
+            Chia sẻ
           </button>
 
           <button
@@ -136,9 +158,9 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
               setOptionModalOpen(false);
               setOpenModal(true);
             }}
-            className="btn btn-neutral btn-outline rounded-3xl w-36 flex items-center justify-center gap-2"
+            className="btn btn-error rounded-3xl w-full flex items-center justify-center gap-2"
           >
-            <Trash2 size={24} /> Xoá
+            <Trash2 size={20} /> Xoá
           </button>
         </div>
       </div>

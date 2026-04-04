@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, Download, Menu, MessageCircle } from "lucide-react";
-import HistorySelectFriend from "@/pages/LocketCameraBeta/ModalViews/HistorySelectFriend";
+import HistorySelectFriend from "@/features/HistorySelectFriend";
 import { useAuthStore, useFriendList } from "@/stores";
 
 const HeaderHome = ({

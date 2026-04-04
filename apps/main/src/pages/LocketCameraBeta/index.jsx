@@ -10,11 +10,11 @@ const BgLocketDio = lazy(() => import("@/components/Effects/BgLocketDio"));
 const LeftHomeScreen = lazy(() => import("./LeftHomeScreen"));
 const RightHomeScreen = lazy(() => import("./RightHomeScreen"));
 
-const FriendsContainer = lazy(() => import("./ModalViews/FriendsContainer"));
-const EmojiPicker = lazy(() => import("./ModalViews/EmojiStudio"));
-const ScreenCustomeStudio = lazy(() => import("../../features/CustomeStudio"));
+const FriendsContainer = lazy(() => import("../../features/FriendsContainer"));
+const EmojiPicker = lazy(() => import("@/features/EmojiStudio"));
+const ScreenCustomeStudio = lazy(() => import("@/features/CustomeStudio"));
 const CropImageStudio = lazy(() => import("@/features/EditorStudio/CropImageStudio"));
-const OptionMoment = lazy(() => import("./ModalViews/OptionMoment"));
+const OptionMoment = lazy(() => import("@/features/OptionMoment"));
 
 export default function LocketCameraBeta() {
   const { navigation, camera } = useApp();
