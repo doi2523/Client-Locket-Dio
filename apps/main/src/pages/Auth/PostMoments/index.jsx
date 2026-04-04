@@ -138,20 +138,28 @@ const PostMoments = () => {
   // }, [overlayData]);
 
   const updateOverlayField = (key, value) => {
-    // Caption = text
+    // Caption = text (KHÔNG đổi type)
     if (key === "caption") {
       updateOverlayEditor({
         caption: value,
         text: value,
+        is_editable: true,
       });
       return;
     }
 
+    // Các thay đổi liên quan đến style => luôn custom
+    const setCustom = (data) => {
+      updateOverlayEditor({
+        ...data,
+        type: "custom",
+      });
+    };
+
     // Text color
     if (key === "text_color") {
-      updateOverlayEditor({
+      setCustom({
         text_color: value,
-        type: "custom",
       });
       return;
     }
@@ -160,20 +168,18 @@ const PostMoments = () => {
     if (key === "update_color") {
       let colors = [...(overlayData.background.colors || [])];
       colors[value.index] = value.color;
-
       colors = ensureMinColors(colors);
 
-      updateOverlayEditor({
+      setCustom({
         background: {
           ...overlayData.background,
           colors,
-          type: "custom",
         },
       });
       return;
     }
 
-    // Add color (max 4)
+    // Add color
     if (key === "add_color") {
       let colors = overlayData.background.colors || [];
 
@@ -190,7 +196,7 @@ const PostMoments = () => {
         colors = [...colors, "#000000"];
       }
 
-      updateOverlayEditor({
+      setCustom({
         background: {
           ...overlayData.background,
           colors,
@@ -199,7 +205,7 @@ const PostMoments = () => {
       return;
     }
 
-    // Remove color (min 2)
+    // Remove color
     if (key === "remove_color") {
       const colors = overlayData.background.colors || [];
 
@@ -210,7 +216,7 @@ const PostMoments = () => {
 
       const newColors = colors.filter((_, i) => i !== value);
 
-      updateOverlayEditor({
+      setCustom({
         background: {
           ...overlayData.background,
           colors: newColors,
@@ -219,10 +225,12 @@ const PostMoments = () => {
       return;
     }
 
-    // Reset
+    // Reset => default
     if (key === "reset") {
       updateOverlayEditor({
         type: "default",
+        caption: "",
+        text: "",
         text_color: "#FFFFFF",
         background: {
           colors: ["#000000", "#000000"],
