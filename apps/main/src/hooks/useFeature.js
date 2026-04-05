@@ -3,7 +3,16 @@ import { useAuthStore } from "@/stores";
 export const useFeatureVisible = (type) => {
   const userPlan = useAuthStore((s) => s.userPlan);
 
-  return userPlan?.features?.[type];
+  if (!userPlan) return false;
+
+  const blocks = userPlan?.feature_blocks || {};
+  const features = userPlan?.features || {};
+
+  // Ưu tiên block trước
+  if (blocks[type]) return false;
+
+  // Không bị block thì theo plan
+  return features[type] ?? false;
 };
 
 export const useGetCode = (type) => {

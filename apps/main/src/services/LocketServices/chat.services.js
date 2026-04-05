@@ -1,5 +1,5 @@
 import { loginHeader } from "@/constants/constrain";
-import { instanceLocket } from "@/lib/axios.locket";
+import { instanceLocket } from "@/libs";
 import { getToken } from "@/utils";
 import { generateUUIDv4Upper } from "@/utils/generate/uuid";
 
@@ -86,7 +86,7 @@ export const sendReactionOnMessage = async (reactionData) => {
           Authorization: `Bearer ${idToken}`,
           ...loginHeader,
         },
-      }
+      },
     );
 
     return response.data;

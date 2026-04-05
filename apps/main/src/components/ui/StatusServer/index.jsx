@@ -3,7 +3,7 @@ import { useApp } from "@/context/AppContext";
 import BouncyLoader from "../Loading/Bouncy";
 import { RiEmotionHappyLine } from "react-icons/ri";
 import { TbMoodCrazyHappy } from "react-icons/tb";
-import { instanceAuth } from "@/lib/axios.auth";
+import { instanceAuth } from "@/libs/instanceAuth";
 
 const StatusServer = () => {
   const { useloading } = useApp();

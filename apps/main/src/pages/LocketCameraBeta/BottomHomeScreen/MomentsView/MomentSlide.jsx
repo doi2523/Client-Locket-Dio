@@ -1,8 +1,7 @@
-import LoadingRing from "@/components/ui/Loading/ring";
 import { X } from "lucide-react";
 import { useState } from "react";
-import CaptionOverlay from "./CaptionOverlay";
 import UserInfo from "../Layout/UserInfoView";
+import { OverlayRenderer } from "@/components/ui";
 
 const MomentSlide = ({ moment, me, handleClose }) => {
   const [isVideoReady, setIsVideoReady] = useState(false);
@@ -49,7 +48,7 @@ const MomentSlide = ({ moment, me, handleClose }) => {
           )}
 
           {/* Caption */}
-          {moment?.caption && <CaptionOverlay currentMoment={moment} />}
+          {moment?.caption && <OverlayRenderer moment={moment} />}
         </div>
 
         <UserInfo user={moment?.user} me={me} date={moment?.date} />

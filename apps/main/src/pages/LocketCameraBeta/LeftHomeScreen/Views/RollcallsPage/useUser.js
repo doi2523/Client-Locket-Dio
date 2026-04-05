@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchUserV2 } from "@/services";
+import { fetchUserById } from "@/services";
 
 /**
  * Hook để fetch thông tin user theo uid
@@ -16,7 +16,7 @@ export function useUser(uid) {
 
     const fetchUser = async () => {
       try {
-        const u = await fetchUserV2(uid);
+        const u = await fetchUserById(uid);
         if (mounted) setUser(u);
       } catch (err) {
         console.error("Failed to fetch user:", err);

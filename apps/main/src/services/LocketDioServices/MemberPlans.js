@@ -1,17 +1,10 @@
-import api from "@/lib/axios";
-
-const LAST_UPDATE_KEY = "lastUserUpdate";
-const UPDATE_INTERVAL = 24 * 60 * 60 * 1000; // 24 giờ
+import api from "@/libs/axios";
+import { getPushSubscription } from "../BrowserServices";
+import { instanceAuth } from "@/libs";
 
 export const updateUserInfo = async (user) => {
-  const lastUpdate = localStorage.getItem(LAST_UPDATE_KEY);
-  const now = Date.now();
-
-  // Nếu đã cập nhật trong vòng 24h thì bỏ qua
-  if (lastUpdate && now - parseInt(lastUpdate) < UPDATE_INTERVAL) return;
-
   try {
-    const payload = {
+    const body = {
       uid: user?.localId,
       username: user?.username || user?.email || "user",
       email: user?.email,
@@ -19,15 +12,51 @@ export const updateUserInfo = async (user) => {
       profile_picture: user?.photoURL || user?.profilePicture || "",
     };
 
-    await api.post("/api/u", payload, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    localStorage.setItem(LAST_UPDATE_KEY, now.toString());
-    console.log("✅ User info updated");
+    await instanceAuth.post("/api/u", body);
   } catch (err) {
     console.error("❌ Failed to update user info:", err);
+  }
+};
+
+export const GetUserData = async () => {
+  try {
+    const res = await api.get("/api/me");
+    return res.data?.data;
+  } catch (error) {
+    console.error(
+      "❌ Lỗi khi lấy thông tin người dùng:",
+      error.response?.data || error.message,
+    );
+    throw error.response?.data || error.message;
+  }
+};
+
+export const GetUserDataV2 = async () => {
+  try {
+    const res = await api.get("/api/cn");
+    return res.data?.data;
+  } catch (error) {
+    console.error(
+      "❌ Lỗi khi lấy thông tin người dùng:",
+      error.response?.data || error.message,
+    );
+    throw error.response?.data || error.message;
+  }
+};
+
+export const syncPushSubscription = async () => {
+  try {
+    const sub = await getPushSubscription();
+    if (!sub) return;
+
+    const body = {
+      app: "locketdio",
+      type: "webpush",
+      data: sub,
+    };
+
+    await instanceAuth.post("/api/setNotificationToken", body);
+  } catch (err) {
+    console.error("Push sync error:", err);
   }
 };

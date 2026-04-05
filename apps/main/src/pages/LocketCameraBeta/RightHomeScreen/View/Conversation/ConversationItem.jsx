@@ -1,10 +1,10 @@
 import { formatTimeAgoV2 } from "@/utils";
 import { ChevronRight } from "lucide-react";
-import { useFriendStoreV2 } from "@/stores";
+import { useFriendStoreV3 } from "@/stores";
 
 // ================= Component: ConversationItem =================
 export const ConversationItem = ({ msg, onSelect }) => {
-  const friendMap = useFriendStoreV2((s) => s.friendDetailsMap);
+  const friendMap = useFriendStoreV3((s) => s.friendDetailsMap);
 
   // 🔹 Lookup O(1)
   const friendDetail = friendMap?.[msg.with_user] ?? null;

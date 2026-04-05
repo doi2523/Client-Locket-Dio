@@ -1,6 +1,6 @@
-import axios from "axios";
 import { CONFIG } from "@/config";
-import { API_URL, urlBase64ToUint8Array } from "@/utils";
+import { urlBase64ToUint8Array } from "@/utils";
+import { instanceMain } from "@/libs";
 
 /**
  * Lấy Push Subscription hiện tại (nếu có)
@@ -75,7 +75,7 @@ export const subscribePush = async () => {
   }
 
   // Gửi subscription lên server để lưu
-  await axios.post(API_URL.REGISTER_PUSH_URL, {
+  await instanceMain.post("/api/push/register", {
     subscription,
   });
 

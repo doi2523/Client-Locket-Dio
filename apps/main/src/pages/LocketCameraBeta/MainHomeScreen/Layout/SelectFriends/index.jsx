@@ -1,21 +1,18 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaUserFriends, FaLock } from "react-icons/fa";
-import { useApp } from "@/context/AppContext";
 import clsx from "clsx";
 import { getToken } from "@/utils";
 import FriendSelectItems from "./FriendSelectItems";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
-import { useFriendStoreV2 } from "@/stores";
+import { useNormalFriendIds, usePostStore } from "@/stores";
 
 const SelectFriendsList = ({}) => {
-  const friendDetailsMap = useFriendStoreV2((s) => s.friendDetailsMap);
-  const friendDetails = useMemo(
-    () => Object.values(friendDetailsMap),
-    [friendDetailsMap]
-  );
+  const friendIds = useNormalFriendIds();
 
-  const { post } = useApp();
-  const { audience, setAudience, setSelectedRecipients } = post;
+  const audience = usePostStore((s) => s.audience);
+  const setAudience = usePostStore((s) => s.setAudience);
+  const setSelectedRecipients = usePostStore((s) => s.setSelectedRecipients);
+  const selectedRecipients = usePostStore((s) => s.selectedRecipients);
 
   const [selectedFriends, setSelectedFriends] = useState([]);
 
@@ -23,7 +20,7 @@ const SelectFriendsList = ({}) => {
   useEffect(() => {
     if (audience !== "all") return;
 
-    const allIds = friendDetails.map((f) => f.uid);
+    const allIds = friendIds;
 
     setSelectedFriends((prev) => {
       if (
@@ -34,31 +31,28 @@ const SelectFriendsList = ({}) => {
       }
       return allIds;
     });
-  }, [audience, friendDetails]);
+  }, [audience, friendIds]);
 
-  // Đồng bộ với context + log
   useEffect(() => {
-    setSelectedRecipients((prev) => {
-      if (
-        prev.length === selectedFriends.length &&
-        prev.every((id) => selectedFriends.includes(id))
-      ) {
-        return prev;
-      }
-      return selectedFriends;
-    });
-  }, [selectedFriends]);
+    const shouldUpdate =
+      selectedRecipients.length !== selectedFriends.length ||
+      !selectedRecipients.every((id) => selectedFriends.includes(id));
+
+    if (shouldUpdate) {
+      setSelectedRecipients(selectedFriends);
+    }
+  }, [selectedFriends, selectedRecipients]);
 
   const handleToggle = (uid) => {
     setAudience("selected");
     setSelectedFriends((prev) =>
-      prev.includes(uid) ? prev.filter((id) => id !== uid) : [...prev, uid]
+      prev.includes(uid) ? prev.filter((id) => id !== uid) : [...prev, uid],
     );
   };
 
   const handleSelectAll = () => {
-    const allIds = friendDetails.map((f) => f.uid);
-    if (selectedFriends.length === friendDetails.length) {
+    const allIds = friendIds;
+    if (selectedFriends.length === friendIds.length) {
       setAudience("selected");
       setSelectedFriends([]);
     } else {
@@ -69,9 +63,8 @@ const SelectFriendsList = ({}) => {
 
   const handleSelectPrivate = () => {
     SonnerInfo("Lưu ý chế độ đăng bài", "Bạn đang chọn chế độ riêng tư!");
-    const { localId } = getToken() || {};
     setAudience("private"); // Thay đổi audience thành "private"
-    setSelectedFriends([localId]); // Set selectedFriends là array chứa localId
+    setSelectedFriends([]);
   };
 
   // Check xem có phải đang ở chế độ private không
@@ -85,9 +78,7 @@ const SelectFriendsList = ({}) => {
 
   // Check xem có phải đang select tất cả không
   const isSelectAll = () => {
-    return (
-      audience === "all" || selectedFriends.length === friendDetails.length
-    );
+    return audience === "all" || selectedFriends.length === friendIds.length;
   };
 
   const scrollRef = useRef(null);
@@ -106,7 +97,7 @@ const SelectFriendsList = ({}) => {
         scrollRef.current.scrollLeft = offsetCenter;
       }
     }
-  }, [friendDetails]);
+  }, [friendIds]);
 
   return (
     <div className={`w-full `}>
@@ -118,7 +109,7 @@ const SelectFriendsList = ({}) => {
         <div
           className={clsx(
             "flex flex-col items-center justify-center snap-center shrink-0 transition-all duration-300",
-            isPrivateMode() ? "opacity-100" : "opacity-60"
+            isPrivateMode() ? "opacity-100" : "opacity-60",
           )}
         >
           <div
@@ -127,7 +118,7 @@ const SelectFriendsList = ({}) => {
               "flex p-0.5 flex-col items-center justify-center cursor-pointer rounded-full border-[2.5px] transition-all duration-300 transform",
               isPrivateMode()
                 ? "border-amber-400 scale-100"
-                : "border-gray-700 scale-95"
+                : "border-gray-700 scale-95",
             )}
           >
             <div className="w-11 h-11 rounded-full bg-base-300 flex items-center justify-center text-xl font-bold text-primary">
@@ -143,7 +134,7 @@ const SelectFriendsList = ({}) => {
         <div
           className={clsx(
             "flex flex-col items-center justify-center snap-center shrink-0 transition-all duration-300",
-            isSelectAll() ? "opacity-100" : "opacity-60"
+            isSelectAll() ? "opacity-100" : "opacity-60",
           )}
         >
           <div
@@ -152,7 +143,7 @@ const SelectFriendsList = ({}) => {
               "flex p-0.5 flex-col items-center justify-center cursor-pointer rounded-full border-[2.5px] transition-all duration-300 transform",
               isSelectAll()
                 ? "border-amber-400 scale-100"
-                : "border-gray-700 scale-95"
+                : "border-gray-700 scale-95",
             )}
           >
             <div className="w-11 h-11 rounded-full bg-base-300 flex items-center justify-center text-xl font-bold text-primary">
@@ -165,11 +156,11 @@ const SelectFriendsList = ({}) => {
         </div>
 
         {/* Danh sách bạn bè */}
-        {friendDetails.map((friend) => (
+        {friendIds.map((uid) => (
           <FriendSelectItems
-            key={friend.uid}
-            friend={friend}
-            isSelected={selectedFriends.includes(friend.uid)}
+            key={uid}
+            uid={uid}
+            isSelected={selectedFriends.includes(uid)}
             onToggle={handleToggle}
           />
         ))}

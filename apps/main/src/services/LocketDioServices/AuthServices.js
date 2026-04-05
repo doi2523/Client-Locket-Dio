@@ -1,8 +1,7 @@
 import { BETA_SERVER_HOST } from "@/config/apiConfig";
-import api from "@/lib/axios";
-import { instanceAuth } from "@/lib/axios.auth";
-import { instanceLocketV2 } from "@/lib/axios.locket";
-import { instanceMain } from "@/lib/axios.main";
+import api from "@/libs/axios";
+import { instanceAuth } from "@/libs";
+import { instanceMain } from "@/libs/instanceMain";
 import { ValidateEmailAddress } from "../LocketServices";
 //Login
 export const loginWithEmail = async ({ email, password, captchaToken }) => {
@@ -32,8 +31,7 @@ export const loginWithEmail = async ({ email, password, captchaToken }) => {
     // Axios error
     if (error.response) {
       const err = new Error(
-        error.response.data?.message ||
-          "Đăng nhập thất bại, vui lòng thử lại"
+        error.response.data?.message || "Đăng nhập thất bại, vui lòng thử lại",
       );
       err.status = error.response.status;
       throw err;
@@ -70,7 +68,7 @@ export const loginWithPhone = async ({ phone, password, captchaToken }) => {
     }
     console.error("❌ Network Error:", error.message);
     throw new Error(
-      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút."
+      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút.",
     );
   }
 };
@@ -91,7 +89,7 @@ export const refreshIdTokenV2 = async () => {
     }
     console.error("❌ Network Error:", error.message);
     throw new Error(
-      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút."
+      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút.",
     );
   }
 };
@@ -101,7 +99,7 @@ export const refreshIdToken = async (refreshToken) => {
     const res = await instanceAuth.post(
       "locket/refresh-token",
       { refreshToken },
-      { withCredentials: true } // Nhận cookie từ server
+      { withCredentials: true }, // Nhận cookie từ server
     );
     // Kiểm tra nếu API trả về lỗi nhưng vẫn có status 200
     // if (res.data?.success === false) {
@@ -116,7 +114,7 @@ export const refreshIdToken = async (refreshToken) => {
     }
     console.error("❌ Network Error:", error.message);
     throw new Error(
-      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút."
+      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút.",
     );
   }
 };
@@ -127,7 +125,7 @@ export const forgotPassword = async (email) => {
 
     const res = await instanceMain.post(
       `${BETA_SERVER_HOST}/locket/resetPassword`,
-      body
+      body,
     );
 
     return res.data;
@@ -139,7 +137,7 @@ export const forgotPassword = async (email) => {
     }
     console.error("❌ Network Error:", error.message);
     throw new Error(
-      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút."
+      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút.",
     );
   }
 };
@@ -152,35 +150,9 @@ export const logout = async () => {
   } catch (error) {
     console.error(
       "❌ Lỗi khi đăng xuất:",
-      error.response?.data || error.message
+      error.response?.data || error.message,
     );
     throw error.response?.data || error.message; // ✅ Trả về lỗi nếu có
-  }
-};
-
-export const GetUserData = async () => {
-  try {
-    const res = await api.get("/api/me");
-    return res.data?.data;
-  } catch (error) {
-    console.error(
-      "❌ Lỗi khi lấy thông tin người dùng:",
-      error.response?.data || error.message
-    );
-    throw error.response?.data || error.message;
-  }
-};
-
-export const GetUserDataV2 = async () => {
-  try {
-    const res = await api.get("/api/po");
-    return res.data?.data;
-  } catch (error) {
-    console.error(
-      "❌ Lỗi khi lấy thông tin người dùng:",
-      error.response?.data || error.message
-    );
-    throw error.response?.data || error.message;
   }
 };
 
@@ -191,7 +163,7 @@ export const GetUserLocket = async () => {
   } catch (error) {
     console.error(
       "❌ Lỗi khi lấy thông tin người dùng:",
-      error.response?.data || error.message
+      error.response?.data || error.message,
     );
     throw error.response?.data || error.message;
   }

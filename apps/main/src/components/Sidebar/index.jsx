@@ -145,7 +145,6 @@ const Sidebar = () => {
       title: "Tài nguyên",
       items: [
         { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "New" },
-        { to: "/collection", icon: Package, text: "Thư viện phiên bản" },
         { to: "/sponsors", icon: Heart, text: "Ủng hộ dự án" },
         { to: "/timeline", icon: Clock, text: "Lịch sử Website" },
         { to: "/docs", icon: BookText, text: "Tài liệu" },

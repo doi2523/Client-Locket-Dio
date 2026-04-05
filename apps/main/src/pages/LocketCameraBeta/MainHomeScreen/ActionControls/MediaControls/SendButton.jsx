@@ -1,9 +1,8 @@
 import * as services from "@/services";
-import { useApp } from "@/context/AppContext.jsx";
+import { useApp } from "@/context/AppContext";
 import { useCallback, useState } from "react";
-import { defaultPostOverlay } from "@/stores/usePost.js";
-import UploadStatusIcon from "./UploadStatusIcon.jsx";
-import { getMaxUploads } from "@/hooks/useFeature.js";
+import UploadStatusIcon from "./UploadStatusIcon";
+import { getMaxUploads } from "@/hooks/useFeature";
 import {
   SonnerError,
   SonnerInfo,
@@ -12,6 +11,7 @@ import {
 } from "@/components/ui/SonnerToast";
 import { useAuthStore, useUploadQueueStore } from "@/stores";
 import { useNavigate } from "react-router-dom";
+import { resetAllPostData } from "@/utils";
 
 const SendButton = () => {
   const navigate = useNavigate();
@@ -25,12 +25,6 @@ const SendButton = () => {
     setSelectedFile,
     isSizeMedia,
     setSizeMedia,
-    postOverlay,
-    setPostOverlay,
-    audience,
-    setAudience,
-    selectedRecipients,
-    setSelectedRecipients,
   } = post;
   const { setCameraActive } = camera;
 
@@ -61,8 +55,10 @@ const SendButton = () => {
     setSelectedFile(null);
     setPreview(null);
     setSizeMedia(null);
-    setPostOverlay(defaultPostOverlay);
-    setAudience("all");
+
+    //Call Utils để reset toàn bộ data liên quan đến post
+    resetAllPostData();
+
     setCameraActive(true); // Giữ dòng này để trigger useEffect
     setIsSuccess(false); // Reset success state
   }, []);
@@ -118,12 +114,9 @@ const SendButton = () => {
       setIsSuccess(false);
 
       // Tạo payload
-      const payload = await services.createRequestPayloadV5(
+      const payload = await services.createRequestPayloadV6(
         selectedFile,
         previewType,
-        postOverlay,
-        audience,
-        selectedRecipients,
       );
 
       if (!payload) {

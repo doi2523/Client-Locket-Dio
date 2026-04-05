@@ -1,4 +1,4 @@
-import { instanceLocketV2 } from "@/lib/axios.locket";
+import { instanceLocketV2 } from "@/libs";
 
 export const ValidateEmailAddress = async (email) => {
   try {
@@ -19,7 +19,7 @@ export const ValidateEmailAddress = async (email) => {
     }
     console.error("❌ Network Error:", error.message);
     throw new Error(
-      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút."
+      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút.",
     );
   }
 };

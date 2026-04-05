@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { useApp } from "@/context/AppContext.jsx";
 import { useCallback, useState } from "react";
-import { defaultPostOverlay } from "@/stores/usePost.js";
+import { resetAllPostData } from "@/utils";
 
 const DelButton = () => {
   const { navigation, post, useloading, camera } = useApp();
@@ -32,8 +32,9 @@ const DelButton = () => {
     setSelectedFile(null);
     setPreview(null);
     setSizeMedia(null);
-    setPostOverlay(defaultPostOverlay);
-    setAudience("all");
+
+    resetAllPostData(); // Call Utils để reset toàn bộ data liên quan đến post
+
     setCameraActive(true); // Giữ dòng này để trigger useEffect
   }, []);
 

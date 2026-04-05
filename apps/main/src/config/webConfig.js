@@ -26,7 +26,7 @@ export const CONFIG = {
     author: "dio",
     shortname: "locketdio",
     fullName: "Locket Dio - Đăng ảnh & Video lên Locket", // Tên đầy đủ
-    clientVersion: "Beta2.5.5.2.4", // Version client
+    clientVersion: "Beta1.0.0.2", // Version client
     apiVersion: "v2.2.1", // Version API
     startYear: 2025,
     env: import.meta.env.MODE, // development | production
@@ -156,5 +156,15 @@ export const CONFIG = {
       { id: "announcement", label: "Thông báo", icon: "Megaphone" },
       { id: "tip", label: "Mẹo sử dụng", icon: "Lightbulb" },
     ],
+  },
+  cache: {
+    keys: {
+      user: "userData",
+      memberToken: "memberToken",
+      memberHeader: "memberHeader",
+    },
+    ttl: {
+      user: 24 * 60 * 60 * 1000,
+    },
   },
 };

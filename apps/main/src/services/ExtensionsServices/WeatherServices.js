@@ -1,6 +1,6 @@
-import { instanceMain } from "@/lib/axios.main";
+import { instanceMain } from "@/libs";
 
-export const getInfoWeather = async ({lat, lon}) => {
+export const getInfoWeather = async ({ lat, lon }) => {
   if (!lat || !lon) {
     console.warn("⚠️ Thieu lat or lon");
     return null;

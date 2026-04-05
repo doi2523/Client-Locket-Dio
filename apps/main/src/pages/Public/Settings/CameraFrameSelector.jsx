@@ -1,7 +1,7 @@
 import { Camera, Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getAllFrameCamera } from "@/services";
-import { useUIStore } from "@/stores/useUIStore";
+import { useUIStore } from "@/stores";
 
 export default function CameraFrameSelector() {
   const [frames, setFrames] = useState([]);
@@ -33,9 +33,7 @@ export default function CameraFrameSelector() {
       {/* Header */}
       <div className="flex items-center mb-4 text-base-content">
         <Camera className="w-5 h-5 mr-2" />
-        <h2 className="text-lg font-semibold">
-          Chọn Khung Camera
-        </h2>
+        <h2 className="text-lg font-semibold">Chọn Khung Camera</h2>
       </div>
 
       {/* Preview khung đã chọn */}

@@ -1,8 +1,4 @@
-import api from "@/lib/axios";
-import { instanceLocketV2 } from "@/lib/axios.locket";
-import { normalizeFriendDataV2 } from "@/utils";
-import { fetchUserV2 } from "./FriendsServices";
-import { chunkArray } from "@/helpers/chunkArray";
+import api from "@/libs/axios";
 
 export const getAllRequestFriend = async (pageToken = null, limit = 100) => {
   try {
@@ -141,12 +137,9 @@ export const getOutgoingRequestFriend = async (
 
 export const SendRequestToFriend = async (uid) => {
   try {
-    const response = await api.post(
-      "/locket/sendFriendRequestV2",
-      {
-        data: { friendUid: uid },
-      },
-    );
+    const response = await api.post("/locket/sendFriendRequestV2", {
+      data: { friendUid: uid },
+    });
     return response.data?.result?.data;
   } catch (error) {
     console.error("❌ Lỗi khi tìm bạn:", error.response?.data || error.message);
@@ -156,9 +149,12 @@ export const SendRequestToFriend = async (uid) => {
 
 export const SendRequestToCelebrity = async (uid) => {
   try {
-    const response = await api.post("https://api-beta.locket-dio.com/locket/sendCelebrityRequestV2", {
-      friendUid: uid,
-    });
+    const response = await api.post(
+      "https://api-beta.locket-dio.com/locket/sendCelebrityRequestV2",
+      {
+        friendUid: uid,
+      },
+    );
     return response?.data;
   } catch (error) {
     console.error("❌ Lỗi khi tìm bạn:", error.response?.data || error.message);

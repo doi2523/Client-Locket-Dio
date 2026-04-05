@@ -1,6 +1,10 @@
-import api from "@/lib/axios";
+import api from "@/libs/axios";
 
-export const GetAllMoments = async ({ timestamp = null, friendId = null, limit = 60}) => {
+export const GetAllMoments = async ({
+  timestamp = null,
+  friendId = null,
+  limit = 60,
+}) => {
   try {
     const res = await api.post("/locket/getMomentV2", {
       timestamp: timestamp,

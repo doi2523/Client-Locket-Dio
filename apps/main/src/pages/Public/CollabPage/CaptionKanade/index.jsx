@@ -3,8 +3,8 @@ import {
   SonnerSuccess,
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
-import { useOverlayStore } from "@/stores";
-import { getCaptionGradientStyle } from "@/utils/captionColors";
+import { getCaptionStyle } from "@/helpers/styleHelpers";
+import { useOverlayUserStore } from "@/stores";
 import { useState } from "react";
 
 export default function ManageCaption() {
@@ -12,11 +12,12 @@ export default function ManageCaption() {
 
   const KANADE_DOMAIN = "https://captionkanade.site";
   const VIDEO_DESKTOP_URL = "https://cdn.captionkanade.site/locketdio.mp4";
-  const VIDEO_MOBILE_URL = "https://cdn.captionkanade.site/Screenrecorder-2026-01-22-22-12-58-939.mp4";
+  const VIDEO_MOBILE_URL =
+    "https://cdn.captionkanade.site/Screenrecorder-2026-01-22-22-12-58-939.mp4";
 
-  const userCaptions = useOverlayStore((s) => s.userCaptions);
-  const addUserCaptionById = useOverlayStore((s) => s.addUserCaptionById);
-  const removeUserCaption = useOverlayStore((s) => s.removeUserCaption);
+  const userCaptions = useOverlayUserStore((s) => s.userCaptions);
+  const addUserCaptionById = useOverlayUserStore((s) => s.addUserCaptionById);
+  const removeUserCaption = useOverlayUserStore((s) => s.removeUserCaption);
   // Regex UUID v4
   const uuidV4Regex =
     /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -180,21 +181,15 @@ export default function ManageCaption() {
               <button
                 className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center shadow-md hover:shadow-lg transition"
                 style={{
-                  ...getCaptionGradientStyle(preset),
-                  color: preset.color || "#fff",
+                  ...getCaptionStyle(preset.background, preset.text_color),
                 }}
               >
                 <span className="text-xl flex items-center gap-2">
-                  {preset.type === "image_icon" ||
-                  preset.type === "image_gif" ? (
-                    <img
-                      src={preset.icon_url}
-                      alt="icon"
-                      className="w-7 h-7 rounded-md object-cover"
-                    />
-                  ) : (
-                    <>{preset.icon_url}</>
-                  )}
+                  <img
+                    src={preset.icon.data}
+                    alt="icon"
+                    className="w-7 h-7 rounded-md object-cover"
+                  />
                   {preset.text}
                 </span>
               </button>

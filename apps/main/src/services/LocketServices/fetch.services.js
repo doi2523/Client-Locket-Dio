@@ -1,6 +1,6 @@
 import { CONFIG } from "@/config";
-import { instanceExten } from "@/lib/axios.exten";
-import { instanceLocketV2 } from "@/lib/axios.locket";
+import { instanceExten } from "@/libs/instanceExtens";
+import { instanceLocketV2 } from "@/libs/instanceLocket";
 
 export const fetchUserById = async (uid) => {
   if (!uid) return;

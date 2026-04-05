@@ -1,11 +1,11 @@
 import React, { lazy, Suspense, useEffect, useRef } from "react";
 import { getAvailableCameras, isIOS } from "@/utils";
-const AutoResizeCaption = lazy(() => import("../CaptionViews"));
+const EditorCaption = lazy(() => import("@/features/EditorCaption"));
 import { useApp } from "@/context/AppContext";
 import { CONFIG } from "@/config";
 import BorderProgress from "../../Widgets/SquareProgress";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
-import { useUIStore } from "@/stores/useUIStore";
+import { useUIStore } from "@/stores";
 
 const MediaPreview = () => {
   const { post, useloading, camera } = useApp();
@@ -255,7 +255,7 @@ const MediaPreview = () => {
           }`}
         >
           <Suspense fallback={null}>
-            <AutoResizeCaption />
+            <EditorCaption />
           </Suspense>
         </div>
 

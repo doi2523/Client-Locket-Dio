@@ -1,9 +1,9 @@
-import { useAuthStore, useFriendStoreV2 } from "@/stores";
+import { useAuthStore, useFriendStoreV3 } from "@/stores";
 import { formatTimeAgo } from "@/utils";
 
 const UserInfo = ({ user: userId, date }) => {
   const me = useAuthStore((s) => s.user);
-  const friendMap = useFriendStoreV2((s) => s.friendDetailsMap);
+  const friendMap = useFriendStoreV3((s) => s.friendDetailsMap);
 
   // -------------------------
   // RESOLVE USER DATA

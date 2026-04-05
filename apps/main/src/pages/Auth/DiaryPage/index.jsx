@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CalendarClock } from "lucide-react";
-import { useAuthStore, useFriendStoreV2 } from "@/stores";
+import { useAuthStore, useFriendStoreV3 } from "@/stores";
 import { getRemovedFriends } from "@/cache/diaryDB";
 import { fetchUserById } from "@/services";
 
@@ -8,7 +8,7 @@ const NEW_DAYS = 7 * 24 * 60 * 60 * 1000;
 
 export default function DiaryPage() {
   const { user } = useAuthStore();
-  const { friendDetailsMap, friendRelationsMap } = useFriendStoreV2();
+  const { friendDetailsMap, friendRelationsMap } = useFriendStoreV3();
 
   const [removedUsers, setRemovedUsers] = useState([]);
   const [newFriends, setNewFriends] = useState([]);

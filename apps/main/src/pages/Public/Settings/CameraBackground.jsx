@@ -3,7 +3,7 @@ import "swiper/css/effect-coverflow";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow } from "swiper/modules";
-import { useUIStore } from "@/stores/useUIStore";
+import { useUIStore } from "@/stores";
 import { getAllBackgroundCamera } from "@/services";
 const BgLocketDio = lazy(() => import("@/components/Effects/BgLocketDio"));
 

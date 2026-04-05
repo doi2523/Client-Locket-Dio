@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ChevronDown, Download, Menu, MessageCircle } from "lucide-react";
-import HistorySelectFriend from "@/pages/LocketCameraBeta/ModalViews/HistorySelectFriend";
-import { useAuthStore, useFriendStoreV2 } from "@/stores";
+import HistorySelectFriend from "@/features/HistorySelectFriend";
+import { useAuthStore, useFriendList } from "@/stores";
 
 const HeaderHome = ({
   setIsHomeOpen,
@@ -14,11 +14,8 @@ const HeaderHome = ({
   selectedFile,
 }) => {
   const { user } = useAuthStore();
-  const friendDetailsMap = useFriendStoreV2((s) => s.friendDetailsMap);
-  const friendList = useMemo(
-    () => Object.values(friendDetailsMap),
-    [friendDetailsMap]
-  );
+
+  const friendList = useFriendList();
 
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
@@ -172,7 +169,6 @@ const HeaderHome = ({
             setIsVisible={setIsVisible}
             setFriendName={setFriendName}
             onClick={toggleDropdown}
-            friendList={friendList}
           />
         </div>
       )}

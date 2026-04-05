@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { SonnerInfo, SonnerSuccess } from "@/components/ui/SonnerToast";
 import { Bell, Camera, MapPin } from "lucide-react";
-import { CONFIG } from "@/config";
-import { API_URL, urlBase64ToUint8Array } from "@/utils";
+import { subscribePush } from "@/services";
 
 export default function PermissionsManager() {
   const [permission, setPermission] = useState("default");
@@ -19,30 +17,6 @@ export default function PermissionsManager() {
 
     checkSubscription();
   }, []);
-
-  const getSubscription = async () => {
-    try {
-      SonnerInfo("Hello");
-      if (!("serviceWorker" in navigator)) return;
-
-      const registration = await navigator.serviceWorker.ready;
-      const sub = await registration.pushManager.getSubscription();
-
-      if (sub) {
-        const json = sub.toJSON();
-
-        console.log("Push subscription:", JSON.stringify(json, null, 2));
-
-        setPushData(json);
-
-        SonnerSuccess("Đã lấy subscription");
-      } else {
-        SonnerInfo("Chưa đăng ký push");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const checkSubscription = async () => {
     try {
@@ -72,9 +46,7 @@ export default function PermissionsManager() {
       const existing = await registration.pushManager.getSubscription();
 
       if (existing) {
-        await axios.post(API_URL.REGISTER_PUSH_URL, {
-          subscription: existing,
-        });
+        await subscribePush();
 
         setSubscribed(true);
 
@@ -82,12 +54,7 @@ export default function PermissionsManager() {
         return;
       }
 
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(CONFIG.keys.vapidPublicKey),
-      });
-
-      await axios.post(API_URL.REGISTER_PUSH_URL, { subscription });
+      await subscribePush();
 
       setSubscribed(true);
 
@@ -311,10 +278,6 @@ export default function PermissionsManager() {
       </div>
 
       {renderLocationGuide()}
-
-      <button className="text-left opacity-0" onClick={getSubscription}>
-        Click to show
-      </button>
     </div>
   );
 }
