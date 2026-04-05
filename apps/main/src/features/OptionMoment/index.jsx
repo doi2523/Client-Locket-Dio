@@ -8,10 +8,10 @@ import {
   SonnerInfo,
 } from "@/components/ui/SonnerToast";
 import Modal from "@/components/ui/Modal";
-import { DeleteMoment } from "@/services";
+import { DeleteMoment, downloadAndShareFile } from "@/services";
 import { getMomentById } from "@/cache/momentDB";
 import { useMomentsStoreV2, useUploadQueueStore } from "@/stores";
-import { downloadByLink } from "@/utils/dowload/downloadByLink";
+import { getUploadItemFromDB } from "@/cache/uploadMomentDB";
 
 const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
   const { post } = useApp();
@@ -26,7 +26,8 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
     selectedFriendUid,
   } = post;
   const [openModal, setOpenModal] = useState(false);
-
+  const [downloading, setDownloading] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const { removeMoment } = useMomentsStoreV2();
 
   const { removeUploadItemById } = useUploadQueueStore();
@@ -72,20 +73,87 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
     }
   };
 
+  const getMediaInfo = async () => {
+    if (selectedQueueId !== null) {
+      const data = await getUploadItemFromDB(selectedQueueId);
+      if (!data) return null;
+
+      const { url, type } = data.mediaInfo || {};
+      if (!url) return null;
+
+      return {
+        url,
+        filename: `moment_${selectedQueueId}.${type === "video" ? "mp4" : "jpg"}`,
+      };
+    }
+
+    if (selectedMomentId !== null) {
+      const data = await getMomentById(selectedMomentId);
+      if (!data) return null;
+
+      if (data.videoUrl) {
+        return {
+          url: data.videoUrl,
+          filename: `moment_${selectedMomentId}.mp4`,
+        };
+      }
+
+      if (data.thumbnailUrl) {
+        return {
+          url: data.thumbnailUrl,
+          filename: `moment_${selectedMomentId}.jpg`,
+        };
+      }
+    }
+
+    return null;
+  };
+
   const handleDownload = async () => {
-    if (!selectedMomentId) return;
+    if (downloading) return;
+    setDownloading(true);
+    SonnerInfo("Đang chuẩn bị tải xuống...");
 
-    const data = await getMomentById(selectedMomentId);
-    if (!data) return;
+    try {
+      const media = await getMediaInfo();
+      if (!media) {
+        SonnerInfo("Không có video hoặc thumbnail để tải");
+        return;
+      }
 
-    const { videoUrl, thumbnailUrl } = data;
+      await downloadAndShareFile(media.url, media.filename, () =>
+        setDownloading(false),
+      );
+    } catch (err) {
+      SonnerWarning(
+        "Phương tiện không tồn tại hoặc đã huỷ quá trình tải xuống.",
+      );
+      console.error(err);
+    } finally {
+      setDownloading(false);
+    }
+  };
 
-    if (videoUrl) {
-      downloadByLink(videoUrl, `moment_${selectedMomentId}.mp4`);
-    } else if (thumbnailUrl) {
-      downloadByLink(thumbnailUrl, `moment_${selectedMomentId}.jpg`);
-    } else {
-      SonnerInfo("Không có video hoặc thumbnail để tải");
+  const handleSharing = async () => {
+    if (sharing) return;
+    setSharing(true);
+    SonnerInfo("Đang chuẩn bị chia sẻ...");
+
+    try {
+      const media = await getMediaInfo();
+      if (!media) {
+        SonnerInfo("Không có video hoặc thumbnail để tải");
+        return;
+      }
+
+      await downloadAndShareFile(media.url, media.filename, () =>
+        setSharing(false),
+      );
+    } catch (err) {
+      SonnerWarning("Phương tiện không tồn tại hoặc đã huỷ quá trình chia sẻ.");
+      console.error(err);
+    } finally {
+      setSharing(false);
     }
   };
 
@@ -130,9 +198,19 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
         <div className="w-full grid grid-cols-2 md:grid-cols-3 gap-3 mt-6">
           <button
             onClick={handleDownload}
+            disabled={downloading}
             className="btn btn-neutral rounded-3xl flex items-center justify-center gap-2"
           >
-            <Download size={20} /> Tải xuống
+            {downloading ? (
+              <>
+                <span className="loading loading-spinner loading-sm"></span>
+                Đang tải...
+              </>
+            ) : (
+              <>
+                <Download size={20} /> Tải xuống
+              </>
+            )}
           </button>
 
           <button
@@ -145,12 +223,21 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
           </button>
 
           <button
-            onClick={() => SonnerInfo("Chức năng này sẽ sớm có mặt!")}
-            className="btn btn-info rounded-3xl w-full flex items-center justify-center gap-2"
+            onClick={handleSharing}
+            disabled={sharing}
+            className="btn btn-info rounded-3xl flex items-center justify-center gap-2"
           >
-            {/* Icon share */}
-            <Share size={20} />
-            Chia sẻ
+            {sharing ? (
+              <>
+                <span className="loading loading-spinner loading-sm"></span>
+                Đang tải...
+              </>
+            ) : (
+              <>
+                <Share size={20} />
+                Chia sẻ
+              </>
+            )}
           </button>
 
           <button
