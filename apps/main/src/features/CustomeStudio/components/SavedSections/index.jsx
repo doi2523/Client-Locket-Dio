@@ -1,7 +1,6 @@
 import { getCaptionStyle } from "@/helpers/styleHelpers";
 import React from "react";
 import { Link } from "react-router-dom";
-import { getCaptionGradientStyle } from "@/utils/captionColors";
 
 const SavedCaptions = ({ title = "Caption của bạn", captions = [], onSelect }) => {
   const isLoading = !captions || captions.length === 0;
