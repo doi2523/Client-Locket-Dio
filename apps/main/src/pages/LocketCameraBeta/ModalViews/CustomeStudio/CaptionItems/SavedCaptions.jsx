@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { getCaptionGradientStyle } from "@/utils/captionColors";
 
 const SavedCaptions = ({ title = "Caption của bạn", captions = [], onSelect }) => {
   const isLoading = !captions || captions.length === 0;
@@ -26,7 +27,7 @@ const SavedCaptions = ({ title = "Caption của bạn", captions = [], onSelect 
               key={cap.id}
               className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center shadow-md hover:shadow-lg transition"
               style={{
-                background: `linear-gradient(to bottom, ${cap.colortop}, ${cap.colorbottom})`,
+                ...getCaptionGradientStyle(cap),
                 color: cap.color || "#fff",
               }}
               onClick={() => onSelect(cap)}

@@ -1,6 +1,7 @@
 // stores/useOverlayStore.js
 import { create } from "zustand";
 import { getAllOverlayCaption, getCollabCaption } from "@/services";
+import { getCaptionGradientColors } from "@/utils/captionColors";
 
 const USER_CAPTION_KEY = "Yourcaptions";
 
@@ -18,6 +19,22 @@ const groupThemesByType = (themes) => ({
   image_gif: sortByOrderIndex(themes.filter((t) => t.type === "image_gif")),
   special: sortByOrderIndex(themes.filter((t) => t.type === "special")),
 });
+
+const normalizeCaption = (caption) => {
+  if (!caption) return caption;
+
+  const { top, bottom } = getCaptionGradientColors(caption);
+
+  return {
+    ...caption,
+    colors:
+      Array.isArray(caption.colors) && caption.colors.length > 0
+        ? caption.colors
+        : [top, bottom],
+    colortop: caption.colortop || caption.color_top || top,
+    colorbottom: caption.colorbottom || caption.color_bottom || bottom,
+  };
+};
 
 export const useOverlayStore = create((set, get) => ({
   captionOverlays: {
@@ -93,7 +110,7 @@ export const useOverlayStore = create((set, get) => ({
 
   addUserCaptionById: async (captionId) => {
     try {
-      const result = await getCollabCaption(captionId);
+      const result = normalizeCaption(await getCollabCaption(captionId));
 
       if (!result) throw new Error("Caption not found");
 

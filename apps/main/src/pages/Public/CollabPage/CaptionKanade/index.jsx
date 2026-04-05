@@ -4,6 +4,7 @@ import {
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
 import { useOverlayStore } from "@/stores";
+import { getCaptionGradientStyle } from "@/utils/captionColors";
 import { useState } from "react";
 
 export default function ManageCaption() {
@@ -179,7 +180,7 @@ export default function ManageCaption() {
               <button
                 className="flex flex-col whitespace-nowrap items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center shadow-md hover:shadow-lg transition"
                 style={{
-                  background: `linear-gradient(to bottom, ${preset.colortop}, ${preset.colorbottom})`,
+                  ...getCaptionGradientStyle(preset),
                   color: preset.color || "#fff",
                 }}
               >

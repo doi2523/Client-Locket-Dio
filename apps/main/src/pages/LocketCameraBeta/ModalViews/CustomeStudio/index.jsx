@@ -14,6 +14,7 @@ import FeatureGate from "@/components/common/FeatureGate";
 import SavedCaptions from "./CaptionItems/SavedCaptions";
 import SpecialCaption from "./CaptionItems/SpecialCaption";
 import { useOverlayStore } from "@/stores";
+import { getCaptionGradientColors } from "@/utils/captionColors";
 
 const ScreenCustomeStudio = () => {
   const navigate = useNavigate();
@@ -108,12 +109,14 @@ const ScreenCustomeStudio = () => {
   };
 
   const handleSelectCaption = (caption) => {
+    const { top, bottom } = getCaptionGradientColors(caption);
+
     // console.log("Chọn caption:", caption);
     // Cập nhật postOverlay từ giá trị preset
     setPostOverlay({
       overlay_id: caption?.id || "standard",
-      color_top: caption.colortop || "",
-      color_bottom: caption.colorbottom || "",
+      color_top: top || "",
+      color_bottom: bottom || "",
       text_color: caption.color || "#FFFFFF",
       icon: caption?.icon_url || "",
       caption: caption?.text || "",
