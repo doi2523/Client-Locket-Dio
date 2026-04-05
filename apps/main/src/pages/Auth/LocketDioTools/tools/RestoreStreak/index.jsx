@@ -63,6 +63,7 @@ export default function RestoreStreak() {
 
   const streakUpdated = streak?.last_updated_yyyymmdd === previousDate;
 
+  const isFutureDate = restoreStreakDate > currentDate;
   // Chỉ cho khôi phục khi:
   // - Chuỗi chưa tới hôm nay
   // - Hoặc user xác nhận đã xoá bài hôm nay
@@ -274,30 +275,45 @@ export default function RestoreStreak() {
             </p>
           </WarningBlock>
         )}
+        <WarningBlock title="❗Bật chế độ khôi phục nâng cao?">
+          <p className="text-sm opacity-80">
+            Bạn vẫn có thể bật chế độ này để cập nhật lại chuỗi vào{" "}
+            <b>ngày trước đó và trước đó nữa</b>.
+          </p>
+          <p className="text-sm opacity-80 mt-2">
+            Tôi xác nhận rằng <b>đã xoá toàn bộ bài đăng của ngày hôm nay</b> và
+            hiểu rằng việc khôi phục chuỗi có thể làm sai lệch dữ liệu nếu thông
+            tin này không chính xác.
+          </p>
+          <label className="flex items-center justify-start gap-2 cursor-pointer text-sm mt-2">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-warning checkbox-sm"
+              checked={confirmDeletedToday}
+              onChange={(e) => setConfirmDeletedToday(e.target.checked)}
+            />
+            <span className="opacity-80">
+              Tôi đồng ý và chấp nhận điều kiện
+            </span>
+          </label>
+        </WarningBlock>
 
-        {isTodayStreak && (
-          <WarningBlock title="❗Bật chế độ khôi phục nâng cao?">
+        {isFutureDate && (
+          <WarningBlock title="⚠️ Bạn đang chọn ngày tương lai">
+            <p className="text-2xl font-semibold">
+              Cái đéo gì tại sao chọn ngày tương lai? Nếu hiểu vấn đề thì đăng
+              tiếp còn không hiểu thì dừng lại. Vui lòng đọc hiểu lại hướng dẫn
+              chứ đéo phải quen tay skip đâu!
+            </p>
             <p className="text-sm opacity-80">
-              Chuỗi của bạn đã cập nhật vào đúng ngày hôm nay. Nhưng vẫn có thể
-              bật chế độ này để cập nhật lại chuỗi vào{" "}
-              <b>ngày trước đó và trước đó nữa</b>.
+              Ngày bạn chọn (<b>{restoreStreakDate}</b>) lớn hơn ngày hiện tại (
+              <b>{currentDate}</b>).
             </p>
+
             <p className="text-sm opacity-80 mt-2">
-              Tôi xác nhận rằng <b>đã xoá toàn bộ bài đăng của ngày hôm nay</b>{" "}
-              và hiểu rằng việc khôi phục chuỗi có thể làm sai lệch dữ liệu nếu
-              thông tin này không chính xác.
+              Việc khôi phục chuỗi với ngày trong tương lai có thể gây{" "}
+              <b>sai lệch dữ liệu</b> hoặc không được hệ thống chấp nhận.
             </p>
-            <label className="flex items-center justify-start gap-2 cursor-pointer text-sm mt-2">
-              <input
-                type="checkbox"
-                className="checkbox checkbox-warning checkbox-sm"
-                checked={confirmDeletedToday}
-                onChange={(e) => setConfirmDeletedToday(e.target.checked)}
-              />
-              <span className="opacity-80">
-                Tôi đồng ý và chấp nhận điều kiện
-              </span>
-            </label>
           </WarningBlock>
         )}
       </div>
