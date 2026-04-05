@@ -9,8 +9,36 @@ const USER_CAPTION_KEY = "Yourcaptions";
 function formatCaption(item) {
   if (!item) return null;
 
+  const rawColors =
+    item.background?.colors ||
+    (Array.isArray(item.colors) ? item.colors : null) ||
+    (item.colortop && item.colorbottom
+      ? [item.colortop, item.colorbottom]
+      : item.color_top && item.color_bottom
+        ? [item.color_top, item.color_bottom]
+        : []);
+
+  const colors = Array.isArray(rawColors)
+    ? rawColors.filter(Boolean)
+    : [];
+
+  const colorTop =
+    item.color_top || item.colortop || colors[0] || "";
+  const colorBottom =
+    item.color_bottom || item.colorbottom || colors[colors.length - 1] || "";
+
   // Nếu đã là format overlay mới
-  if (item.overlay_id && item.background) return item;
+  if (item.overlay_id && item.background) {
+    return {
+      ...item,
+      background: {
+        ...item.background,
+        colors,
+      },
+      color_top: colorTop,
+      color_bottom: colorBottom,
+    };
+  }
 
   // Convert từ server hoặc local format cũ
   return {
@@ -32,15 +60,11 @@ function formatCaption(item) {
     type: item.type || "caption_icon",
 
     background: {
-      colors:
-        item.background?.colors ||
-        (item.colortop && item.colorbottom
-          ? [item.colortop, item.colorbottom]
-          : []),
+      colors,
     },
     is_editable: true,
-    color_top: item.color_top || item.colortop || "",
-    color_bottom: item.color_bottom || item.colorbottom || "",
+    color_top: colorTop,
+    color_bottom: colorBottom,
   };
 }
 
