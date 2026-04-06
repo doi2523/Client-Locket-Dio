@@ -83,15 +83,15 @@ export default function RestoreStreak() {
     });
   }, [mode, restoreStreakDate, setRestoreStreak]);
 
-  useEffect(() => {
-    console.log({
-      restoreStreakDate,
-      currentDate,
-      previousDate,
-      isCurrentDate,
-      isFutureDate,
-    });
-  }, [restoreStreakDate, currentDate]);
+  // useEffect(() => {
+  //   console.log({
+  //     restoreStreakDate,
+  //     currentDate,
+  //     previousDate,
+  //     isCurrentDate,
+  //     isFutureDate,
+  //   });
+  // }, [restoreStreakDate, currentDate]);
 
   if (!hasAccess) {
     return (
