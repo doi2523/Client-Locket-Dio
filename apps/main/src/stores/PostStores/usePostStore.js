@@ -7,7 +7,7 @@ const defaultState = {
   isSizeMedia: null,
   audience: "all",
   selectedRecipients: [],
-  restoreStreak: null,
+  restoreStreakData: null,
 };
 
 export const usePostStore = create((set) => ({
@@ -20,7 +20,7 @@ export const usePostStore = create((set) => ({
   setAudience: (val) => set({ audience: val }),
   setSelectedRecipients: (recipients) =>
     set({ selectedRecipients: recipients }),
-  setRestoreStreak: (val) => set({ restoreStreak: val }),
+  setRestoreStreakData: (val) => set({ restoreStreakData: val }),
 
   resetPostStore: () => set(defaultState),
 }));

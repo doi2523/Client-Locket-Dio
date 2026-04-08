@@ -13,7 +13,8 @@ export default function RestoreStreak() {
   const codeUser = useGetCode();
   const [confirmDeletedToday, setConfirmDeletedToday] = useState(false);
   const { streak } = useStreakStore();
-  const { setRestoreStreak, restoreStreak } = usePostStore();
+  const restoreStreakData = usePostStore((s) => s.restoreStreakData);
+  const setRestoreStreakData = usePostStore((s) => s.setRestoreStreakData);
   const [mode, setMode] = useState("restore"); // "restore" | "continue"
   const [suggestType, setSuggestType] = useState(null);
 
@@ -75,13 +76,13 @@ export default function RestoreStreak() {
   }, [isTodayStreak]);
 
   useEffect(() => {
-    setRestoreStreak({
+    setRestoreStreakData({
       data: restoreStreakDate,
       mode,
       name:
         mode === "restore" ? "Chế độ khôi phục chuỗi" : "Chế độ nối tiếp chuỗi",
     });
-  }, [mode, restoreStreakDate, setRestoreStreak]);
+  }, [mode, restoreStreakDate, setRestoreStreakData]);
 
   // useEffect(() => {
   //   console.log({

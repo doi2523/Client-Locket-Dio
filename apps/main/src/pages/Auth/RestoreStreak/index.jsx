@@ -11,24 +11,25 @@ import * as utils from "@/utils";
 import * as services from "@/services";
 import LoadingRing from "@/components/ui/Loading/ring.jsx";
 import { useApp } from "@/context/AppContext.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Hourglass from "@/components/ui/Loading/hourglass.jsx";
-import MediaSizeInfo from "@/components/ui/MediaSizeInfo/index.jsx";
-import { defaultPostOverlay } from "@/stores/usePost.js";
+import MediaSizeInfo from "@/components/ui/MediaSizeInfo";
 import { getMaxUploads } from "@/hooks/useFeature.js";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge.jsx";
 import {
   SonnerError,
   SonnerInfo,
   SonnerSuccess,
+  SonnerWarning,
 } from "@/components/ui/SonnerToast";
-import { useNavigate } from "react-router-dom";
 import {
   useAuthStore,
+  useOverlayEditorStore,
   usePostStore,
   useStreakStore,
   useUploadQueueStore,
 } from "@/stores";
+import { getCaptionStyle } from "@/helpers/styleHelpers";
 
 const RestoreStreak = () => {
   const { post, useloading } = useApp();
@@ -37,32 +38,28 @@ const RestoreStreak = () => {
   const { sendLoading, setSendLoading, uploadLoading } = useloading;
 
   const {
-    caption,
-    setCaption,
     preview,
     setPreview,
     selectedFile,
     setSelectedFile,
-    selectedColors,
-    setSelectedColors,
     isSizeMedia,
     setSizeMedia,
-    postOverlay,
-    setPostOverlay,
     setImageToCrop,
   } = post;
-  const { maxImageSizeMB, maxVideoSizeMB, storage_limit_mb } = getMaxUploads();
 
-  const fileInputRef = useRef(null);
-  const savePostedMoment = useUploadQueueStore((s) => s.savePostedMoment);
+  const overlayData = useOverlayEditorStore((s) => s.overlayData);
+  const updateOverlayEditor = useOverlayEditorStore(
+    (s) => s.updateOverlayEditor,
+  );
+  const resetOverlayEditor = useOverlayEditorStore((s) => s.resetOverlayEditor);
 
   const { fetchStreak } = useStreakStore();
-  const { setRestoreStreak, restoreStreak } = usePostStore();
+  const restoreStreakData = usePostStore((s) => s.restoreStreakData);
+  const setRestoreStreakData = usePostStore((s) => s.setRestoreStreakData);
 
-  // Đồng bộ caption và màu từ postOverlay → state
-  useEffect(() => {
-    setCaption(postOverlay.caption || "");
-  }, [postOverlay.caption]);
+  const { maxImageSizeMB, maxVideoSizeMB, storage_limit_mb } = getMaxUploads();
+  const savePostedMoment = useUploadQueueStore((s) => s.savePostedMoment);
+  const fileInputRef = useRef(null);
 
   const handleFileChange = useCallback(async (event) => {
     const rawFile = event.target.files[0];
@@ -72,11 +69,11 @@ const RestoreStreak = () => {
     const fileType = rawFile.type.startsWith("image/")
       ? "image"
       : rawFile.type.startsWith("video/")
-      ? "video"
-      : null;
+        ? "video"
+        : null;
 
     if (!fileType) {
-      SonnerError("error", "Chỉ hỗ trợ ảnh và video.");
+      SonnerInfo("Chỉ hỗ trợ ảnh và video.");
       return;
     }
     const fileSizeInMB = rawFile.size / (1024 * 1024);
@@ -97,14 +94,14 @@ const RestoreStreak = () => {
 
   const handleSubmit = async () => {
     if (!selectedFile) {
-      SonnerError("error", "Không có dữ liệu để tải lên.");
+      SonnerInfo("Vui lòng chọn file để tải lên.");
       return;
     }
     if (
       storage_limit_mb !== -1 &&
       uploadStats?.total_storage_used_mb > storage_limit_mb
     ) {
-      SonnerError("Dung lượng sử dụng vượt quá giới hạn của gói hiện tại!");
+      SonnerWarning("Dung lượng sử dụng vượt quá giới hạn của gói hiện tại!");
       return;
     }
 
@@ -113,16 +110,14 @@ const RestoreStreak = () => {
       const payload = await services.createRequestPayloadV4(
         selectedFile,
         preview.type,
-        postOverlay,
-        restoreStreak
       );
 
       if (!payload) {
         throw new Error("Không tạo được payload. Hủy tiến trình tải lên.");
       }
+      // console.log("Payload:", payload);
 
       SonnerInfo("Đợi chút nhé", `Đang tạo bài viết !`);
-
       // Gọi API upload
       const response = await services.uploadMediaV2(payload);
 
@@ -137,45 +132,161 @@ const RestoreStreak = () => {
       // Chỉ lưu khi có dữ liệu chuẩn hoá
       if (hasData) {
         savePostedMoment(payload, normalizedNewData);
-        SonnerSuccess(restoreStreak.name, "Hãy kiểm tra chuỗi của bạn!");
+        SonnerSuccess(restoreStreakData.name, "Hãy kiểm tra chuỗi của bạn!");
       } else {
         console.warn("Dữ liệu upload trả về rỗng hoặc không hợp lệ");
-        SonnerError(restoreStreak.name, "Thất bại không có dữ liệu trả về!");
+        SonnerError(
+          restoreStreakData.name,
+          "Thất bại không có dữ liệu trả về!",
+        );
       }
 
       fetchStreak();
 
+      savePostedMoment(payload, normalizedNewData);
+
+      SonnerSuccess(
+        "Đăng tải thành công!",
+        `${preview.type === "video" ? "Video" : "Hình ảnh"} đã được tải lên!`,
+      );
+
       setPreview(null);
       setSelectedFile(null);
-      setPostOverlay(defaultPostOverlay);
-      setRestoreStreak(null);
-
+      resetOverlayEditor();
+      setRestoreStreakData(null);
       goToRestoreStreakTab();
     } catch (error) {
       const errorMessage =
         error?.response?.data?.message || error.message || "Lỗi không xác định";
-      SonnerError("error", `Lỗi khi tải lên: ${errorMessage}`);
+      SonnerError("Lỗi khi tải lên", errorMessage);
       console.error("Lỗi khi gửi bài:", error);
     } finally {
       setSendLoading(false);
     }
   };
 
+  // useEffect(() => {
+  //   console.log("overlayData", overlayData);
+  // }, [overlayData]);
+
   const updateOverlayField = (key, value) => {
-    setPostOverlay((prev) => ({
-      ...prev,
-      [key]: value,
-      ...(key === "color_top" || key === "color_bottom" || key === "text_color"
-        ? { type: "background" }
-        : {}),
-    }));
+    // Caption = text (KHÔNG đổi type)
+    if (key === "caption") {
+      updateOverlayEditor({
+        caption: value,
+        text: value,
+        is_editable: true,
+      });
+      return;
+    }
+
+    // Các thay đổi liên quan đến style => luôn custom
+    const setCustom = (data) => {
+      updateOverlayEditor({
+        ...data,
+        type: "custom",
+      });
+    };
+
+    // Text color
+    if (key === "text_color") {
+      setCustom({
+        text_color: value,
+      });
+      return;
+    }
+
+    // Update color theo index
+    if (key === "update_color") {
+      let colors = [...(overlayData.background.colors || [])];
+      colors[value.index] = value.color;
+      colors = ensureMinColors(colors);
+
+      setCustom({
+        background: {
+          ...overlayData.background,
+          colors,
+        },
+      });
+      return;
+    }
+
+    // Add color
+    if (key === "add_color") {
+      let colors = overlayData.background.colors || [];
+
+      if (colors.length >= 4) {
+        SonnerWarning("Tối đa 4 màu gradient");
+        return;
+      }
+
+      if (colors.length === 0) {
+        colors = ["#000000", "#000000"];
+      } else if (colors.length === 1) {
+        colors = [colors[0], colors[0]];
+      } else {
+        colors = [...colors, "#000000"];
+      }
+
+      setCustom({
+        background: {
+          ...overlayData.background,
+          colors,
+        },
+      });
+      return;
+    }
+
+    // Remove color
+    if (key === "remove_color") {
+      const colors = overlayData.background.colors || [];
+
+      if (colors.length <= 2) {
+        SonnerWarning("Gradient cần ít nhất 2 màu");
+        return;
+      }
+
+      const newColors = colors.filter((_, i) => i !== value);
+
+      setCustom({
+        background: {
+          ...overlayData.background,
+          colors: newColors,
+        },
+      });
+      return;
+    }
+
+    // Reset => default
+    if (key === "reset") {
+      updateOverlayEditor({
+        type: "default",
+        caption: "",
+        text: "",
+        text_color: "#FFFFFF",
+        background: {
+          colors: ["#000000", "#000000"],
+        },
+      });
+    }
+  };
+
+  const colorsRender =
+    overlayData?.background?.colors?.length >= 2
+      ? overlayData.background.colors
+      : ["#000000", "#000000"]; // fallback 2 màu mặc định
+
+  const ensureMinColors = (colors = []) => {
+    if (colors.length === 0) return ["#000000", "#000000"];
+    if (colors.length === 1) return [colors[0], colors[0]];
+    return colors;
   };
 
   return (
     <div className="flex justify-center items-center flex-col min-h-screen bg-base-200">
       <div className="p-6 rounded-lg shadow-md w-full max-w-md bg-base-100">
         <h2 className="text-3xl font-semibold mb-4 text-center">
-          Upload Video hoặc Ảnh
+          {restoreStreakData?.name || "Chế độ khôi phục chuỗi"}
         </h2>
 
         <div
@@ -247,20 +358,18 @@ const RestoreStreak = () => {
               </div>
             )}
 
-            {caption && !uploadLoading && (
+            {overlayData?.caption && !uploadLoading && (
               <div className="absolute bottom-4 w-auto px-3">
                 <div
                   className="text-white font-semibold py-2 px-4 rounded-3xl bg-black/40 backdrop-blur-3xl"
                   style={{
-                    ...(postOverlay.type !== "default" && {
-                      background: `linear-gradient(to bottom, ${
-                        postOverlay.color_top || "#000000"
-                      }, ${postOverlay.color_bottom || "#000000"})`,
-                    }),
-                    color: postOverlay.text_color || "#FFFFFF",
+                    ...getCaptionStyle(
+                      overlayData.background,
+                      overlayData.text_color,
+                    ),
                   }}
                 >
-                  {caption}
+                  {overlayData?.caption}
                 </div>
               </div>
             )}
@@ -273,11 +382,11 @@ const RestoreStreak = () => {
           <h2 className="text-3xl font-semibold mb-4">Customize Caption </h2>
 
           {/* Hiển thị chế độ khôi phục / nối tiếp + số ngày */}
-          {restoreStreak?.mode && (
+          {restoreStreakData?.mode && (
             <div className="mb-4 p-3 rounded-md bg-blue-100 text-blue-800 text-center font-semibold">
-              <p className="mb-1">{restoreStreak.name}</p>
-              {restoreStreak.data && (
-                <p>Số ngày đã chọn: {restoreStreak.data}</p>
+              <p className="mb-1">{restoreStreakData.name}</p>
+              {restoreStreakData.data && (
+                <p>Số ngày đã chọn: {restoreStreakData.data}</p>
               )}
             </div>
           )}
@@ -293,9 +402,8 @@ const RestoreStreak = () => {
               type="text"
               className="w-full p-2 border shadow-md rounded-xl mb-4"
               placeholder="Thêm một tin nhắn"
-              value={caption}
+              value={overlayData?.caption}
               onChange={(e) => {
-                setCaption(e.target.value);
                 updateOverlayField("caption", e.target.value);
               }}
             />
@@ -305,46 +413,66 @@ const RestoreStreak = () => {
             <p className="text-left text-sm mb-3 text-primary">
               Note: 2 đen 1 trắng là mặc định caption sẽ không có màu
             </p>
-            <div className="flex justify-center items-center gap-4">
-              {[
-                {
-                  label: "Màu trên",
-                  key: "color_top",
-                  value: postOverlay.color_top,
-                },
-                {
-                  label: "Màu dưới",
-                  key: "color_bottom",
-                  value: postOverlay.color_bottom,
-                },
-                {
-                  label: "Màu chữ",
-                  key: "text_color",
-                  value: postOverlay.text_color || "#FFFFFF",
-                },
-              ].map(({ label, key, value }) => (
-                <div key={key} className="flex flex-col items-center">
-                  <label className="mb-1">{label}</label>
+            {/* Text color */}
+            <div className="flex items-center justify-between mb-4">
+              <label className="font-medium">Màu chữ</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={overlayData?.text_color || "#ffffff"}
+                  onChange={(e) =>
+                    updateOverlayField("text_color", e.target.value)
+                  }
+                  className="w-10 h-10 rounded-md border p-1"
+                />
+              </div>
+            </div>
+            <p className="font-medium text-left">Màu nền</p>
+            <div className="flex flex-wrap justify-center items-center gap-4">
+              {colorsRender.map((color, index) => (
+                <div key={index} className="flex flex-col items-center gap-1">
+                  <label className="text-sm font-medium">Màu {index + 1}</label>
+
                   <input
                     type="color"
-                    value={value}
-                    onChange={(e) => updateOverlayField(key, e.target.value)}
+                    value={color}
+                    onChange={(e) =>
+                      updateOverlayField("update_color", {
+                        index,
+                        color: e.target.value,
+                      })
+                    }
                     className="w-10 h-10 rounded-md border p-1"
                   />
+
+                  {colorsRender.length > 2 && (
+                    <button
+                      onClick={() => updateOverlayField("remove_color", index)}
+                      className="text-xs text-red-500"
+                    >
+                      Xóa
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
-            <div className="flex justify-center">
+
+            <div className="flex justify-center gap-3 my-4">
               <button
-                onClick={() => {
-                  updateOverlayField("color_top", "");
-                  updateOverlayField("color_bottom", "");
-                  updateOverlayField("text_color", "#FFFFFF");
-                  updateOverlayField("type", "default");
-                }}
-                className="flex items-center gap-2 px-4 py-2 rounded-md shadow-md mt-4 btn"
+                onClick={() => updateOverlayField("add_color")}
+                className="btn btn-sm"
               >
-                <RotateCcw size={20} /> Reset màu
+                + Thêm màu
+              </button>
+            </div>
+
+            {/* Reset */}
+            <div className="flex justify-center pt-2 border-t">
+              <button
+                onClick={resetOverlayEditor}
+                className="flex items-center gap-2 px-4 py-2 rounded-md shadow-sm btn"
+              >
+                <RotateCcw size={16} /> Reset
               </button>
             </div>
           </div>
