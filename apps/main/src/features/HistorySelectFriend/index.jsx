@@ -1,5 +1,5 @@
 import { useApp } from "@/context/AppContext";
-import { useAuthStore, useFriendObjects } from "@/stores";
+import { useAuthStore, useFriendObjects, useSelectedStore } from "@/stores";
 import { ChevronRight } from "lucide-react";
 import React, { useState } from "react";
 import { FaUserFriends } from "react-icons/fa";
@@ -10,10 +10,13 @@ function HistorySelectFriend({
   setFriendName,
   onClick,
 }) {
-  const { navigation, post } = useApp();
+  const { navigation } = useApp();
   const { isBottomOpen, isFriendHistoryOpen, setFriendHistoryOpen } =
     navigation;
-  const { setSelectedFriendUid, setSelectedMoment, setSelectedQueue } = post;
+
+  const setSelectedFriendUid = useSelectedStore((state) => state.setSelectedFriendUid);
+  const setSelectedMoment = useSelectedStore((state) => state.setSelectedMoment);
+  const setSelectedQueue = useSelectedStore((state) => state.setSelectedQueue);
 
   const { user } = useAuthStore();
 

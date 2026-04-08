@@ -1,21 +1,17 @@
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Virtual } from "swiper/modules";
-import { useApp } from "@/context/AppContext";
 import MomentSlide from "./MomentSlide";
-import { useAuthStore } from "@/stores";
+import { useAuthStore, useSelectedStore } from "@/stores";
 
 const MomentViewer = ({ moments }) => {
   const { user } = useAuthStore();
   const [swiperRef, setSwiperRef] = useState(null);
-  const { post } = useApp();
-  const {
-    selectedMoment,
-    setSelectedMoment,
-    selectedMomentId,
-    selectedFriendUid,
-    setSelectedMomentId,
-  } = post;
+
+  const selectedMoment = useSelectedStore((s) => s.selectedMoment);
+  const setSelectedMoment = useSelectedStore((s) => s.setSelectedMoment);
+
+  const setSelectedMomentId = useSelectedStore((s) => s.setSelectedMomentId);
 
   // Hiện tại có moment không?
   const hasValidMoment =
@@ -58,14 +54,14 @@ const MomentViewer = ({ moments }) => {
     };
   }, [hasValidMoment, isAnimating]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (!swiperRef || selectedMoment == null) return;
 
     if (swiperRef.activeIndex !== selectedMoment) {
       swiperRef.slideTo(selectedMoment, 0);
     }
   }, [selectedMoment, swiperRef]);
-  
+
   if (!hasValidMoment && !isAnimating) return null;
 
   return (
@@ -105,14 +101,14 @@ const MomentViewer = ({ moments }) => {
               virtualIndex={index}
               className="h-full flex items-center justify-center"
             >
-                <div className="pointer-events-auto bg-amber-600 touch-pan-y w-full h-2/5 pb-26 flex items-center justify-center">
-                  <MomentSlide
-                    moment={slideContent}
-                    me={user}
-                    handleClose={handleClose}
-                    className="w-full max-w-3xl"
-                  />
-                </div>
+              <div className="pointer-events-auto bg-amber-600 touch-pan-y w-full h-2/5 pb-26 flex items-center justify-center">
+                <MomentSlide
+                  moment={slideContent}
+                  me={user}
+                  handleClose={handleClose}
+                  className="w-full max-w-3xl"
+                />
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>

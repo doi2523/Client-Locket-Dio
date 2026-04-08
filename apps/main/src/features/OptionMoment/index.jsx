@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Download, Repeat, Share, Trash2, X } from "lucide-react";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge";
-import { useApp } from "@/context/AppContext";
 import {
   SonnerSuccess,
   SonnerWarning,
@@ -10,21 +9,29 @@ import {
 import Modal from "@/components/ui/Modal";
 import { DeleteMoment, downloadAndShareFile } from "@/services";
 import { getMomentById } from "@/cache/momentDB";
-import { useMomentsStoreV2, useUploadQueueStore } from "@/stores";
+import {
+  useMomentsStoreV2,
+  useSelectedStore,
+  useUploadQueueStore,
+} from "@/stores";
 import { getUploadItemFromDB } from "@/cache/uploadMomentDB";
 
 const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
-  const { post } = useApp();
-  const {
-    selectedMomentId,
-    setSelectedMomentId,
-    setSelectedMoment,
-    selectedQueue,
-    selectedQueueId,
-    setSelectedQueueId,
-    setSelectedQueue,
-    selectedFriendUid,
-  } = post;
+  const selectedMoment = useSelectedStore((s) => s.selectedMoment);
+  const setSelectedMoment = useSelectedStore((s) => s.setSelectedMoment);
+
+  const selectedQueue = useSelectedStore((s) => s.selectedQueue);
+  const setSelectedQueue = useSelectedStore((s) => s.setSelectedQueue);
+
+  const selectedMomentId = useSelectedStore((s) => s.selectedMomentId);
+  const setSelectedMomentId = useSelectedStore((s) => s.setSelectedMomentId);
+
+  const selectedQueueId = useSelectedStore((s) => s.selectedQueueId);
+  const setSelectedQueueId = useSelectedStore((s) => s.setSelectedQueueId);
+
+  const selectedFriendUid = useSelectedStore((s) => s.selectedFriendUid);
+  const setSelectedFriendUid = useSelectedStore((s) => s.setSelectedFriendUid);
+
   const [openModal, setOpenModal] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [sharing, setSharing] = useState(false);

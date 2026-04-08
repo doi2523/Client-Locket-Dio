@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { MdSlowMotionVideo } from "react-icons/md";
-import { useApp } from "@/context/AppContext";
-import { useMomentsStoreV2 } from "@/stores";
+import { useMomentsStoreV2, useSelectedStore } from "@/stores";
 import { SonnerSuccess } from "@/components/ui/SonnerToast";
 
 const MomentsGrid = ({
@@ -12,13 +11,9 @@ const MomentsGrid = ({
   hasMore,
   loading,
 }) => {
-  const { post } = useApp();
-  const {
-    selectedMoment,
-    setSelectedMoment,
-    setSelectedMomentId,
-    selectedFriendUid,
-  } = post;
+  const setSelectedMoment = useSelectedStore((s) => s.setSelectedMoment);
+  const setSelectedMomentId = useSelectedStore((s) => s.setSelectedMomentId);
+  const selectedFriendUid = useSelectedStore((s) => s.selectedFriendUid);
 
   const reloadMoments = useMomentsStoreV2((s) => s.reloadMoments);
   const [loadingMoments, setLoadingMoments] = useState(false);
