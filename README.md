@@ -243,6 +243,16 @@ _Full Stack Developer_
 
 ### ⭐ Hãy Star repository này nếu bạn thấy hữu ích!
 
+## Star History
+
+<a href="https://www.star-history.com/?repos=doi2523%2FClient-Locket-Dio&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=doi2523/Client-Locket-Dio&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=doi2523/Client-Locket-Dio&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=doi2523/Client-Locket-Dio&type=date&legend=top-left" />
+ </picture>
+</a>
+
 **Được tạo với ❤️ bởi [Dio](https://github.com/doi2523) | © 2025 [Locket Dio](https://locket-dio.com) | Tất cả quyền được bảo lưu**
 
 [![Về đầu trang](https://img.shields.io/badge/⬆️_Về_Đầu_Trang-Nhấn_Vào_Đây-blue?style=for-the-badge)](#-locket-dio)
