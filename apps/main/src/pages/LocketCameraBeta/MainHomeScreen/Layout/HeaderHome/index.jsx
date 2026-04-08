@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronDown, Download, Menu, MessageCircle } from "lucide-react";
 import HistorySelectFriend from "@/features/HistorySelectFriend";
 import { useAuthStore, useFriendList } from "@/stores";
+import { shareBlob } from "@/services";
 
 const HeaderHome = ({
   setIsHomeOpen,
@@ -40,23 +41,18 @@ const HeaderHome = ({
     // Nếu bottom đang đóng → mở tab bạn bè
     setFriendsTabOpen(true);
   };
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!selectedFile) return;
 
-    const url = URL.createObjectURL(selectedFile);
+    try {
+      const extension = selectedFile.type.split("/")[1] || "png";
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const fileName = `locketdio-${timestamp}.${extension}`;
 
-    const extension = selectedFile.type.split("/")[1] || "png";
-    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    const defaultName = `locketdio-${timestamp}.${extension}`;
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = defaultName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    URL.revokeObjectURL(url);
+      await shareBlob(selectedFile, fileName);
+    } catch (err) {
+      console.error("❌ Share error:", err);
+    }
   };
 
   return (
