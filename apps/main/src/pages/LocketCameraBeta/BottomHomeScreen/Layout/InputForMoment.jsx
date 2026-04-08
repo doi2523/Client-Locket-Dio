@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowUp, SmilePlus } from "lucide-react";
 import clsx from "clsx";
 import { useApp } from "@/context/AppContext";
@@ -8,16 +8,17 @@ import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 import { getFriendDetail } from "@/cache/friendsDB";
 import ActivitySection from "../Modal/ActivityViews/ActivityModal";
 import { markMomentViewedOnce } from "@/cache/viewedMomentDB";
-import { useAuthStore } from "@/stores";
+import { useAuthStore, useSelectedStore } from "@/stores";
 
 const InputForMoment = () => {
   const { user } = useAuthStore();
   const localId = user?.localId || null;
 
+  const selectedMomentId = useSelectedStore((s) => s.selectedMomentId);
+
   const {
     reactionInfo,
     setReactionInfo,
-    selectedMomentId,
     showEmojiPicker,
     setShowEmojiPicker,
   } = useApp().post;
