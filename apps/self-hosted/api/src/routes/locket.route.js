@@ -22,7 +22,7 @@ router.post("/postMomentV1", verifyIdToken, saveUploadFile, locketController.upl
 //API bản V2 chính là công nghệ hiện tại Locket Dio đang sử dụng
 router.post("/postMomentV2", verifyIdToken, locketController.uploadMediaV2);
 
-
+router.post("/getInfoMomentV2", verifyIdToken, locketController.getInfoMoments);
 router.post("/getMomentV2", verifyIdToken, locketController.getMoments);
 router.post("/getAllMessageV2", verifyIdToken, locketController.getMessages);
 
