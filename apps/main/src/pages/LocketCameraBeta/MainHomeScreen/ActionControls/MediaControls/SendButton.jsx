@@ -31,7 +31,7 @@ const SendButton = () => {
   //Nhap hooks
   const { maxImageSizeMB, maxVideoSizeMB, storage_limit_mb } = getMaxUploads();
   const enqueueUploadItem = useUploadQueueStore((s) => s.enqueueUploadItem);
-  const reloadUser = useAuthStore((s) => s.init);
+  const reloadUser = useAuthStore((s) => s.initAuth);
 
   const isImage = preview?.type === "image";
   const isVideo = preview?.type === "video";
