@@ -16,7 +16,6 @@ const UploadFile = () => {
     videoCrop, setVideoCrop,
     videoCropArea, setVideoCropArea
   } = post;
-  const { uploadLoading, setUploadLoading, setIsCaptionLoading } = useloading;
   const { cameraActive, setCameraActive } = camera;
 
   //Handle tải file
@@ -43,7 +42,6 @@ const UploadFile = () => {
     // Convert file size to MB
     const fileSizeInMB = rawFile.size / (1024 * 1024); // size in MB
     setSizeMedia(fileSizeInMB.toFixed(2)); // Store the size in MB, rounded to 2 decimal places
-    setIsCaptionLoading(true);
     if (fileType === "image") {
       setImageToCrop(localPreviewUrl);
       return;
