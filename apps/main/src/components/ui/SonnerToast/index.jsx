@@ -15,7 +15,7 @@ function showToast(type, message, body = "", options = {}) {
   switch (type) {
     case "success":
       return toast.success(message, baseConfig);
-      break;
+
     case "error":
       return toast.error(message, {
         ...baseConfig,
@@ -50,7 +50,7 @@ export const SonnerPromise = (
     options = {},
   } = {},
 ) => {
-  return toast.promise(promise, {
+  toast.promise(promise, {
     loading,
     success: (data) => ({
       message: typeof success === "function" ? success(data) : success,
