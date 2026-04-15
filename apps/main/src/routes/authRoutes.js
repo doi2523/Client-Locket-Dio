@@ -26,6 +26,7 @@ const Contact = React.lazy(() => import("../pages/Public/Contact"));
 const PrivacyPolicy = React.lazy(() => import("../pages/Public/PrivacyPolicy"));
 const BirthdayPage = React.lazy(() => import("../pages/Public/BirthdayPage"));
 const LocketUpload = React.lazy(() => import("@/pages/Public/CollabPage/LocketUpload"));
+const TermsPage = React.lazy(() => import("@/pages/Public/TermsPage"));
 
 const APP_NAME = CONFIG.app.fullName;
 
@@ -59,6 +60,8 @@ export const authRoutes = [
   { path: "/incidents", component: ErrorReferencePage, title: `Trung tâm sự cố | ${APP_NAME}` },
   { path: "/privacy", component: PrivacyPolicy, title: `Chính sách bảo mật | ${APP_NAME}` },
   { path: "/docs", component: Docs, title: `Tài liệu | ${APP_NAME}` },
+
+  { path: "/terms", component: TermsPage, title: `Điều khoản sử dụng | ${APP_NAME}` },
 
   { path: "/happy-birthday", component: BirthdayPage, title: `Chúc mừng sinh nhật Dio | ${APP_NAME}` },
 ];
