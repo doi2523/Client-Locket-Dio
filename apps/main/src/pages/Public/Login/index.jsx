@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
-import * as utils from "@/utils";
 import LoadingRing from "@/components/ui/Loading/ring";
-import StatusServer from "@/components/ui/StatusServer";
-import { useApp } from "@/context/AppContext";
 import { Link } from "react-router-dom";
-import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
+import { SonnerError, SonnerPromise } from "@/components/ui/SonnerToast";
 import { CONFIG } from "@/config";
 import RotatingCircleText from "./RotatingCircleText";
 import { ensureDBOwner } from "@/cache/configDB";
@@ -13,6 +10,8 @@ import TurnstileCaptcha from "./TurnstileCaptcha";
 import { Mail, Phone } from "lucide-react";
 import { loginWithEmail, loginWithPhone } from "@/services";
 import { PhoneInput } from "./PhoneInput";
+import StatusServer from "./StatusServer";
+import { saveToken } from "@/utils";
 
 const Login = () => {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -27,8 +26,8 @@ const Login = () => {
     return stored === null ? true : stored === "true";
   });
 
-  const { useloading } = useApp();
-  const { isStatusServer, isLoginLoading, setIsLoginLoading } = useloading;
+  const [isStatusServer, setIsStatusServer] = useState(false);
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
 
   useEffect(() => {
     if (rememberMe) {
@@ -46,7 +45,6 @@ const Login = () => {
       return;
     }
 
-    // Validate
     if (loginMethod === "email") {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(identifier)) {
@@ -60,64 +58,63 @@ const Login = () => {
         return;
       }
     }
+
     setIsLoginLoading(true);
 
     try {
-      const res =
-        loginMethod === "email"
-          ? await loginWithEmail({
-              email: identifier,
-              password,
-              captchaToken,
-            })
-          : await loginWithPhone({
-              phone: identifier,
-              password,
-              captchaToken,
-            });
+      const loginPromise = (async () => {
+        const res =
+          loginMethod === "email"
+            ? await loginWithEmail({
+                email: identifier,
+                password,
+                captchaToken,
+              })
+            : await loginWithPhone({
+                phone: identifier,
+                password,
+                captchaToken,
+              });
 
-      if (!res?.data) throw new Error("Server không trả về dữ liệu");
+        if (!res?.data) throw new Error("Server không trả về dữ liệu");
 
-      const { idToken, localId, refreshToken } = res.data;
+        const { idToken, localId, refreshToken } = res.data;
 
-      utils.saveToken({ idToken, localId, refreshToken }, rememberMe);
-      await ensureDBOwner(localId);
+        saveToken({ idToken, localId, refreshToken }, rememberMe);
 
-      SonnerSuccess(
-        "Đăng nhập thành công!",
-        `Xin chào ${res.data?.displayName || "người dùng"}!`
-      );
+        await ensureDBOwner(localId);
 
-      initAuth();
-      hydrateAuth();
-    } catch (error) {
-      if (error?.status) {
-        switch (error.status) {
-          case 400:
-            SonnerError("Tài khoản hoặc mật khẩu không đúng!");
-            break;
-          case 401:
-            SonnerError("Phiên đăng nhập đã hết. Vui lòng đăng nhập lại!");
-            break;
-          case 429:
-            SonnerError("Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau!");
-            break;
-          case 403:
-            SonnerError("Bạn không có quyền truy cập.");
-            window.location.href = "/login";
-            break;
-          case 500:
-            SonnerError("Lỗi hệ thống, vui lòng thử lại sau!");
-            break;
-          default:
-            SonnerError(error.message || "Đăng nhập thất bại!");
-        }
-      } else {
-        SonnerError("Lỗi kết nối! Vui lòng kiểm tra mạng.");
-      }
+        initAuth();
+        hydrateAuth();
 
-      // setIdentifier("");
-      // setPassword("");
+        return res.data;
+      })();
+
+      SonnerPromise(loginPromise, {
+        loading: "Đang đăng nhập...",
+        success: (data) => `Xin chào ${data?.displayName || "người dùng"}!`,
+        error: (error) => {
+          const status = error?.status || error?.response?.status;
+
+          switch (status) {
+            case 400:
+              return "Tài khoản hoặc mật khẩu không đúng!";
+            case 401:
+              return "Phiên đăng nhập đã hết. Vui lòng đăng nhập lại!";
+            case 429:
+              return "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau!";
+            case 403:
+              window.location.href = "/login";
+              return "Bạn không có quyền truy cập.";
+            case 500:
+              return "Lỗi hệ thống, vui lòng thử lại sau!";
+            default:
+              return error?.message || "Lỗi kết nối! Vui lòng kiểm tra mạng.";
+          }
+        },
+      });
+
+      await loginPromise;
     } finally {
       setIsLoginLoading(false);
     }
@@ -303,7 +300,10 @@ const Login = () => {
             <TurnstileCaptcha onVerify={setCaptchaToken} />
 
             <span className="text-xs">Vui lòng chờ Server02 khởi động.</span>
-            <StatusServer />
+            <StatusServer
+              isStatusServer={isStatusServer}
+              setIsStatusServer={setIsStatusServer}
+            />
           </form>
         </div>
       </div>

@@ -1,14 +1,10 @@
 import React, { useEffect } from "react";
-import { useApp } from "@/context/AppContext";
-import BouncyLoader from "../Loading/Bouncy";
+import BouncyLoader from "@/components/ui/Loading/Bouncy";
 import { RiEmotionHappyLine } from "react-icons/ri";
 import { TbMoodCrazyHappy } from "react-icons/tb";
 import { instanceAuth } from "@/libs/instanceAuth";
 
-const StatusServer = () => {
-  const { useloading } = useApp();
-  const { isStatusServer, setIsStatusServer } = useloading; // null: đang kiểm tra, true/false: kết quả
-
+const StatusServer = ({ isStatusServer, setIsStatusServer }) => {
   useEffect(() => {
     let intervalId;
 
