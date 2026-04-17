@@ -1,6 +1,7 @@
 import { CONFIG } from "@/config";
 import React from "react";
 // import CameraCapture from "../pages/UILocket";
+const FriendManager = React.lazy(() => import("@/pages/Auth/FriendManager"));
 const DiaryPage = React.lazy(() => import("@/pages/Auth/DiaryPage"));
 const AboutLocketDio = React.lazy(() => import("../pages/Public/About"));
 const RestoreStreak = React.lazy(() => import("@/pages/Auth/RestoreStreak"));
@@ -49,6 +50,7 @@ export const authRoutes = [
   { path: "/profile", component: Profile, title: `Hồ sơ | ${APP_NAME}` },
   { path: "/postmoments", component: PostMoments, title: `Đăng Moment Mới | ${APP_NAME}` },
   { path: "/restore-streak", component: RestoreStreak, title: `Khôi phục chuỗi Locket | ${APP_NAME}` },
+  { path: "/friends", component: FriendManager, title: `Bạn bè Locket | ${APP_NAME}` },
   { path: "/tools", component: ToolsLocket, title: `Công cụ mở rộng | ${APP_NAME}` },
   { path: "/collab/caption-kanade", component: ManageCaption, title: `Web hợp tác Caption Kanade | ${APP_NAME}` },
   { path: "/collab/locket-upload", component: LocketUpload, title: `Web hợp tác Locket Upload | ${APP_NAME}` },

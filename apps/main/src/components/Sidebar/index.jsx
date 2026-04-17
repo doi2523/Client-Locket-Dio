@@ -23,6 +23,7 @@ import {
   CalendarClock,
   SquareArrowDown,
   ScrollText,
+  BookUser,
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { MenuItem } from "./MenuItem";
@@ -96,6 +97,7 @@ const Sidebar = () => {
           text: "Nhật ký Locket",
           badge: "New",
         },
+        { to: "/friends", icon: BookUser, text: "Bạn bè Locket" },
         { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "Hot" },
         { to: "/profile", icon: UserRound, text: "Hồ sơ của bạn" },
       ],
