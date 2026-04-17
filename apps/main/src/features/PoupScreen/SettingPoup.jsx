@@ -18,7 +18,7 @@ const SettingPoup = ({ open, onClose }) => {
       setTimeout(() => setAnimate(true), 10);
     } else {
       setAnimate(false);
-      setTimeout(() => setShowModal(false), 300);
+      setTimeout(() => setShowModal(false), 500);
     }
   }, [open]);
 
@@ -62,7 +62,7 @@ const SettingPoup = ({ open, onClose }) => {
             <div className="bg-base-200 rounded-2xl divide-y divide-base-300">
               <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 flex items-center justify-center rounded-xl bg-base-300">
+                  <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl bg-base-300">
                     <Eye className="w-5 h-5" />
                   </div>
 
@@ -84,7 +84,7 @@ const SettingPoup = ({ open, onClose }) => {
 
               <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 flex items-center justify-center rounded-xl bg-base-300">
+                  <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl bg-base-300">
                     <UserRoundSearch className="w-5 h-5" />
                   </div>
 
