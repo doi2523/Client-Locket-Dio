@@ -2,13 +2,18 @@ import { useState, useEffect, useRef } from "react";
 import { ArrowUp, SmilePlus } from "lucide-react";
 import clsx from "clsx";
 import { useApp } from "@/context/AppContext";
-import { GetInfoMoment, GetViewsMoment, SendMessageMoment, SendReactMoment } from "@/services";
+import {
+  GetInfoMoment,
+  GetViewsMoment,
+  SendMessageMoment,
+  SendReactMoment,
+} from "@/services";
 import { getMomentById } from "@/cache/momentDB";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 import { getFriendDetail } from "@/cache/friendsDB";
 import ActivitySection from "../Modal/ActivityViews/ActivityModal";
 import { markMomentViewedOnce } from "@/cache/viewedMomentDB";
-import { useAuthStore, useSelectedStore } from "@/stores";
+import { useAuthStore, useSelectedStore, useUserSetting } from "@/stores";
 
 const InputForMoment = () => {
   const { user } = useAuthStore();
@@ -16,12 +21,8 @@ const InputForMoment = () => {
 
   const selectedMomentId = useSelectedStore((s) => s.selectedMomentId);
 
-  const {
-    reactionInfo,
-    setReactionInfo,
-    showEmojiPicker,
-    setShowEmojiPicker,
-  } = useApp().post;
+  const { reactionInfo, setReactionInfo, showEmojiPicker, setShowEmojiPicker } =
+    useApp().post;
 
   const {
     showFlyingEffect,
@@ -110,15 +111,19 @@ const InputForMoment = () => {
     }
   }, [selectedMomentId]);
 
+  const showSeenMoments = useUserSetting((s) => s.showSeenMoments);
+
   useEffect(() => {
     if (!selectedMomentId || !momentUser) return;
 
+    if (!showSeenMoments) return;
+
     const markViewed = async () => {
       try {
-        // await markMomentViewedOnce({
-        //   id: selectedMomentId,
-        //   user: momentUser,
-        // });
+        await markMomentViewedOnce({
+          id: selectedMomentId,
+          user: momentUser,
+        });
       } catch (err) {
         console.error("❌ Lỗi mark viewed:", err);
       }
@@ -157,7 +162,7 @@ const InputForMoment = () => {
         try {
           setIsLoadingActivity(true);
           const info = await GetInfoMoment(selectedMomentId);
-          const views = await GetViewsMoment(selectedMomentId)
+          const views = await GetViewsMoment(selectedMomentId);
           const { reactions = [] } = info;
           // Map qua từng view, gắn thêm userInfo + reaction (nếu có)
           const merged = await Promise.all(
@@ -176,7 +181,7 @@ const InputForMoment = () => {
                     }
                   : null,
               };
-            })
+            }),
           );
 
           setActivity(merged);
@@ -264,7 +269,7 @@ const InputForMoment = () => {
                     "flex items-center w-full px-4 py-3.5 rounded-3xl bg-base-200 shadow-md",
                     userDetail?.isCelebrity
                       ? "cursor-not-allowed opacity-70"
-                      : "cursor-text"
+                      : "cursor-text",
                   )}
                   onClick={() => {
                     if (!userDetail?.isCelebrity) setShowFullInput(true);
