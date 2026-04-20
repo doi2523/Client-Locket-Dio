@@ -7,12 +7,18 @@ export const useUserSetting = create(
     (set, get) => ({
       // ===== STATE =====
       showSeenMoments: true,
+      sendReadReceipts: true,
       allowSearch: true,
 
       // ===== ACTIONS =====
       toggleSeenMoments: () =>
         set((state) => ({
           showSeenMoments: !state.showSeenMoments,
+        })),
+
+      toggleReadReceipts: () =>
+        set((state) => ({
+          sendReadReceipts: !state.sendReadReceipts,
         })),
 
       toggleAllowSearch: async () => {
@@ -35,6 +41,7 @@ export const useUserSetting = create(
       resetSettings: () =>
         set({
           showSeenMoments: true,
+          sendReadReceipts: true,
           allowSearch: true,
         }),
     }),
@@ -43,3 +50,19 @@ export const useUserSetting = create(
     },
   ),
 );
+
+// const showSeenMoments = useUserSetting((s) => s.showSeenMoments);
+// const toggleSeenMoments = useUserSetting((s) => s.toggleSeenMoments);
+
+// const allowSearch = useUserSetting((s) => s.allowSearch);
+// const toggleAllowSearch = useUserSetting((s) => s.toggleAllowSearch);
+
+export const useReadReceipts = () => {
+  const sendReadReceipts = useUserSetting((s) => s.sendReadReceipts);
+  const toggleReadReceipts = useUserSetting((s) => s.toggleReadReceipts);
+
+  return {
+    sendReadReceipts,
+    toggleReadReceipts,
+  };
+};
