@@ -99,6 +99,8 @@ const CaptionIconOverlay = ({
 
   useAutoResize([textareaRef]);
 
+  if (!isEditable) return <DecorativeOverlay overlayData={postOverlay}/>
+
   return (
     <div
       className="flex items-center bg-white/50 backdrop-blur-2xl py-2 pl-4 rounded-4xl"
@@ -495,6 +497,7 @@ const EditorCaption = () => {
       case "image_gif":
       case "caption_gif":
       case "caption_image":
+      case "star_sign":
         return <CaptionIconOverlay {...commonProps} isEditable={isEditable} />;
 
       case "decorative":
