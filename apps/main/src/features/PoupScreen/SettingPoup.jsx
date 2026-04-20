@@ -39,7 +39,7 @@ const SettingPoup = ({ open, onClose }) => {
     >
       <div
         className={`fixed bottom-0 left-0 w-full h-[70%] bg-base-100 rounded-t-4xl shadow-xl
-        transition-all duration-300 ease-in-out z-[63] flex flex-col
+        transition-all duration-500 z-[63] flex flex-col
         ${animate ? "translate-y-0" : "translate-y-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
