@@ -1,5 +1,5 @@
-import { useUserSetting } from "@/stores";
-import { Eye, UserRoundSearch, X } from "lucide-react";
+import { useReadReceipts, useUserSetting } from "@/stores";
+import { CheckCheck, Eye, UserRoundSearch, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
@@ -27,6 +27,8 @@ const SettingPoup = ({ open, onClose }) => {
 
   const allowSearch = useUserSetting((s) => s.allowSearch);
   const toggleAllowSearch = useUserSetting((s) => s.toggleAllowSearch);
+
+  const { sendReadReceipts, toggleReadReceipts } = useReadReceipts();
 
   if (!showModal) return null;
 
@@ -79,6 +81,29 @@ const SettingPoup = ({ open, onClose }) => {
                   checked={showSeenMoments}
                   onChange={(e) => toggleSeenMoments()}
                   className="toggle toggle-secondary"
+                />
+              </div>
+
+              <div className="flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl bg-base-300">
+                    <CheckCheck className="w-5 h-5" />
+                  </div>
+
+                  <div>
+                    <p className="font-medium">Hiển thị đã đọc</p>
+                    <p className="text-sm text-base-content/60">
+                      Khi bật, người khác sẽ biết bạn đã đọc tin nhắn của họ.
+                    </p>
+                  </div>
+                </div>
+
+                <input
+                  type="checkbox"
+                  checked={sendReadReceipts}
+                  onChange={toggleReadReceipts}
+                  className="toggle toggle-secondary"
+                  disabled
                 />
               </div>
 
