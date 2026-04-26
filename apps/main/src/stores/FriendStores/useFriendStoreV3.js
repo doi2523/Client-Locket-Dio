@@ -1,4 +1,3 @@
-// src/store/friend/useFriendStoreV3.js
 import { create } from "zustand";
 import {
   getAllFriendDetails,
@@ -11,12 +10,6 @@ import { addRemovedFriend } from "@/cache/diaryDB";
 import { buildFriendDetailsMap } from "./buildFriendData";
 import { sortFriends } from "./sortFriendData";
 
-// state = {
-//   friendList: ["uid1", "uid2", "uid3"], // chỉ UID (order)
-//   friendDetailsMap: { uid1: {...} },    // info user
-//   friendRelationsMap: { uid1: {...} }   // hidden, createdAt...
-// }
-
 export const useFriendStoreV3 = create((set, get) => ({
   friendList: [],
   friendDetailsMap: {},
@@ -24,10 +17,10 @@ export const useFriendStoreV3 = create((set, get) => ({
   loading: false,
 
   // -------------------------
-  // 🔥 REBUILD LIST UID (SORT ORDER)
+  // 🔥 REBUILD (OPTIMIZED)
   // -------------------------
   rebuildFriendList: () => {
-    const { friendDetailsMap, friendRelationsMap } = get();
+    const { friendDetailsMap, friendRelationsMap, friendList } = get();
 
     const merged = Object.keys(friendDetailsMap).map((uid) => ({
       uid,
@@ -36,39 +29,46 @@ export const useFriendStoreV3 = create((set, get) => ({
       createdAt: friendRelationsMap[uid]?.createdAt ?? 0,
     }));
 
-    const sorted = sortFriends(merged);
+    const newList = sortFriends(merged).map((f) => f.uid);
 
-    // ⭐ chỉ lưu UID
-    set({ friendList: sorted.map((f) => f.uid) });
+    // ✅ tránh set nếu không đổi (giảm re-render)
+    if (
+      newList.length === friendList.length &&
+      newList.every((id, i) => id === friendList[i])
+    ) {
+      return;
+    }
+
+    set({ friendList: newList });
   },
 
   // -------------------------
-  // LOAD + SYNC
+  // ⚡ LOAD LOCAL ONLY
   // -------------------------
-  loadFriends: async () => {
+  loadFriendsLocalOnly: async () => {
     set({ loading: true });
 
     try {
-      // 1️⃣ Load local (offline first)
       const localDetails = await getAllFriendDetails();
+
       const detailsMap = buildFriendDetailsMap(localDetails);
 
-      set({ friendDetailsMap: detailsMap });
-
-      // build list từ local trước
-      get().rebuildFriendList();
-
-      // 2️⃣ Sync server
-      const { details, friendRelationsMap } = await syncFriendsWithServer();
-
-      const newDetailsMap = buildFriendDetailsMap(details);
+      const relationsMap = {};
+      for (const f of localDetails) {
+        relationsMap[f.uid] = {
+          hidden: f.hidden ?? false,
+          sharedHistoryOn: f.sharedHistoryOn ?? null,
+          isCelebrity: f.isCelebrity ?? false,
+          createdAt: f.createdAt ?? 0,
+          updatedAt: f.updatedAt ?? null,
+        };
+      }
 
       set({
-        friendDetailsMap: newDetailsMap,
-        friendRelationsMap: friendRelationsMap,
+        friendDetailsMap: detailsMap,
+        friendRelationsMap: relationsMap,
       });
 
-      // rebuild lại order sau khi sync
       get().rebuildFriendList();
     } finally {
       set({ loading: false });
@@ -76,7 +76,41 @@ export const useFriendStoreV3 = create((set, get) => ({
   },
 
   // -------------------------
-  // ADD FRIEND
+  // 🔄 LOAD + BACKGROUND SYNC
+  // -------------------------
+  loadFriends: async () => {
+    // ⚡ load local trước (không block UI)
+    get().loadFriendsLocalOnly();
+
+    try {
+      const res = await syncFriendsWithServer();
+
+      // ❗ nếu fallback thì bỏ qua sync
+      if (!res || res.isFallback) return;
+
+      const { details, friendRelationsMap } = res;
+
+      const newDetailsMap = buildFriendDetailsMap(details);
+
+      set((state) => ({
+        friendDetailsMap: {
+          ...state.friendDetailsMap,
+          ...newDetailsMap,
+        },
+        friendRelationsMap: {
+          ...state.friendRelationsMap,
+          ...friendRelationsMap,
+        },
+      }));
+
+      get().rebuildFriendList();
+    } catch (err) {
+      console.error("syncFriends error:", err);
+    }
+  },
+
+  // -------------------------
+  // ADD
   // -------------------------
   addFriendLocal: async (friend) => {
     if (!friend?.uid) return;
@@ -96,7 +130,6 @@ export const useFriendStoreV3 = create((set, get) => ({
       },
     }));
 
-    // ⭐ rebuild để sort lại
     get().rebuildFriendList();
   },
 
@@ -118,12 +151,12 @@ export const useFriendStoreV3 = create((set, get) => ({
 
     await putInfobyID({ uid, hidden });
 
-    // hidden có thể ảnh hưởng sort → rebuild
-    // get().rebuildFriendList();
+    //chỉ rebuild nếu hidden ảnh hưởng sort
+    get().rebuildFriendList();
   },
 
   // -------------------------
-  // REMOVE FRIEND
+  // REMOVE
   // -------------------------
   removeFriendLocal: async (uid) => {
     await removeFriendToCache(uid);
@@ -139,7 +172,6 @@ export const useFriendStoreV3 = create((set, get) => ({
       };
     });
 
-    // rebuild list UID
     get().rebuildFriendList();
   },
 
