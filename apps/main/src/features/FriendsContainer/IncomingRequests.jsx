@@ -14,43 +14,70 @@ const IncomingFriendRequests = () => {
   const { user } = useAuthStore();
   const { navigation } = useApp();
   const { isFriendsTabOpen } = navigation;
+
   const [friends, setFriends] = useState([]);
-  const addFriendLocal = useFriendStoreV3((s) => s.addFriendLocal);
   const [nextPageToken, setNextPageToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [showAllFriends, setShowAllFriends] = useState(false);
+  const [lastFetchAt, setLastFetchAt] = useState(0);
 
+  const addFriendLocal = useFriendStoreV3((s) => s.addFriendLocal);
+
+  // ✅ CHỈ reset state khi mở tab — KHÔNG gọi API
   useEffect(() => {
     if (isFriendsTabOpen) {
-      setFriends([]); // reset khi mở tab mới
+      setFriends([]);
       setNextPageToken(null);
       setShowAllFriends(false);
-      fetchFriendRequests();
+      setErrorMessage(null);
     }
   }, [isFriendsTabOpen]);
 
+  // ✅ Fetch khi user bấm nút
   const fetchFriendRequests = async (pageToken = null) => {
     if (!user) return;
-    setLoading(true);
-    const result = await getListRequestFriendV2(pageToken);
 
-    if (result?.errorMessage) {
-      setErrorMessage(result.errorMessage);
-    } else {
-      const frienddetails = await loadFriendDetailsV3(result?.friends);
-      setFriends((prev) => [...prev, ...frienddetails]);
-      setNextPageToken(result.nextPageToken || null);
+    const now = Date.now();
+
+    // 🚫 chống spam (5 giây)
+    if (now - lastFetchAt < 5000) return;
+
+    setLastFetchAt(now);
+    setLoading(true);
+
+    try {
+      const result = await getListRequestFriendV2(pageToken);
+
+      if (result?.errorMessage) {
+        setErrorMessage(result.errorMessage);
+      } else {
+        const frienddetails = await loadFriendDetailsV3(result?.friends);
+
+        setFriends((prev) =>
+          pageToken ? [...prev, ...frienddetails] : frienddetails
+        );
+
+        setNextPageToken(result.nextPageToken || null);
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage("Lỗi khi tải danh sách lời mời");
     }
+
     setLoading(false);
   };
 
   const handleAcceptRequest = async (uid) => {
     try {
       const data = await AcceptRequestToFriend(uid);
+
       if (data) {
         addFriendLocal(data);
-        // ✅ Hiển thị thông báo
+
+        // remove khỏi list
+        setFriends((prev) => prev.filter((f) => f.uid !== uid));
+
         SonnerSuccess(
           "Thông báo từ Locket Dio",
           `Đã chấp nhận ${data.firstName}`
@@ -62,7 +89,7 @@ const IncomingFriendRequests = () => {
         );
       }
     } catch (error) {
-      console.error("❌ Lỗi khi chấp nhận lời mời:", error.message || error);
+      console.error("❌ Lỗi khi chấp nhận:", error);
       SonnerError("❌ Chấp nhận lời mời thất bại!");
     }
   };
@@ -74,7 +101,18 @@ const IncomingFriendRequests = () => {
       <h2 className="flex flex-row items-center gap-2 text-base-content font-semibold text-md lg:text-xl mb-3">
         <FaStarOfLife size={22} /> Lời mời kết bạn
       </h2>
-      <div className="text-xs text-gray-500 mt-1 w-full"></div>
+
+      {/* ✅ Nút fetch */}
+      {friends.length === 0 && !loading && (
+        <div className="flex justify-center my-4">
+          <button
+            onClick={() => fetchFriendRequests()}
+            className="bg-yellow-500 text-black px-4 py-2 rounded-full font-semibold"
+          >
+            Lấy danh sách lời mời
+          </button>
+        </div>
+      )}
 
       {loading && friends.length === 0 ? (
         <p className="text-center text-gray-400 h-[70px]">Đang tải...</p>
@@ -82,7 +120,7 @@ const IncomingFriendRequests = () => {
         <p className="text-center text-red-500 h-[70px]">{errorMessage}</p>
       ) : friends.length === 0 ? (
         <p className="text-center text-gray-400 h-[70px]">
-          Không tìm thấy ai!!
+          Chưa tải danh sách
         </p>
       ) : (
         <>
@@ -90,7 +128,7 @@ const IncomingFriendRequests = () => {
             {visibleFriends.map((friend) => (
               <div
                 key={friend.uid}
-                className="flex items-center gap-3 rounded-md cursor-pointer justify-between"
+                className="flex items-center gap-3 rounded-md justify-between"
               >
                 <div className="flex items-center gap-3">
                   <img
@@ -107,15 +145,18 @@ const IncomingFriendRequests = () => {
                     </p>
                   </div>
                 </div>
+
                 <button
-                  className="btn flex flex-row justify-center bg-yellow-500 text-black p-1 px-3 rounded-full transition shrink-0"
+                  className="btn flex items-center bg-yellow-500 text-black px-3 py-1 rounded-full"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleAcceptRequest(friend.uid);
                   }}
                 >
                   <Check className="w-5 h-5" strokeWidth={3} />
-                  <span className="text-base font-semibold">Chấp nhận</span>
+                  <span className="text-base font-semibold ml-1">
+                    Chấp nhận
+                  </span>
                 </button>
               </div>
             ))}
@@ -132,7 +173,7 @@ const IncomingFriendRequests = () => {
                     await fetchFriendRequests(nextPageToken);
                   }
                 }}
-                className="bg-base-200 hover:bg-base-300 text-base-content font-semibold px-4 py-2 transition-colors rounded-3xl"
+                className="bg-base-200 hover:bg-base-300 text-base-content font-semibold px-4 py-2 rounded-3xl"
               >
                 {nextPageToken
                   ? "Xem thêm"
