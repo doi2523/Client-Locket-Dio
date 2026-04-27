@@ -46,8 +46,6 @@ export const useFriendStoreV3 = create((set, get) => ({
   // ⚡ LOAD LOCAL ONLY
   // -------------------------
   loadFriendsLocalOnly: async () => {
-    set({ loading: true });
-
     try {
       const localDetails = await getAllFriendDetails();
 
@@ -70,8 +68,8 @@ export const useFriendStoreV3 = create((set, get) => ({
       });
 
       get().rebuildFriendList();
-    } finally {
-      set({ loading: false });
+    } catch (err) {
+      console.error("loadFriendsLocalOnly error:", err);
     }
   },
 
@@ -79,13 +77,15 @@ export const useFriendStoreV3 = create((set, get) => ({
   // 🔄 LOAD + BACKGROUND SYNC
   // -------------------------
   loadFriends: async () => {
-    // ⚡ load local trước (không block UI)
-    get().loadFriendsLocalOnly();
+    set({ loading: true });
 
     try {
+      // ⚡ load local trước (silent, không loading)
+      await get().loadFriendsLocalOnly();
+
       const res = await syncFriendsWithServer();
 
-      // ❗ nếu fallback thì bỏ qua sync
+      // fallback -> stop sync nhưng vẫn tắt loading
       if (!res || res.isFallback) return;
 
       const { details, friendRelationsMap } = res;
@@ -106,6 +106,8 @@ export const useFriendStoreV3 = create((set, get) => ({
       get().rebuildFriendList();
     } catch (err) {
       console.error("syncFriends error:", err);
+    } finally {
+      set({ loading: false });
     }
   },
 
