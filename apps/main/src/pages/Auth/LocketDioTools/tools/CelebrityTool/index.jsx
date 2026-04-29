@@ -17,10 +17,12 @@ import { useFeatureVisible, useGetCode } from "@/hooks/useFeature";
 import { PiExport } from "react-icons/pi";
 import LockedFeature from "../../Layout/LockedFeature";
 import { useAuthStore } from "@/stores";
+import { useNavigate } from "react-router-dom";
 
 export default function CelebrateTool() {
   const isCelebrityFeature = useFeatureVisible("celebrity_tool");
   const codeUser = useGetCode();
+  const navigate = useNavigate();
   const fetchUserData = useAuthStore((s) => s.fetchUserData);
   const [celebrateList, setCelebrateList] = useState([]);
   const [userDetails, setUserDetails] = useState([]);
@@ -175,13 +177,22 @@ export default function CelebrateTool() {
   // Nếu không có quyền truy cập
   if (!isCelebrityFeature) {
     return (
-      <LockedFeature
-        toolName="Celebrity Tool"
-        price="5000"
-        note="LDT1M"
-        codeUser={codeUser}
-        onReload={fetchUserData}
-      />
+      <div className="rounded-xl border p-4 text-center flex flex-col items-center gap-3">
+        <div className="text-6xl">🔒</div>
+
+        <h3 className="text-xl font-semibold">Tính năng bị khóa</h3>
+
+        <p className="text-sm text-gray-500">
+          Đăng ký gói để kích hoạt tính năng này
+        </p>
+
+        <button
+          onClick={() => navigate("/pricing")}
+          className="rounded-lg bg-black px-4 py-2 text-white hover:opacity-90 transition"
+        >
+          Xem ngay
+        </button>
+      </div>
     );
   }
 
