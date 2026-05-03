@@ -7,7 +7,7 @@ export const getInfoWeather = async ({ lat, lon }) => {
   }
 
   try {
-    const res = await instanceMain.post("/api/weatherV2", { lat, lon });
+    const res = await instanceMain.post("/api/weatherV3", { lat, lon });
 
     if (res?.data?.status === "success") {
       return res.data.data;

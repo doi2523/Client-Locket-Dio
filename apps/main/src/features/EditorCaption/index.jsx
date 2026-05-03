@@ -99,7 +99,7 @@ const CaptionIconOverlay = ({
 
   useAutoResize([textareaRef]);
 
-  if (!isEditable) return <DecorativeOverlay overlayData={postOverlay}/>
+  if (!isEditable) return <DecorativeOverlay overlayData={postOverlay} />;
 
   return (
     <div
@@ -133,21 +133,14 @@ const CaptionIconOverlay = ({
 
 const WeatherOverlay = ({ postOverlay }) => {
   return (
-    <div className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl text-white font-semibold">
-      <img
-        src={
-          postOverlay?.caption?.icon
-            ? `https:${postOverlay?.caption?.icon}`
-            : "./images/sun_max_indicator.png"
-        }
-        alt={postOverlay?.caption?.condition || "Thời tiết"}
-        className="w-6 h-6"
-      />
-      <span>
-        {postOverlay?.caption?.temp_c_rounded !== undefined
-          ? `${postOverlay?.caption?.temp_c_rounded}°C`
-          : "Thời tiết"}
-      </span>
+    <div
+      className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl text-white font-semibold"
+      style={{
+        ...getCaptionStyle(postOverlay.background, postOverlay.text_color),
+      }}
+    >
+      <IconRenderer icon={postOverlay.icon} />
+      <span>{postOverlay?.text || postOverlay?.caption}</span>
     </div>
   );
 };
