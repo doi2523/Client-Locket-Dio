@@ -28,6 +28,7 @@ export default function CelebrateTool() {
   const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
+  const [processingUid, setProcessingUid] = useState(null);
 
   // --- Fetch danh sách celebrate (cache 7 ngày trong localStorage) ---
   const fetchCelebrates = async () => {
@@ -110,19 +111,34 @@ export default function CelebrateTool() {
       return SonnerInfo("Nhập UID trước đã!");
     }
 
+    if (processingUid === uid) return; // chặn spam click
+
+    setProcessingUid(uid);
+
     try {
-      // const res = await SendRequestToCelebrity(uid);
-      // if (res?.success) {
-      // SonnerSuccess(
-      //   "Đã gửi yêu cầu thành công!",
-      //   "Làm mới để xem sự thay đổi"
-      // );
-      // } else {
-      // SonnerWarning("UID không hợp lệ hoặc đã tồn tại!");
-      // }
-      SonnerWarning("Không còn hỗ trợ gửi yêu cầu!");
+      const res = await SendRequestToCelebrity(uid);
+
+      if (res?.success) {
+        SonnerSuccess(
+          "Đã gửi yêu cầu thành công!",
+          "Đang cập nhật trạng thái...",
+        );
+
+        // 🔥 fetch lại user mới nhất
+        const updatedUser = await fetchUserById(uid);
+
+        if (updatedUser) {
+          setUserDetails((prev) =>
+            prev.map((u) => (u.uid === uid ? { ...u, ...updatedUser } : u)),
+          );
+        }
+      } else {
+        SonnerWarning("UID không hợp lệ hoặc đã tồn tại!");
+      }
     } catch (err) {
       SonnerError("❌ Thêm UID thất bại.");
+    } finally {
+      setProcessingUid(null);
     }
   };
 
@@ -224,6 +240,10 @@ export default function CelebrateTool() {
         của họ. Click vào username để copy link kết bạn. Bấm thêm để gửi kết bạn
         tới họ nhé!
       </p>
+      <div className="mb-3 text-sm opacity-80 leading-relaxed space-y-1">
+        <p>1. Chỉ cần làm mới khi cần thiết.</p>
+        <p>2. Không spam yêu cầu quá nhiều để tránh ảnh hưởng tới tài khoản.</p>
+      </div>
 
       {/* Tabs → Chuyển thành nút */}
       <div className="flex gap-2 mb-3 flex-wrap">
@@ -296,6 +316,7 @@ export default function CelebrateTool() {
               user={user}
               slotdata={user?.celebrity_data}
               onAdd={handleAddUid}
+              loadingUid={processingUid}
             />
           ))
         ) : (

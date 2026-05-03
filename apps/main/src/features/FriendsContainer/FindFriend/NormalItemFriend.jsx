@@ -1,7 +1,13 @@
 import React from "react";
-import { Plus } from "lucide-react";
+import FriendActionButton from "../components/FriendActionButton";
 
-export default function NormalItemFriend({ friend, handleAddFriend }) {
+export default function NormalItemFriend({
+  friend,
+  handleAddFriend,
+  loading,
+  disabled,
+  status
+}) {
   return (
     <div
       key={friend.uid}
@@ -23,13 +29,14 @@ export default function NormalItemFriend({ friend, handleAddFriend }) {
         </div>
       </div>
 
-      <button
-        className="btn flex flex-row justify-center bg-yellow-500 text-black p-1 px-3 rounded-full transition shrink-0"
-        onClick={handleAddFriend}
-      >
-        <Plus className="w-5 h-5" strokeWidth={3} />
-        <span className="text-base font-semibold">Thêm</span>
-      </button>
+      <FriendActionButton
+        status={status}
+        onAdd={handleAddFriend}
+        loading={loading}
+        onAccept={() => console.log("accept")}
+        onReject={() => console.log("reject")}
+        disabled={disabled}
+      />
     </div>
   );
 }
