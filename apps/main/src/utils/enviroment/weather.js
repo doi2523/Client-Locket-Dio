@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getInfoWeather } from "@/services";
+import { getInfoWeatherV1 } from "@/services";
 
 const CACHE_KEY = "weather_cache";
 const CACHE_DURATION = 10 * 60 * 1000; // 2 phút
@@ -31,7 +31,7 @@ export function useLocationWeather() {
         try {
           const { latitude, longitude } = position.coords;
 
-          const data = await getInfoWeather({ lat: latitude, lon: longitude });
+          const data = await getInfoWeatherV1({ lat: latitude, lon: longitude });
 
           if (data) {
             setLocation(data.location);
