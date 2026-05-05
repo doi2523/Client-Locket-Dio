@@ -14,50 +14,73 @@ const OutgoingRequest = () => {
   const { navigation } = useApp();
   const { user } = useAuthStore();
   const { isFriendsTabOpen } = navigation;
+
   const [friends, setFriends] = useState([]);
   const [nextPageToken, setNextPageToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [showAllFriends, setShowAllFriends] = useState(false);
+  const [lastFetchAt, setLastFetchAt] = useState(0);
 
+  // ✅ CHỈ reset state khi mở tab — KHÔNG fetch
   useEffect(() => {
     if (isFriendsTabOpen) {
-      setFriends([]); // reset khi mở tab mới
+      setFriends([]);
       setNextPageToken(null);
       setShowAllFriends(false);
-      fetchFriendRequests();
+      setErrorMessage(null);
     }
   }, [isFriendsTabOpen]);
 
+  // ✅ Fetch khi bấm nút
   const fetchFriendRequests = async (pageToken = null) => {
     if (!user) return;
-    setLoading(true);
-    const result = await getOutgoingRequestFriend(pageToken);
 
-    if (result?.errorMessage) {
-      setErrorMessage(result.errorMessage);
-    } else {
-      const frienddetails = await loadFriendDetailsV3(result?.friends);
-      setFriends((prev) => [...prev, ...frienddetails]);
-      setNextPageToken(result.nextPageToken || null);
+    const now = Date.now();
+
+    // 🚫 chống spam 5s
+    if (now - lastFetchAt < 5000) return;
+
+    setLastFetchAt(now);
+    setLoading(true);
+
+    try {
+      const result = await getOutgoingRequestFriend(pageToken);
+
+      if (result?.errorMessage) {
+        setErrorMessage(result.errorMessage);
+      } else {
+        const frienddetails = await loadFriendDetailsV3(result?.friends);
+
+        setFriends((prev) =>
+          pageToken ? [...prev, ...frienddetails] : frienddetails,
+        );
+
+        setNextPageToken(result.nextPageToken || null);
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage("Lỗi khi tải danh sách yêu cầu đã gửi");
     }
+
     setLoading(false);
   };
 
   const handleCancelRequest = async (uid, name) => {
     if (window.confirm(`Bạn có muốn huỷ yêu cầu kết bạn tới ${name}?`)) {
       try {
-        await rejectFriendRequests(uid, "outgoing"); // gọi API huỷ
+        await rejectFriendRequests(uid, "outgoing");
+
         SonnerSuccess(
           "Huỷ yêu cầu thành công",
-          `Bạn đã huỷ yêu cầu kết bạn tới ${name}`
+          `Bạn đã huỷ yêu cầu kết bạn tới ${name}`,
         );
 
-        // Xoá khỏi danh sách hiển thị
+        // ✅ remove khỏi list
         setFriends((prev) => prev.filter((f) => f.uid !== uid));
       } catch (error) {
-        console.error("❌ Lỗi khi huỷ yêu cầu:", error);
-        SonnerError("Có lỗi xảy ra khi huỷ yêu cầu. Vui lòng thử lại!");
+        console.error("❌ Lỗi khi huỷ:", error);
+        SonnerError("Có lỗi xảy ra khi huỷ yêu cầu!");
       }
     }
   };
@@ -66,26 +89,35 @@ const OutgoingRequest = () => {
 
   return (
     <div>
-      <h2 className="flex flex-row items-center gap-2 text-base-content font-semibold text-md lg:text-xl mb-3">
+      <h2 className="flex items-center gap-2 font-semibold text-md lg:text-xl mb-3">
         <BsCheckCircleFill size={22} /> Yêu cầu đã gửi
       </h2>
-      <div className="text-xs text-gray-500 mt-1 w-full"></div>
+
+      {/* ✅ Nút fetch */}
+      {friends.length === 0 && !loading && (
+        <div className="flex justify-center my-4">
+          <button
+            onClick={() => fetchFriendRequests()}
+            className="bg-yellow-500 text-black px-4 py-2 rounded-full font-semibold"
+          >
+            Lấy danh sách đã gửi
+          </button>
+        </div>
+      )}
 
       {loading && friends.length === 0 ? (
         <p className="text-center text-gray-400 h-[70px]">Đang tải...</p>
       ) : errorMessage ? (
         <p className="text-center text-red-500 h-[70px]">{errorMessage}</p>
       ) : friends.length === 0 ? (
-        <p className="text-center text-gray-400 h-[70px]">
-          Không tìm thấy ai!!
-        </p>
+        <p className="text-center text-gray-400 h-[70px]">Chưa tải danh sách</p>
       ) : (
         <>
           <div className="flex flex-col gap-3">
             {visibleFriends.map((friend) => (
               <div
                 key={friend.uid}
-                className="flex items-center gap-3 rounded-md cursor-pointer justify-between"
+                className="flex items-center gap-3 justify-between"
               >
                 <div className="flex items-center gap-3">
                   <img
@@ -102,8 +134,9 @@ const OutgoingRequest = () => {
                     </p>
                   </div>
                 </div>
+
                 <button
-                  className="flex flex-row justify-center p-1 px-2.5 rounded-full transition shrink-0"
+                  className="p-1 px-2.5 rounded-full"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleCancelRequest(friend.uid, friend.firstName);
@@ -126,13 +159,13 @@ const OutgoingRequest = () => {
                     await fetchFriendRequests(nextPageToken);
                   }
                 }}
-                className="bg-base-200 hover:bg-base-300 text-base-content font-semibold px-4 py-2 transition-colors rounded-3xl"
+                className="bg-base-200 hover:bg-base-300 font-semibold px-4 py-2 rounded-3xl"
               >
                 {nextPageToken
                   ? "Xem thêm"
                   : showAllFriends
-                  ? "Đã hiện hết"
-                  : "Xem thêm"}
+                    ? "Đã hiện hết"
+                    : "Xem thêm"}
               </button>
               <hr className="flex-grow border-t border-base-content" />
             </div>

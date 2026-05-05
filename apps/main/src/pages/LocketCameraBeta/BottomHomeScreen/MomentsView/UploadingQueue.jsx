@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { Check, RotateCcw } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useApp } from "@/context/AppContext";
 import LoadingOverlay from "@/components/ui/Loading/LineSpinner";
-import { useUploadQueueStore } from "@/stores";
+import { useSelectedStore, useUploadQueueStore } from "@/stores";
 
 const UploadingQueue = () => {
   const [loadedItems, setLoadedItems] = useState([]);
-  const {
-    selectedQueue,
-    selectedQueueId,
-    setSelectedQueueId,
-    setSelectedQueue,
-  } = useApp().post;
+
+  const selectedQueue = useSelectedStore((s) => s.selectedQueue);
+  const setSelectedQueue = useSelectedStore((s) => s.setSelectedQueue);
+
+  const selectedQueueId = useSelectedStore((s) => s.selectedQueueId);
+  const setSelectedQueueId = useSelectedStore((s) => s.setSelectedQueueId);
+
   const uploadItems = useUploadQueueStore((s) => s.uploadItems);
   const handleLoaded = (id) => {
     setLoadedItems((prev) => (prev.includes(id) ? prev : [...prev, id]));

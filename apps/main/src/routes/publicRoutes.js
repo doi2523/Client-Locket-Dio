@@ -7,7 +7,7 @@ import { CONFIG } from "@/config";
 const LocketUpload = React.lazy(() => import("@/pages/Public/CollabPage/LocketUpload"));
 const LocketCameraBeta = React.lazy(() => import("../pages/LocketCameraBeta"));
 // import CameraCapture from "@/pages/UILocket";
-// const WhitePage = React.lazy(() => import("@/pages/Public/WhitePage"));
+const TermsPage = React.lazy(() => import("@/pages/Public/TermsPage"));
 const NewsPage = React.lazy(() => import("@/pages/Public/NewsPage"));
 const NewsDetailPage = React.lazy(() => import("@/pages/Public/NewsDetailPage"));
 const ForgotPassword = React.lazy(() => import("@/pages/Public/ForgotPassword"));
@@ -63,7 +63,7 @@ export const publicRoutes = [
   { path: "/collab/locket-upload", component: LocketUpload, title: `Web hợp tác Locket Upload | ${APP_NAME}` },
   { path: "/happy-birthday", component: BirthdayPage, title: `Chúc mừng sinh nhật Dio | ${APP_NAME}` },
 
-  // { path: "/wt", component: WhitePage, title: `White Page for Development | ${APP_NAME}` },
+  { path: "/terms", component: TermsPage, title: `Điều khoản sử dụng | ${APP_NAME}` },
   // { path: "/locket", component: LocketCameraBeta, title: `White Page for Development | ${APP_NAME}` },
 
   { path: "/forgot-password", component: ForgotPassword, title: `Khôi phục mật khẩu | ${APP_NAME}` },

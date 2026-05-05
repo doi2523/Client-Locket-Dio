@@ -2,7 +2,7 @@ import React from "react";
 import { Link, Plus, UserRoundCheck } from "lucide-react";
 import { SonnerSuccess } from "@/components/ui/SonnerToast";
 
-export default function CelebrateItem({ user, slotdata, onAdd }) {
+export default function CelebrateItem({ user, slotdata, onAdd, loadingUid }) {
   // Tính % bạn bè (nếu có dữ liệu)
   const percent =
     slotdata?.max_friends && slotdata?.friend_count
@@ -110,10 +110,9 @@ export default function CelebrateItem({ user, slotdata, onAdd }) {
           </div>
         ) : (
           <button
-            disabled={isFullSlot}
-            className={`flex items-center gap-1 px-2 py-1 rounded-2xl font-semibold
+            className={`flex items-center gap-1 px-2 py-1 rounded-2xl font-semibold transition
               ${
-                isFullSlot
+                isFullSlot || loadingUid === user.uid
                   ? "bg-gray-300 text-gray-400 cursor-not-allowed"
                   : "bg-cyan-300 text-blue-500 hover:text-blue-600"
               }
@@ -121,10 +120,13 @@ export default function CelebrateItem({ user, slotdata, onAdd }) {
             onClick={(e) => {
               e.stopPropagation();
               if (isFullSlot) return;
+              if (loadingUid === user.uid) return;
               onAdd(user.uid);
             }}
+            disabled={isFullSlot || loadingUid === user.uid}
           >
-            <Plus className="w-5 h-5" /> Thêm
+            <Plus className="w-5 h-5" />{" "}
+            {loadingUid === user.uid ? "Đang gửi..." : "Thêm"}
           </button>
         )}
       </div>

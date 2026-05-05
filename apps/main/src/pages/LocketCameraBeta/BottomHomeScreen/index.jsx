@@ -9,10 +9,10 @@ import { Virtual } from "swiper/modules";
 import "swiper/css";
 import MomentSlide from "./MomentsView/MomentSlide";
 import { useSocket } from "@/context/SocketContext";
-import { useAuthStore, useMomentsStoreV2 } from "@/stores";
+import { useAuthStore, useMomentsStoreV2, useSelectedStore } from "@/stores";
 
 const BottomHomeScreen = () => {
-  const { navigation, post } = useApp();
+  const { navigation } = useApp();
   const [swiperRef, setSwiperRef] = useState(null);
   const {
     isHomeOpen,
@@ -23,15 +23,18 @@ const BottomHomeScreen = () => {
     setIsHomeOpen,
     isProfileOpen,
   } = navigation;
-  const {
-    selectedMoment,
-    setSelectedMoment,
-    selectedQueue,
-    setSelectedQueue,
-    selectedFriendUid,
-    selectedMomentId,
-    setSelectedMomentId,
-  } = post;
+
+  const selectedMoment = useSelectedStore((s) => s.selectedMoment);
+  const setSelectedMoment = useSelectedStore((s) => s.setSelectedMoment);
+
+  const selectedQueue = useSelectedStore((s) => s.selectedQueue);
+  const setSelectedQueue = useSelectedStore((s) => s.setSelectedQueue);
+
+  const selectedMomentId = useSelectedStore((s) => s.selectedMomentId);
+  const setSelectedMomentId = useSelectedStore((s) => s.setSelectedMomentId);
+
+  const selectedFriendUid = useSelectedStore((s) => s.selectedFriendUid);
+  const setSelectedFriendUid = useSelectedStore((s) => s.setSelectedFriendUid);
 
   const { user } = useAuthStore();
 

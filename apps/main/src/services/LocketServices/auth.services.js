@@ -23,3 +23,24 @@ export const ValidateEmailAddress = async (email) => {
     );
   }
 };
+
+export const updateAllowSearch = async (allowSearch) => {
+  try {
+    const body = {
+      data: {
+        username_discoverability_disable: !allowSearch,
+      },
+    };
+
+    const res = await instanceLocketV2.post("changeProfileInfo", body);
+    return res.data.result.success === true;
+  } catch (error) {
+    if (error.response && error.response.data?.error) {
+      throw error.response.data.error;
+    }
+
+    throw new Error(
+      "Có sự cố khi kết nối đến hệ thống, vui lòng thử lại sau ít phút."
+    );
+  }
+};

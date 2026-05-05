@@ -6,7 +6,7 @@ const SavedCaptions = ({ title = "Caption của bạn", captions = [], onSelect 
   const isLoading = !captions || captions.length === 0;
 
   return (
-    <div className="px-4">
+    <div className="px-4 mt-3">
       {title && (
         <h2 className="text-md font-semibold text-primary mb-2">{title}</h2>
       )}

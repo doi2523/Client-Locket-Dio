@@ -1,6 +1,10 @@
 {
-    "rewrites": [
-      { "source": "/(.*)", "destination": "/" }
-    ]
-  }
-  
+  "framework": "vite",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build -w main",
+  "outputDirectory": "apps/main/dist",
+
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}

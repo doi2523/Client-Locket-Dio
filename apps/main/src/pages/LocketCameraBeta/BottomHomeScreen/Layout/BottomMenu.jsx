@@ -1,31 +1,32 @@
 import { CalendarHeart, LayoutGrid, Share } from "lucide-react";
 import InputForMoment from "./InputForMoment";
-import { useApp } from "@/context/AppContext";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
+import { useSelectedStore } from "@/stores";
 
 const BottomMenu = ({ setIsBottomOpen, setOptionModalOpen }) => {
-  const { post } = useApp();
-  const {
-    selectedMoment,
-    setSelectedMomentId,
-    setSelectedQueueId,
-    setSelectedMoment,
-    selectedQueue,
-    setSelectedQueue,
-  } = post;
+  const selectedMoment = useSelectedStore((s) => s.selectedMoment);
+  const selectedQueue = useSelectedStore((s) => s.selectedQueue);
+
+  const setSelectedMoment = useSelectedStore((s) => s.setSelectedMoment);
+  const setSelectedQueue = useSelectedStore((s) => s.setSelectedQueue);
+
+  const setSelectedMomentId = useSelectedStore((s) => s.setSelectedMomentId);
+  const setSelectedQueueId = useSelectedStore((s) => s.setSelectedQueueId);
+
+  const resetSelection = () => {
+    setSelectedMoment(null);
+    setSelectedQueue(null);
+    setSelectedMomentId(null);
+    setSelectedQueueId(null);
+  };
 
   const handleReturnHome = () => {
-    setSelectedMoment(null);
-    setSelectedQueue(null);
-    setSelectedMomentId(null);
-    setSelectedQueueId(null);
+    resetSelection();
     setIsBottomOpen(false);
   };
+
   const handleClose = () => {
-    setSelectedMoment(null);
-    setSelectedQueue(null);
-    setSelectedMomentId(null);
-    setSelectedQueueId(null);
+    resetSelection();
   };
 
   return (

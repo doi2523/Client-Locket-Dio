@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
-import { useApp } from "@/context/AppContext";
 import { Check, RotateCcw, X } from "lucide-react";
 import LoadingOverlay from "@/components/ui/Loading/LineSpinner";
-import { useUploadQueueStore } from "@/stores";
+import { useSelectedStore, useUploadQueueStore } from "@/stores";
+import { getCaptionStyle } from "@/helpers/styleHelpers";
+import IconRenderer from "@/features/OverlayRender/iconRenders";
 
 const QueueViewer = () => {
-  const { post } = useApp();
   const retryUploadItem = useUploadQueueStore((s) => s.retryUploadItem);
-  const { selectedQueue, setSelectedQueue, selectedQueueId } = post;
+
+  const selectedQueue = useSelectedStore((s) => s.selectedQueue);
+  const setSelectedQueue = useSelectedStore((s) => s.setSelectedQueue);
+
+  const selectedQueueId = useSelectedStore((s) => s.selectedQueueId);
+  const setSelectedQueueId = useSelectedStore((s) => s.setSelectedQueueId);
+
   const queueInfo = useUploadQueueStore((s) =>
-    s.uploadItems.find((i) => i.id === selectedQueueId)
+    s.uploadItems.find((i) => i.id === selectedQueueId),
   );
 
   const [isVisible, setIsVisible] = useState(false);
@@ -62,10 +68,10 @@ const QueueViewer = () => {
 
   const mediaType = queueInfo?.mediaInfo?.type;
   const mediaUrl = queueInfo?.mediaInfo?.url;
-  const caption = queueInfo?.caption || "";
-  const icon = queueInfo?.options?.icon || "";
-  const colorTop = queueInfo?.options?.color_top || "#00000088";
-  const colorBottom = queueInfo?.options?.color_bottom || "#000000cc";
+  const caption = queueInfo?.caption ||  queueInfo?.text || "";
+  const icon = queueInfo?.options?.icon || {};
+
+  const background = queueInfo?.optionsData?.colors || []
   const textColor = queueInfo?.options?.text_color || "#ffffff";
 
   return (
@@ -149,11 +155,11 @@ const QueueViewer = () => {
               <div
                 className="absolute bottom-4 w-fit backdrop-blur-sm rounded-2xl px-3 py-2"
                 style={{
-                  background: `linear-gradient(to bottom, ${colorTop}, ${colorBottom})`,
+                  ...getCaptionStyle(background, textColor)
                 }}
               >
-                <p className="text-sm font-medium" style={{ color: textColor }}>
-                  {icon} {caption}
+                <p className="text-sm font-medium">
+                  <IconRenderer icon={icon} /> {caption}
                 </p>
               </div>
             )}
@@ -164,10 +170,7 @@ const QueueViewer = () => {
             onClick={handleRetry}
             className="flex items-center gap-1 px-6 py-3 rounded-2xl font-semibold text-error"
           >
-            <RotateCcw
-              strokeWidth={2}
-              className="w-10 h-10"
-            />
+            <RotateCcw strokeWidth={2} className="w-10 h-10" />
             Thử lại
           </button>
         </div>

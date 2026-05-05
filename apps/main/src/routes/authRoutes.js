@@ -1,6 +1,7 @@
 import { CONFIG } from "@/config";
 import React from "react";
 // import CameraCapture from "../pages/UILocket";
+const FriendManager = React.lazy(() => import("@/pages/Auth/FriendManager"));
 const DiaryPage = React.lazy(() => import("@/pages/Auth/DiaryPage"));
 const AboutLocketDio = React.lazy(() => import("../pages/Public/About"));
 const RestoreStreak = React.lazy(() => import("@/pages/Auth/RestoreStreak"));
@@ -26,6 +27,7 @@ const Contact = React.lazy(() => import("../pages/Public/Contact"));
 const PrivacyPolicy = React.lazy(() => import("../pages/Public/PrivacyPolicy"));
 const BirthdayPage = React.lazy(() => import("../pages/Public/BirthdayPage"));
 const LocketUpload = React.lazy(() => import("@/pages/Public/CollabPage/LocketUpload"));
+const TermsPage = React.lazy(() => import("@/pages/Public/TermsPage"));
 
 const APP_NAME = CONFIG.app.fullName;
 
@@ -48,6 +50,7 @@ export const authRoutes = [
   { path: "/profile", component: Profile, title: `Hồ sơ | ${APP_NAME}` },
   { path: "/postmoments", component: PostMoments, title: `Đăng Moment Mới | ${APP_NAME}` },
   { path: "/restore-streak", component: RestoreStreak, title: `Khôi phục chuỗi Locket | ${APP_NAME}` },
+  { path: "/friends", component: FriendManager, title: `Bạn bè Locket | ${APP_NAME}` },
   { path: "/tools", component: ToolsLocket, title: `Công cụ mở rộng | ${APP_NAME}` },
   { path: "/collab/caption-kanade", component: ManageCaption, title: `Web hợp tác Caption Kanade | ${APP_NAME}` },
   { path: "/collab/locket-upload", component: LocketUpload, title: `Web hợp tác Locket Upload | ${APP_NAME}` },
@@ -59,6 +62,8 @@ export const authRoutes = [
   { path: "/incidents", component: ErrorReferencePage, title: `Trung tâm sự cố | ${APP_NAME}` },
   { path: "/privacy", component: PrivacyPolicy, title: `Chính sách bảo mật | ${APP_NAME}` },
   { path: "/docs", component: Docs, title: `Tài liệu | ${APP_NAME}` },
+
+  { path: "/terms", component: TermsPage, title: `Điều khoản sử dụng | ${APP_NAME}` },
 
   { path: "/happy-birthday", component: BirthdayPage, title: `Chúc mừng sinh nhật Dio | ${APP_NAME}` },
 ];

@@ -44,6 +44,19 @@ export const GetUserDataV2 = async () => {
   }
 };
 
+export const GetInfoFamily = async () => {
+  try {
+    const res = await api.get("/api/getInfoFamily");
+    return res.data?.data;
+  } catch (error) {
+    console.error(
+      "❌ Lỗi khi lấy thông tin người dùng:",
+      error.response?.data || error.message,
+    );
+    throw error.response?.data || error.message;
+  }
+};
+
 export const syncPushSubscription = async () => {
   try {
     const sub = await getPushSubscription();

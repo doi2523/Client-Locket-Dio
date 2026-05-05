@@ -5,12 +5,10 @@ import {
   Home,
   Upload,
   Smartphone,
-  Briefcase,
   Rocket,
   Info,
   ShieldCheck,
   Wrench,
-  Code2,
   BookText,
   UserCircle,
   Clock,
@@ -19,13 +17,13 @@ import {
   Palette,
   UserRound,
   LifeBuoy,
-  Package,
   SquareArrowOutUpRight,
   Heart,
   Newspaper,
   CalendarClock,
   SquareArrowDown,
-  CircleStar,
+  ScrollText,
+  BookUser,
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { MenuItem } from "./MenuItem";
@@ -39,7 +37,7 @@ import { useAuthStore } from "@/stores";
 const Sidebar = () => {
   const user = useAuthStore((state) => state.user);
   const clearAndlogout = useAuthStore((state) => state.clearAndlogout);
-  
+
   const navigate = useNavigate();
   const { navigation } = useApp();
   const { isSidebarOpen, setIsSidebarOpen } = navigation;
@@ -99,12 +97,13 @@ const Sidebar = () => {
           text: "Nhật ký Locket",
           badge: "New",
         },
+        { to: "/friends", icon: BookUser, text: "Bạn bè Locket" },
         { to: "/pricing", icon: Rocket, text: "Gói thành viên", badge: "Hot" },
         { to: "/profile", icon: UserRound, text: "Hồ sơ của bạn" },
       ],
     },
     {
-      title: "Hợp tác",
+      title: "Đối tác & Tích hợp",
       items: [
         { to: "/collab/caption-kanade", icon: Palette, text: "Caption Kanade" },
         {
@@ -117,9 +116,9 @@ const Sidebar = () => {
     {
       title: "Hệ thống & Hỗ trợ",
       items: [
-        // { to: "/devpage", icon: Code2, text: "Trang lập trình", badge: "New" },
         { to: "/incidents", icon: Bug, text: "Trung tâm sự cố" },
         { to: "/contact", icon: LifeBuoy, text: "Liên hệ & Hỗ trợ" },
+        { to: "/terms", icon: ScrollText, text: "Điều khoản sử dụng" },
         { to: "/privacy", icon: ShieldCheck, text: "Chính sách bảo mật" },
         { to: "/settings", icon: Settings, text: "Cài đặt" },
       ],
@@ -151,7 +150,7 @@ const Sidebar = () => {
       ],
     },
     {
-      title: "Hợp tác",
+      title: "Đối tác & Tích hợp",
       items: [
         { to: "/collab/caption-kanade", icon: Palette, text: "Caption Kanade" },
         {
@@ -166,6 +165,7 @@ const Sidebar = () => {
       items: [
         { to: "/incidents", icon: Bug, text: "Trung tâm sự cố" },
         { to: "/contact", icon: LifeBuoy, text: "Liên hệ & Hỗ trợ" },
+        { to: "/terms", icon: ScrollText, text: "Điều khoản sử dụng" },
         { to: "/privacy", icon: ShieldCheck, text: "Chính sách bảo mật" },
         { to: "/settings", icon: Settings, text: "Cài đặt" },
       ],

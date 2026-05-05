@@ -22,7 +22,9 @@ const FriendList = ({
 }) => {
   const friendObjects = useFriendObjects();
 
-  const [lastUpdated, setLastUpdated] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(() => {
+    return localStorage.getItem("friendsUpdatedAt");
+  });
   const [searchTerm, setSearchTerm] = useState("");
 
   const [isFocused, setIsFocused] = useState(null);

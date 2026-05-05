@@ -8,7 +8,12 @@ import {
   SonnerSuccess,
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
-import { FindFriendByUserName, SendRequestToCelebrity } from "@/services";
+import {
+  FindFriendByUserName,
+  getFriendshipStatus,
+  SendRequestToCelebrity,
+  SendRequestToFriend,
+} from "@/services";
 import BouncyLoader from "@/components/ui/Loading/Bouncy";
 
 const FindFriend = () => {
@@ -16,23 +21,28 @@ const FindFriend = () => {
   const [searchTermFind, setSearchTermFind] = useState("");
   const [foundUser, setFoundUser] = useState(null);
   const [isFocusedFind, setIsFocusedFind] = useState(null);
+  const [sending, setSending] = useState(false); // 👉 NEW
+
+  const [friendshipStatus, setFriendshipStatus] = useState("NONE");
 
   const handleFindFriend = async (username) => {
     if (!username) return;
 
     try {
       setLoading(true);
+      setFoundUser(null);
+
       const result = await FindFriendByUserName(username);
 
-      if (result?.success === true) {
+      if (result?.success) {
         setFoundUser(result.data);
+
+        const status = await getFriendshipStatus(result.data.uid);
+        setFriendshipStatus(status);
       } else {
-        setFoundUser(null);
         SonnerInfo("Người dùng không tồn tại");
       }
     } catch (error) {
-      console.error("❌ Lỗi khi tìm bạn:", error);
-      setFoundUser(null);
       SonnerInfo(error.message || "Người dùng không tồn tại");
     } finally {
       setLoading(false);
@@ -40,25 +50,33 @@ const FindFriend = () => {
   };
 
   const handleAddFriend = async () => {
-    if (!foundUser) return;
+    if (!foundUser || sending) return;
 
     try {
-      setLoading(true);
+      setSending(true);
 
-      if (foundUser?.celebrity === true) {
-        await SendRequestToCelebrity(foundUser.uid);
-        SonnerSuccess("Gửi lời mời thành công!");
+      if (foundUser?.celebrity) {
+        // const res = await SendRequestToCelebrity(foundUser.uid);
 
-        // 👉 fetch lại để cập nhật friendship_status mới
-        await handleFindFriend(searchTermFind);
+        // if (res?.success) {
+        //   SonnerSuccess("Gửi thành công!");
+        //   setFriendshipStatus("OUTGOING");
+        // }
+        SonnerWarning("Sắp hỗ trợ điều này");
       } else {
-        SonnerWarning("Chưa hỗ trợ tính năng này!");
+        const res = await SendRequestToFriend(foundUser.uid);
+
+        if (res?.status === "real-user") {
+          SonnerSuccess("Đã gửi yêu cầu!");
+          setFriendshipStatus("OUTGOING");
+        } else {
+          SonnerWarning("Gửi thất bại");
+        }
       }
     } catch (error) {
-      console.error("❌ Lỗi gửi yêu cầu:", error);
-      SonnerWarning(error.message || "Gửi yêu cầu thất bại");
+      SonnerWarning(error.message || "Lỗi");
     } finally {
-      setLoading(false);
+      setSending(false);
     }
   };
 
@@ -69,6 +87,7 @@ const FindFriend = () => {
       <h2 className="flex items-center gap-2 text-md font-semibold mb-1">
         <FaSearchPlus size={22} /> Tìm kiếm ai đó?
       </h2>
+      <p className="text-sm">Không nên spam quá nhiều.</p>
 
       <div className="flex gap-2 items-center">
         <SearchInput
@@ -82,12 +101,12 @@ const FindFriend = () => {
         {searchTermFind && (
           <button
             disabled={loading}
-            className="btn btn-base-200 text-base flex items-center gap-2 rounded-full"
+            className="btn btn-base-200 text-base flex items-center gap-2 rounded-full disabled:opacity-50"
             onClick={() => handleFindFriend(searchTermFind)}
           >
             {loading ? (
               <>
-                <BouncyLoader size={25} color="orange"/> Đợi tí
+                <BouncyLoader size={25} /> Đợi tí
               </>
             ) : (
               "Tìm kiếm"
@@ -108,7 +127,9 @@ const FindFriend = () => {
             <NormalItemFriend
               friend={foundUser}
               handleAddFriend={handleAddFriend}
-              loading={loading}
+              loading={sending}
+              disabled={sending}
+              status={friendshipStatus}
             />
           )
         ) : (

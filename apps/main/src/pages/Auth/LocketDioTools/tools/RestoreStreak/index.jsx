@@ -13,7 +13,8 @@ export default function RestoreStreak() {
   const codeUser = useGetCode();
   const [confirmDeletedToday, setConfirmDeletedToday] = useState(false);
   const { streak } = useStreakStore();
-  const { setRestoreStreak, restoreStreak } = usePostStore();
+  const restoreStreakData = usePostStore((s) => s.restoreStreakData);
+  const setRestoreStreakData = usePostStore((s) => s.setRestoreStreakData);
   const [mode, setMode] = useState("restore"); // "restore" | "continue"
   const [suggestType, setSuggestType] = useState(null);
 
@@ -64,6 +65,7 @@ export default function RestoreStreak() {
   const streakUpdated = streak?.last_updated_yyyymmdd === previousDate;
 
   const isFutureDate = restoreStreakDate > currentDate;
+  const isCurrentDate = String(restoreStreakDate) === String(currentDate);
   // Chỉ cho khôi phục khi:
   // - Chuỗi chưa tới hôm nay
   // - Hoặc user xác nhận đã xoá bài hôm nay
@@ -74,13 +76,23 @@ export default function RestoreStreak() {
   }, [isTodayStreak]);
 
   useEffect(() => {
-    setRestoreStreak({
+    setRestoreStreakData({
       data: restoreStreakDate,
       mode,
       name:
         mode === "restore" ? "Chế độ khôi phục chuỗi" : "Chế độ nối tiếp chuỗi",
     });
-  }, [mode, restoreStreakDate, setRestoreStreak]);
+  }, [mode, restoreStreakDate, setRestoreStreakData]);
+
+  // useEffect(() => {
+  //   console.log({
+  //     restoreStreakDate,
+  //     currentDate,
+  //     previousDate,
+  //     isCurrentDate,
+  //     isFutureDate,
+  //   });
+  // }, [restoreStreakDate, currentDate]);
 
   if (!hasAccess) {
     return (
@@ -297,6 +309,19 @@ export default function RestoreStreak() {
             </span>
           </label>
         </WarningBlock>
+
+        {isCurrentDate && (
+          <WarningBlock title="⚠️ Bạn đang chọn ngày hiện tại">
+            <p className="text-2xl font-semibold">
+              Khôi phục cho ngày hiện tại?! Thật là điên dồ hãy chắc những gì
+              bạn đang làm!
+            </p>
+            <p className="text-sm opacity-80 mt-2">
+              Ngày bạn chọn (<b>{restoreStreakDate}</b>) bằng ngày hiện tại (
+              <b>{currentDate}</b>).
+            </p>
+          </WarningBlock>
+        )}
 
         {isFutureDate && (
           <WarningBlock title="⚠️ Bạn đang chọn ngày tương lai">

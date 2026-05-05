@@ -137,10 +137,11 @@ export const getOutgoingRequestFriend = async (
 
 export const SendRequestToFriend = async (uid) => {
   try {
-    const response = await api.post("/locket/sendFriendRequestV2", {
+    const response = await api.post("https://api-beta.locket-dio.com/locket/sendFriendRequestV2", {
       data: { friendUid: uid },
     });
-    return response.data?.result?.data;
+    
+    return response.data?.data?.result?.data;
   } catch (error) {
     console.error("❌ Lỗi khi tìm bạn:", error.response?.data || error.message);
     throw error;

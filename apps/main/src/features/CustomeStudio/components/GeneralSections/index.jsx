@@ -1,58 +1,70 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { PiClockFill } from "react-icons/pi";
 import { useApp } from "@/context/AppContext";
 import { useBatteryStatus } from "@/utils";
-import { useLocationOptions, useLocationWeather } from "@/utils/enviroment";
 import { getInfoMusicByUrl } from "@/services";
-import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
+import {
+  SonnerError,
+  SonnerInfo,
+  SonnerSuccess,
+} from "@/components/ui/SonnerToast";
 import FormMusicPoup from "@/features/PoupScreen/FormMusicPoup";
 import FormReviewPoup from "@/features/PoupScreen/FormReviewPoup";
 import { useOverlayEditorStore, useStreakStore } from "@/stores";
+import IconRenderer from "@/features/OverlayRender/iconRenders";
+import { getCaptionStyle } from "@/helpers/styleHelpers";
+import { useCurrentWeather, useCurrentLocation } from "../../hooks";
 
 export default function GeneralThemes({ title }) {
   const { navigation } = useApp();
   const { setIsFilterOpen } = navigation;
-  const { addressOptions } = useLocationOptions();
-  const { weather } = useLocationWeather();
+
+  const { addressOptions } = useCurrentLocation();
+  const weatherInfo = useCurrentWeather();
+
   const { level, charging } = useBatteryStatus();
-
   const streak = useStreakStore((s) => s.streak);
-
-  const [time, setTime] = useState(() => new Date());
-  const [savedAddressOptions, setSavedAddressOptions] = useState([]);
-
-  const [loading, setLoading] = useState(false);
-
-  // --- Popup States ---
-  const [popupActive, setPopupActive] = useState(false); // hiệu ứng hiển thị
-  const [formType, setFormType] = useState(""); // "spotify" | "apple"
-
-  useEffect(() => {
-    if (
-      addressOptions.length > 0 &&
-      JSON.stringify(addressOptions) !== JSON.stringify(savedAddressOptions)
-    ) {
-      setSavedAddressOptions(addressOptions);
-    }
-  }, [addressOptions, savedAddressOptions]);
-
-  useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const formattedTime = time.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
   const updateOverlayEditor = useOverlayEditorStore(
     (s) => s.updateOverlayEditor,
   );
   const resetOverlayEditor = useOverlayEditorStore((s) => s.resetOverlayEditor);
 
-  // === Overlay Apply ===
-  const handleCustomeSelect = (data) => {
+  const [time, setTime] = useState(new Date());
+  const [savedAddressOptions, setSavedAddressOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // popup states
+  const [popupActive, setPopupActive] = useState(false);
+  const [formType, setFormType] = useState("");
+  const [reviewOpen, setReviewOpen] = useState(false);
+
+  // --- EFFECTS ---
+  useEffect(() => {
+    if (
+      addressOptions.length &&
+      JSON.stringify(addressOptions) !== JSON.stringify(savedAddressOptions)
+    ) {
+      setSavedAddressOptions(addressOptions);
+    }
+  }, [addressOptions]);
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedTime = useMemo(
+    () =>
+      time.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    [time],
+  );
+
+  // --- CORE APPLY ---
+  const applyOverlay = (data) => {
     resetOverlayEditor();
 
     updateOverlayEditor({
@@ -64,10 +76,11 @@ export default function GeneralThemes({ title }) {
       caption: data.caption || "",
       type: data.type || "default",
     });
+
     setIsFilterOpen(false);
   };
 
-  // === MUSIC FORM ===
+  // --- MUSIC ---
   const openMusicForm = (type) => {
     setFormType(type);
     requestAnimationFrame(() => setPopupActive(true));
@@ -75,9 +88,7 @@ export default function GeneralThemes({ title }) {
 
   const closeMusicForm = () => {
     setPopupActive(false);
-    setTimeout(() => {
-      setFormType("");
-    }, 300);
+    setTimeout(() => setFormType(""), 300);
   };
 
   const handleMusicSubmit = async (link) => {
@@ -88,19 +99,19 @@ export default function GeneralThemes({ title }) {
         formType === "apple" ? "apple" : "spotify",
       );
 
-      handleCustomeSelect({
+      applyOverlay({
         overlay_id: "music",
         caption: music.title,
         text: music.title,
         icon: { data: music.image, type: "image", source: "url" },
         type: "music",
-        payload: {
-          ...music,
-        },
+        payload: music,
       });
 
-      const musicType = formType === "apple" ? "Apple Music" : "Spotify";
-      SonnerSuccess(`${musicType} by Dio`, "Lấy nhạc thành công");
+      SonnerSuccess(
+        `${formType === "apple" ? "Apple Music" : "Spotify"} by Dio`,
+        "Lấy nhạc thành công",
+      );
 
       closeMusicForm();
     } catch {
@@ -110,104 +121,94 @@ export default function GeneralThemes({ title }) {
     }
   };
 
-  const [reviewOpen, setReviewOpen] = useState(false);
-
-  // === REVIEW FORM ===
-  const openReviewForm = () => {
-    setReviewOpen(true);
-  };
-
-  const closeReviewForm = () => {
+  // --- REVIEW ---
+  const handleReviewSubmit = ({ rating, text }) => {
+    applyOverlay({
+      overlay_id: "review",
+      caption: text,
+      text,
+      type: "review",
+      payload: { rating, comment: text },
+    });
     setReviewOpen(false);
   };
 
-  const handleReviewSubmit = ({ rating, text }) => {
-    handleCustomeSelect({
-      overlay_id: "review",
-      icon: {},
-      caption: text,
-      text: text,
-      type: "review",
-      payload: {
-        rating,
-        comment: text,
-      },
-    });
+  // --- ACTION MAP ---
+  const actions = {
+    default: () => applyOverlay({ type: "default" }),
 
-    closeReviewForm();
+    music: () => openMusicForm("spotify"),
+    music_apple: () => openMusicForm("apple"),
+
+    review: () => setReviewOpen(true),
+
+    time: () =>
+      applyOverlay({
+        overlay_id: "time",
+        icon: { color: "#FFFFFFCC", data: "clock.fill", type: "sf_symbol" },
+        caption: formattedTime,
+        text: formattedTime,
+        type: "time",
+      }),
+
+    weather: () => {
+      if (!weatherInfo || !weatherInfo.payload) {
+        SonnerInfo("Không có dữ liệu thời tiết!");
+        return;
+      }
+
+      applyOverlay({
+        overlay_id: "weather",
+        caption: weatherInfo?.text || {},
+        type: "weather",
+        ...weatherInfo,
+      });
+    },
+
+    battery: () =>
+      applyOverlay({
+        overlay_id: "battery",
+        caption: level || "50",
+        icon: charging,
+        text: `${level || "50"}%`,
+        type: "battery",
+      }),
+
+    heart: () =>
+      applyOverlay({
+        overlay_id: "heart",
+        caption: "inlove",
+        text: "inlove",
+        icon: { color: "#FF0000CC", data: "heart.fill", type: "sf_symbol" },
+        type: "heart",
+      }),
+
+    streak: () =>
+      applyOverlay({
+        overlay_id: "streak",
+        icon: { color: "#00000099", data: "flame.fill", type: "sf_symbol" },
+        background: { colors: ["#FFD25F", "#EAA900"] },
+        caption: streak?.count || "0",
+        text: String(streak?.count || "0"),
+        type: "streak",
+        text_color: "#00000099",
+      }),
   };
 
-  // === MAIN BUTTON ACTIONS ===
-  const handleClick = (id) => {
-    switch (id) {
-      case "default":
-        handleCustomeSelect({ type: "default" });
-        break;
-      case "music":
-        openMusicForm("spotify");
-        break;
-      case "music_apple":
-        openMusicForm("apple");
-        break;
-      case "review":
-        openReviewForm();
-        break;
-      case "time":
-        handleCustomeSelect({
-          overlay_id: "time",
-          icon: { color: "#FFFFFFCC", data: "clock.fill", type: "sf_symbol" },
-          caption: formattedTime,
-          text: formattedTime,
-          type: "time",
-        });
-        break;
-      case "weather":
-        handleCustomeSelect({
-          overlay_id: "weather",
-          caption: weather || {},
-          payload: {
-            ...weather,
-            temperature: weather?.temperature,
-            cloud_cover: weather?.cloud_cover,
-            is_daylight: weather?.is_daylight,
-            wk_condition: weather?.wk_condition,
-          },
-          type: "weather",
-        });
-        break;
-      case "battery":
-        handleCustomeSelect({
-          overlay_id: "battery",
-          caption: level || "50",
-          icon: charging,
-          text: `${level || "50"}%`,
-          type: "battery",
-        });
-        break;
-      case "heart":
-        handleCustomeSelect({
-          overlay_id: "heart",
-          caption: "inlove",
-          text: "inlove",
-          icon: { color: "#FF0000CC", data: "heart.fill", type: "sf_symbol" },
-          type: "heart",
-        });
-      case "streak":
-        handleCustomeSelect({
-          overlay_id: "streak",
-          icon: { color: "#00000099", data: "flame.fill", type: "sf_symbol" },
-          background: { colors: ["#FFD25F", "#EAA900"] },
-          caption: streak?.count || "0",
-          text: String(streak?.count || "0"),
-          type: "streak",
-          text_color: "#00000099",
-        });
-        break;
-      default:
-        break;
-    }
+  const handleClick = (id) => actions[id]?.();
+
+  // --- MUSIC META (fix thiếu props modal) ---
+  const musicMeta = {
+    icon:
+      formType === "apple" ? (
+        <img src="./svg/lcd-empty-logo.svg" className="w-8 h-8" />
+      ) : (
+        <img src="./icons/spotify_icon.png" className="w-8 h-8" />
+      ),
+    title: `Nhập link ${formType === "apple" ? "Apple Music" : "Spotify"}`,
   };
 
+  // --- BUTTONS ---
   const buttons = [
     {
       id: "default",
@@ -225,6 +226,13 @@ export default function GeneralThemes({ title }) {
       label: "Apple Music",
     },
     {
+      id: "weather",
+      icon: <IconRenderer icon={weatherInfo.icon} />,
+      background: weatherInfo.background.colors,
+      color: "#FFFFFF",
+      label: weatherInfo?.text || "Thời tiết",
+    },
+    {
       id: "review",
       icon: <img src="./icons/star_icon.png" className="w-5 h-5 mr-1" />,
       label: "Review",
@@ -233,24 +241,6 @@ export default function GeneralThemes({ title }) {
       id: "time",
       icon: <PiClockFill className="w-6 h-6 mr-1 rotate-270" />,
       label: formattedTime,
-    },
-    {
-      id: "weather",
-      icon: (
-        <img
-          src={
-            weather?.icon
-              ? `https:${weather.icon}`
-              : "./icons/sun_max_indicator.png"
-          }
-          alt="Weather"
-          className="w-6 h-6 mr-1"
-        />
-      ),
-      label:
-        weather?.temp_c_rounded !== undefined
-          ? `${weather.temp_c_rounded}°C`
-          : "Thời tiết",
     },
     {
       id: "streak",
@@ -281,30 +271,29 @@ export default function GeneralThemes({ title }) {
           </div>
         )}
 
-        {/* --- BUTTON GRID --- */}
         <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
           {buttons.map((btn) => (
             <button
               key={btn.id}
               onClick={() => handleClick(btn.id)}
-              style={getButtonStyle(btn)}
-              className={`flex flex-col whitespace-nowrap
-    backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto
-    rounded-3xl font-semibold justify-center
-    ${!btn.background ? "bg-base-200 dark:bg-white/30" : ""}
-    `}
+              style={{ ...getCaptionStyle(btn.background, btn.color) }}
+              className={`flex flex-col whitespace-nowrap backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center ${
+                !btn.background ? "bg-base-200 dark:bg-white/30" : ""
+              }`}
             >
               <span className="text-base flex flex-row items-center gap-1">
                 {btn.icon}
+
                 {btn.id === "location" ? (
                   <div className="relative w-max">
                     <div className="cursor-pointer select-none">
                       {savedAddressOptions[0] || "Vị trí"}
                     </div>
+
                     <select
                       className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
                       onChange={(e) =>
-                        handleCustomeSelect({
+                        applyOverlay({
                           preset_id: "location",
                           caption: e.target.value,
                           type: "location",
@@ -329,24 +318,18 @@ export default function GeneralThemes({ title }) {
           ))}
         </div>
       </div>
-      {/* === POPUP MUSIC FORM === */}
+
+      {/* POPUP MUSIC */}
       <FormMusicPoup
         open={popupActive}
         onClose={closeMusicForm}
         onConfirm={handleMusicSubmit}
         loading={loading}
         formType={formType}
-        icon={
-          formType === "apple" ? (
-            <img src="./svg/lcd-empty-logo.svg" className="w-8 h-8" />
-          ) : (
-            <img src="./icons/spotify_icon.png" className="w-8 h-8" />
-          )
-        }
-        title={`Nhập link ${formType === "apple" ? "Apple Music" : "Spotify"}`}
+        {...musicMeta}
       />
 
-      {/* === POPUP REVIEW FORM === */}
+      {/* POPUP REVIEW */}
       <FormReviewPoup
         open={reviewOpen}
         onClose={() => setReviewOpen(false)}
@@ -356,28 +339,3 @@ export default function GeneralThemes({ title }) {
     </>
   );
 }
-
-const getButtonStyle = (btn) => {
-  if (!btn.background) return {};
-
-  if (Array.isArray(btn.background)) {
-    return {
-      background: `linear-gradient(to bottom, ${btn.background[0]}, ${btn.background[1]})`,
-      color: btn.color || "#fff",
-    };
-  }
-
-  if (btn.background.startsWith("url")) {
-    return {
-      backgroundImage: btn.background,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      color: btn.color || "#fff",
-    };
-  }
-
-  return {
-    background: btn.background,
-    color: btn.color || "#fff",
-  };
-};

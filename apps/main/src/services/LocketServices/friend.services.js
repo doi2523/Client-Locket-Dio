@@ -113,3 +113,35 @@ export const toggleHiddenFriend = async (uid) => {
     uid,
   };
 };
+
+// Hàm lấy trạng thái bạn bè
+export const getFriendshipStatus = async (eqfriend) => {
+  try {
+    const body = {
+      data: {
+        user_id: eqfriend,
+      },
+    };
+
+    const res = await instanceLocketV2.post("/getFriendshipStatus", body);
+
+    switch (res.data?.result) {
+      case "incoming-request":
+        return "INCOMING";
+      case "outgoing-request":
+        return "OUTGOING";
+      case "friends":
+        return "FRIENDS";
+      case "none":
+        return "NONE";
+      default:
+        return "UNKNOWN";
+    }
+  } catch (error) {
+    console.error(
+      "❌ Lỗi khi get data:",
+      error.response?.data || error.message,
+    );
+    throw error;
+  }
+};

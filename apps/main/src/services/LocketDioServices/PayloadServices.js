@@ -10,17 +10,22 @@ const determineRecipients = (audience, selectedRecipients, localId) => {
   // Trường hợp public hoặc khác trả về mảng rỗng
   return [];
 };
-//Bản chính mới nhất
-export const createRequestPayloadV5 = async (
-  selectedFile,
-  previewType,
-  postOverlay,
-  audience,
-  selectedRecipients,
-) => {
+
+export const createRequestPayloadV4 = async (selectedFile, previewType) => {
   try {
     const { localId } = getToken() || {};
-    const isStreakToday = useStreakStore.getState().isStreakUpdatedToday();
+
+    const restoreStreakData = usePostStore.getState().restoreStreakData;
+
+    const overlayData = useOverlayEditorStore.getState().overlayData;
+
+    const audience = usePostStore.getState().audience;
+    const selectedRecipients = usePostStore.getState().selectedRecipients;
+
+    if (!restoreStreakData) {
+      SonnerWarning("Dữ liệu khôi phục không hợp lệ vui lòng chọn lại!");
+      return null;
+    }
 
     if (!localId) {
       SonnerWarning("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
@@ -43,92 +48,21 @@ export const createRequestPayloadV5 = async (
       type: previewType,
     };
 
-    // Chuẩn bị dữ liệu tùy chọn (caption, overlay, v.v.)
-    const optionsData = {
-      caption: postOverlay.caption,
-      overlay_id: postOverlay.overlay_id,
-      type: postOverlay.type,
-      icon: postOverlay.icon,
-      text_color: postOverlay.text_color,
-      color_top: postOverlay.color_top,
-      color_bottom: postOverlay.color_bottom,
+    const optionsDataObj = {
+      ...overlayData,
       audience, // Gắn audience vào options luôn
       recipients: determineRecipients(audience, selectedRecipients, localId),
-      music: postOverlay?.music || "",
-      isStreaktoday: isStreakToday, //False khi chưa có đăng chuỗi ngày hôm nay
-    };
-
-    // Tạo payload cuối cùng
-    const payload = {
-      // userData: { idToken: idToken, localId },
-      options: optionsData,
-      model: "Version-UploadmediaV3.1",
-      mediaInfo,
-      contentType: previewType,
-    };
-
-    return payload;
-  } catch (error) {
-    console.error("Lỗi khi tạo payload:", error);
-    throw error;
-  }
-};
-
-export const createRequestPayloadV4 = async (
-  selectedFile,
-  previewType,
-  postOverlay,
-  restoreStreak,
-  audience,
-  selectedRecipients,
-) => {
-  try {
-    const { localId } = getToken() || {};
-
-    if (!localId) {
-      SonnerWarning("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
-      return null;
-    }
-    // Upload file & chuẩn bị thông tin media
-    const fileInfo = await uploadFileAndGetInfoR2(
-      selectedFile,
-      previewType,
-      localId,
-    );
-    // console.log(fileInfo);
-
-    const mediaInfo = {
-      url: fileInfo.downloadURL,
-      path: fileInfo.metadata.path, // đường dẫn đầy đủ trong Storage
-      name: fileInfo.metadata.name, // tên file
-      size: fileInfo.metadata.size, // kích thước file (bytes)
-      uploadedAt: fileInfo.metadata.uploadedAt, // thời gian tạo
-      type: previewType,
-    };
-
-    // Chuẩn bị dữ liệu tùy chọn (caption, overlay, v.v.)
-    const optionsData = {
-      caption: postOverlay.caption,
-      overlay_id: postOverlay.overlay_id,
-      type: postOverlay.type,
-      icon: postOverlay.icon,
-      text_color: postOverlay.text_color,
-      color_top: postOverlay.color_top,
-      color_bottom: postOverlay.color_bottom,
-      audience, // Gắn audience vào options luôn
-      recipients: determineRecipients(audience, selectedRecipients, localId),
-      music: postOverlay?.music || "",
     };
 
     // Chỉ thêm restoreStreakDate nếu mode là "restore"
-    if (restoreStreak?.mode === "restore") {
-      optionsData.restoreStreakDate = restoreStreak;
+    if (restoreStreakData?.mode === "restore") {
+      optionsDataObj.restoreStreakDate = restoreStreakData;
+      optionsDataObj.restoreStreakData = restoreStreakData;
     }
 
     // Tạo payload cuối cùng
     const payload = {
-      // userData: { idToken: idToken, localId },
-      options: optionsData,
+      optionsData: optionsDataObj,
       model: "Version-UploadmediaV3.1",
       mediaInfo,
       contentType: previewType,

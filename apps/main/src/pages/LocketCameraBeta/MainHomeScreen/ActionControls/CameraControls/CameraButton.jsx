@@ -7,7 +7,7 @@ import { detectAppEnvironment } from "@/utils/logic/checkIfRunningAsPWA";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
 
 const CameraButton = () => {
-  const { camera, post, useloading } = useApp();
+  const { camera, post } = useApp();
   const {
     videoRef,
     streamRef,
@@ -30,7 +30,6 @@ const CameraButton = () => {
     setZoomLevel,
   } = camera;
   const { preview, setPreview, setSelectedFile, setSizeMedia } = post;
-  const { setIsCaptionLoading, uploadLoading, setUploadLoading } = useloading;
 
   const holdStartTimeRef = useRef(null);
   const holdTimeoutRef = useRef(null);
@@ -150,7 +149,6 @@ const CameraButton = () => {
         setPreview({ type: "video", data: videoUrl });
         setSelectedFile(file);
         setCameraActive(false);
-        setIsCaptionLoading(true);
         stopCamera();
         setLoading(false);
 
@@ -310,7 +308,6 @@ const CameraButton = () => {
           setSizeMedia(fileSizeInMB.toFixed(2));
 
           setSelectedFile(file);
-          setIsCaptionLoading(true);
           setCameraActive(false);
         }
       },
