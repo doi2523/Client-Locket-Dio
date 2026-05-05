@@ -67,12 +67,12 @@ const QueueViewer = () => {
   if (!queueInfo && !isAnimating) return null;
 
   const mediaType = queueInfo?.mediaInfo?.type;
-  const mediaUrl = queueInfo?.mediaInfo?.url;
-  const caption = queueInfo?.caption ||  queueInfo?.text || "";
-  const icon = queueInfo?.options?.icon || {};
+  const mediaUrl = queueInfo?.mediaInfo?.downloadURL;
+  const caption = queueInfo?.optionsData?.text ||  queueInfo?.text || "";
+  const icon = queueInfo?.optionsData?.icon || {};
 
   const background = queueInfo?.optionsData?.colors || []
-  const textColor = queueInfo?.options?.text_color || "#ffffff";
+  const textColor = queueInfo?.optionsData?.text_color || "#ffffff";
 
   return (
     <div
