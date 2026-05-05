@@ -185,12 +185,14 @@ export default function ManageCaption() {
                 }}
               >
                 <span className="text-xl flex items-center gap-2">
-                  <img
-                    src={preset.icon.data}
-                    alt="icon"
-                    className="w-7 h-7 rounded-md object-cover"
-                  />
-                  {preset.text}
+                  {preset.icon.data  && (
+                    <img
+                      src={preset.icon.data}
+                      alt="icon"
+                      className="w-7 h-7 rounded-md object-cover"
+                    />
+                  )}
+                  {preset.text ? preset.text : "Caption"}
                 </span>
               </button>
             </div>
