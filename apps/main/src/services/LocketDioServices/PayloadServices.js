@@ -40,11 +40,7 @@ export const createRequestPayloadV4 = async (selectedFile, previewType) => {
     // console.log(fileInfo);
 
     const mediaInfo = {
-      url: fileInfo.downloadURL,
-      path: fileInfo.metadata.path, // đường dẫn đầy đủ trong Storage
-      name: fileInfo.metadata.name, // tên file
-      size: fileInfo.metadata.size, // kích thước file (bytes)
-      uploadedAt: fileInfo.metadata.uploadedAt, // thời gian tạo
+      ...fileInfo,
       type: previewType,
     };
 
@@ -99,11 +95,7 @@ export const createRequestPayloadV6 = async (selectedFile, previewType) => {
     // console.log(fileInfo);
 
     const mediaInfo = {
-      url: fileInfo.downloadURL,
-      path: fileInfo.metadata.path, // đường dẫn đầy đủ trong Storage
-      name: fileInfo.metadata.name, // tên file
-      size: fileInfo.metadata.size, // kích thước file (bytes)
-      uploadedAt: fileInfo.metadata.uploadedAt, // thời gian tạo
+      ...fileInfo,
       type: previewType,
     };
 

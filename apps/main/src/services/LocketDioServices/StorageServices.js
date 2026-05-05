@@ -25,10 +25,10 @@ export const uploadFileAndGetInfoR2 = async (
   // === Bước 1: Gọi BE để lấy Presigned URL
   const res = await instanceBaseStorage.post("/api/presignedV3", body);
 
-  const { url, publicURL, key, expiresIn } = res.data.data;
+  const { url, uploadUrl, key, expiresIn } = res.data.data;
 
   // === Bước 2: Upload file qua presigned URL
-  const uploadRes = await fetch(url, {
+  const uploadRes = await fetch(uploadUrl, {
     method: "PUT",
     headers: {
       "Content-Type": file.type,
@@ -40,14 +40,5 @@ export const uploadFileAndGetInfoR2 = async (
     throw new Error("❌ Upload to R2 failed");
   }
 
-  return {
-    downloadURL: publicURL,
-    metadata: {
-      name: fileName,
-      size: file.size,
-      type: file.type,
-      uploadedAt: new Date().toISOString(),
-      path: key,
-    },
-  };
+  return res.data.data;
 };
