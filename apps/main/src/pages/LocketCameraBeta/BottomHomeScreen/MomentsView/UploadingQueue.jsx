@@ -45,7 +45,7 @@ const UploadingQueue = () => {
           const media = item.mediaInfo;
           const status = item.status || "uploading";
           const isVideo = media?.type === "video";
-          const url = media?.url;
+          const url = media?.publicURL;
 
           return (
             <div

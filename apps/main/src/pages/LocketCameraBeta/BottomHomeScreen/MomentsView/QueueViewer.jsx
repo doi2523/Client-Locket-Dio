@@ -67,7 +67,7 @@ const QueueViewer = () => {
   if (!queueInfo && !isAnimating) return null;
 
   const mediaType = queueInfo?.mediaInfo?.type;
-  const mediaUrl = queueInfo?.mediaInfo?.downloadURL;
+  const mediaUrl = queueInfo?.mediaInfo?.publicURL;
   const caption = queueInfo?.optionsData?.text ||  queueInfo?.text || "";
   const icon = queueInfo?.optionsData?.icon || {};
 
