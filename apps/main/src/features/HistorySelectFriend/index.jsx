@@ -115,72 +115,67 @@ function HistorySelectFriend({
               </svg>
             </div>
             <div className="space-y-1.5 max-h-90 overflow-y-auto pt-3 px-4">
-              {filteredFriends && filteredFriends.length > 0 ? (
-                <>
-                  {/* Mọi người */}
-                  <div
-                    onClick={() => handleSelectAll()}
-                    className="flex items-center bg-base-200 p-2 justify-between hover:bg-base-200 rounded-2xl transition cursor-pointer active:scale-97 select-none"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center">
-                        <FaUserFriends className="w-6 h-6" />
-                      </div>
-                      <span className="text-base font-medium">Mọi người</span>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-base-content" />
+              {/* Mọi người */}
+              <div
+                onClick={() => handleSelectAll()}
+                className="flex items-center bg-base-200 p-2 justify-between hover:bg-base-200 rounded-2xl transition cursor-pointer active:scale-97 select-none"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-full bg-base-300 flex items-center justify-center">
+                    <FaUserFriends className="w-6 h-6" />
                   </div>
-                  {/* Bạn */}
+                  <span className="text-base font-medium">Mọi người</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-base-content" />
+              </div>
+
+              {/* Bạn */}
+              <div
+                onClick={() => handleSelectMe()}
+                className="flex bg-base-200 p-2 items-center justify-between hover:bg-base-200 rounded-2xl transition cursor-pointer active:scale-97 select-none"
+              >
+                <div className="flex items-center gap-3">
+                  <img
+                    src={user?.profilePicture || "/images/default_profile.png"}
+                    alt="Bạn"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/images/default_profile.png";
+                    }}
+                    className="w-10 h-10 rounded-full border-[2.5px] p-0.5 border-base-300 object-cover"
+                  />
+                  <span className="text-base font-medium">Bạn</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-base-content" />
+              </div>
+
+              {/* Danh sách bạn bè */}
+              {filteredFriends.length > 0 ? (
+                filteredFriends.map((friend) => (
                   <div
-                    onClick={() => handleSelectMe()}
+                    key={friend.uid}
+                    onClick={() => handleSelectFriend(friend)}
                     className="flex bg-base-200 p-2 items-center justify-between hover:bg-base-200 rounded-2xl transition cursor-pointer active:scale-97 select-none"
                   >
                     <div className="flex items-center gap-3">
                       <img
-                        src={
-                          user?.profilePicture || "/images/default_profile.png"
-                        }
-                        alt="Bạn"
+                        src={friend.profilePic || "/images/default_profile.png"}
+                        alt={friend.name || "avatar"}
+                        className="w-10 h-10 rounded-full border-[2.5px] p-0.5 border-amber-400 object-cover"
                         onError={(e) => {
-                          e.target.onerror = null; // tránh loop
+                          e.target.onerror = null;
                           e.target.src = "/images/default_profile.png";
                         }}
-                        className="w-10 h-10 rounded-full border-[2.5px] p-0.5 border-base-300 object-cover"
                       />
-                      <span className="text-base font-medium">Bạn</span>
+                      <span className="text-base font-medium">
+                        {friend.firstName} {friend.lastName}
+                      </span>
                     </div>
                     <ChevronRight className="w-5 h-5 text-base-content" />
                   </div>
-
-                  {/* Danh sách bạn bè */}
-                  {filteredFriends.map((friend) => (
-                    <div
-                      key={friend.uid}
-                      onClick={() => handleSelectFriend(friend)}
-                      className="flex bg-base-200 p-2 items-center justify-between hover:bg-base-200 rounded-2xl transition cursor-pointer active:scale-97 select-none"
-                    >
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={
-                            friend.profilePic || "/images/default_profile.png"
-                          }
-                          alt={friend.name || "avatar"}
-                          className="w-10 h-10 rounded-full border-[2.5px] p-0.5 border-amber-400 object-cover"
-                          onError={(e) => {
-                            e.target.onerror = null; // tránh loop
-                            e.target.src = "/images/default_profile.png";
-                          }}
-                        />
-                        <span className="text-base font-medium">
-                          {friend.firstName} {friend.lastName}
-                        </span>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-base-content" />
-                    </div>
-                  ))}
-                </>
+                ))
               ) : (
-                <div className="text-gray-400 italic text-sm text-center mt-6">
+                <div className="text-gray-400 italic text-sm text-center mt-4">
                   Không có bạn bè
                 </div>
               )}
