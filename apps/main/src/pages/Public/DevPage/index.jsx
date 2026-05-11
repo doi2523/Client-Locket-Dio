@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Camera, Cloud, Copy, Monitor, Thermometer } from "lucide-react";
-import { useLocationWeather } from "@/utils";
+import { useCurrentWeatherV2 } from "@/features/CustomeStudio/hooks";
 
 const DevPage = () => {
   const [devices, setDevices] = useState([]);
@@ -11,8 +11,7 @@ const DevPage = () => {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
 
-  // Mock weather data since useLocationWeather isn't available
-  const { location, weather } = useLocationWeather();
+  const weatherInfo = useCurrentWeatherV2();
 
   // Lấy danh sách thiết bị và khởi động camera mặc định
   useEffect(() => {
@@ -180,7 +179,7 @@ const DevPage = () => {
                       onClick={() =>
                         copyToClipboard(
                           JSON.stringify(devices, null, 2),
-                          "Device info"
+                          "Device info",
                         )
                       }
                       className="flex items-center px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm"
@@ -202,39 +201,52 @@ const DevPage = () => {
               <div className="space-y-6">
                 {/* Weather Display */}
                 <div className="bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg p-6 text-white">
-                  {weather && location ? (
+                  {weatherInfo ? (
                     <div className="flex items-center justify-between">
-                      <div>
-                        <div className="flex items-center mb-2">
+                      <div className="w-full">
+                        <div className="flex items-center mb-4">
                           <img
-                            src={`https:${weather.icon}`}
-                            alt={weather.condition}
+                            src={`https:${weatherInfo?.current?.condition?.icon}`}
+                            alt={weatherInfo?.current?.condition?.text}
                             className="w-16 h-16 mr-4"
                           />
+
                           <div>
                             <h2 className="text-3xl font-bold">
-                              {weather.temp_c}°C
+                              {weatherInfo?.current?.temp_c}°C
                             </h2>
-                            <p className="text-blue-100">{weather.condition}</p>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4 mt-4 text-base-content">
-                          <div className="bg-base-200 bg-opacity-20 rounded-lg p-3">
-                            <div className="flex items-center">
-                              <Thermometer size={20} className="mr-2" />
-                              <span className="text-sm">Temperature</span>
-                            </div>
-                            <p className="text-xl font-semibold">
-                              {weather.temperature}°F
+
+                            <p className="text-blue-100">
+                              {weatherInfo?.current?.condition?.text}
+                            </p>
+
+                            <p className="text-sm text-blue-200">
+                              {weatherInfo?.location?.name},{" "}
+                              {weatherInfo?.location?.country}
                             </p>
                           </div>
-                          <div className="bg-base-300 bg-opacity-20 rounded-lg p-3">
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 mt-4 text-white">
+                          <div className="bg-white/20 rounded-lg p-3">
+                            <div className="flex items-center">
+                              <Thermometer size={20} className="mr-2" />
+                              <span className="text-sm">Feels Like</span>
+                            </div>
+
+                            <p className="text-xl font-semibold">
+                              {weatherInfo?.current?.feelslike_c}°C
+                            </p>
+                          </div>
+
+                          <div className="bg-white/20 rounded-lg p-3">
                             <div className="flex items-center">
                               <Cloud size={20} className="mr-2" />
                               <span className="text-sm">Cloud Cover</span>
                             </div>
+
                             <p className="text-xl font-semibold">
-                              {Math.round(weather.cloud_cover * 100)}%
+                              {weatherInfo?.current?.cloud}%
                             </p>
                           </div>
                         </div>
@@ -246,6 +258,7 @@ const DevPage = () => {
                         size={48}
                         className="mb-4 animate-pulse text-white/70"
                       />
+
                       <p className="text-white/80 text-lg">
                         Loading weather data...
                       </p>
@@ -262,8 +275,8 @@ const DevPage = () => {
                     <button
                       onClick={() =>
                         copyToClipboard(
-                          JSON.stringify(weather || {}, null, 2),
-                          "Weather data"
+                          JSON.stringify(weatherInfo || {}, null, 2),
+                          "Weather data",
                         )
                       }
                       className="flex items-center px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm"
@@ -275,9 +288,9 @@ const DevPage = () => {
                   <div className="bg-white rounded-md p-3 max-h-64 overflow-auto">
                     <pre className="text-sm text-gray-700">
                       {JSON.stringify(
-                        weather || { message: "No data yet" },
+                        weatherInfo || { message: "No data yet" },
                         null,
-                        2
+                        2,
                       )}
                     </pre>
                   </div>

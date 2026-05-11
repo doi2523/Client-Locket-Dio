@@ -13,14 +13,14 @@ import FormReviewPoup from "@/features/PoupScreen/FormReviewPoup";
 import { useOverlayEditorStore, useStreakStore } from "@/stores";
 import IconRenderer from "@/features/OverlayRender/iconRenders";
 import { getCaptionStyle } from "@/helpers/styleHelpers";
-import { useCurrentWeather, useCurrentLocation } from "../../hooks";
+import { useCurrentWeatherV2, useCurrentLocation } from "../../hooks";
 
 export default function GeneralThemes({ title }) {
   const { navigation } = useApp();
   const { setIsFilterOpen } = navigation;
 
   const { addressOptions } = useCurrentLocation();
-  const weatherInfo = useCurrentWeather();
+  const weatherInfo = useCurrentWeatherV2();
 
   const { level, charging } = useBatteryStatus();
   const streak = useStreakStore((s) => s.streak);
