@@ -145,3 +145,20 @@ export const getFriendshipStatus = async (eqfriend) => {
     throw error;
   }
 };
+
+export const shareHistoryWithFriend = async (uid) => {
+  try {
+    const body = {
+      data: {
+        receiver_id: uid,
+      },
+    };
+
+    const response = await instanceLocketV2.post("shareHistory", body);
+
+    return response?.status === 200 || response?.data?.result?.status === 200;
+  } catch (error) {
+    console.error("shareHistoryWithFriend error:", error);
+    return false;
+  }
+};
