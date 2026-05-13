@@ -23,21 +23,6 @@ cleanupOutdatedCaches();
 
 // Điều hướng fallback cho SPA
 registerRoute(new NavigationRoute(createHandlerBoundToURL("index.html")));
-registerRoute(
-  ({ url, request }) =>
-    url.origin === "https://cdn.locket-dio.com" &&
-    request.destination === "font" &&
-    url.pathname.startsWith("/v1/fonts/"),
-  new CacheFirst({
-    cacheName: "dio-fonts-v1",
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 20,
-        maxAgeSeconds: 365 * 24 * 60 * 60,
-      }),
-    ],
-  })
-);
 
 registerRoute(
   ({ url, request }) =>

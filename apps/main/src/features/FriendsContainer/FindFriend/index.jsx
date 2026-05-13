@@ -13,14 +13,18 @@ import {
   getFriendshipStatus,
   SendRequestToCelebrity,
   SendRequestToFriend,
+  shareHistoryWithFriend,
 } from "@/services";
 import BouncyLoader from "@/components/ui/Loading/Bouncy";
 import { useFeatureVisible } from "@/hooks/useFeature";
 import { useNavigate } from "react-router-dom";
+import { useShareHistory } from "@/stores";
 
 const FindFriend = () => {
   const navigate = useNavigate();
   const isSendRequest = useFeatureVisible("send_friend_request");
+
+  const { shareHistoryOn, toggleShareHistoryOn } = useShareHistory();
 
   const [loading, setLoading] = useState(false);
   const [searchTermFind, setSearchTermFind] = useState("");
@@ -92,6 +96,12 @@ const FindFriend = () => {
         if (res?.status === "real-user") {
           SonnerSuccess("Đã gửi yêu cầu!");
           setFriendshipStatus("OUTGOING");
+          if (shareHistoryOn) {
+            SonnerInfo(
+              "Lịch sử trò chuyện sẽ được chia sẻ nếu họ chấp nhận yêu cầu.",
+            );
+            await shareHistoryWithFriend(foundUser.uid);
+          }
         } else {
           SonnerWarning("Gửi thất bại");
         }
@@ -111,6 +121,24 @@ const FindFriend = () => {
         <FaSearchPlus size={22} /> Tìm kiếm ai đó?
       </h2>
       <p className="text-sm">Không nên spam quá nhiều.</p>
+
+      <div className="flex items-center justify-between py-3">
+        <div className="flex items-center gap-3">
+          <div>
+            <p className="font-medium">Chia sẻ lịch sử?</p>
+            <p className="text-sm text-base-content/60">
+              Tự động chia sẻ lịch sử ảnh trong 30 ngày gần đây cho họ.
+            </p>
+          </div>
+        </div>
+
+        <input
+          type="checkbox"
+          checked={shareHistoryOn}
+          onChange={toggleShareHistoryOn}
+          className="toggle toggle-secondary"
+        />
+      </div>
 
       <div className="flex gap-2 items-center">
         <SearchInput
