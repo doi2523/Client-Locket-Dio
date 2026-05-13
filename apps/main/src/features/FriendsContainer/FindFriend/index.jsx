@@ -15,8 +15,13 @@ import {
   SendRequestToFriend,
 } from "@/services";
 import BouncyLoader from "@/components/ui/Loading/Bouncy";
+import { useFeatureVisible } from "@/hooks/useFeature";
+import { useNavigate } from "react-router-dom";
 
 const FindFriend = () => {
+  const navigate = useNavigate();
+  const isSendRequest = useFeatureVisible("send_friend_request");
+
   const [loading, setLoading] = useState(false);
   const [searchTermFind, setSearchTermFind] = useState("");
   const [foundUser, setFoundUser] = useState(null);
@@ -52,17 +57,35 @@ const FindFriend = () => {
   const handleAddFriend = async () => {
     if (!foundUser || sending) return;
 
+    if (!isSendRequest) {
+      SonnerWarning(
+        "Tính năng bị khoá!",
+        "Nâng cấp gói để gửi yêu cầu kết bạn.",
+        {
+          action: {
+            label: "Nâng cấp",
+            onClick: () => {
+              navigate("/pricing");
+            },
+          },
+        },
+      );
+      return;
+    }
     try {
       setSending(true);
 
       if (foundUser?.celebrity) {
-        // const res = await SendRequestToCelebrity(foundUser.uid);
+        const res = await SendRequestToCelebrity(foundUser.uid);
 
-        // if (res?.success) {
-        //   SonnerSuccess("Gửi thành công!");
-        //   setFriendshipStatus("OUTGOING");
-        // }
-        SonnerWarning("Sắp hỗ trợ điều này");
+        if (res?.success) {
+          SonnerSuccess("Gửi thành công!");
+          setFriendshipStatus("OUTGOING");
+          setFoundUser((prev) => ({
+            ...prev,
+            friendship_status: "outgoing-follow-request",
+          }));
+        }
       } else {
         const res = await SendRequestToFriend(foundUser.uid);
 

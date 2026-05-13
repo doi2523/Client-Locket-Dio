@@ -1,5 +1,5 @@
-import { useReadReceipts, useUserSetting } from "@/stores";
-import { CheckCheck, Eye, UserRoundSearch, X } from "lucide-react";
+import { useReadReceipts, useShareHistory, useUserSetting } from "@/stores";
+import { CheckCheck, Eye, History, UserRoundSearch, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
@@ -29,6 +29,7 @@ const SettingPoup = ({ open, onClose }) => {
   const toggleAllowSearch = useUserSetting((s) => s.toggleAllowSearch);
 
   const { sendReadReceipts, toggleReadReceipts } = useReadReceipts();
+  const { shareHistoryOn, toggleShareHistoryOn } = useShareHistory();
 
   if (!showModal) return null;
 
@@ -80,6 +81,28 @@ const SettingPoup = ({ open, onClose }) => {
                   type="checkbox"
                   checked={showSeenMoments}
                   onChange={(e) => toggleSeenMoments()}
+                  className="toggle toggle-secondary"
+                />
+              </div>
+
+              <div className="flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl bg-base-300">
+                    <History className="w-5 h-5" />
+                  </div>
+
+                  <div>
+                    <p className="font-medium">Chia sẻ lịch sử</p>
+                    <p className="text-sm text-base-content/60">
+                      Tự động chia sẻ lịch sử ảnh trong 30 ngày gần đây cho họ.
+                    </p>
+                  </div>
+                </div>
+
+                <input
+                  type="checkbox"
+                  checked={shareHistoryOn}
+                  onChange={toggleShareHistoryOn}
                   className="toggle toggle-secondary"
                 />
               </div>
