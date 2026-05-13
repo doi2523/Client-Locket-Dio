@@ -9,6 +9,7 @@ export const useUserSetting = create(
       showSeenMoments: true,
       sendReadReceipts: true,
       allowSearch: true,
+      shareHistoryOn: false,
 
       // ===== ACTIONS =====
       toggleSeenMoments: () =>
@@ -19,6 +20,11 @@ export const useUserSetting = create(
       toggleReadReceipts: () =>
         set((state) => ({
           sendReadReceipts: !state.sendReadReceipts,
+        })),
+
+      toggleShareHistoryOn: () =>
+        set((state) => ({
+          shareHistoryOn: !state.shareHistoryOn,
         })),
 
       toggleAllowSearch: async () => {
@@ -43,19 +49,16 @@ export const useUserSetting = create(
           showSeenMoments: true,
           sendReadReceipts: true,
           allowSearch: true,
+          shareHistoryOn: false,
         }),
     }),
     {
-      name: "user-settings", // key trong localStorage
+      name: "user-settings",
     },
   ),
 );
 
-// const showSeenMoments = useUserSetting((s) => s.showSeenMoments);
-// const toggleSeenMoments = useUserSetting((s) => s.toggleSeenMoments);
-
-// const allowSearch = useUserSetting((s) => s.allowSearch);
-// const toggleAllowSearch = useUserSetting((s) => s.toggleAllowSearch);
+// ===== Hooks =====
 
 export const useReadReceipts = () => {
   const sendReadReceipts = useUserSetting((s) => s.sendReadReceipts);
@@ -66,3 +69,25 @@ export const useReadReceipts = () => {
     toggleReadReceipts,
   };
 };
+
+export const useShareHistory = () => {
+  const shareHistoryOn = useUserSetting((s) => s.shareHistoryOn);
+
+  const toggleShareHistoryOn = useUserSetting((s) => s.toggleShareHistoryOn);
+
+  return {
+    shareHistoryOn,
+    toggleShareHistoryOn,
+  };
+};
+
+// ===== Example =====
+
+// const shareHistoryOn = useUserSetting(
+//   (s) => s.shareHistoryOn
+// );
+
+// const toggleShareHistoryOn =
+//   useUserSetting(
+//     (s) => s.toggleShareHistoryOn
+//   );
