@@ -1,4 +1,4 @@
-console.log("[SW] Locket Dio SW v2.2.7.3636.555.4-6.3 - loaded");
+console.log("[SW] Locket Dio SW v2.2.7.5173.555.4-6.3 - loaded");
 import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching";
 import { registerRoute, NavigationRoute } from "workbox-routing";
 import { createHandlerBoundToURL } from "workbox-precaching";
@@ -22,8 +22,17 @@ console.log("[SW] started precache");
 cleanupOutdatedCaches();
 
 // Điều hướng fallback cho SPA
-registerRoute(new NavigationRoute(createHandlerBoundToURL("index.html")));
-
+registerRoute(
+  new NavigationRoute(
+    createHandlerBoundToURL("index.html"),
+    {
+      denylist: [
+        /^\/assets\//,
+        /\/[^/?]+\.[^/]+$/,
+      ],
+    }
+  )
+);
 registerRoute(
   ({ url, request }) =>
     url.origin === "https://cdn.locket-dio.com" &&

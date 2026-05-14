@@ -15,6 +15,33 @@ const updateSW = registerSW({
   },
 });
 
+window.addEventListener("error", (event) => {
+  const msg = event?.message || "";
+
+  if (
+    msg.includes("Loading chunk") ||
+    msg.includes("Failed to fetch dynamically imported module") ||
+    msg.includes("Unexpected token '<'")
+  ) {
+    console.log("[APP] Chunk failed -> reload");
+
+    window.location.reload();
+  }
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+  const msg = String(event?.reason || "");
+
+  if (
+    msg.includes("Loading chunk") ||
+    msg.includes("Failed to fetch dynamically imported module")
+  ) {
+    console.log("[APP] Import failed -> reload");
+
+    window.location.reload();
+  }
+});
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ErrorBoundary>
