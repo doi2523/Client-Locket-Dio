@@ -10,6 +10,7 @@ export const useUserSetting = create(
       sendReadReceipts: true,
       allowSearch: true,
       shareHistoryOn: false,
+      autoUpdateStreak: true,
 
       // ===== ACTIONS =====
       toggleSeenMoments: () =>
@@ -50,10 +51,16 @@ export const useUserSetting = create(
           sendReadReceipts: true,
           allowSearch: true,
           shareHistoryOn: false,
+          autoUpdateStreak: true,
         }),
     }),
     {
       name: "user-settings",
+
+      merge: (persistedState, currentState) => ({
+        ...currentState,
+        ...persistedState,
+      }),
     },
   ),
 );
