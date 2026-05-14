@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Check, RotateCcw, X } from "lucide-react";
+import { Check, RotateCcw, TriangleAlert, X } from "lucide-react";
 import LoadingOverlay from "@/components/ui/Loading/LineSpinner";
 import { useSelectedStore, useUploadQueueStore } from "@/stores";
 import { getCaptionStyle } from "@/helpers/styleHelpers";
 import IconRenderer from "@/features/OverlayRender/iconRenders";
+import { SonnerWarning } from "@/components/ui/SonnerToast";
 
 const QueueViewer = () => {
   const retryUploadItem = useUploadQueueStore((s) => s.retryUploadItem);
@@ -21,7 +22,7 @@ const QueueViewer = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isMediaLoading, setIsMediaLoading] = useState(true);
-
+  const [mediaFailed, setMediaFailed] = useState(false);
   // Mở hiệu ứng khi có selectedQueue
   useEffect(() => {
     if (selectedQueue !== null) {
@@ -54,6 +55,10 @@ const QueueViewer = () => {
   }, [selectedQueue, isAnimating]);
 
   const handleRetry = async () => {
+    if (mediaFailed) {
+      SonnerWarning("Ảnh/Video này không tồn tại.");
+      return;
+    }
     if (!queueInfo?.id) return;
 
     try {
@@ -67,11 +72,14 @@ const QueueViewer = () => {
   if (!queueInfo && !isAnimating) return null;
 
   const mediaType = queueInfo?.mediaInfo?.type;
-  const mediaUrl = queueInfo?.mediaInfo?.publicURL;
-  const caption = queueInfo?.optionsData?.text ||  queueInfo?.text || "";
+  const mediaUrl =
+    queueInfo?.mediaInfo?.publicUrl ||
+    queueInfo?.mediaInfo?.publicURL ||
+    queueInfo?.mediaInfo?.url;
+  const caption = queueInfo?.optionsData?.text || queueInfo?.text || "";
   const icon = queueInfo?.optionsData?.icon || {};
 
-  const background = queueInfo?.optionsData?.colors || []
+  const background = queueInfo?.optionsData?.colors || [];
   const textColor = queueInfo?.optionsData?.text_color || "#ffffff";
 
   return (
@@ -101,8 +109,22 @@ const QueueViewer = () => {
           </button>
 
           {/* Nội dung media */}
-          <div className="h-full w-full flex items-center justify-center relative bg-gradient-to-br from-base-300/20 to-base-100/20">
-            {mediaType === "video" ? (
+          <div className="h-full w-full flex items-center justify-center relative">
+            {mediaFailed ? (
+              <div className="h-full w-full rounded-2xl flex flex-col bg-base-200 select-none p-10">
+                <span className="text-7xl tracking-tight font-semibold">
+                  {":("}
+                </span>
+
+                <p className="mt-3 text-sm font-medium">Media not found</p>
+
+                {mediaUrl && (
+                  <p className="mt-1 text-center text-[10px] break-all font-mono">
+                    {mediaUrl}
+                  </p>
+                )}
+              </div>
+            ) : mediaType === "video" ? (
               <video
                 src={mediaUrl}
                 className="max-h-full max-w-full object-contain rounded-2xl"
@@ -110,21 +132,21 @@ const QueueViewer = () => {
                 muted
                 loop
                 playsInline
+                onError={() => setMediaFailed(true)}
               />
             ) : (
               <img
                 src={mediaUrl}
                 alt={caption}
                 className="max-h-full max-w-full object-contain rounded-2xl"
+                onError={() => setMediaFailed(true)}
               />
             )}
 
             {/* Status Icon */}
             {queueInfo?.status && (
               <>
-                <div className="absolute inset-0 backdrop-blur-[2px] bg-black/40 flex items-center justify-center z-10"></div>
-
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+                <div className="absolute w-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
                   {queueInfo?.status === "uploading" && (
                     <LoadingOverlay color="white" />
                   )}
@@ -133,16 +155,47 @@ const QueueViewer = () => {
                   )}
                   {queueInfo?.status === "failed" && (
                     <div className="flex flex-col items-center justify-center text-error">
-                      <RotateCcw
+                      <TriangleAlert
                         strokeWidth={1.5}
                         className="w-16 h-16 transition-transform duration-700"
                       />
 
                       {queueInfo?.errorMessage && (
-                        <p className="text-xs text-center mt-2 text-white bg-black/50 px-2 py-1 rounded">
-                          {queueInfo.errorMessage} - Lần thử lại:{" "}
-                          {queueInfo?.retryCount}
-                        </p>
+                        <div className="mt-3 w-full bg-base-300/70 backdrop-blur-md p-4 shadow-lg">
+                          <div className="space-y-2 text-sm">
+                            <div className="flex items-start gap-2">
+                              <span className="badge badge-error badge-sm shrink-0">
+                                CODE
+                              </span>
+
+                              <p className="font-mono font-semibold break-all text-base-content">
+                                {queueInfo?.errorCode || "UNKNOWN_ERROR"}
+                              </p>
+                            </div>
+
+                            <div className="flex items-start gap-2">
+                              <span className="badge badge-warning badge-sm shrink-0">
+                                MSG
+                              </span>
+
+                              <p className="font-mono break-words text-base-content/80">
+                                {queueInfo?.errorMessage}
+                              </p>
+                            </div>
+
+                            {!!queueInfo?.retryCount && (
+                              <div className="flex items-center gap-2 pt-1">
+                                <span className="badge badge-ghost badge-sm shrink-0">
+                                  RETRY
+                                </span>
+
+                                <p className="font-mono text-base-content/60">
+                                  #{queueInfo.retryCount}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       )}
                     </div>
                   )}
@@ -155,7 +208,7 @@ const QueueViewer = () => {
               <div
                 className="absolute bottom-4 w-fit backdrop-blur-sm rounded-2xl px-3 py-2"
                 style={{
-                  ...getCaptionStyle(background, textColor)
+                  ...getCaptionStyle(background, textColor),
                 }}
               >
                 <p className="text-sm font-medium">

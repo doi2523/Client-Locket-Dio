@@ -85,11 +85,13 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
       const data = await getUploadItemFromDB(selectedQueueId);
       if (!data) return null;
 
-      const { url, type } = data.mediaInfo || {};
-      if (!url) return null;
+      const { url, publicUrl, publicURL, type } = data.mediaInfo || {};
+      const mediaUrl = publicUrl || publicURL || url;
+
+      if (!mediaUrl) return null;
 
       return {
-        url,
+        url: mediaUrl,
         filename: `moment_${selectedQueueId}.${type === "video" ? "mp4" : "jpg"}`,
       };
     }
