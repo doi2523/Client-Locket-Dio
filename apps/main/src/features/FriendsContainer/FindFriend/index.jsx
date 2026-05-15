@@ -97,9 +97,7 @@ const FindFriend = () => {
           SonnerSuccess("Đã gửi yêu cầu!");
           setFriendshipStatus("OUTGOING");
           if (shareHistoryOn) {
-            SonnerInfo(
-              "Lịch sử trò chuyện sẽ được chia sẻ nếu họ chấp nhận yêu cầu.",
-            );
+            SonnerInfo("Lịch sử sẽ được chia sẻ nếu họ chấp nhận yêu cầu.");
             await shareHistoryWithFriend(foundUser.uid);
           }
         } else {
