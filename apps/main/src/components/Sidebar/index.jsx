@@ -85,7 +85,7 @@ const Sidebar = () => {
       items: [
         { to: "/postmoments", icon: Upload, text: "Đăng ảnh, video" },
         {
-          to: "/locket-beta",
+          to: "/locket",
           icon: Smartphone,
           text: "Locket Camera",
           badge: "Beta",
