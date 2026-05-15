@@ -152,7 +152,7 @@ export default function GeneralThemes({ title }) {
       }),
 
     weather: () => {
-      if (!weatherInfo || !weatherInfo.payload) {
+      if (!weatherInfo || !weatherInfo.payload || !weatherInfo.text) {
         SonnerInfo("Không có dữ liệu thời tiết!");
         return;
       }
@@ -231,6 +231,7 @@ export default function GeneralThemes({ title }) {
       background: weatherInfo.background.colors,
       color: "#FFFFFF",
       label: weatherInfo?.text || "Thời tiết",
+      cover: "./images/cloud_cover.png",
     },
     {
       id: "review",
@@ -277,10 +278,20 @@ export default function GeneralThemes({ title }) {
               key={btn.id}
               onClick={() => handleClick(btn.id)}
               style={{ ...getCaptionStyle(btn.background, btn.color) }}
-              className={`flex flex-col whitespace-nowrap backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center ${
+              className={`relative flex flex-col whitespace-nowrap backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center ${
                 !btn.background ? "bg-base-200 dark:bg-white/30" : ""
               }`}
             >
+              {btn.cover && (
+                <img
+                  src={btn.cover}
+                  alt="Cover"
+                  className="absolute inset-0 w-full h-full object-cover rounded-3xl select-none pointer-events-none"
+                  style={{
+                    opacity: weatherInfo?.payload?.cloud_cover ?? 0.5,
+                  }}
+                />
+              )}
               <span className="text-base flex flex-row items-center gap-1">
                 {btn.icon}
 

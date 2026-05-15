@@ -14,6 +14,9 @@ const DEFAULT_WEATHER = {
   background: {
     colors: ["#4facfe", "#00f2fe"],
   },
+  payload: {
+    cloud_cover: 0.5,
+  },
 };
 
 export function useCurrentWeatherV2() {
