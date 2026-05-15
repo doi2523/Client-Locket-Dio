@@ -94,18 +94,19 @@ export default function GeneralThemes({ title }) {
   const handleMusicSubmit = async (link) => {
     setLoading(true);
     try {
-      const music = await getInfoMusicByUrl(
+      const musicData = await getInfoMusicByUrl(
         link,
         formType === "apple" ? "apple" : "spotify",
       );
 
       applyOverlay({
         overlay_id: "music",
-        caption: music.title,
-        text: music.title,
-        icon: { data: music.image, type: "image", source: "url" },
+        caption: musicData.title,
+        text: musicData.title,
+        icon: { data: musicData.image, type: "image", source: "url" },
         type: "music",
-        payload: music,
+        payload: musicData,
+        ...musicData,
       });
 
       SonnerSuccess(
