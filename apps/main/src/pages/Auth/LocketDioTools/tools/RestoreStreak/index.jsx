@@ -7,12 +7,15 @@ import { usePostStore, useStreakStore } from "@/stores";
 import { InfoBlock, WarningBlock } from "./WarningBlock";
 import ReviewFeature from "./ReviewFeature";
 import DisableFeature from "../../Layout/DisableFeature";
+// import { RenewStreak } from "./RenewStreak";
 
 export default function RestoreStreak() {
   const hasAccess = useFeatureVisible("restore_streak_tool");
   const codeUser = useGetCode();
   const [confirmDeletedToday, setConfirmDeletedToday] = useState(false);
-  const { streak } = useStreakStore();
+
+  const streak = useStreakStore((s) => s.streak);
+
   const restoreStreakData = usePostStore((s) => s.restoreStreakData);
   const setRestoreStreakData = usePostStore((s) => s.setRestoreStreakData);
   const [mode, setMode] = useState("restore"); // "restore" | "continue"
@@ -125,6 +128,7 @@ export default function RestoreStreak() {
         </p>
       </div>
       <ReviewFeature />
+      {/* <RenewStreak /> */}
       {/* STREAK INFO */}
       <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
         <div

@@ -1,119 +1,127 @@
 // src/store/useStreakStore.js
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
 import { GetLastestMoment } from "@/services";
 import { formatYYYYMMDD } from "@/utils";
 
-const STREAK_KEY = "streak";
+export const useStreakStore = create(
+  persist(
+    (set, get) => ({
+      streak: null,
+      loading: false,
 
-export const useStreakStore = create((set, get) => ({
-  streak: null,
-  loading: false,
+      // ======================
+      // FETCH
+      // ======================
 
-  // ---------- init from localStorage ----------
-  initStreak: () => {
-    const cached = localStorage.getItem(STREAK_KEY);
-    if (cached) {
-      set({ streak: JSON.parse(cached) });
-    }
-  },
+      fetchStreak: async () => {
+        if (get().loading) return;
 
-  // ---------- fetch ----------
-  fetchStreak: async () => {
-    set({ loading: true });
+        set({ loading: true });
 
-    try {
-      const data = await GetLastestMoment();
+        try {
+          const data = await GetLastestMoment();
 
-      if (data?.streak) {
-        set({ streak: data.streak });
-        localStorage.setItem(STREAK_KEY, JSON.stringify(data.streak));
-      }
-    } catch (error) {
-      console.error("❌ Error fetching streak:", error);
-    } finally {
-      set({ loading: false });
-    }
-  },
+          if (data?.streak) {
+            set({ streak: data.streak });
+          }
+        } catch (error) {
+          console.error("❌ Error fetching streak:", error);
+        } finally {
+          set({ loading: false });
+        }
+      },
 
-  syncStreak: async () => {
-    // 1️⃣ Load local trước (sync)
-    try {
-      const cached = localStorage.getItem(STREAK_KEY);
-      if (cached) {
-        set({ streak: JSON.parse(cached) });
-      }
-    } catch (err) {
-      console.error("❌ Load local streak error:", err);
-    }
+      // ======================
+      // SYNC
+      // ======================
 
-    // 2️⃣ Fetch server (async)
-    if (get().loading) return;
+      syncStreak: async () => {
+        // persist đã tự load local rồi
+        if (get().loading) return;
 
-    set({ loading: true });
+        set({ loading: true });
 
-    try {
-      const data = await GetLastestMoment();
-      if (!data?.streak) return;
+        try {
+          const data = await GetLastestMoment();
 
-      set({ streak: data.streak });
-      localStorage.setItem(STREAK_KEY, JSON.stringify(data.streak));
-    } catch (error) {
-      console.error("❌ Fetch streak error:", error);
-    } finally {
-      set({ loading: false });
-    }
-  },
+          if (data?.streak) {
+            set({ streak: data.streak });
+          }
+        } catch (error) {
+          console.error("❌ Sync streak error:", error);
+        } finally {
+          set({ loading: false });
+        }
+      },
 
-  /* ---------- fetch if NOT updated today ---------- */
-  fetchStreakIfNeeded: async () => {
-    const { streak, loading } = get();
-    const today = formatYYYYMMDD();
+      // ======================
+      // FETCH IF NEEDED
+      // ======================
 
-    // 🚫 đang fetch
-    if (loading) return;
+      fetchStreakIfNeeded: async () => {
+        const { streak, loading } = get();
 
-    // 🚫 đã có streak và cập nhật hôm nay
-    if (streak?.last_updated_yyyymmdd === today) return;
+        if (loading) return;
 
-    set({ loading: true });
+        const today = formatYYYYMMDD();
 
-    try {
-      const data = await GetLastestMoment();
+        if (streak?.last_updated_yyyymmdd === today) {
+          return;
+        }
 
-      if (data?.streak) {
-        set({ streak: data.streak });
-        localStorage.setItem(STREAK_KEY, JSON.stringify(data.streak));
-      }
-    } catch (error) {
-      console.error("❌ Error fetching streak:", error);
-    } finally {
-      set({ loading: false });
-    }
-  },
+        set({ loading: true });
 
-  // ---------- clear ----------
-  clearStreak: () => {
-    localStorage.removeItem(STREAK_KEY);
-    set({ streak: null });
-  },
+        try {
+          const data = await GetLastestMoment();
 
-  /* ---------- helpers ---------- */
-  isStreakUpdatedToday: () => {
-    const { streak } = get();
-    if (!streak?.last_updated_yyyymmdd) return false;
-    return streak.last_updated_yyyymmdd === formatYYYYMMDD();
-  },
+          if (data?.streak) {
+            set({ streak: data.streak });
+          }
+        } catch (error) {
+          console.error("❌ Error fetching streak:", error);
+        } finally {
+          set({ loading: false });
+        }
+      },
 
-  getTodayIfNotUpdated: () => {
-    const { streak } = get();
-    if (!streak?.last_updated_yyyymmdd) return formatYYYYMMDD();
+      // ======================
+      // CLEAR
+      // ======================
 
-    const today = formatYYYYMMDD();
+      clearStreak: () => {
+        set({ streak: null });
+      },
 
-    if (streak.last_updated_yyyymmdd === today) {
-      return null; // Đã update hôm nay
-    }
+      // ======================
+      // HELPERS
+      // ======================
 
-    return today; // Chưa update hôm nay → trả về hôm nay
-  },
-}));
+      isStreakUpdatedToday: () => {
+        const { streak } = get();
+
+        return streak?.last_updated_yyyymmdd === formatYYYYMMDD();
+      },
+
+      getTodayIfNotUpdated: () => {
+        const { streak } = get();
+
+        const today = formatYYYYMMDD();
+
+        if (streak?.last_updated_yyyymmdd === today) {
+          return null;
+        }
+
+        return today;
+      },
+    }),
+    {
+      name: "streak-storage",
+
+      partialize: (state) => ({
+        streak: state.streak,
+      }),
+    },
+  ),
+);

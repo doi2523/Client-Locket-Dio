@@ -53,7 +53,7 @@ const RestoreStreak = () => {
   );
   const resetOverlayEditor = useOverlayEditorStore((s) => s.resetOverlayEditor);
 
-  const { fetchStreak } = useStreakStore();
+  const fetchStreak = useStreakStore((s) => s.fetchStreak);
   const restoreStreakData = usePostStore((s) => s.restoreStreakData);
   const setRestoreStreakData = usePostStore((s) => s.setRestoreStreakData);
 
