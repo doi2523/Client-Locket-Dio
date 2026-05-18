@@ -24,6 +24,7 @@ export const PUBLIC_API = {
   frames: "v1/public/myframes",
   backgroundList: "v1/public/getAllbackgrounds",
   celebrates: "v1/public/getAllCelebrate",
+  celebratesV2: "v1/public/getAllCelebrateV2",
   notifications: "v1/public/notification",
   plans: "v1/public/dio-plans",
   themes: "v1/public/themes",
