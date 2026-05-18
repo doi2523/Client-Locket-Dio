@@ -20,20 +20,7 @@ self.addEventListener("install", () => {
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    (async () => {
-      // cleanup old caches theo version
-      const keys = await caches.keys();
-
-      await Promise.all(
-        keys
-          .filter((key) => !key.includes(SW_VERSION))
-          .map((key) => caches.delete(key)),
-      );
-
-      await clients.claim();
-    })(),
-  );
+  event.waitUntil(clients.claim());
 });
 
 // ======================
@@ -73,62 +60,19 @@ registerRoute(
 );
 
 // ======================
-// FIX: MIME HTML LOADING JS BUG
-// ======================
-self.addEventListener("fetch", (event) => {
-  const url = new URL(event.request.url);
-
-  const isAsset = url.pathname.endsWith(".js") || url.pathname.endsWith(".css");
-
-  if (!isAsset) return;
-
-  event.respondWith(
-    fetch(event.request)
-      .then(async (res) => {
-        const contentType = res.headers.get("content-type") || "";
-
-        // ❌ server trả HTML thay vì JS/CSS
-        if (contentType.includes("text/html")) {
-          console.warn("[SW] MIME mismatch detected:", url.pathname);
-
-          // clear cache toàn bộ
-          const cacheKeys = await caches.keys();
-          await Promise.all(cacheKeys.map((k) => caches.delete(k)));
-
-          // reload tất cả tab
-          const clientsList = await clients.matchAll({
-            type: "window",
-          });
-
-          clientsList.forEach((client) => {
-            client.navigate(client.url);
-          });
-
-          throw new Error("MIME mismatch -> forcing reload");
-        }
-
-        return res;
-      })
-      .catch((err) => {
-        console.error("[SW] fetch failed:", err);
-        throw err;
-      }),
-  );
-});
-
-// ======================
 // PUSH NOTIFICATION
 // ======================
 self.addEventListener("push", (event) => {
   const data = event.data?.json() || {};
 
   const title = data.title || "🔔 Thông báo";
+  const urlToOpen = data?.url || self.location.origin;
 
   const options = {
     body: data.body || "Bạn có thông báo mới!",
-    data: { url: data.url || "https://locket-dio.com" },
+    data: { url: urlToOpen },
     icon: "/android-chrome-192x192.png",
-    badge: "/maskable_icon.png",
+    badge: "/maskable-icon-512x512.png",
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
@@ -140,7 +84,7 @@ self.addEventListener("push", (event) => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const urlToOpen = event.notification.data?.url || "https://locket-dio.com";
+  const urlToOpen = event.notification.data?.url || self.location.origin;
 
   event.waitUntil(
     clients
