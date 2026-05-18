@@ -56,7 +56,11 @@ export const useUserSetting = create(
     }),
     {
       name: "user-settings",
+      version: 1,
 
+      migrate: (persistedState) => {
+        return persistedState;
+      },
       merge: (persistedState, currentState) => ({
         ...currentState,
         ...persistedState,
