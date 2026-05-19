@@ -5,7 +5,9 @@ import {
   getListCelebrityV2,
   SendRequestToCelebrity,
 } from "@/services";
-import CelebrateItem from "./CelebrateItem";
+import CelebrateItem from "./components/CelebrateItem";
+import SkeletonItem from "./components/SkeletonItem";
+import FilterButton from "./components/FilterButton";
 import {
   SonnerError,
   SonnerInfo,
@@ -347,19 +349,6 @@ export default function CelebrateTool() {
     },
   ];
 
-  // --- Skeleton Loading Component ---
-  const SkeletonItem = () => (
-    <div className="animate-pulse flex flex-col gap-2 p-3 rounded-3xl bg-base-200 m-2">
-      <div className="flex items-center gap-3">
-        <div className="w-16 h-16 bg-gray-300 rounded-full" />
-        <div className="flex-1 space-y-2">
-          <div className="w-32 h-4 bg-gray-300 rounded" />
-          <div className="w-20 h-3 bg-gray-300 rounded" />
-        </div>
-      </div>
-    </div>
-  );
-
   // Nếu không có quyền truy cập
   if (!isCelebrityFeature) {
     return (
@@ -418,90 +407,51 @@ export default function CelebrateTool() {
       <h3 className="font-semibold text-sm uppercase opacity-70">
         Danh mục quốc gia
       </h3>
-      <div className="flex gap-2 mb-3 flex-wrap">
-        {/* 🔥 Tab ALL */}
-        <button
-          className={`px-3 py-1 rounded-lg flex items-center gap-2 ${
-            countryCode === "ALL" ? "bg-green-500 text-white" : "bg-base-200"
-          }`}
-          onClick={() => setCountryCode("ALL")}
-        >
-          <span>ALL</span>
 
-          <span
-            className={`min-w-[24px] h-6 px-2 rounded-md text-xs font-semibold flex items-center justify-center ${
-              countryCode === "ALL"
-                ? "bg-white/20 text-white"
-                : "bg-black/10 text-base-content"
-            }`}
-          >
-            {Object.values(celebrateList).flat().length}
-          </span>
-        </button>
+      <div className="flex gap-2 mb-3 flex-wrap">
+        <FilterButton
+          label="ALL"
+          count={Object.values(celebrateList).flat().length}
+          active={countryCode === "ALL"}
+          activeClass="bg-green-500 text-white"
+          onClick={() => setCountryCode("ALL")}
+        />
 
         {Object.keys(celebrateList).map((code) => (
-          <button
+          <FilterButton
             key={code}
-            className={`px-3 py-1 rounded-lg flex items-center gap-2 ${
-              countryCode === code ? "bg-green-500 text-white" : "bg-base-200"
-            }`}
+            label={code}
+            count={celebrateList[code]?.length || 0}
+            active={countryCode === code}
+            activeClass="bg-green-500 text-white"
             onClick={() => setCountryCode(code)}
-          >
-            <span>{code}</span>
-
-            <span
-              className={`min-w-[24px] h-6 px-2 rounded-md text-xs font-semibold flex items-center justify-center ${
-                countryCode === code
-                  ? "bg-white/20 text-white"
-                  : "bg-black/10 text-base-content"
-              }`}
-            >
-              {celebrateList[code]?.length || 0}
-            </span>
-          </button>
+          />
         ))}
       </div>
 
       <h3 className="font-semibold text-sm uppercase opacity-70">
         Bộ lọc nhanh
       </h3>
-      {/* Tabs → Chuyển thành nút */}
+
       <div className="flex gap-2 mb-3 flex-wrap">
-        {tabs.map((tab) => {
-          const active = activeTab === tab.key;
-
-          return (
-            <button
-              key={tab.key}
-              className={`px-3 py-1 rounded-lg flex items-center gap-2 transition ${
-                active ? "bg-blue-500 text-white" : "bg-base-200"
-              }`}
-              onClick={() => setActiveTab(tab.key)}
-            >
-              <span>{tab.label}</span>
-
-              <span
-                className={`min-w-[24px] h-6 px-2 rounded-md text-xs font-semibold flex items-center justify-center ${
-                  active
-                    ? "bg-white/20 text-white"
-                    : "bg-black/10 text-base-content"
-                }`}
-              >
-                {tab.count}
-              </span>
-            </button>
-          );
-        })}
+        {tabs.map((tab) => (
+          <FilterButton
+            key={tab.key}
+            label={tab.label}
+            count={tab.count}
+            active={activeTab === tab.key}
+            activeClass="bg-blue-500 text-white"
+            onClick={() => setActiveTab(tab.key)}
+          />
+        ))}
       </div>
       {/* Danh sách user details */}
       <div className="border rounded-sm h-96 overflow-y-auto">
         {loading ? (
           <>
-            <SkeletonItem />
-            <SkeletonItem />
-            <SkeletonItem />
-            <SkeletonItem />
-            <SkeletonItem />
+            {Array.from({ length: 5 }).map((_, index) => (
+              <SkeletonItem key={index} />
+            ))}
           </>
         ) : categorized[activeTab]?.length > 0 ? (
           categorized[activeTab].map((user) => (
