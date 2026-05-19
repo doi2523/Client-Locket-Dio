@@ -3,7 +3,7 @@ import { useApp } from "@/context/AppContext";
 import { getAvailableCameras } from "@/utils";
 import { RefreshCcw } from "lucide-react";
 
-const CameraToggle = () => {
+const CameraToggleAndroid = () => {
   const { camera, post, useloading } = useApp();
   const {
     videoRef,
@@ -79,4 +79,4 @@ const CameraToggle = () => {
   );
 };
 
-export default CameraToggle;
+export default CameraToggleAndroid;
