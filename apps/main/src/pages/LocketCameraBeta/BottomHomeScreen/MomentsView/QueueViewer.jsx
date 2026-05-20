@@ -76,6 +76,9 @@ const QueueViewer = () => {
     queueInfo?.mediaInfo?.publicUrl ||
     queueInfo?.mediaInfo?.publicURL ||
     queueInfo?.mediaInfo?.url;
+
+  const optionsData = queueInfo?.optionsData || {};
+
   const caption = queueInfo?.optionsData?.text || queueInfo?.text || "";
   const icon = queueInfo?.optionsData?.icon || {};
 
@@ -204,7 +207,7 @@ const QueueViewer = () => {
             )}
 
             {/* Caption nếu có */}
-            {caption && (
+            {optionsData && (
               <div
                 className="absolute bottom-4 w-fit backdrop-blur-sm rounded-2xl px-3 py-2"
                 style={{

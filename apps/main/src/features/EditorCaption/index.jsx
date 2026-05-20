@@ -8,6 +8,7 @@ import { getCaptionStyle } from "@/helpers/styleHelpers";
 import IconRenderer from "../OverlayRender/iconRenders";
 import StreakOverlay from "./components/StreakOverlay";
 import MusicOverlay from "./components/MusicOverlay";
+import { ColorPaletteOverlay } from "@/components/OverlayRender/ColorPaletteOverlay";
 
 // Custom Hooks
 const useTextMeasurement = (text, ref, type, placeholder, parentRef) => {
@@ -535,6 +536,9 @@ const EditorCaption = () => {
 
       case "special":
         return <SpecialOverlay {...commonProps} isEditable={isEditable} />;
+
+      case "color_palette":
+        return <ColorPaletteOverlay overlayData={overlayData} />;
 
       case "default":
         return <DefaultOverlay {...commonProps} />;

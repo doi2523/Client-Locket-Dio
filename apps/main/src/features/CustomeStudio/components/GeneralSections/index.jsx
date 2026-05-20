@@ -13,10 +13,14 @@ import FormReviewPoup from "@/features/PoupScreen/FormReviewPoup";
 import { useOverlayEditorStore, useStreakStore } from "@/stores";
 import IconRenderer from "@/features/OverlayRender/iconRenders";
 import { getCaptionStyle } from "@/helpers/styleHelpers";
-import { useCurrentWeatherV2, useCurrentLocation } from "../../hooks";
+import {
+  useCurrentWeatherV2,
+  useCurrentLocation,
+  useMediaPalette,
+} from "../../hooks";
 
 export default function GeneralThemes({ title }) {
-  const { navigation } = useApp();
+  const { navigation, post } = useApp();
   const { setIsFilterOpen } = navigation;
 
   const { addressOptions } = useCurrentLocation();
@@ -38,6 +42,8 @@ export default function GeneralThemes({ title }) {
   const [popupActive, setPopupActive] = useState(false);
   const [formType, setFormType] = useState("");
   const [reviewOpen, setReviewOpen] = useState(false);
+
+  const { dominantColor, palette } = useMediaPalette(post);
 
   // --- EFFECTS ---
   useEffect(() => {
@@ -194,6 +200,17 @@ export default function GeneralThemes({ title }) {
         type: "streak",
         text_color: "#00000099",
       }),
+    color_palette: () =>
+      applyOverlay({
+        overlay_id: "color_palette",
+        icon: { source: "local", data: "color_palette_icon", type: "image" },
+        background: { material_blur: "ultra_thin", colors: [] },
+        caption: String(dominantColor || "#FFFFFF"),
+        text: String(dominantColor || "#FFFFFF"),
+        payload: { colors: palette || [] },
+        type: "color_palette",
+        text_color: "#FFFFFFE6",
+      }),
   };
 
   const handleClick = (id) => actions[id]?.();
@@ -215,6 +232,13 @@ export default function GeneralThemes({ title }) {
       id: "default",
       icon: <span className="mr-1 font-semibold">Aa</span>,
       label: "Văn bản",
+    },
+    {
+      id: "color_palette",
+      icon: (
+        <img src="./icons/color_palette_iconv1.png" className="w-6 h-6 mr-1" />
+      ),
+      label: "Màu sắc",
     },
     {
       id: "music",

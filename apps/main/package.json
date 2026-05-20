@@ -16,6 +16,7 @@
     "axios": "^1.8.1",
     "canvas-confetti": "^1.9.3",
     "clsx": "^2.1.1",
+    "colorthief": "^3.3.1",
     "dexie": "^4.0.11",
     "driver.js": "^1.4.0",
     "jwt-decode": "^4.0.0",

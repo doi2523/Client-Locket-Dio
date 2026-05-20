@@ -1,3 +1,4 @@
+import { ColorPaletteOverlay } from "@/components/OverlayRender/ColorPaletteOverlay";
 import BaseOverlay from "./overlays/BaseOverlay";
 import ReviewOverlay from "./overlays/ReviewOverlay";
 
@@ -13,6 +14,13 @@ export function OverlayRenderer({ moment }) {
 
   if (overlay_id === "caption:review")
     return <ReviewOverlay currentMoment={moment} />;
+
+  if (overlay_id === "caption:color_palette")
+    return (
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+        <ColorPaletteOverlay overlayData={moment?.overlays} />
+      </div>
+    );
 
   if (!Component) return null;
 
