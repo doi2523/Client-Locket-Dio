@@ -95,9 +95,9 @@
 <div align="center">
   <img src="./assets/preview-0.webp" width="300px" alt="Preview 0" style="border-radius: 10px; margin: 10px;">
   <img src="./assets/preview-1.webp" width="300px" alt="Preview 1" style="border-radius: 10px; margin: 10px;">
-  <img src="./assets/preview-2.webp" width="300px" alt="Preview 2" style="border-radius: 10px; margin: 10px;">
-  <img src="./assets/preview-3.webp" width="300px" alt="Preview 3" style="border-radius: 10px; margin: 10px;">
-  <img src="./assets/preview-4.webp" width="300px" alt="Preview 4" style="border-radius: 10px; margin: 10px;">
+  <img src="./assets/preview-2.webp" width="200px" alt="Preview 2" style="border-radius: 10px; margin: 10px;">
+  <img src="./assets/preview-3.webp" width="200px" alt="Preview 3" style="border-radius: 10px; margin: 10px;">
+  <img src="./assets/preview-4.webp" width="200px" alt="Preview 4" style="border-radius: 10px; margin: 10px;">
 </div>
 
 </details>
