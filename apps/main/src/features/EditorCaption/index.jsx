@@ -5,10 +5,10 @@ import ReviewOverlay from "./components/ReviewOverlay";
 import { useOverlayEditorStore } from "@/stores";
 import DecorativeOverlay from "./components/DecorativeOverlay";
 import { getCaptionStyle } from "@/helpers/styleHelpers";
-import IconRenderer from "../OverlayRender/iconRenders";
 import StreakOverlay from "./components/StreakOverlay";
 import MusicOverlay from "./components/MusicOverlay";
-import { ColorPaletteOverlay } from "@/components/OverlayRender/ColorPaletteOverlay";
+import { OverlayRenderer } from "@/components/Overlay";
+import IconRenderer from "@/components/Overlay/icons/IconRenderer";
 
 // Custom Hooks
 const useTextMeasurement = (text, ref, type, placeholder, parentRef) => {
@@ -485,6 +485,8 @@ const EditorCaption = () => {
     hour: "2-digit",
     minute: "2-digit",
   });
+  if (overlayData.type === "color_palette")
+    return <OverlayRenderer overlayData={overlayData} />;
 
   const renderOverlay = () => {
     const commonProps = {
@@ -536,9 +538,6 @@ const EditorCaption = () => {
 
       case "special":
         return <SpecialOverlay {...commonProps} isEditable={isEditable} />;
-
-      case "color_palette":
-        return <ColorPaletteOverlay overlayData={overlayData} />;
 
       case "default":
         return <DefaultOverlay {...commonProps} />;

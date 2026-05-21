@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { Check, RotateCcw, TriangleAlert, X } from "lucide-react";
 import LoadingOverlay from "@/components/ui/Loading/LineSpinner";
 import { useSelectedStore, useUploadQueueStore } from "@/stores";
-import { getCaptionStyle } from "@/helpers/styleHelpers";
-import IconRenderer from "@/features/OverlayRender/iconRenders";
 import { SonnerWarning } from "@/components/ui/SonnerToast";
+import { OverlayRenderer } from "@/components/Overlay";
 
 const QueueViewer = () => {
   const retryUploadItem = useUploadQueueStore((s) => s.retryUploadItem);
@@ -80,10 +79,6 @@ const QueueViewer = () => {
   const optionsData = queueInfo?.optionsData || {};
 
   const caption = queueInfo?.optionsData?.text || queueInfo?.text || "";
-  const icon = queueInfo?.optionsData?.icon || {};
-
-  const background = queueInfo?.optionsData?.colors || [];
-  const textColor = queueInfo?.optionsData?.text_color || "#ffffff";
 
   return (
     <div
@@ -208,16 +203,7 @@ const QueueViewer = () => {
 
             {/* Caption nếu có */}
             {optionsData && (
-              <div
-                className="absolute bottom-4 w-fit backdrop-blur-sm rounded-2xl px-3 py-2"
-                style={{
-                  ...getCaptionStyle(background, textColor),
-                }}
-              >
-                <p className="text-sm font-medium">
-                  <IconRenderer icon={icon} /> {caption}
-                </p>
-              </div>
+              <OverlayRenderer overlayData={optionsData} />
             )}
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import { ColorPaletteIcon } from "../iconRender";
+import { ColorPaletteIcon } from "../icons/ColorPaletteIcon";
 
 // kiểm tra màu sáng/tối
 function isLightColor(hex) {
@@ -29,8 +29,7 @@ export const ColorPaletteOverlay = ({ overlayData }) => {
 
   return (
     <div
-      className={`
-        rounded-3xl px-3 flex flex-col items-center backdrop-blur-xl
+      className={`absolute bottom-4 left-1/2 -translate-x-1/2 rounded-3xl px-3 flex flex-col items-center backdrop-blur-xl
         ${isLight ? "bg-black/10" : "bg-white/30"}
       `}
     >

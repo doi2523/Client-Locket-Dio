@@ -1,10 +1,11 @@
 import React from "react";
-import { StarRating } from "@/components/ui/StarRating/StarRating";
+import { StarRating } from "../icons/StarRating";
 import { RiDoubleQuotesL, RiDoubleQuotesR } from "react-icons/ri";
 
-function ReviewOverlay({ payload }) {
+function ReviewOverlay({ overlayData }) {
+  const payload =  overlayData?.payload || overlayData?.overlays?.payload || {};
   const rating = payload.rating || 0;
-  const comment = payload?.comment;
+  const comment = payload.comment;
 
   return (
     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/50 backdrop-blur-2xl rounded-3xl px-6 flex flex-col items-center font-semibold max-w-[90vw] w-max">

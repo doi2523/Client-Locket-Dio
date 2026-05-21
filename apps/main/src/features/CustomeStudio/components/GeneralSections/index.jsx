@@ -11,7 +11,7 @@ import {
 import FormMusicPoup from "@/features/PoupScreen/FormMusicPoup";
 import FormReviewPoup from "@/features/PoupScreen/FormReviewPoup";
 import { useOverlayEditorStore, useStreakStore } from "@/stores";
-import IconRenderer from "@/features/OverlayRender/iconRenders";
+import IconRenderer from "@/components/Overlay/icons/IconRenderer";
 import { getCaptionStyle } from "@/helpers/styleHelpers";
 import {
   useCurrentWeatherV2,

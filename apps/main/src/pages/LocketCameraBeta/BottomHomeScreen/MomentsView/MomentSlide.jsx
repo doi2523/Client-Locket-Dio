@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import UserInfo from "../Layout/UserInfoView";
-import { OverlayRenderer } from "@/components/ui";
+import { OverlayRenderer } from "@/components/Overlay";
 
 const MomentSlide = ({ moment, me, handleClose }) => {
   const [isVideoReady, setIsVideoReady] = useState(false);
@@ -46,9 +46,8 @@ const MomentSlide = ({ moment, me, handleClose }) => {
               onLoadedData={() => setIsVideoReady(true)}
             />
           )}
-
           {/* Caption */}
-          {moment?.caption && <OverlayRenderer moment={moment} />}
+          <OverlayRenderer overlayData={moment?.overlays} momentId={moment?.id} />
         </div>
 
         <UserInfo user={moment?.user} me={me} date={moment?.date} />
