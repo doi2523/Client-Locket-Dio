@@ -12,7 +12,7 @@ initPWA();
 // init chunk recovery
 initReloadState();
 
-initChunkRecovery();
+// initChunkRecovery();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
