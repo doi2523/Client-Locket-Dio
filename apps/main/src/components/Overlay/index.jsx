@@ -2,12 +2,14 @@ import { ColorPaletteOverlay } from "./overlays/ColorPaletteOverlay";
 import BaseOverlay from "./overlays/BaseOverlay";
 import ReviewOverlay from "./overlays/ReviewOverlay";
 import MusicOverlay from "./overlays/MusicOverlay";
+import PollOverlay from "./overlays/PollOverlay";
 
 const OVERLAY_COMPONENTS = {
   caption: BaseOverlay,
   review: ReviewOverlay,
   music: MusicOverlay,
   color_palette: ColorPaletteOverlay,
+  poll: PollOverlay,
 };
 
 export function OverlayRenderer({
@@ -25,7 +27,7 @@ export function OverlayRenderer({
     overlayData?.id || overlayData?.overlay_id || "caption:standard";
 
   if (overlay_id === "caption:review")
-    return <ReviewOverlay currentMoment={overlayData} />;
+    return <ReviewOverlay overlayData={overlayData} />;
 
   if (overlay_id === "caption:color_palette")
     return <ColorPaletteOverlay overlayData={overlayData} />;

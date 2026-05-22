@@ -211,6 +211,18 @@ export default function GeneralThemes({ title }) {
         type: "color_palette",
         text_color: "#FFFFFFE6",
       }),
+    poll: () =>
+      applyOverlay({
+        overlay_id: "poll",
+        background: { colors: ["#685AF7", "#685AF7"] },
+        text: "",
+        type: "poll",
+        text_color: "#FFFFFFF0",
+        payload: {
+          right_emoji: "👎",
+          left_emoji: "👍",
+        },
+      }),
   };
 
   const handleClick = (id) => actions[id]?.();
@@ -274,6 +286,13 @@ export default function GeneralThemes({ title }) {
       label: streak?.count || "0",
       background: ["#FFD25F", "#EAA900"],
       color: "#00000099",
+    },
+    {
+      id: "poll",
+      background: ["#685AF7", "#685AF7"],
+      icon: <img src="./icons/poll_icon.png" className="w-5 h-5 mr-0.5" />,
+      color: "#FFFFFF",
+      label: "Poll",
     },
     {
       id: "location",
