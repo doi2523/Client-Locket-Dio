@@ -26,6 +26,47 @@ class LocketController {
     }
   }
 
+  async loginWithPhone(req, res, next) {
+    try {
+      const { phone, password } = req.body;
+      // 1️⃣ Normalize phone
+      const phoneNormalized = authServices.normalizePhone(phone);
+
+      // 2️⃣ Gửi verification code trước
+      const verifyStatus = await authServices.sendVerifiCode(phoneNormalized);
+      // ❌ Chưa đăng ký
+      if (verifyStatus === 601) {
+        logInfo("loginPhoneController", "❌ Số điện thoại chưa đăng ký");
+        return res.status(400).json({
+          success: false,
+          message: "Số điện thoại chưa đăng ký",
+        });
+      }
+      logInfo("loginPhoneController", `Verify status: ${verifyStatus}`);
+      if (![400, 602].includes(verifyStatus)) {
+        logError(
+          "loginPhoneController",
+          `❌ Verify status không hợp lệ: ${verifyStatus}`,
+        );
+        return res.status(400).json({
+          success: false,
+          message: "Không thể xác minh số điện thoại",
+        });
+      }
+      // 3️⃣ Đã đăng ký → Login
+      const loginResponse = await authServices.loginWithPhoneService(
+        phoneNormalized,
+        password,
+      );
+
+      return res
+        .status(200)
+        .json({ data: loginResponse, success: true, message: "ok" });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getInfoLocket(req, res, next) {
     try {
       const { idToken, localId } = req.user;

@@ -61,8 +61,25 @@ const refreshIdToken = async (refreshToken) => {
   }
 };
 
+// Hàm xử lý đăng nhập
+const verifyCustomeToken = async (token) => {
+  const verifyPayload = {
+    token,
+    returnSecureToken: true,
+  };
+  const firebaseAuthApi = createGoogleInstance("auth");
+  
+  const response = await firebaseAuthApi.post(
+    "verifyCustomToken",
+    verifyPayload,
+  );
+
+  return response.data;
+};
+
 module.exports = {
   login,
   logout,
-  refreshIdToken
+  refreshIdToken,
+  verifyCustomeToken,
 };
