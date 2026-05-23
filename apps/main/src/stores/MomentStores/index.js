@@ -14,7 +14,7 @@ const { initialVisible, loadMoreLimit } = MOMENTS_CONFIG;
  * Default bucket
  * -------------------------------------------------- */
 const defaultBucket = () => ({
-  items: [],
+  moments: [],
   loading: false,
   hasMore: true,
   isLoadingMore: false,
@@ -81,7 +81,7 @@ export const useMomentsStoreV2 = create((set, get) => ({
               ...state.momentsByUser,
               [key]: {
                 ...bucket,
-                items: [...localData].sort(
+                moments: [...localData].sort(
                   (a, b) => b.createTime - a.createTime
                 ),
               },
@@ -105,7 +105,7 @@ export const useMomentsStoreV2 = create((set, get) => ({
               ...state.momentsByUser,
               [key]: {
                 ...bucket,
-                items: [...apiData].sort((a, b) => b.createTime - a.createTime),
+                moments: [...apiData].sort((a, b) => b.createTime - a.createTime),
               },
             },
           };
@@ -167,7 +167,7 @@ export const useMomentsStoreV2 = create((set, get) => ({
               ...state.momentsByUser,
               [key]: {
                 ...bucket,
-                items: [...localData].sort(
+                moments: [...localData].sort(
                   (a, b) => b.createTime - a.createTime
                 ),
               },
@@ -191,7 +191,7 @@ export const useMomentsStoreV2 = create((set, get) => ({
               ...state.momentsByUser,
               [key]: {
                 ...bucket,
-                items: [...apiData].sort((a, b) => b.createTime - a.createTime),
+                moments: [...apiData].sort((a, b) => b.createTime - a.createTime),
               },
             },
           };
@@ -227,7 +227,7 @@ export const useMomentsStoreV2 = create((set, get) => ({
     const bucket = get().momentsByUser[key];
     if (!bucket) return;
 
-    if (bucket.isLoadingMore || !bucket.hasMore || !bucket.items.length) {
+    if (bucket.isLoadingMore || !bucket.hasMore || !bucket.moments.length) {
       return;
     }
 
@@ -247,7 +247,7 @@ export const useMomentsStoreV2 = create((set, get) => ({
     });
 
     try {
-      const lastCreateTime = bucket.items[bucket.items.length - 1].createTime;
+      const lastCreateTime = bucket.moments[bucket.moments.length - 1].createTime;
 
       const older = await GetAllMoments({
         timestamp: lastCreateTime,
@@ -276,7 +276,7 @@ export const useMomentsStoreV2 = create((set, get) => ({
         const b = state.momentsByUser[key];
         if (!b) return state;
 
-        const existingIds = new Set(b.items.map((i) => i.id));
+        const existingIds = new Set(b.moments.map((i) => i.id));
         const filtered = older.filter((m) => !existingIds.has(m.id));
 
         return {
@@ -284,7 +284,7 @@ export const useMomentsStoreV2 = create((set, get) => ({
             ...state.momentsByUser,
             [key]: {
               ...b,
-              items: [...b.items, ...filtered],
+              moments: [...b.moments, ...filtered],
               hasMore: older.length === loadMoreLimit,
             },
           },
@@ -335,11 +335,11 @@ export const useMomentsStoreV2 = create((set, get) => ({
           const bucket = next[key] ?? defaultBucket();
 
           // ❌ duplicate
-          if (bucket.items.some((i) => i.id === m.id)) continue;
+          if (bucket.moments.some((i) => i.id === m.id)) continue;
 
           next[key] = {
             ...bucket,
-            items: [m, ...bucket.items].sort(
+            moments: [m, ...bucket.moments].sort(
               (a, b) => b.createTime - a.createTime
             ),
           };
@@ -369,7 +369,7 @@ export const useMomentsStoreV2 = create((set, get) => ({
 
       next["all"] = {
         ...bucket,
-        items: bucket.items.filter((m) => snapshotIds.has(m.id)),
+        moments: bucket.moments.filter((m) => snapshotIds.has(m.id)),
       };
 
       return { momentsByUser: next };
@@ -401,7 +401,7 @@ export const useMomentsStoreV2 = create((set, get) => ({
         ...state.momentsByUser,
         [key]: {
           ...bucket,
-          items: bucket.items.filter((m) => m.id !== momentId),
+          moments: bucket.moments.filter((m) => m.id !== momentId),
         },
       },
     }));
@@ -417,7 +417,7 @@ export const useMomentsStoreV2 = create((set, get) => ({
     const bucket = get().momentsByUser[key];
     if (!bucket) return;
 
-    if (bucket.visibleCount < bucket.items.length) {
+    if (bucket.visibleCount < bucket.moments.length) {
       set((state) => ({
         momentsByUser: {
           ...state.momentsByUser,
@@ -425,7 +425,7 @@ export const useMomentsStoreV2 = create((set, get) => ({
             ...bucket,
             visibleCount: Math.min(
               bucket.visibleCount + initialVisible,
-              bucket.items.length
+              bucket.moments.length
             ),
           },
         },

@@ -45,7 +45,7 @@ const BottomHomeScreen = () => {
   const bucket = useMomentsStoreV2((s) => s.momentsByUser[selectedKey]);
 
   const {
-    items: moments = [],
+    moments = [],
     loading = false,
     hasMore = true,
     visibleCount = 0,
@@ -179,10 +179,10 @@ const BottomHomeScreen = () => {
         </>
       ) : null}
       <div
-        className={`transition-all w-full duration-500 ${
+        className={`transition-all w-full duration-300 ${
           selectedAnimate
-            ? "opacity-0 scale-95 pointer-events-none select-none"
-            : "opacity-100 scale-100"
+            ? "opacity-0 pointer-events-none select-none"
+            : "opacity-100"
         }`}
       >
         <UploadingQueue />
