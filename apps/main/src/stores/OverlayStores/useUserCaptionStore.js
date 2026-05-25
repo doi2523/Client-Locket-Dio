@@ -27,6 +27,38 @@ function formatCaption(item) {
   const colorBottom =
     item.color_bottom || item.colorbottom || colors[colors.length - 1] || "";
 
+  // Caption mới có background_image_url (star_sign)
+  if (item.background_image_url) {
+    return {
+      overlay_id: "caption_kanade_custome",
+      id: item.id,
+      text: item.text || "",
+      text_color: item.color || "#FFFFFF",
+      icon: {
+        data: item.icon?.url || item.icon_url || "https://media.chisadin.id.vn/transparent.png",
+        type: "image",
+        source: "url",
+      },
+      type: "custom",
+      active: true,
+      effect: null,
+      source: "remote",
+      order_id: 1,
+      max_lines: 1,
+      background: {
+        image: {
+          data: item.background_image_url,
+          type: "image",
+          source: "url",
+        },
+        colors,
+      },
+      is_editable: true,
+      color_top: colorTop,
+      color_bottom: colorBottom,
+    };
+  }
+
   // Nếu đã là format overlay mới
   if (item.overlay_id && item.background) {
     return {
