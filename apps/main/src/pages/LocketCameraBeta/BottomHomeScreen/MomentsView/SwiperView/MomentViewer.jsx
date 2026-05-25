@@ -1,10 +1,29 @@
 import { X } from "lucide-react";
 import { useState } from "react";
-import UserInfo from "../Layout/UserInfoView";
 import { OverlayRenderer } from "@/components/Overlay";
+import {
+  useAuthStore,
+  useMomentActivityStore,
+  resolveMomentOwnerUid,
+  resolveMyUid,
+} from "@/stores";
+import UserInfo from "../../Layout/UserInfoView";
 
-const MomentSlide = ({ moment, me, handleClose }) => {
+const MomentViewer = ({ moment, handleClose }) => {
   const [isVideoReady, setIsVideoReady] = useState(false);
+
+  const { user } = useAuthStore();
+  const myUid = resolveMyUid(user);
+  const ownerUid = resolveMomentOwnerUid(moment);
+  const isOwnMoment = Boolean(myUid && ownerUid && myUid === ownerUid);
+
+  const pollCounts = useMomentActivityStore((s) =>
+    isOwnMoment && moment?.id ? s.byMomentId[moment.id]?.pollCounts : null,
+  );
+
+  const thumbnailUrl =
+    moment?.thumbnailUrl || moment?.thumbnail_url || moment?.image_url;
+  const videoUrl = moment?.videoUrl || moment?.video_url;
 
   return (
     <div className="flex w-full flex-col justify-center items-center">
@@ -22,9 +41,9 @@ const MomentSlide = ({ moment, me, handleClose }) => {
 
         <div className="h-full w-full sm:max-w-sm max-w-md aspect-square flex items-center justify-center relative bg-gradient-to-br from-base-300/20 to-base-100/20 rounded-[64px] overflow-hidden">
           {/* 1️⃣ Thumbnail luôn hiển thị trước */}
-          {moment?.thumbnailUrl && (
+          {thumbnailUrl && (
             <img
-              src={moment.thumbnailUrl}
+              src={thumbnailUrl}
               alt={moment?.caption || "Moment"}
               className={`absolute inset-0 w-full h-full object-cover rounded-2xl transition-opacity duration-300 ${
                 isVideoReady ? "opacity-0" : "opacity-100"
@@ -33,9 +52,9 @@ const MomentSlide = ({ moment, me, handleClose }) => {
           )}
 
           {/* 2️⃣ Video load ngầm */}
-          {moment?.videoUrl && (
+          {videoUrl && (
             <video
-              src={moment.videoUrl}
+              src={videoUrl}
               className={`absolute inset-0 w-full h-full object-cover rounded-2xl transition-opacity duration-300 ${
                 isVideoReady ? "opacity-100" : "opacity-0"
               }`}
@@ -47,13 +66,18 @@ const MomentSlide = ({ moment, me, handleClose }) => {
             />
           )}
           {/* Caption */}
-          <OverlayRenderer overlayData={moment?.overlays} momentId={moment?.id} />
+          <OverlayRenderer
+            overlayData={moment?.overlays}
+            momentId={moment?.id}
+            pollCounts={pollCounts}
+            pollVariant={isOwnMoment ? "owner" : "friend"}
+          />
         </div>
 
-        <UserInfo user={moment?.user} me={me} date={moment?.date} />
+        <UserInfo user={moment?.user} date={moment?.date ?? moment?.createTime} />
       </div>
     </div>
   );
 };
 
-export default MomentSlide;
+export default MomentViewer;

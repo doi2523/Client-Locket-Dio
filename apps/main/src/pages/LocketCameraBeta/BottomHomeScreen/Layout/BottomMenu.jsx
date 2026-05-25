@@ -1,7 +1,7 @@
 import { CalendarHeart, LayoutGrid, Share } from "lucide-react";
 import InputForMoment from "./InputForMoment";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
-import { useSelectedStore } from "@/stores";
+import { useMomentActivityStore, useSelectedStore } from "@/stores";
 
 const BottomMenu = ({ setIsBottomOpen, setOptionModalOpen }) => {
   const selectedMoment = useSelectedStore((s) => s.selectedMoment);
@@ -13,11 +13,14 @@ const BottomMenu = ({ setIsBottomOpen, setOptionModalOpen }) => {
   const setSelectedMomentId = useSelectedStore((s) => s.setSelectedMomentId);
   const setSelectedQueueId = useSelectedStore((s) => s.setSelectedQueueId);
 
+  const clearActivity = useMomentActivityStore((s) => s.clearActive);
+
   const resetSelection = () => {
     setSelectedMoment(null);
     setSelectedQueue(null);
     setSelectedMomentId(null);
     setSelectedQueueId(null);
+    clearActivity();
   };
 
   const handleReturnHome = () => {

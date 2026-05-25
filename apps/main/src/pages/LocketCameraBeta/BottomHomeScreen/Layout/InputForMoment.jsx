@@ -1,35 +1,50 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { ArrowUp, SmilePlus } from "lucide-react";
 import clsx from "clsx";
 import { useApp } from "@/context/AppContext";
-import {
-  GetInfoMoment,
-  GetViewsMoment,
-  SendMessageMoment,
-  SendReactMoment,
-} from "@/services";
+import { SendMessageMoment, SendReactMoment } from "@/services";
 import { getMomentById } from "@/cache/momentDB";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 import { getFriendDetail } from "@/cache/friendsDB";
 import ActivitySection from "../Modal/ActivityViews/ActivityModal";
 import { markMomentViewedOnce } from "@/cache/viewedMomentDB";
-import { useAuthStore, useSelectedStore, useUserSetting } from "@/stores";
+import {
+  useAuthStore,
+  useMomentsStoreV2,
+  useMomentActivityStore,
+  useSelectedStore,
+  useUserSetting,
+  resolveMyUid,
+  resolveMomentOwnerUid,
+} from "@/stores";
+import ReactionEffect from "@/components/Effects/ReactionEffect";
 
 const InputForMoment = () => {
   const { user } = useAuthStore();
-  const localId = user?.localId || null;
+  const myUid = resolveMyUid(user);
 
   const selectedMomentId = useSelectedStore((s) => s.selectedMomentId);
+  const selectedFriendUid = useSelectedStore((s) => s.selectedFriendUid);
 
-  const { reactionInfo, setReactionInfo, showEmojiPicker, setShowEmojiPicker } =
-    useApp().post;
+  const selectedKey = selectedFriendUid ?? "all";
+  const moments =
+    useMomentsStoreV2((s) => s.momentsByUser[selectedKey]?.moments) ?? [];
 
-  const {
-    showFlyingEffect,
-    setShowFlyingEffect,
-    flyingEmojis,
-    setFlyingEmojis,
-  } = useApp().navigation;
+  const knownOwnerFromList = useMemo(() => {
+    if (!selectedMomentId) return null;
+    const m = moments.find((item) => item.id === selectedMomentId);
+    return resolveMomentOwnerUid(m);
+  }, [moments, selectedMomentId]);
+
+  const syncForSelectedMoment = useMomentActivityStore(
+    (s) => s.syncForSelectedMoment,
+  );
+  const clearActive = useMomentActivityStore((s) => s.clearActive);
+  const activityEntry = useMomentActivityStore((s) =>
+    selectedMomentId ? s.byMomentId[selectedMomentId] : null,
+  );
+
+  const { setShowEmojiPicker } = useApp().post;
 
   const [showFullInput, setShowFullInput] = useState(false);
   const [message, setMessage] = useState("");
@@ -39,35 +54,114 @@ const InputForMoment = () => {
   const holdInterval = useRef(null);
   const wrapperRef = useRef(null);
   const inputRef = useRef(null);
-
-  const [momentUser, setMomentUser] = useState(null);
+  // thêm state
+  const [reactionEffectEmoji, setReactionEffectEmoji] = useState(null);
   const [userDetail, setUserDetail] = useState(null);
-  const [isPublic, setIsPublic] = useState(true);
-
-  const [activity, setActivity] = useState([]);
-
-  // ✅ Loading states
-  const [isLoadingMoment, setIsLoadingMoment] = useState(true);
-  const [isLoadingActivity, setIsLoadingActivity] = useState(false);
+  const [isLoadingMomentMeta, setIsLoadingMomentMeta] = useState(false);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [isSendingReaction, setIsSendingReaction] = useState(false);
 
-  // ---- CÁC HÀM CŨ ----
+  const ownerUid = activityEntry?.ownerUid ?? knownOwnerFromList;
+  const isOwnMoment = Boolean(myUid && ownerUid && myUid === ownerUid);
+  const isPublic = activityEntry?.isPublic ?? true;
+  const activity = activityEntry?.activity ?? [];
+  const pollCounts = activityEntry?.pollCounts ?? null;
+  const isLoadingActivity = activityEntry?.loading ?? false;
+
+  useEffect(() => {
+    if (!selectedMomentId) {
+      clearActive();
+      setUserDetail(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    const run = async () => {
+      setIsLoadingMomentMeta(true);
+
+      await syncForSelectedMoment({
+        momentId: selectedMomentId,
+        myUid,
+        ownerUid: knownOwnerFromList,
+      });
+
+      if (cancelled || !selectedMomentId) return;
+
+      const entry =
+        useMomentActivityStore.getState().byMomentId[selectedMomentId];
+      const resolvedOwner = entry?.ownerUid ?? knownOwnerFromList;
+
+      if (!resolvedOwner || resolvedOwner === myUid) {
+        setUserDetail(null);
+        setIsLoadingMomentMeta(false);
+        return;
+      }
+
+      try {
+        const data = await getFriendDetail(resolvedOwner);
+        if (!cancelled) setUserDetail(data);
+      } catch (err) {
+        console.error("Lỗi khi lấy user detail:", err);
+      } finally {
+        if (!cancelled) setIsLoadingMomentMeta(false);
+      }
+    };
+
+    run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    selectedMomentId,
+    myUid,
+    knownOwnerFromList,
+    syncForSelectedMoment,
+    clearActive,
+  ]);
+
+  const showSeenMoments = useUserSetting((s) => s.showSeenMoments);
+
+  useEffect(() => {
+    if (!selectedMomentId || !ownerUid || isOwnMoment) return;
+    if (!showSeenMoments) return;
+
+    const markViewed = async () => {
+      try {
+        await markMomentViewedOnce({
+          id: selectedMomentId,
+          user: ownerUid,
+        });
+      } catch (err) {
+        console.error("❌ Lỗi mark viewed:", err);
+      }
+    };
+
+    markViewed();
+  }, [selectedMomentId, ownerUid, isOwnMoment, showSeenMoments]);
+
   const sendReact = async (emoji, power = 0) => {
-    if (isSendingReaction) return;
+    if (isSendingReaction || !selectedMomentId) return;
 
     try {
       setIsSendingReaction(true);
-      setFlyingEmojis(emoji);
-      setShowFlyingEffect(true);
-      const res = await SendReactMoment(emoji, selectedMomentId, power);
-      SonnerSuccess(`Gửi cảm xúc thành công!`);
+
+      // trigger effect
+      await SendReactMoment(emoji, selectedMomentId, power);
+      setReactionEffectEmoji(emoji);
+      SonnerSuccess("Gửi cảm xúc thành công!");
       setShowEmojiPicker(false);
     } catch (error) {
       SonnerError("Gửi cảm xúc thất bại!");
       console.error("Lỗi khi gửi react:", error);
     } finally {
       setIsSendingReaction(false);
+
+      // reset để lần sau trigger lại
+      setTimeout(() => {
+        setReactionEffectEmoji(null);
+      }, 10000);
     }
   };
 
@@ -90,50 +184,8 @@ const InputForMoment = () => {
     setReactionPower(0);
   };
 
-  useEffect(() => {
-    const fetchMomentAndUser = async () => {
-      try {
-        setIsLoadingMoment(true);
-        const moment = await getMomentById(selectedMomentId);
-        setIsPublic(moment.isPublic);
-        setMomentUser(moment.user);
-        const data = await getFriendDetail(moment.user);
-        setUserDetail(data);
-      } catch (err) {
-        console.error("Lỗi khi lấy moment hoặc user:", err);
-      } finally {
-        setIsLoadingMoment(false);
-      }
-    };
-
-    if (selectedMomentId) {
-      fetchMomentAndUser();
-    }
-  }, [selectedMomentId]);
-
-  const showSeenMoments = useUserSetting((s) => s.showSeenMoments);
-
-  useEffect(() => {
-    if (!selectedMomentId || !momentUser) return;
-
-    if (!showSeenMoments) return;
-
-    const markViewed = async () => {
-      try {
-        await markMomentViewedOnce({
-          id: selectedMomentId,
-          user: momentUser,
-        });
-      } catch (err) {
-        console.error("❌ Lỗi mark viewed:", err);
-      }
-    };
-
-    markViewed();
-  }, [selectedMomentId, momentUser]);
-
   const handleSend = async () => {
-    if (isSendingMessage || !message.trim()) return;
+    if (isSendingMessage || !message.trim() || !selectedMomentId) return;
 
     try {
       setIsSendingMessage(true);
@@ -157,56 +209,14 @@ const InputForMoment = () => {
     fullName.length > 10 ? fullName.slice(0, 10) + "…" : fullName;
 
   useEffect(() => {
-    if (localId && momentUser && localId === momentUser && selectedMomentId) {
-      const fetchMyMoment = async () => {
-        try {
-          setIsLoadingActivity(true);
-          const info = await GetInfoMoment(selectedMomentId);
-          const views = await GetViewsMoment(selectedMomentId);
-          const { reactions = [] } = info;
-          // Map qua từng view, gắn thêm userInfo + reaction (nếu có)
-          const merged = await Promise.all(
-            views?.moment_views.map(async (view) => {
-              const userInfo = await getFriendDetail(view.user);
-              const reaction = reactions.find((r) => r.user === view.user);
-
-              return {
-                user: userInfo,
-                viewedAt: view.viewed_at,
-                reaction: reaction
-                  ? {
-                      emoji: reaction.emoji,
-                      intensity: reaction.intensity,
-                      createdAt: reaction.createdAt,
-                    }
-                  : null,
-              };
-            }),
-          );
-
-          setActivity(merged);
-        } catch (err) {
-          console.error("❌ Lỗi khi gọi GetInfoMoment:", err);
-        } finally {
-          setIsLoadingActivity(false);
-        }
-      };
-
-      fetchMyMoment();
-    }
-  }, [localId, momentUser, selectedMomentId]);
-
-  useEffect(() => {
-    if (!showFullInput) return; // chỉ chạy khi đang mở input
+    if (!showFullInput) return;
 
     const handleClickOutside = (e) => {
-      // nếu click bên ngoài vùng input
       if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
         setShowFullInput(false);
       }
     };
 
-    // lắng nghe click
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("touchstart", handleClickOutside);
 
@@ -216,103 +226,108 @@ const InputForMoment = () => {
     };
   }, [showFullInput]);
 
+  if (!selectedMomentId) return null;
+
+  if (isOwnMoment) {
+    return (
+      <ActivitySection
+        isPublic={isPublic}
+        activity={activity}
+        pollCounts={pollCounts}
+        isLoading={isLoadingActivity || isLoadingMomentMeta}
+      />
+    );
+  }
+
   return (
     <>
-      {localId && momentUser && localId === momentUser ? (
-        <ActivitySection
-          isPublic={isPublic}
-          activity={activity}
-          isLoading={isLoadingActivity}
-        />
-      ) : (
-        <>
-          {/* ✅ Input hiện khi gõ */}
-          {showFullInput && (
-            <div ref={wrapperRef} className="z-50 w-full">
-              <div className="relative w-full">
-                <div className="flex w-full items-center gap-3 px-4 py-3.5 bg-base-200 rounded-3xl shadow-md">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder={`Trả lời ${shortName}`}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    disabled={isSendingMessage || userDetail?.isCelebrity}
-                    className="flex-1 bg-transparent focus:outline-none font-semibold pl-1 disabled:opacity-50"
-                  />
-                  <button
-                    onClick={handleSend}
-                    disabled={
-                      isSendingMessage ||
-                      !message.trim() ||
-                      userDetail?.isCelebrity
-                    }
-                    className="btn absolute right-3 p-1 btn-sm bg-base-300 btn-circle flex justify-center items-center disabled:opacity-50"
-                  >
-                    {isSendingMessage ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-base-content"></div>
-                    ) : (
-                      <ArrowUp className="text-base-content w-7 h-7" />
-                    )}
-                  </button>
-                </div>
-              </div>
+      {showFullInput && (
+        <div ref={wrapperRef} className="z-50 w-full">
+          <div className="relative w-full">
+            <div className="flex w-full items-center gap-3 px-4 py-3.5 bg-base-200 rounded-3xl shadow-md">
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder={`Trả lời ${shortName}`}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                disabled={isSendingMessage || userDetail?.isCelebrity}
+                className="flex-1 bg-transparent focus:outline-none font-semibold pl-1 disabled:opacity-50"
+              />
+              <button
+                onClick={handleSend}
+                disabled={
+                  isSendingMessage || !message.trim() || userDetail?.isCelebrity
+                }
+                className="btn absolute right-3 p-1 btn-sm bg-base-300 btn-circle flex justify-center items-center disabled:opacity-50"
+              >
+                {isSendingMessage ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-base-content"></div>
+                ) : (
+                  <ArrowUp className="text-base-content w-7 h-7" />
+                )}
+              </button>
             </div>
-          )}
-
-          {/* ✅ Khung rút gọn */}
-          {!showFullInput && (
-            <div className="w-full">
-              <div className="relative w-full">
-                <div
-                  className={clsx(
-                    "flex items-center w-full px-4 py-3.5 rounded-3xl bg-base-200 shadow-md",
-                    userDetail?.isCelebrity
-                      ? "cursor-not-allowed opacity-70"
-                      : "cursor-text",
-                  )}
-                  onClick={() => {
-                    if (!userDetail?.isCelebrity) setShowFullInput(true);
-                  }}
-                >
-                  <span className="flex-1 text-md text-base-content/60 font-semibold pl-1">
-                    Gửi tin nhắn...
-                  </span>
-                </div>
-
-                {/* ✅ Icon cảm xúc */}
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-4 pointer-events-auto px-2">
-                  {["🤣", "💛", "💩"].map((emoji) => (
-                    <button
-                      key={emoji}
-                      title={emoji}
-                      disabled={isSendingReaction}
-                      onMouseDown={() => handleHoldStart(emoji)}
-                      onMouseUp={() => handleHoldEnd(emoji)}
-                      onMouseLeave={() => handleHoldEnd(emoji)}
-                      onTouchStart={() => handleHoldStart(emoji)}
-                      onTouchEnd={() => handleHoldEnd(emoji)}
-                      className={`cursor-pointer select-none text-3xl transition-transform disabled:opacity-50 ${
-                        holdingEmoji === emoji ? "shake" : ""
-                      } ${isSendingReaction ? "pointer-events-none" : ""}`}
-                    >
-                      <span>{emoji}</span>
-                    </button>
-                  ))}
-                  <button
-                    type="button"
-                    disabled={isSendingReaction}
-                    className="cursor-pointer relative disabled:opacity-50"
-                    onClick={() => setShowEmojiPicker((prev) => !prev)}
-                  >
-                    <SmilePlus className="w-8 h-8" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </>
+          </div>
+        </div>
       )}
+
+      {!showFullInput && (
+        <div className="w-full">
+          <div className="relative w-full">
+            <div
+              className={clsx(
+                "flex items-center w-full px-4 py-3.5 rounded-3xl bg-base-200 shadow-md",
+                userDetail?.isCelebrity
+                  ? "cursor-not-allowed opacity-70"
+                  : "cursor-text",
+              )}
+              onClick={() => {
+                if (!userDetail?.isCelebrity) setShowFullInput(true);
+              }}
+            >
+              <span className="flex-1 text-md text-base-content/60 font-semibold pl-1">
+                Gửi tin nhắn...
+              </span>
+            </div>
+
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-4 pointer-events-auto px-2">
+              {["🤣", "💛", "💩"].map((emoji) => (
+                <button
+                  key={emoji}
+                  title={emoji}
+                  disabled={isSendingReaction}
+                  onMouseDown={() => handleHoldStart(emoji)}
+                  onMouseUp={() => handleHoldEnd(emoji)}
+                  onMouseLeave={() => handleHoldEnd(emoji)}
+                  onTouchStart={() => handleHoldStart(emoji)}
+                  onTouchEnd={() => handleHoldEnd(emoji)}
+                  className={`cursor-pointer select-none text-3xl transition-transform disabled:opacity-50 ${
+                    holdingEmoji === emoji ? "shake" : ""
+                  } ${isSendingReaction ? "pointer-events-none" : ""}`}
+                >
+                  <span>{emoji}</span>
+                </button>
+              ))}
+              <button
+                type="button"
+                disabled={isSendingReaction}
+                className="cursor-pointer relative disabled:opacity-50"
+                onClick={() => setShowEmojiPicker((prev) => !prev)}
+              >
+                <SmilePlus className="w-8 h-8" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <ReactionEffect
+        emojis={reactionEffectEmoji ? [reactionEffectEmoji] : []}
+        count={25}
+        direction="up"
+        running={Boolean(reactionEffectEmoji)}
+      />
     </>
   );
 };

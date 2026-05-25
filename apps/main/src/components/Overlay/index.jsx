@@ -16,6 +16,8 @@ export function OverlayRenderer({
   overlayData,
   momentId,
   isCaptionEditing = false,
+  pollCounts = null,
+  pollVariant = "friend",
 }) {
   if (!overlayData) return null;
 
@@ -35,6 +37,12 @@ export function OverlayRenderer({
   if (!Component) return <BaseOverlay overlayData={overlayData} />;
 
   return (
-    <Component overlayData={overlayData} momentId={momentId} isCaptionEditing={isCaptionEditing} />
+    <Component
+      overlayData={overlayData}
+      momentId={momentId}
+      isCaptionEditing={isCaptionEditing}
+      pollCounts={type === "poll" ? pollCounts : undefined}
+      pollVariant={type === "poll" ? pollVariant : undefined}
+    />
   );
 }

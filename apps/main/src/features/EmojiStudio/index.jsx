@@ -5,18 +5,14 @@ import { allEmojis } from "@/constants/emojis";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge";
 import { useApp } from "@/context/AppContext";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
+import { useSelectedStore } from "@/stores";
+import ReactionEffect from "@/components/Effects/ReactionEffect";
 
 const popularEmojis = allEmojis.slice(0, 20);
 
 const EmojiPicker = () => {
-  const { selectedMomentId, showEmojiPicker, setShowEmojiPicker } =
-    useApp().post;
-  const {
-    showFlyingEffect,
-    setShowFlyingEffect,
-    flyingEmojis,
-    setFlyingEmojis,
-  } = useApp().navigation;
+  const selectedMomentId = useSelectedStore((s) => s.selectedMomentId);
+  const { showEmojiPicker, setShowEmojiPicker } = useApp().post;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [recentEmojis, setRecentEmojis] = useState(() => {
@@ -28,6 +24,8 @@ const EmojiPicker = () => {
       return [];
     }
   });
+
+  const [reactionEffectEmoji, setReactionEffectEmoji] = useState(null);
 
   // Hold state
   const [reactionPower, setReactionPower] = useState(0);
@@ -63,7 +61,6 @@ const EmojiPicker = () => {
     setReactionPower(0);
     setIsHolding(false);
     setHoldingEmoji(null);
-    setShowFlyingEffect(false);
     setIsScrolling(false);
     setHasMoved(false);
     clearInterval(holdInterval.current);
@@ -82,15 +79,12 @@ const EmojiPicker = () => {
     hasSentRef.current = true; // ✅ Đánh dấu đã gửi
 
     try {
-      setFlyingEmojis(emoji);
-      setShowFlyingEffect(true);
       setShowEmojiPicker(false);
 
       await SendReactMoment(emoji, selectedMomentId, power);
-      setFlyingEmojis(null);
-
+      setReactionEffectEmoji(emoji);
       SonnerSuccess(
-        `Đã gửi cảm xúc ${emoji}${power > 0 ? ` (Power: ${power})` : ""}`
+        `Đã gửi cảm xúc ${emoji}${power > 0 ? ` (Power: ${power})` : ""}`,
       );
 
       // Lưu recent
@@ -102,6 +96,11 @@ const EmojiPicker = () => {
     } catch (error) {
       SonnerError("Gửi cảm xúc thất bại!");
       console.error(error);
+    } finally {
+      // reset để lần sau trigger lại
+      setTimeout(() => {
+        setReactionEffectEmoji(null);
+      }, 10000);
     }
   };
 
@@ -346,6 +345,13 @@ const EmojiPicker = () => {
           </div>
         </div>
       </div>
+
+      <ReactionEffect
+        emojis={reactionEffectEmoji ? [reactionEffectEmoji] : []}
+        count={25}
+        direction="up"
+        running={Boolean(reactionEffectEmoji)}
+      />
     </>
   );
 };

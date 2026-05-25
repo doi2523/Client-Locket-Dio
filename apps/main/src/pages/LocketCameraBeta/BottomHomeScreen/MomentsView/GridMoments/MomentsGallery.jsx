@@ -3,7 +3,7 @@ import { MdSlowMotionVideo } from "react-icons/md";
 import { useMomentsStoreV2, useSelectedStore } from "@/stores";
 import { SonnerSuccess } from "@/components/ui/SonnerToast";
 
-const MomentsGrid = ({
+const MomentsGallery = ({
   visibleCount,
   increaseVisibleCount,
   moments,
@@ -28,7 +28,7 @@ const MomentsGrid = ({
   const refreshMoments = async () => {
     setLoadingMoments(true);
     try {
-      await reloadMoments();
+      await reloadMoments(selectedFriendUid);
       SonnerSuccess("Làm mới thành công!");
     } catch (err) {
       console.warn("Failed", err);
@@ -185,4 +185,4 @@ const MomentsGrid = ({
   );
 };
 
-export default MomentsGrid;
+export default MomentsGallery;

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from "react";
+import ReactDOM from "react-dom";
 
 const rand = (min, max) => Math.random() * (max - min) + min;
 
@@ -149,7 +150,7 @@ export default function ReactionEffect({
     };
   }, [running, delay, loop]);
 
-  return (
+  return ReactDOM.createPortal(
     <div
       ref={stageRef}
       className={`pointer-events-none fixed top-0 left-0 w-full h-full z-[99] ${className || ""}`}
@@ -175,6 +176,7 @@ export default function ReactionEffect({
           {p.emoji}
         </span>
       ))}
-    </div>
+    </div>,
+    document.body,
   );
 }
