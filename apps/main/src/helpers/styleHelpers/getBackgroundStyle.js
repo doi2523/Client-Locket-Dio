@@ -2,21 +2,47 @@ export function getBackgroundStyle(background, direction = "to bottom") {
   if (!background) return {};
 
   let colors = [];
+  let bgImage = null;
 
   // Array [ #ccc, #999 ]
   if (Array.isArray(background)) {
     colors = background;
   }
 
-  // Object { colors: [] }
+  // Object { colors: [], image?: { data, type, source } }
   else if (background.colors && Array.isArray(background.colors)) {
     colors = background.colors;
+    bgImage = background.image?.data || null;
   }
 
-  // Không đủ hai màu → không áp dụng background
-  if (colors.length < 2) return {};
+  const hasColors = colors.length >= 2;
+  const hasImage = !!bgImage;
 
+  if (!hasColors && !hasImage) return {};
+
+  // Chỉ có ảnh nền
+  if (hasImage && !hasColors) {
+    return {
+      backgroundImage: `url(${bgImage})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+    };
+  }
+
+  // Chỉ có màu (cũ)
+  if (!hasImage && hasColors) {
+    return {
+      background: `linear-gradient(${direction}, ${colors.join(", ")})`,
+    };
+  }
+
+  // Cả ảnh + màu: ảnh đè lên gradient, hiển thị rõ ràng
+  const gradient = `linear-gradient(${direction}, ${colors.join(", ")})`;
   return {
-    background: `linear-gradient(${direction}, ${colors.join(", ")})`,
+    backgroundImage: `url(${bgImage}), ${gradient}`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
   };
 }

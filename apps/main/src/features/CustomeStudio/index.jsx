@@ -49,7 +49,7 @@ const ScreenCustomeStudio = () => {
 
     updateOverlayEditor({
       ...caption,
-      overlay_id: caption?.id || "standard",
+      overlay_id: caption?.overlay_id || caption?.id || "standard",
 
       text_color: caption.text_color || "#FFFFFF",
       text: caption?.text || "",
