@@ -34,14 +34,11 @@ function formatCaption(item) {
       id: item.id,
       text: item.text || "",
       text_color: item.color || "#FFFFFF",
-      icon:
-        item.icon?.url || item.icon_url
-          ? {
-              data: item.icon?.url || item.icon_url,
-              type: "image",
-              source: "url",
-            }
-          : {},
+      icon: {
+        data: item.icon?.url || item.icon_url || "https://media.chisadin.id.vn/transparent.png",
+        type: "image",
+        source: "url",
+      },
       type: "custom",
       active: true,
       effect: null,
