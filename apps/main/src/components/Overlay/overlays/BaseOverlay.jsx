@@ -14,6 +14,7 @@ function BaseOverlay({ overlayData }) {
     <div
       className="absolute max-w-[80%] bottom-4 w-fit backdrop-blur-sm rounded-3xl px-2.5 py-2"
       style={{
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
         ...getCaptionStyle(background, textColor),
       }}
     >
