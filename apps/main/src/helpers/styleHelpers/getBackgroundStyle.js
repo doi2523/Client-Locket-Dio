@@ -39,6 +39,15 @@ export function getBackgroundStyle(background, direction = "to bottom") {
 
   // Cả ảnh + màu: ảnh đè lên gradient, hiển thị rõ ràng
   const gradient = `linear-gradient(${direction}, ${colors.join(", ")})`;
+
+  if (background.image.data === "star_sign_background") {
+    return {
+      backgroundImage: `url("./images/star_sign_background.png"), ${gradient}`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+    };
+  }
   return {
     backgroundImage: `url(${bgImage}), ${gradient}`,
     backgroundSize: "cover",

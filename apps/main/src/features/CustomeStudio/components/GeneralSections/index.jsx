@@ -248,7 +248,7 @@ export default function GeneralThemes({ title }) {
     {
       id: "color_palette",
       icon: (
-        <img src="./icons/color_palette_iconv1.png" className="w-6 h-6 mr-1" />
+        <img src="./icons/color_palette_icon.png" className="w-6 h-6 mr-1" />
       ),
       label: "Màu sắc",
     },
