@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
 import { getCaptionStyle } from "@/helpers/styleHelpers";
 import { SendReactMoment } from "@/services";
-import ReactionEffect from "@/components/Effects/ReactionEffect";
+import { useReactionStore } from "@/stores";
 
 /**
  * pollVariant:
@@ -36,6 +36,8 @@ function PollOverlay({
   const [votingEmoji, setVotingEmoji] = useState(null);
   const [myVote, setMyVote] = useState(null);
 
+  const triggerReaction = useReactionStore((s) => s.triggerReaction);
+
   const handleVote = async (emoji) => {
     if (!momentId || votingEmoji) return;
 
@@ -43,6 +45,7 @@ function PollOverlay({
       setVotingEmoji(emoji);
       await SendReactMoment(emoji, momentId, 0);
       setMyVote(emoji);
+      triggerReaction(emoji);
       SonnerSuccess("Đã gửi vote!");
     } catch (err) {
       console.error("Poll vote failed:", err);
@@ -150,12 +153,6 @@ function PollOverlay({
           )}
         </div>
       </div>
-      <ReactionEffect
-        emojis={myVote ? [myVote] : []}
-        count={25}
-        direction="up"
-        running={Boolean(myVote)}
-      />
     </>
   );
 }
