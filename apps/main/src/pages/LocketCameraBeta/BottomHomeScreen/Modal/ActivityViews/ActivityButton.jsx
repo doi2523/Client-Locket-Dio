@@ -1,7 +1,9 @@
-import ReactionEffect from "@/components/Effects/ReactionEffect";
+import { lazy, Suspense, useMemo } from "react";
+const ReactionEffect = lazy(
+  () => import("@/components/Effects/ReactionEffect"),
+);
 import LoadingRing from "@/components/ui/Loading/ring";
 import { MoonStar } from "lucide-react";
-import { useMemo } from "react";
 
 const ActivityButton = ({ activity, isLoading, onClick }) => {
   const viewersWithReaction = activity.filter((i) => i.reactions?.length > 0);
@@ -44,12 +46,14 @@ const ActivityButton = ({ activity, isLoading, onClick }) => {
           )}
         </div>
       </div>
-      <ReactionEffect
-        emojis={reactionEmojis}
-        count={15}
-        direction="up"
-        running={reactionEmojis.length > 0}
-      />
+      <Suspense fallback={null}>
+        <ReactionEffect
+          key={`${reactionEmojis.join("-")}-${activity.length}`}
+          emojis={reactionEmojis}
+          count={30}
+          direction="down"
+        />
+      </Suspense>
     </>
   );
 };

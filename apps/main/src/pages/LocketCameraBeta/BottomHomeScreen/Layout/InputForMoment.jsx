@@ -16,8 +16,8 @@ import {
   useUserSetting,
   resolveMyUid,
   resolveMomentOwnerUid,
+  useReactionStore,
 } from "@/stores";
-import ReactionEffect from "@/components/Effects/ReactionEffect";
 
 const InputForMoment = () => {
   const { user } = useAuthStore();
@@ -141,6 +141,7 @@ const InputForMoment = () => {
     markViewed();
   }, [selectedMomentId, ownerUid, isOwnMoment, showSeenMoments]);
 
+  const triggerReaction = useReactionStore((s) => s.triggerReaction);
   const sendReact = async (emoji, power = 0) => {
     if (isSendingReaction || !selectedMomentId) return;
 
@@ -149,7 +150,7 @@ const InputForMoment = () => {
 
       // trigger effect
       await SendReactMoment(emoji, selectedMomentId, power);
-      setReactionEffectEmoji(emoji);
+      triggerReaction(emoji);
       SonnerSuccess("Gửi cảm xúc thành công!");
       setShowEmojiPicker(false);
     } catch (error) {
@@ -321,13 +322,6 @@ const InputForMoment = () => {
           </div>
         </div>
       )}
-
-      <ReactionEffect
-        emojis={reactionEffectEmoji ? [reactionEffectEmoji] : []}
-        count={25}
-        direction="up"
-        running={Boolean(reactionEffectEmoji)}
-      />
     </>
   );
 };

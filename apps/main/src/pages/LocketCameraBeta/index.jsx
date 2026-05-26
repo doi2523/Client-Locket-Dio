@@ -3,6 +3,7 @@ import { useApp } from "@/context/AppContext";
 import MainHomeScreen from "./MainHomeScreen";
 import { MusicPlayer } from "./Widgets/MusicPlayer";
 import { useOverlayEditorStore, useUIStore } from "@/stores";
+import GlobalReactionEffect from "./Widgets/GlobalReactionEffect";
 // import CropVideoStudio from "./ModalViews/CropVideoStudio";
 // const Snowfall = lazy(() => import("@/components/Effects/SnowBanner"));
 const BgLocketDio = lazy(() => import("@/components/Effects/BgLocketDio"));
@@ -46,6 +47,7 @@ export default function LocketCameraBeta() {
     <>
       <Suspense fallback={null}>
         <BgLocketDio bgSrc={background?.url} />
+        <GlobalReactionEffect />
       </Suspense>
 
       <MainHomeScreen />

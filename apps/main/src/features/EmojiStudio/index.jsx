@@ -5,8 +5,7 @@ import { allEmojis } from "@/constants/emojis";
 import PlanBadge from "@/components/ui/PlanBadge/PlanBadge";
 import { useApp } from "@/context/AppContext";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
-import { useSelectedStore } from "@/stores";
-import ReactionEffect from "@/components/Effects/ReactionEffect";
+import { useReactionStore, useSelectedStore } from "@/stores";
 
 const popularEmojis = allEmojis.slice(0, 20);
 
@@ -73,7 +72,7 @@ const EmojiPicker = () => {
     sendReact(emoji, power);
     return;
   };
-
+  const triggerReaction = useReactionStore((s) => s.triggerReaction);
   const sendReact = async (emoji, power = 0) => {
     if (hasSentRef.current) return; // ✅ Ngăn gọi lại nếu đã gửi
     hasSentRef.current = true; // ✅ Đánh dấu đã gửi
@@ -86,6 +85,7 @@ const EmojiPicker = () => {
       SonnerSuccess(
         `Đã gửi cảm xúc ${emoji}${power > 0 ? ` (Power: ${power})` : ""}`,
       );
+      triggerReaction(emoji)
 
       // Lưu recent
       if (!recentEmojis.includes(emoji)) {
@@ -345,13 +345,6 @@ const EmojiPicker = () => {
           </div>
         </div>
       </div>
-
-      <ReactionEffect
-        emojis={reactionEffectEmoji ? [reactionEffectEmoji] : []}
-        count={25}
-        direction="up"
-        running={Boolean(reactionEffectEmoji)}
-      />
     </>
   );
 };
