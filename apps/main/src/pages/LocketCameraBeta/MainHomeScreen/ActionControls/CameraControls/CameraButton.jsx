@@ -35,13 +35,36 @@ const CameraButton = () => {
   const holdTimeoutRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const intervalRef = useRef(null);
+  const animationFrameRef = useRef(null);
+  const autoStopTimeoutRef = useRef(null);
   const isTryingToRecordRef = useRef(false);
   const isRecordingRef = useRef(false);
 
   const MAX_RECORD_TIME = getVideoRecordLimit();
+  const RECORD_FPS = 30;
+  const PWA_RECORD_SIZE = 720;
 
-  const stopCamera = () => {
-    console.log("Hello đang test camera à babi");
+  const cleanupCameraStream = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
+
+  const cleanupRecordingResources = () => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+
+    if (autoStopTimeoutRef.current) {
+      clearTimeout(autoStopTimeoutRef.current);
+      autoStopTimeoutRef.current = null;
+    }
   };
 
   const startHold = (e) => {
@@ -60,6 +83,7 @@ const CameraButton = () => {
       setIsHolding(true);
 
       const video = videoRef.current;
+      const isPWA = detectAppEnvironment();
       if (!video || video.readyState < 2) {
         SonnerInfo("Camera chưa sẵn sàng, vui lòng chờ giây lát...");
         isTryingToRecordRef.current = false;
@@ -69,21 +93,24 @@ const CameraButton = () => {
 
       // Tạo canvas vuông
       const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext("2d", {
+        alpha: false,
+        desynchronized: true,
+      });
 
       const side = Math.min(video.videoWidth, video.videoHeight);
-      const outputSize = CAMERA_CONFIG.videoResolutionPx;
+      const outputSize = isPWA
+        ? Math.min(CAMERA_CONFIG.videoResolutionPx, PWA_RECORD_SIZE)
+        : CAMERA_CONFIG.videoResolutionPx;
       canvas.width = outputSize;
       canvas.height = outputSize;
 
       // Điều chỉnh FPS dựa trên môi trường
-      const targetFPS = detectAppEnvironment() ? 45 : undefined; // PWA: 45fps, Web: tự động
-      const canvasStream = targetFPS
-        ? canvas.captureStream(targetFPS)
-        : canvas.captureStream();
+      const targetFPS = RECORD_FPS;
+      const canvasStream = canvas.captureStream(RECORD_FPS);
 
       console.log(
-        `🎥 Recording mode: ${detectAppEnvironment() ? "PWA" : "Web"}, FPS: ${
+        `🎥 Recording mode: ${isPWA ? "PWA" : "Web"}, FPS: ${
           targetFPS || "auto"
         }`
       );
@@ -99,12 +126,10 @@ const CameraButton = () => {
 
       // Cấu hình recorder options với bitrate phù hợp cho PWA
       const recorderOptions = mimeType ? { mimeType } : {};
-      if (detectAppEnvironment() && mimeType) {
-        // Nâng bitrate cho PWA để tăng chất lượng
-        recorderOptions.videoBitsPerSecond = 5000000; // 5 Mbps
+      if (isPWA && mimeType) {
+        recorderOptions.videoBitsPerSecond = 2500000; // 2.5 Mbps cho 720p/30fps
       } else if (mimeType) {
-        // Web thường mạnh hơn => bitrate cao hơn
-        recorderOptions.videoBitsPerSecond = 8000000; // 8 Mbps
+        recorderOptions.videoBitsPerSecond = 5000000; // 5 Mbps cho 1080p/30fps
       }
 
       const recorder = new MediaRecorder(canvasStream, recorderOptions);
@@ -119,9 +144,13 @@ const CameraButton = () => {
 
       recorder.onstop = async () => {
         console.log("📹 Video recording stopped, chunks:", chunks.length);
+        cleanupRecordingResources();
+        canvasStream.getTracks().forEach((track) => track.stop());
 
         if (chunks.length === 0) {
           console.error("No video data captured");
+          isRecordingRef.current = false;
+          setIsHolding(false);
           return;
         }
 
@@ -139,7 +168,7 @@ const CameraButton = () => {
           size: file.size,
           type: file.type,
           name: file.name,
-          environment: detectAppEnvironment() ? "PWA" : "Web",
+          environment: isPWA ? "PWA" : "Web",
         });
 
         const videoUrl = URL.createObjectURL(file);
@@ -149,7 +178,7 @@ const CameraButton = () => {
         setPreview({ type: "video", data: videoUrl });
         setSelectedFile(file);
         setCameraActive(false);
-        stopCamera();
+        cleanupCameraStream();
         setLoading(false);
 
         // Reset states
@@ -159,6 +188,8 @@ const CameraButton = () => {
 
       recorder.onerror = (e) => {
         console.error("MediaRecorder error:", e);
+        cleanupRecordingResources();
+        canvasStream.getTracks().forEach((track) => track.stop());
         isRecordingRef.current = false;
         setIsHolding(false);
       };
@@ -178,7 +209,7 @@ const CameraButton = () => {
 
       // Hàm vẽ mỗi frame vào canvas với FPS control cho PWA
       let lastFrameTime = 0;
-      const frameInterval = detectAppEnvironment() ? 1000 / 45 : 0; // 45fps cho PWA, unlimited cho web
+      const frameInterval = 1000 / RECORD_FPS;
 
       const drawFrame = (currentTime) => {
         if (video.paused || video.ended || recorder.state !== "recording") {
@@ -186,12 +217,9 @@ const CameraButton = () => {
         }
 
         // Kiểm tra frame rate cho PWA
-        if (
-          detectAppEnvironment() &&
-          currentTime - lastFrameTime < frameInterval
-        ) {
+        if (currentTime - lastFrameTime < frameInterval) {
           if (recorder.state === "recording") {
-            requestAnimationFrame(drawFrame);
+            animationFrameRef.current = requestAnimationFrame(drawFrame);
           }
           return;
         }
@@ -212,14 +240,14 @@ const CameraButton = () => {
         ctx.restore();
 
         if (recorder.state === "recording") {
-          requestAnimationFrame(drawFrame);
+          animationFrameRef.current = requestAnimationFrame(drawFrame);
         }
       };
 
-      requestAnimationFrame(drawFrame);
+      animationFrameRef.current = requestAnimationFrame(drawFrame);
 
       // Auto stop sau MAX_RECORD_TIME
-      setTimeout(() => {
+      autoStopTimeoutRef.current = setTimeout(() => {
         if (recorder.state === "recording") {
           console.log("📹 Auto stopping recording after max time");
           recorder.stop();
@@ -328,6 +356,7 @@ const CameraButton = () => {
       if (mediaRecorderRef.current?.state === "recording") {
         mediaRecorderRef.current.stop();
       }
+      cleanupRecordingResources();
       clearTimeout(holdTimeoutRef.current);
       clearInterval(intervalRef.current);
     };

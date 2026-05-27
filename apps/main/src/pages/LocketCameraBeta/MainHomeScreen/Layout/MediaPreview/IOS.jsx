@@ -168,7 +168,7 @@ const MediaPreviewIOS = () => {
             playsInline
             muted
             className={`
-              w-full h-full object-cover transition-all duration-500 ease-in-out
+              w-full h-full object-cover transition-opacity duration-200 ease-out
               ${cameraMode === "user" ? "scale-x-[-1]" : ""}
               ${
                 cameraActive

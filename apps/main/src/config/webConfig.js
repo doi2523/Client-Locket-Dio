@@ -44,10 +44,12 @@ export const CONFIG = {
         default: {
           width: { ideal: 1920 },
           height: { ideal: 1080 },
+          frameRate: { ideal: 30, max: 30 },
         },
         ultraHD: {
           width: { ideal: 3840 },
           height: { ideal: 2160 },
+          frameRate: { ideal: 30, max: 30 },
         },
       },
     },
