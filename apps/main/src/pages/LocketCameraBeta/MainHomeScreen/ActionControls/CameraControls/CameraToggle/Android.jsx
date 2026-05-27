@@ -1,8 +1,9 @@
 import React from "react";
 import { useApp } from "@/context/AppContext";
+import { getAvailableCameras } from "@/utils";
 import { RefreshCcw } from "lucide-react";
 
-const CameraToggle = () => {
+const CameraToggleAndroid = () => {
   const { camera, post, useloading } = useApp();
   const {
     videoRef,
@@ -29,25 +30,39 @@ const CameraToggle = () => {
   const handleRotateCamera = async () => {
     setRotation((prev) => prev - 180);
     const newMode = cameraMode === "user" ? "environment" : "user";
-    setCameraMode(newMode);
-    // ✅ Reset deviceId để tránh bị giữ lại cam cũ (zoom cam)
-    setZoomLevel("1x");
-    setDeviceId(null);
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-    }
+    let nextDeviceId = null;
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: newMode },
-        audio: false,
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
+      const cameras = await getAvailableCameras();
+      const currentTrack = streamRef.current?.getVideoTracks?.()?.[0] || null;
+      const currentDeviceId = currentTrack?.getSettings?.()?.deviceId;
+      const fallbackDevice = cameras?.allCameras?.find(
+        (device) => device.deviceId !== currentDeviceId
+      );
+
+      nextDeviceId =
+        newMode === "environment"
+          ? cameras?.backNormalCamera?.deviceId ||
+            cameras?.backCameras?.[0]?.deviceId ||
+            fallbackDevice?.deviceId ||
+            null
+          : cameras?.frontCameras?.[0]?.deviceId ||
+            fallbackDevice?.deviceId ||
+            null;
     } catch (error) {
-      console.error("Lỗi khi đổi camera:", error);
+      console.error("Lỗi khi lấy danh sách camera:", error);
+    }
+
+    setCameraMode(newMode);
+    setZoomLevel("1x");
+    setDeviceId(nextDeviceId);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
     }
   };
 
@@ -64,4 +79,4 @@ const CameraToggle = () => {
   );
 };
 
-export default CameraToggle;
+export default CameraToggleAndroid;
