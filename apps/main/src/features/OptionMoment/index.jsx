@@ -35,7 +35,7 @@ const OptionMoment = ({ setOptionModalOpen, isOptionModalOpen }) => {
   const [openModal, setOpenModal] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [sharing, setSharing] = useState(false);
-  const { removeMoment } = useMomentsStoreV2();
+  const removeMoment = useMomentsStoreV2((s) => s.removeMoment);
 
   const { removeUploadItemById } = useUploadQueueStore();
   // Lock scroll khi mở modal

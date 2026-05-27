@@ -68,7 +68,7 @@ function AppContent() {
 
   useEffect(() => {
     if (!loading && isAuth && location.pathname === "/login") {
-      navigate("/locket-beta", { replace: true });
+      navigate("/locket", { replace: true });
     }
   }, [isAuth, loading, location.pathname]);
 
@@ -139,7 +139,7 @@ function AppContent() {
               <Route
                 key={path}
                 path={path}
-                element={<Navigate to="/locket-beta" replace />}
+                element={<Navigate to="/locket" replace />}
               />
             ))}
 

@@ -2,7 +2,7 @@ import { Flame, Heart } from "lucide-react";
 import { useStreakStore } from "@/stores";
 
 export default function BottomStreak({ recentPosts = [] }) {
-  const { streak } = useStreakStore();
+  const streak = useStreakStore((s) => s.streak);
 
   return (
     <div className="w-full flex justify-center items-center pb-24">

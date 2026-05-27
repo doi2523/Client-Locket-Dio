@@ -11,12 +11,16 @@ import {
 import FormMusicPoup from "@/features/PoupScreen/FormMusicPoup";
 import FormReviewPoup from "@/features/PoupScreen/FormReviewPoup";
 import { useOverlayEditorStore, useStreakStore } from "@/stores";
-import IconRenderer from "@/features/OverlayRender/iconRenders";
+import IconRenderer from "@/components/Overlay/icons/IconRenderer";
 import { getCaptionStyle } from "@/helpers/styleHelpers";
-import { useCurrentWeatherV2, useCurrentLocation } from "../../hooks";
+import {
+  useCurrentWeatherV2,
+  useCurrentLocation,
+  useMediaPalette,
+} from "../../hooks";
 
 export default function GeneralThemes({ title }) {
-  const { navigation } = useApp();
+  const { navigation, post } = useApp();
   const { setIsFilterOpen } = navigation;
 
   const { addressOptions } = useCurrentLocation();
@@ -38,6 +42,8 @@ export default function GeneralThemes({ title }) {
   const [popupActive, setPopupActive] = useState(false);
   const [formType, setFormType] = useState("");
   const [reviewOpen, setReviewOpen] = useState(false);
+
+  const { dominantColor, palette } = useMediaPalette(post);
 
   // --- EFFECTS ---
   useEffect(() => {
@@ -94,18 +100,19 @@ export default function GeneralThemes({ title }) {
   const handleMusicSubmit = async (link) => {
     setLoading(true);
     try {
-      const music = await getInfoMusicByUrl(
+      const musicData = await getInfoMusicByUrl(
         link,
         formType === "apple" ? "apple" : "spotify",
       );
 
       applyOverlay({
         overlay_id: "music",
-        caption: music.title,
-        text: music.title,
-        icon: { data: music.image, type: "image", source: "url" },
+        caption: musicData.title,
+        text: musicData.title,
+        icon: { data: musicData.image, type: "image", source: "url" },
         type: "music",
-        payload: music,
+        payload: musicData,
+        ...musicData,
       });
 
       SonnerSuccess(
@@ -152,7 +159,7 @@ export default function GeneralThemes({ title }) {
       }),
 
     weather: () => {
-      if (!weatherInfo || !weatherInfo.payload) {
+      if (!weatherInfo || !weatherInfo.payload || !weatherInfo.text) {
         SonnerInfo("Không có dữ liệu thời tiết!");
         return;
       }
@@ -193,6 +200,29 @@ export default function GeneralThemes({ title }) {
         type: "streak",
         text_color: "#00000099",
       }),
+    color_palette: () =>
+      applyOverlay({
+        overlay_id: "color_palette",
+        icon: { source: "local", data: "color_palette_icon", type: "image" },
+        background: { material_blur: "ultra_thin", colors: [] },
+        caption: String(dominantColor || "#FFFFFF"),
+        text: String(dominantColor || "#FFFFFF"),
+        payload: { colors: palette || [] },
+        type: "color_palette",
+        text_color: "#FFFFFFE6",
+      }),
+    poll: () =>
+      applyOverlay({
+        overlay_id: "poll",
+        background: { colors: ["#685AF7", "#685AF7"] },
+        text: "",
+        type: "poll",
+        text_color: "#FFFFFFF0",
+        payload: {
+          right_emoji: "👎",
+          left_emoji: "👍",
+        },
+      }),
   };
 
   const handleClick = (id) => actions[id]?.();
@@ -216,6 +246,13 @@ export default function GeneralThemes({ title }) {
       label: "Văn bản",
     },
     {
+      id: "color_palette",
+      icon: (
+        <img src="./icons/color_palette_icon.png" className="w-6 h-6 mr-1" />
+      ),
+      label: "Màu sắc",
+    },
+    {
       id: "music",
       icon: <img src="./icons/music_icon.png" className="w-6 h-6 mr-1" />,
       label: "Spotify",
@@ -231,6 +268,7 @@ export default function GeneralThemes({ title }) {
       background: weatherInfo.background.colors,
       color: "#FFFFFF",
       label: weatherInfo?.text || "Thời tiết",
+      cover: "./images/cloud_cover.png",
     },
     {
       id: "review",
@@ -248,6 +286,13 @@ export default function GeneralThemes({ title }) {
       label: streak?.count || "0",
       background: ["#FFD25F", "#EAA900"],
       color: "#00000099",
+    },
+    {
+      id: "poll",
+      background: ["#685AF7", "#685AF7"],
+      icon: <img src="./icons/poll_icon.png" className="w-5 h-5 mr-0.5" />,
+      color: "#FFFFFF",
+      label: "Poll",
     },
     {
       id: "location",
@@ -277,10 +322,20 @@ export default function GeneralThemes({ title }) {
               key={btn.id}
               onClick={() => handleClick(btn.id)}
               style={{ ...getCaptionStyle(btn.background, btn.color) }}
-              className={`flex flex-col whitespace-nowrap backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center ${
+              className={`relative flex flex-col whitespace-nowrap backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center ${
                 !btn.background ? "bg-base-200 dark:bg-white/30" : ""
               }`}
             >
+              {btn.cover && (
+                <img
+                  src={btn.cover}
+                  alt="Cover"
+                  className="absolute inset-0 w-full h-full object-cover rounded-3xl select-none pointer-events-none"
+                  style={{
+                    opacity: weatherInfo?.payload?.cloud_cover ?? 0.5,
+                  }}
+                />
+              )}
               <span className="text-base flex flex-row items-center gap-1">
                 {btn.icon}
 

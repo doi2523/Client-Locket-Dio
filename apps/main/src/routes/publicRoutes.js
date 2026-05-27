@@ -46,7 +46,7 @@ export const publicRoutes = [
 
   { path: "/docs", component: Docs, title: `Tài liệu | ${APP_NAME}` },
   { path: "/sponsors", component: DonatePage, title: `Ủng hộ dự án | ${APP_NAME}` },
-  { path: "/locket-beta", component: LocketCameraBeta, title: `Locket Camera Beta | ${APP_NAME}` },
+  { path: "/locket", component: LocketCameraBeta, title: `Locket Camera | ${APP_NAME}` },
 
   { path: "/privacy", component: PrivacyPolicy, title: `Chính sách riêng tư | ${APP_NAME}` },
   { path: "/pricing", component: PricingPage, title: `Đăng ký gói thành viên | ${APP_NAME}` },

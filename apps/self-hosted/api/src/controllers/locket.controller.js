@@ -71,31 +71,46 @@ class LocketController {
       const { idToken, localId } = req.user;
 
       const data = await postServices.getLocketMoments(idToken, localId);
-      return res
-        .status(200)
-        .json({
-          data: data.moments,
-          nextPageToken: data.nextPageToken,
-          success: true,
-          message: "ok",
-        });
+      return res.status(200).json({
+        data: data.moments,
+        nextPageToken: data.nextPageToken,
+        success: true,
+        message: "ok",
+      });
     } catch (error) {
       next(error);
     }
   }
+
+  async getInfoMoments(req, res, next) {
+    try {
+      const { idToken, uid } = req.user;
+      const { idMoment } = req.body;
+      // 1. Gọi service lấy moments
+      const data = await postServices.getInfoLocketMoments(idToken, idMoment);
+
+      return res.status(200).json({
+        data: data.moments,
+        nextPageToken: data.nextPageToken,
+        success: true,
+        message: "ok",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getMessages(req, res, next) {
     try {
       const { idToken, localId } = req.user;
 
       const data = await chatServices.getAllMessages(idToken, localId);
-      return res
-        .status(200)
-        .json({
-          data: data?.messages,
-          nextPageToken: data?.nextPageToken,
-          success: true,
-          message: "ok",
-        });
+      return res.status(200).json({
+        data: data?.messages,
+        nextPageToken: data?.nextPageToken,
+        success: true,
+        message: "ok",
+      });
     } catch (error) {
       next(error);
     }

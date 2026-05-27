@@ -88,6 +88,17 @@ export const getListCelebrity = async () => {
     return null;
   }
 };
+
+export const getListCelebrityV2 = async () => {
+  try {
+    const res = await instanceBaseData.get(PUBLIC_API.celebratesV2);
+    return res.data;
+  } catch (error) {
+    console.error("🚨 Lỗi khi gọi API:", error.message);
+    return null;
+  }
+};
+
 export const getNotifications = async () => {
   try {
     const res = await instanceBaseData.get(PUBLIC_API.notifications);

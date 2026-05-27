@@ -5,9 +5,10 @@ import ReviewOverlay from "./components/ReviewOverlay";
 import { useOverlayEditorStore } from "@/stores";
 import DecorativeOverlay from "./components/DecorativeOverlay";
 import { getCaptionStyle } from "@/helpers/styleHelpers";
-import IconRenderer from "../OverlayRender/iconRenders";
 import StreakOverlay from "./components/StreakOverlay";
 import MusicOverlay from "./components/MusicOverlay";
+import { OverlayRenderer } from "@/components/Overlay";
+import IconRenderer from "@/components/Overlay/icons/IconRenderer";
 
 // Custom Hooks
 const useTextMeasurement = (text, ref, type, placeholder, parentRef) => {
@@ -18,15 +19,21 @@ const useTextMeasurement = (text, ref, type, placeholder, parentRef) => {
   const getTextWidth = (text, ref) => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
+
     if (!context || !ref.current) return 100;
 
+    // FIX
+    const safeText = String(text || "");
+
     const style = getComputedStyle(ref.current);
+
     context.font = `${style.fontSize} ${style.fontFamily}`;
 
     const emojiRegex =
       /([\uD800-\uDBFF][\uDC00-\uDFFF])|(\p{Extended_Pictographic})/gu;
-    const textOnly = text.replace(emojiRegex, "");
-    const emojiMatches = text.match(emojiRegex) || [];
+
+    const textOnly = safeText.replace(emojiRegex, "");
+    const emojiMatches = safeText.match(emojiRegex) || [];
 
     const baseWidth = context.measureText(textOnly).width;
     const emojiWidth = emojiMatches.length * 24;
@@ -134,11 +141,19 @@ const CaptionIconOverlay = ({
 const WeatherOverlay = ({ postOverlay }) => {
   return (
     <div
-      className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl text-white font-semibold"
+      className="relative flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl text-white font-semibold"
       style={{
         ...getCaptionStyle(postOverlay.background, postOverlay.text_color),
       }}
     >
+      <img
+        src="./images/cloud_cover.png"
+        alt="Cover"
+        className="absolute inset-0 w-full h-full object-cover rounded-3xl select-none pointer-events-none"
+        style={{
+          opacity: postOverlay?.payload?.cloud_cover ?? 0,
+        }}
+      />
       <IconRenderer icon={postOverlay.icon} />
       <span>{postOverlay?.text || postOverlay?.caption}</span>
     </div>
@@ -460,6 +475,82 @@ const DefaultOverlay = ({
   );
 };
 
+function PollOverlay({
+  postOverlay,
+  setPostOverlay,
+  placeholder,
+  isEditable,
+  parentRef,
+}) {
+  const textareaRef = useRef(null);
+
+  const pollData = postOverlay?.payload || postOverlay?.overlays?.payload || {};
+
+  const backgroundColors = postOverlay?.background?.colors || [
+    "#685AF7",
+    "#685AF7",
+  ];
+
+  const rightEmoji = pollData.right_emoji || "👍";
+  const leftEmoji = pollData.left_emoji || "👎";
+
+  const pollText = postOverlay?.text || "";
+  const textColor = postOverlay?.text_color || "#FFFFFF";
+
+  const { width, shouldWrap } = useTextMeasurement(
+    pollText,
+    textareaRef,
+    "default",
+    placeholder,
+    parentRef,
+  );
+
+  useAutoResize([textareaRef]);
+
+  const handleChange = (e) => {
+    setPostOverlay({
+      text: e.target.value,
+    });
+  };
+
+  return (
+    <div
+      className="rounded-3xl p-2 flex flex-col items-center font-semibold w-max max-w-[80vw]"
+      style={{
+        width: `${width}px`,
+        maxWidth: "90%",
+        minWidth: `${Math.max(width, 180)}px`,
+        ...getCaptionStyle(backgroundColors, textColor),
+      }}
+    >
+      {/* Poll text */}
+      <textarea
+        ref={textareaRef}
+        value={pollText}
+        onChange={handleChange}
+        placeholder="Ask a question..."
+        rows={1}
+        className="bg-transparent text-center outline-none resize-none overflow-hidden w-full mb-3 px-2"
+        style={{
+          color: textColor,
+          whiteSpace: shouldWrap ? "pre-wrap" : "nowrap",
+        }}
+      />
+
+      {/* Poll actions */}
+      <div className="flex items-center gap-2 w-full">
+        <div className="flex-1 flex items-center justify-center py-1 px-5 rounded-3xl bg-white/10 backdrop-blur-md shadow-md text-xl">
+          {leftEmoji}
+        </div>
+
+        <div className="flex-1 flex items-center justify-center py-1 px-5 rounded-3xl bg-white/10 backdrop-blur-md shadow-md text-xl">
+          {rightEmoji}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Main Component
 const EditorCaption = () => {
   const parentRef = useRef(null);
@@ -476,6 +567,8 @@ const EditorCaption = () => {
     hour: "2-digit",
     minute: "2-digit",
   });
+  if (overlayData.type === "color_palette")
+    return <OverlayRenderer overlayData={overlayData} />;
 
   const renderOverlay = () => {
     const commonProps = {
@@ -527,6 +620,9 @@ const EditorCaption = () => {
 
       case "special":
         return <SpecialOverlay {...commonProps} isEditable={isEditable} />;
+
+      case "poll":
+        return <PollOverlay {...commonProps} isEditable={isEditable} />;
 
       case "default":
         return <DefaultOverlay {...commonProps} />;

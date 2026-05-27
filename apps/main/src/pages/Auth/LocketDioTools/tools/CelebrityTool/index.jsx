@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import { CONFIG } from "@/config";
 import {
   fetchUserById,
-  getListCelebrity,
+  getListCelebrityV2,
   SendRequestToCelebrity,
 } from "@/services";
-import CelebrateItem from "./CelebrateItem";
+import CelebrateItem from "./components/CelebrateItem";
+import SkeletonItem from "./components/SkeletonItem";
+import FilterButton from "./components/FilterButton";
 import {
   SonnerError,
   SonnerInfo,
+  SonnerPromise,
   SonnerSuccess,
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
@@ -24,42 +27,52 @@ export default function CelebrateTool() {
   const codeUser = useGetCode();
   const navigate = useNavigate();
   const fetchUserData = useAuthStore((s) => s.fetchUserData);
-  const [celebrateList, setCelebrateList] = useState([]);
   const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const [activeTab, setActiveTab] = useState("all");
   const [processingUid, setProcessingUid] = useState(null);
 
-  // --- Fetch danh sách celebrate (cache 7 ngày trong localStorage) ---
+  const [celebrateList, setCelebrateList] = useState({});
+  const [userMap, setUserMap] = useState({});
+  // 🔥 load country từ localStorage
+  const [countryCode, setCountryCode] = useState(() => {
+    return localStorage.getItem("celebrate_country") || "ALL";
+  });
+
+  // 🔥 lưu lại khi đổi country
+  useEffect(() => {
+    localStorage.setItem("celebrate_country", countryCode);
+  }, [countryCode]);
+
   const fetchCelebrates = async () => {
     setLoading(true);
+
     try {
       const cacheKey = "celebrate_cache";
       const cachedData = localStorage.getItem(cacheKey);
 
       if (cachedData) {
         const { data, timestamp } = JSON.parse(cachedData);
-        const now = Date.now();
-        const sevenDays = 3 * 60 * 60 * 1000;
 
-        // Kiểm tra hạn cache + dữ liệu hợp lệ
-        if (data && data.length > 0 && now - timestamp < sevenDays) {
+        const now = Date.now();
+        const threeHours = 3 * 60 * 60 * 1000;
+
+        if (data && now - timestamp < threeHours) {
           setCelebrateList(data);
           setLoading(false);
           return;
         }
       }
 
-      // Nếu chưa có cache, cache hết hạn, hoặc data rỗng thì gọi API
-      const result = await getListCelebrity();
+      const result = await getListCelebrityV2();
 
-      setCelebrateList(result || []);
+      setCelebrateList(result || {});
 
-      // Lưu cache kèm timestamp
       localStorage.setItem(
         cacheKey,
         JSON.stringify({
-          result,
+          data: result,
           timestamp: Date.now(),
         }),
       );
@@ -70,18 +83,47 @@ export default function CelebrateTool() {
     }
   };
 
-  // --- Fetch chi tiết user ---
   const fetchDetails = async (list) => {
-    if (list.length === 0) {
-      setUserDetails([]);
-      return;
-    }
+    if (!list?.length) return;
+
     setLoading(true);
+
     try {
       const details = await Promise.all(
         list.map((item) => fetchUserById(item?.uid)),
       );
-      setUserDetails(details.filter(Boolean));
+
+      const validUsers = details.filter(Boolean);
+
+      // 🔥 merge vào cache
+      setUserMap((prev) => {
+        const newMap = { ...prev };
+
+        validUsers.forEach((user) => {
+          newMap[user.uid] = user;
+        });
+
+        return newMap;
+      });
+
+      // 🔥 build lại danh sách hiện tại
+      let currentList = [];
+
+      if (countryCode === "ALL") {
+        currentList = Object.values(celebrateList).flat();
+      } else {
+        currentList = celebrateList[countryCode] || [];
+      }
+
+      setUserDetails(
+        currentList
+          .map((item) => {
+            return (
+              validUsers.find((u) => u.uid === item.uid) || userMap[item.uid]
+            );
+          })
+          .filter(Boolean),
+      );
     } catch (err) {
       SonnerError(
         "Phiên đăng nhập hết hạn",
@@ -92,26 +134,124 @@ export default function CelebrateTool() {
     }
   };
 
-  // --- Gọi API khi mount ---
+  const handleRefresh = async () => {
+    const refreshPromise = (async () => {
+      // lấy list mới
+      const result = await getListCelebrityV2();
+
+      setCelebrateList(result || {});
+
+      localStorage.setItem(
+        "celebrate_cache",
+        JSON.stringify({
+          data: result,
+          timestamp: Date.now(),
+        }),
+      );
+
+      // chỉ lấy country hiện tại
+      let currentList = [];
+
+      if (countryCode === "ALL") {
+        currentList = Object.values(result || {}).flat();
+      } else {
+        currentList = result?.[countryCode] || [];
+      }
+
+      // fetch users
+      const details = await Promise.all(
+        currentList.map((item) => fetchUserById(item?.uid)),
+      );
+
+      const validUsers = details.filter(Boolean);
+
+      // update cache map
+      setUserMap((prev) => {
+        const newMap = { ...prev };
+
+        validUsers.forEach((user) => {
+          newMap[user.uid] = user;
+        });
+
+        return newMap;
+      });
+
+      // update UI
+      setUserDetails(validUsers);
+
+      return {
+        total: validUsers.length,
+        country: countryCode,
+      };
+    })();
+
+    setLoading(true);
+
+    try {
+      SonnerPromise(refreshPromise, {
+        loading: "Đang làm mới dữ liệu...",
+        success: (data) =>
+          `Đã làm mới ${data?.total || 0} tài khoản (${data?.country})`,
+        error: (error) => {
+          const status = error?.status || error?.response?.status;
+
+          switch (status) {
+            case 401:
+              return "Phiên đăng nhập đã hết hạn!";
+            case 429:
+              return "Bạn thao tác quá nhanh. Vui lòng thử lại sau!";
+            case 500:
+              return "Lỗi hệ thống. Vui lòng thử lại!";
+            default:
+              return error?.message || "Không thể làm mới dữ liệu.";
+          }
+        },
+      });
+
+      await refreshPromise;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isCelebrityFeature) {
       fetchCelebrates();
     }
   }, [isCelebrityFeature]);
 
-  // --- Khi celebrateList thay đổi thì fetch chi tiết ---
   useEffect(() => {
-    if (celebrateList.length > 0 && isCelebrityFeature) {
-      fetchDetails(celebrateList);
+    if (!isCelebrityFeature) return;
+
+    let currentList = [];
+
+    if (countryCode === "ALL") {
+      currentList = Object.values(celebrateList).flat();
+    } else {
+      currentList = celebrateList[countryCode] || [];
     }
-  }, [celebrateList, isCelebrityFeature]);
+
+    const missingUsers = currentList.filter((item) => !userMap[item.uid]);
+
+    // 🔥 nếu đã có đủ thì chỉ set local
+    if (missingUsers.length === 0) {
+      setUserDetails(
+        currentList.map((item) => userMap[item.uid]).filter(Boolean),
+      );
+
+      return;
+    }
+
+    // 🔥 chỉ fetch những uid chưa có
+    fetchDetails(missingUsers);
+  }, [celebrateList, countryCode, isCelebrityFeature]);
 
   const handleAddUid = async (uid) => {
     if (!uid || !uid.trim()) {
       return SonnerInfo("Nhập UID trước đã!");
     }
 
-    if (processingUid === uid) return; // chặn spam click
+    if (processingUid === uid) return;
 
     setProcessingUid(uid);
 
@@ -124,7 +264,6 @@ export default function CelebrateTool() {
           "Đang cập nhật trạng thái...",
         );
 
-        // 🔥 fetch lại user mới nhất
         const updatedUser = await fetchUserById(uid);
 
         if (updatedUser) {
@@ -153,13 +292,13 @@ export default function CelebrateTool() {
 
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
+
     const link = document.createElement("a");
     link.href = url;
     link.download = "danh_sach.pdf";
     link.click();
   };
 
-  // --- Phân loại user ---
   const categorized = {
     all: userDetails,
     friends: userDetails.filter((u) => u?.friendship_status === "friends"),
@@ -170,25 +309,45 @@ export default function CelebrateTool() {
       (u) => u?.friendship_status === "outgoing-follow-request",
     ),
     hasSlot: userDetails.filter(
-      (u) => u?.celebrity_data.friend_count < u?.celebrity_data.max_friends,
+      (u) => u?.celebrity_data?.friend_count < u?.celebrity_data?.max_friends,
     ),
     noSlot: userDetails.filter(
-      (u) => u?.celebrity_data.friend_count >= u?.celebrity_data.max_friends,
+      (u) => u?.celebrity_data?.friend_count >= u?.celebrity_data?.max_friends,
     ),
   };
 
-  // --- Skeleton Loading Component ---
-  const SkeletonItem = () => (
-    <div className="animate-pulse flex flex-col gap-2 p-3 rounded-3xl bg-base-200 m-2">
-      <div className="flex items-center gap-3">
-        <div className="w-16 h-16 bg-gray-300 rounded-full" />
-        <div className="flex-1 space-y-2">
-          <div className="w-32 h-4 bg-gray-300 rounded" />
-          <div className="w-20 h-3 bg-gray-300 rounded" />
-        </div>
-      </div>
-    </div>
-  );
+  const tabs = [
+    {
+      key: "all",
+      label: "Tất cả",
+      count: categorized.all.length,
+    },
+    {
+      key: "friends",
+      label: "Bạn bè",
+      count: categorized.friends.length,
+    },
+    {
+      key: "waitlist",
+      label: "Xếp hàng",
+      count: categorized.waitlist.length,
+    },
+    {
+      key: "hasSlot",
+      label: "Còn slot",
+      count: categorized.hasSlot.length,
+    },
+    {
+      key: "noSlot",
+      label: "Hết slot",
+      count: categorized.noSlot.length,
+    },
+    {
+      key: "waitaccept",
+      label: "Chờ chấp nhận",
+      count: categorized.waitaccept.length,
+    },
+  ];
 
   // Nếu không có quyền truy cập
   if (!isCelebrityFeature) {
@@ -222,8 +381,9 @@ export default function CelebrateTool() {
         {/* Nút làm mới */}
         <div className="flex gap-2 flex-row">
           <button
-            onClick={fetchCelebrates}
+            onClick={handleRefresh}
             className="flex items-center gap-1 text-sm px-2 py-1 rounded-md border hover:bg-base-200"
+            disabled={loading}
           >
             <RefreshCcw className="w-4 h-4" /> Làm mới
           </button>
@@ -244,70 +404,54 @@ export default function CelebrateTool() {
         <p>1. Chỉ cần làm mới khi cần thiết.</p>
         <p>2. Không spam yêu cầu quá nhiều để tránh ảnh hưởng tới tài khoản.</p>
       </div>
+      <h3 className="font-semibold text-sm uppercase opacity-70">
+        Danh mục quốc gia
+      </h3>
 
-      {/* Tabs → Chuyển thành nút */}
       <div className="flex gap-2 mb-3 flex-wrap">
-        <button
-          className={`px-3 py-1 rounded-lg ${
-            activeTab === "all" ? "bg-blue-500 text-white" : "bg-base-200"
-          }`}
-          onClick={() => setActiveTab("all")}
-        >
-          Tất cả ({categorized.all.length})
-        </button>
-        <button
-          className={`px-3 py-1 rounded-lg ${
-            activeTab === "friends" ? "bg-blue-500 text-white" : "bg-base-200"
-          }`}
-          onClick={() => setActiveTab("friends")}
-        >
-          Bạn bè ({categorized.friends.length})
-        </button>
-        <button
-          className={`px-3 py-1 rounded-lg ${
-            activeTab === "waitlist" ? "bg-blue-500 text-white" : "bg-base-200"
-          }`}
-          onClick={() => setActiveTab("waitlist")}
-        >
-          Xếp hàng ({categorized.waitlist.length})
-        </button>
-        <button
-          className={`px-3 py-1 rounded-lg ${
-            activeTab === "hasSlot" ? "bg-blue-500 text-white" : "bg-base-200"
-          }`}
-          onClick={() => setActiveTab("hasSlot")}
-        >
-          Còn slot ({categorized.hasSlot.length})
-        </button>
-        <button
-          className={`px-3 py-1 rounded-lg ${
-            activeTab === "noSlot" ? "bg-blue-500 text-white" : "bg-base-200"
-          }`}
-          onClick={() => setActiveTab("noSlot")}
-        >
-          Hết slot ({categorized.noSlot.length})
-        </button>
-        <button
-          className={`px-3 py-1 rounded-lg ${
-            activeTab === "waitaccept"
-              ? "bg-blue-500 text-white"
-              : "bg-base-200"
-          }`}
-          onClick={() => setActiveTab("waitaccept")}
-        >
-          Chờ chấp nhận ({categorized.waitaccept.length})
-        </button>
+        <FilterButton
+          label="ALL"
+          count={Object.values(celebrateList).flat().length}
+          active={countryCode === "ALL"}
+          activeClass="bg-green-500 text-white"
+          onClick={() => setCountryCode("ALL")}
+        />
+
+        {Object.keys(celebrateList).map((code) => (
+          <FilterButton
+            key={code}
+            label={code}
+            count={celebrateList[code]?.length || 0}
+            active={countryCode === code}
+            activeClass="bg-green-500 text-white"
+            onClick={() => setCountryCode(code)}
+          />
+        ))}
       </div>
 
+      <h3 className="font-semibold text-sm uppercase opacity-70">
+        Bộ lọc nhanh
+      </h3>
+
+      <div className="flex gap-2 mb-3 flex-wrap">
+        {tabs.map((tab) => (
+          <FilterButton
+            key={tab.key}
+            label={tab.label}
+            count={tab.count}
+            active={activeTab === tab.key}
+            activeClass="bg-blue-500 text-white"
+            onClick={() => setActiveTab(tab.key)}
+          />
+        ))}
+      </div>
       {/* Danh sách user details */}
       <div className="border rounded-sm h-96 overflow-y-auto">
         {loading ? (
           <>
-            <SkeletonItem />
-            <SkeletonItem />
-            <SkeletonItem />
-            <SkeletonItem />
-            <SkeletonItem />
+            {Array.from({ length: 5 }).map((_, index) => (
+              <SkeletonItem key={index} />
+            ))}
           </>
         ) : categorized[activeTab]?.length > 0 ? (
           categorized[activeTab].map((user) => (

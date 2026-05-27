@@ -1,38 +1,48 @@
-console.log("[SW] Locket Dio SW v2.2.7.5173.555.4-6.3 - loaded");
+const SW_VERSION = import.meta.env.VITE_APP_VERSION;
+
+console.log(`[SW] Locket Dio SW ${SW_VERSION} - loaded`);
+
 import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching";
 import { registerRoute, NavigationRoute } from "workbox-routing";
 import { createHandlerBoundToURL } from "workbox-precaching";
-
 import { CacheFirst } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
 
+// ======================
+// FORCE SKIP WAITING
+// ======================
 self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
 });
-self.addEventListener("install", (event) => {
-  self.skipWaiting(); // Cập nhật ngay
+
+self.addEventListener("install", () => {
+  self.skipWaiting();
 });
+
 self.addEventListener("activate", (event) => {
   event.waitUntil(clients.claim());
 });
 
-// Precache và cleanup
+// ======================
+// PRECACHE
+// ======================
 precacheAndRoute(self.__WB_MANIFEST || []);
 console.log("[SW] started precache");
+
 cleanupOutdatedCaches();
 
-// Điều hướng fallback cho SPA
+// ======================
+// SPA NAVIGATION ROUTE
+// ======================
 registerRoute(
-  new NavigationRoute(
-    createHandlerBoundToURL("index.html"),
-    {
-      denylist: [
-        /^\/assets\//,
-        /\/[^/?]+\.[^/]+$/,
-      ],
-    }
-  )
+  new NavigationRoute(createHandlerBoundToURL("index.html"), {
+    denylist: [/^\/assets\//, /\/[^/?]+\.[^/]+$/],
+  }),
 );
+
+// ======================
+// IMAGE CACHE
+// ======================
 registerRoute(
   ({ url, request }) =>
     url.origin === "https://cdn.locket-dio.com" &&
@@ -46,30 +56,35 @@ registerRoute(
         maxAgeSeconds: 7 * 24 * 60 * 60,
       }),
     ],
-  })
+  }),
 );
 
-// Push Notification handler
+// ======================
+// PUSH NOTIFICATION
+// ======================
 self.addEventListener("push", (event) => {
   const data = event.data?.json() || {};
-  const notificationTitle = data.title || "🔔 Thông báo";
-  const notificationOptions = {
+
+  const title = data.title || "🔔 Thông báo";
+  const urlToOpen = data?.url || self.location.origin;
+
+  const options = {
     body: data.body || "Bạn có thông báo mới!",
-    data: { url: data.url || "https://locket-dio.com" }, // truyền URL để redirect khi click
+    data: { url: urlToOpen },
     icon: "/android-chrome-192x192.png",
-    badge: "/maskable_icon.png",
+    badge: "/maskable-icon-512x512.png",
   };
 
-  event.waitUntil(
-    self.registration.showNotification(notificationTitle, notificationOptions)
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
-// Click handler: mở tab hoặc focus vào web
+// ======================
+// NOTIFICATION CLICK
+// ======================
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const urlToOpen = event.notification.data?.url || "https://locket-dio.com";
+  const urlToOpen = event.notification.data?.url || self.location.origin;
 
   event.waitUntil(
     clients
@@ -84,6 +99,6 @@ self.addEventListener("notificationclick", (event) => {
         if (clients.openWindow) {
           return clients.openWindow(urlToOpen);
         }
-      })
+      }),
   );
 });

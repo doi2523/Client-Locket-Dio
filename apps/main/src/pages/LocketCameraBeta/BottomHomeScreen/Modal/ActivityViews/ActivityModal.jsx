@@ -3,15 +3,19 @@ import ActivityButton from "./ActivityButton";
 import PrivateButton from "./PrivateButton";
 import { ActivityModal } from "@/features/ActivityModal";
 
-// ================= Parent Example =================
-export default function ActivitySection({ isPublic, activity, isLoading }) {
+export default function ActivitySection({
+  isPublic,
+  activity,
+  isLoading,
+  pollCounts,
+}) {
   const [showModal, setShowModal] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState(null);
 
   return (
     <>
       {isPublic !== false && (
-        <div className="w-full relative">
+        <div className="relative w-full">
           <ActivityButton
             activity={activity}
             isLoading={isLoading}
@@ -22,6 +26,7 @@ export default function ActivitySection({ isPublic, activity, isLoading }) {
             onClose={() => setShowModal(false)}
             activity={activity}
             isLoading={isLoading}
+            pollCounts={pollCounts}
             activeTooltip={activeTooltip}
             setActiveTooltip={setActiveTooltip}
           />
@@ -29,7 +34,7 @@ export default function ActivitySection({ isPublic, activity, isLoading }) {
       )}
 
       {isPublic === false && (
-        <div className="flex justify-center items-center w-full relative">
+        <div className="relative flex w-full items-center justify-center">
           <PrivateButton />
         </div>
       )}

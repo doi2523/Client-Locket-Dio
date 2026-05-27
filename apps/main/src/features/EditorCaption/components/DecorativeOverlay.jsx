@@ -1,6 +1,6 @@
 import React from "react";
 import { getCaptionStyle } from "@/helpers/styleHelpers";
-import IconRenderer from "@/features/OverlayRender/iconRenders";
+import IconRenderer from "@/components/Overlay/icons/IconRenderer";
 
 function DecorativeOverlay({ overlayData }) {
 

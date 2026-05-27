@@ -4,11 +4,12 @@ import {
   AcceptRequestToFriend,
   getListRequestFriendV2,
   loadFriendDetailsV3,
+  shareHistoryWithFriend,
 } from "@/services";
 import { useApp } from "@/context/AppContext";
 import { Check } from "lucide-react";
 import { SonnerError, SonnerSuccess } from "@/components/ui/SonnerToast";
-import { useAuthStore, useFriendStoreV3 } from "@/stores";
+import { useAuthStore, useFriendStoreV3, useShareHistory } from "@/stores";
 
 const IncomingFriendRequests = () => {
   const { user } = useAuthStore();
@@ -24,6 +25,7 @@ const IncomingFriendRequests = () => {
 
   const addFriendLocal = useFriendStoreV3((s) => s.addFriendLocal);
 
+  const { shareHistoryOn, toggleShareHistoryOn } = useShareHistory();
   // ✅ CHỈ reset state khi mở tab — KHÔNG gọi API
   useEffect(() => {
     if (isFriendsTabOpen) {
@@ -55,7 +57,7 @@ const IncomingFriendRequests = () => {
         const frienddetails = await loadFriendDetailsV3(result?.friends);
 
         setFriends((prev) =>
-          pageToken ? [...prev, ...frienddetails] : frienddetails
+          pageToken ? [...prev, ...frienddetails] : frienddetails,
         );
 
         setNextPageToken(result.nextPageToken || null);
@@ -80,12 +82,16 @@ const IncomingFriendRequests = () => {
 
         SonnerSuccess(
           "Thông báo từ Locket Dio",
-          `Đã chấp nhận ${data.firstName}`
+          `Đã chấp nhận ${data.firstName}`,
         );
+        if (shareHistoryOn) {
+          await shareHistoryWithFriend(uid);
+          SonnerInfo("Đã chia sẻ lịch sử bài đăng.");
+        }
       } else {
         SonnerError(
           "Thông báo từ Locket Dio",
-          "Không tìm thấy lời mời để chấp nhận."
+          "Không tìm thấy lời mời để chấp nhận.",
         );
       }
     } catch (error) {
@@ -119,9 +125,7 @@ const IncomingFriendRequests = () => {
       ) : errorMessage ? (
         <p className="text-center text-red-500 h-[70px]">{errorMessage}</p>
       ) : friends.length === 0 ? (
-        <p className="text-center text-gray-400 h-[70px]">
-          Chưa tải danh sách
-        </p>
+        <p className="text-center text-gray-400 h-[70px]">Chưa tải danh sách</p>
       ) : (
         <>
           <div className="flex flex-col gap-3">
@@ -178,8 +182,8 @@ const IncomingFriendRequests = () => {
                 {nextPageToken
                   ? "Xem thêm"
                   : showAllFriends
-                  ? "Đã hiện hết"
-                  : "Xem thêm"}
+                    ? "Đã hiện hết"
+                    : "Xem thêm"}
               </button>
               <hr className="flex-grow border-t border-base-content" />
             </div>

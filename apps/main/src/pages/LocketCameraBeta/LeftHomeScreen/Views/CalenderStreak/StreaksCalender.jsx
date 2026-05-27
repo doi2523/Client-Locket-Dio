@@ -86,7 +86,7 @@ function getStreakStartDate(streak) {
 }
 
 const MonthCalendar = ({ monthKey, postsInMonth }) => {
-  const { streak } = useStreakStore();
+  const streak = useStreakStore((s) => s.streak);
 
   const streakStartDate = getStreakStartDate(streak);
 
