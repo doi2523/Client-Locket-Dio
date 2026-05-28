@@ -292,7 +292,7 @@ export default function GeneralThemes({ title }) {
       background: ["#685AF7", "#685AF7"],
       icon: <img src="./icons/poll_icon.png" className="w-5 h-5 mr-0.5" />,
       color: "#FFFFFF",
-      label: "Poll",
+      label: "Bình chọn",
     },
     {
       id: "location",
