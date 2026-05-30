@@ -18,6 +18,7 @@ import {
   useCurrentLocation,
   useMediaPalette,
 } from "../../hooks";
+import LocationIcon from "@/assets/icons/LocationIcon";
 
 export default function GeneralThemes({ title }) {
   const { navigation, post } = useApp();
@@ -283,7 +284,7 @@ export default function GeneralThemes({ title }) {
     {
       id: "streak",
       icon: <img src="./icons/flame_fill.png" className="w-5 h-5 mr-0.5" />,
-      label: streak?.count || "0",
+      label: streak?.count || "1",
       background: ["#FFD25F", "#EAA900"],
       color: "#00000099",
     },
@@ -296,12 +297,7 @@ export default function GeneralThemes({ title }) {
     },
     {
       id: "location",
-      icon: (
-        <img
-          src="https://img.icons8.com/?size=100&id=NEiCAz3KRY7l&format=png&color=000000"
-          className="w-6 h-6 mr-1"
-        />
-      ),
+      icon: <LocationIcon className="w-6 h-6 mr-0.5" />,
       label: savedAddressOptions[0] || "Vị trí",
     },
   ];
@@ -321,10 +317,11 @@ export default function GeneralThemes({ title }) {
             <button
               key={btn.id}
               onClick={() => handleClick(btn.id)}
-              style={{ ...getCaptionStyle(btn.background, btn.color) }}
-              className={`relative flex flex-col whitespace-nowrap backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center ${
-                !btn.background ? "bg-base-200 dark:bg-white/30" : ""
-              }`}
+              style={{
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
+                ...getCaptionStyle(btn.background, btn.color),
+              }}
+              className={`relative flex flex-col whitespace-nowrap backdrop-blur-3xl items-center space-y-1 py-2 px-4 btn h-auto w-auto rounded-3xl font-semibold justify-center`}
             >
               {btn.cover && (
                 <img

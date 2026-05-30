@@ -9,6 +9,7 @@ import StreakOverlay from "./components/StreakOverlay";
 import MusicOverlay from "./components/MusicOverlay";
 import { OverlayRenderer } from "@/components/Overlay";
 import IconRenderer from "@/components/Overlay/icons/IconRenderer";
+import LocationIcon from "@/assets/icons/LocationIcon";
 
 // Custom Hooks
 const useTextMeasurement = (text, ref, type, placeholder, parentRef) => {
@@ -182,11 +183,7 @@ const LocationOverlay = ({
       className="flex items-center bg-white/50 backdrop-blur-2xl gap-1 py-2 px-4 rounded-4xl text-white font-semibold"
       style={{ width: `${width}px` }}
     >
-      <img
-        src="https://img.icons8.com/?size=100&id=NEiCAz3KRY7l&format=png&color=000000"
-        alt=""
-        className="w-6 h-6"
-      />
+      <LocationIcon className="w-6 h-6 mr-0.5" />
       <textarea
         ref={textareaRef}
         value={postOverlay.caption || ""}
