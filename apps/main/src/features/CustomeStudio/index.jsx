@@ -9,10 +9,14 @@ import Footer from "@/components/Footer";
 import { useFeatureVisible } from "@/hooks/useFeature";
 import FeatureGate from "@/components/common/FeatureGate";
 import SavedCaptions from "./components/SavedSections";
-import { useOverlayDataStore, useOverlayUserStore } from "@/stores/OverlayStores";
+import {
+  useOverlayDataStore,
+  useOverlayUserStore,
+} from "@/stores/OverlayStores";
 import CaptionSections from "./components/OverlaySections";
 import { useOverlayEditorStore } from "@/stores";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
+import NotesSection from "./components/NotesSection";
 
 const ScreenCustomeStudio = () => {
   const navigate = useNavigate();
@@ -104,7 +108,7 @@ const ScreenCustomeStudio = () => {
           </button>
         </div>
         {/* Nội dung - Cuộn được */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto space-y-4">
           <GeneralThemes title="🎨 General" onSelect={handleSelectCaption} />
 
           <CaptionSections
@@ -117,47 +121,11 @@ const ScreenCustomeStudio = () => {
             captions={userCaptions}
             onSelect={handleSelectCaption}
           />
-          <FeatureGate canUse={canUseCaptionimage}>
+          {/* <FeatureGate canUse={canUseCaptionimage}>
             <ImageCaptionSelector title="🎨 Caption Ảnh - Truy cập sớm" />
-          </FeatureGate>
-          <div className="px-4 mt-2">
-            <h2 className="text-md font-semibold text-primary mb-2">
-              ✏️ Ghi chú
-            </h2>
-            <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start text-base-content">
-              <p>
-                Theo dõi kênh{" "}
-                <a
-                  className="text-primary font-semibold underline hover:text-primary-focus"
-                  href="https://t.me/ddevdio"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Telegram
-                </a>
-              </p>
-              <p>
-                Tham gia nhóm Discord{" "}
-                <a
-                  className="text-primary font-semibold underline hover:text-primary-focus"
-                  href="https://discord.gg/47buy9nMGc"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Discord
-                </a>
-              </p>
-              <p>
-                Mọi đóng góp hỗ trợ xin nhận tại{" "}
-                <Link
-                  to="/aboutdio"
-                  className="text-primary font-semibold underline hover:text-primary-focus"
-                >
-                  trang giới thiệu Dio
-                </Link>
-              </p>
-            </div>
-          </div>
+          </FeatureGate> */}
+
+          <NotesSection />
           <div className="bottom-0">
             <Footer />
           </div>

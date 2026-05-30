@@ -5,7 +5,7 @@ const CaptionSections = ({ sections, onSelect }) => {
   if (!sections) return null;
 
   return (
-    <div className="space-y-6">
+    <>
       {sections
         .filter((section) => section.active)
         .sort((a, b) => a.order_id - b.order_id)
@@ -62,7 +62,7 @@ const CaptionSections = ({ sections, onSelect }) => {
             </div>
           </div>
         ))}
-    </div>
+    </>
   );
 };
 

@@ -10,12 +10,12 @@ const SavedCaptions = ({
   const isLoading = !captions || captions.length === 0;
 
   return (
-    <div className="px-4 mt-3">
+    <div className="px-4">
       {title && (
-        <h2 className="text-md font-semibold text-primary mb-2">{title}</h2>
+        <h2 className="text-md font-semibold text-primary mb-3">{title}</h2>
       )}
 
-      <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
+      <div className="flex flex-wrap gap-4 justify-start">
         {isLoading ? (
           <Link
             to={"/collab/caption-kanade"}

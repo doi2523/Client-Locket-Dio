@@ -312,7 +312,7 @@ export default function GeneralThemes({ title }) {
           </div>
         )}
 
-        <div className="flex flex-wrap gap-4 pt-2 pb-5 justify-start">
+        <div className="flex flex-wrap gap-4 justify-start">
           {buttons.map((btn) => (
             <button
               key={btn.id}
