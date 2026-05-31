@@ -3,7 +3,7 @@ const icons = import.meta.glob("/src/assets/sf-symbols/*.{png,svg}", {
   import: "default",
 });
 
-const SFSymbolIcon = ({ data, className = "w-6 h-6 object-cover" }) => {
+const SFSymbolIcon = ({ data, className = "w-6 h-6 object-contain" }) => {
   const src =
     icons[`/src/assets/sf-symbols/${data}.svg`] ||
     icons[`/src/assets/sf-symbols/${data}.png`];
