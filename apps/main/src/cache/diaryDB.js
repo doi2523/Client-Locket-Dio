@@ -27,3 +27,28 @@ export const isFriendRemoved = async (uid) => {
 export const clearRemovedFriends = async () => {
   await diaryDB.removedFriends.clear();
 };
+
+export const cleanupRemovedFriends = async (currentFriendIds = []) => {
+  const removed = await diaryDB.removedFriends.toArray();
+
+  const friendSet = new Set(currentFriendIds);
+
+  const valid = [];
+  const needDelete = [];
+
+  for (const item of removed) {
+    if (friendSet.has(item.uid)) {
+      needDelete.push(item.uid);
+    } else {
+      valid.push(item);
+    }
+  }
+
+  if (needDelete.length) {
+    await Promise.all(
+      needDelete.map((uid) => diaryDB.removedFriends.delete(uid)),
+    );
+  }
+
+  return valid;
+};

@@ -7,36 +7,40 @@ import CelebrityTool from "./tools/CelebrityTool";
 import ExportDataTool from "./tools/ExportDataTool";
 import RestoreStreak from "./tools/RestoreStreak";
 import { useAuthStore } from "@/stores";
-
-const toolsList = [
-  {
-    key: "delete-friends",
-    label: "Clean Requests",
-    icon: <UserRoundX />,
-    content: <DeleteFriendsTool />,
-  },
-  {
-    key: "celebrity",
-    label: "Celebrity Tool",
-    icon: <TbUserStar />,
-    content: <CelebrityTool />,
-  },
-  {
-    key: "exports-tool",
-    label: "Xuất dữ liệu",
-    icon: <FolderDown />,
-    content: <ExportDataTool />,
-  },
-  {
-    key: "restore-streak",
-    label: "Khôi phục chuỗi",
-    icon: <Flame />,
-    content: <RestoreStreak />,
-  },
-];
+import { useFeatureVisible } from "@/hooks/useFeature";
 
 export default function ToolsLocket() {
-  const { user } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+
+  const hasAccess = useFeatureVisible("restore_streak_tool");
+
+  const toolsList = [
+    {
+      key: "delete-friends",
+      label: "Clean Requests",
+      icon: <UserRoundX />,
+      content: <DeleteFriendsTool />,
+    },
+    {
+      key: "celebrity",
+      label: "Celebrity Tool",
+      icon: <TbUserStar />,
+      content: <CelebrityTool />,
+    },
+    {
+      key: "exports-tool",
+      label: "Xuất dữ liệu",
+      icon: <FolderDown />,
+      content: <ExportDataTool />,
+    },
+    {
+      key: "restore-streak",
+      label: "Khôi phục chuỗi",
+      icon: <Flame />,
+      content: <RestoreStreak />,
+      visible: hasAccess,
+    },
+  ];
   const [activeTab, setActiveTab] = useState(
     window.location.hash.replace("#", "") || toolsList[0].key,
   );
@@ -60,6 +64,8 @@ export default function ToolsLocket() {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
+  const visibleTools = toolsList.filter((tool) => tool.visible !== false);
+
   return (
     <div className="flex flex-col min-h-[84vh] w-full p-3 pb-24 md:pb-3">
       {/* Title */}
@@ -78,7 +84,7 @@ export default function ToolsLocket() {
         {/* Sidebar */}
         <div className="hidden md:block w-1/4">
           <div className="flex flex-col gap-2 bg-base-100 p-4 rounded-xl shadow-md border">
-            {toolsList.map((tool) => (
+            {visibleTools.map((tool) => (
               <button
                 key={tool.key}
                 onClick={() => setActiveTab(tool.key)}
@@ -98,14 +104,14 @@ export default function ToolsLocket() {
 
         {/* Content */}
         <div className="flex-1 bg-base-100 border border-base-300 p-4 rounded-2xl shadow-md">
-          {toolsList.find((t) => t.key === activeTab)?.content || (
+          {visibleTools.find((t) => t.key === activeTab)?.content || (
             <div>🔍 Không tìm thấy nội dung</div>
           )}
         </div>
 
         {/* Mobile Bottom Toolbar */}
         <BottomToolBar
-          tools={toolsList}
+          tools={visibleTools}
           activeKey={activeTab}
           onChange={setActiveTab}
         />
