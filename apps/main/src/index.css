@@ -123,43 +123,29 @@
 
 /* InputForMoment.css */
 
-@keyframes custom-shake {
+@keyframes angry-shake {
   0% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
+    transform: scale(var(--emoji-scale, 1)) rotate(-6deg);
   }
-  10% {
-    transform: translate(-2px, -1px) rotate(-1deg) scale(1.05);
+
+  25% {
+    transform: scale(var(--emoji-scale, 1)) rotate(6deg);
   }
-  20% {
-    transform: translate(2px, 1px) rotate(1deg) scale(0.97);
-  }
-  30% {
-    transform: translate(-1px, 2px) rotate(-1.5deg) scale(1.03);
-  }
-  40% {
-    transform: translate(1px, -2px) rotate(1.5deg) scale(0.95);
-  }
+
   50% {
-    transform: translate(-2px, 1px) rotate(-1deg) scale(1.1);
+    transform: scale(var(--emoji-scale, 1)) rotate(-8deg);
   }
-  60% {
-    transform: translate(2px, -1px) rotate(1deg) scale(0.95);
+
+  75% {
+    transform: scale(var(--emoji-scale, 1)) rotate(8deg);
   }
-  70% {
-    transform: translate(-1px, -2px) rotate(-1.5deg) scale(1.03);
-  }
-  80% {
-    transform: translate(1px, 2px) rotate(1.5deg) scale(0.97);
-  }
-  90% {
-    transform: translate(-2px, 0) rotate(-1deg) scale(1.05);
-  }
+
   100% {
-    transform: translate(0, 0) rotate(0deg) scale(1);
+    transform: scale(var(--emoji-scale, 1)) rotate(-6deg);
   }
 }
 
 .shake {
-  animation: custom-shake 0.8s infinite;
+  animation: angry-shake var(--shake-speed, 0.12s) linear infinite;
   transform-origin: center;
 }
