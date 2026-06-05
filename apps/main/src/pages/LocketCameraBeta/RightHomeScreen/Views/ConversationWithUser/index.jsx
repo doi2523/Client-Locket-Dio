@@ -1,65 +1,22 @@
 import React, { useState, useRef, useMemo, useLayoutEffect } from "react";
-import ChatDetailHeader from "../Layout/HeaderChatDetail";
-import ChatDetailFooter from "../Layout/InputChatDetail";
-
-// ================= Component: ChatMessageItem =================
-const ChatMessageItem = ({ msg, selectedChat }) => {
-  const me = localStorage.getItem("localId");
-  const isMe = msg.sender === me;
-
-  return (
-    <div className={`chat ${isMe ? "chat-end" : "chat-start"}`} key={msg.id}>
-      {/* Nội dung */}
-      <div className="chat-bubble relative">
-        {/* Reply */}
-        {msg.reply_moment && (
-          <div className="text-sm italic opacity-70">↪ {msg.reply_moment}</div>
-        )}
-
-        {/* Ảnh thumbnail */}
-        {msg.thumbnail_url && (
-          <img
-            src={msg.thumbnail_url}
-            alt="thumbnail"
-            className="w-32 h-32 object-cover rounded-lg my-1"
-          />
-        )}
-
-        {/* Text */}
-        {msg.text}
-
-        {/* Reactions */}
-        {msg.reactions && msg.reactions.length > 0 && (
-          <div className="absolute -top-4 -right-2 flex gap-1 bg-base-200 p-1 rounded-full shadow text-sm">
-            {msg.reactions.map((r, idx) => (
-              <span key={idx} title={r.sender}>
-                {r.emoji}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Thời gian */}
-      <div className="chat-footer opacity-50 text-xs">
-        {new Date(Number(msg.create_time) * 1000).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
-      </div>
-    </div>
-  );
-};
+import ChatDetailHeader from "./HeaderChatDetail";
+import InputChatDetail from "./InputChatDetail";
+import MessageItem from "./MessageItem";
 
 // ================= Component: ChatDetail =================
-const ChatDetail = ({ selectedChat, messages, setSelectedChat, isLoading }) => {
+const ConversationWithUser = ({
+  selectedChat,
+  messages,
+  setSelectedChat,
+  isLoading,
+}) => {
   const [message, setMessage] = useState("");
   const messagesContainerRef = useRef(null);
 
   // Sort tin nhắn theo thời gian tăng dần
   const sortedMessages = useMemo(() => {
     return [...messages].sort(
-      (a, b) => Number(a.create_time) - Number(b.create_time)
+      (a, b) => Number(a.create_time) - Number(b.create_time),
     );
   }, [messages]);
 
@@ -109,24 +66,20 @@ const ChatDetail = ({ selectedChat, messages, setSelectedChat, isLoading }) => {
             ...new Map(
               sortedMessages
                 .filter((msg) => msg && msg.id) // bỏ null/undefined
-                .map((m) => [m.id, m]) // dùng id làm key trong Map
+                .map((m) => [m.id, m]), // dùng id làm key trong Map
             ).values(),
           ].map((msg) => (
-            <ChatMessageItem
-              key={msg.id}
-              msg={msg}
-              selectedChat={selectedChat}
-            />
+            <MessageItem key={msg.id} msg={msg} selectedChat={selectedChat} />
           ))
         )}
       </div>
 
       {/* Footer */}
       <div className="sticky bottom-4 z-10 p-2">
-        <ChatDetailFooter selectedChat={selectedChat} />
+        <InputChatDetail selectedChat={selectedChat} />
       </div>
     </div>
   );
 };
 
-export default ChatDetail;
+export default ConversationWithUser;

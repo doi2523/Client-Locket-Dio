@@ -3,7 +3,7 @@ import { ArrowUp } from "lucide-react";
 import { sendMessage } from "@/services";
 import { SonnerSuccess } from "@/components/ui/SonnerToast";
 
-const ChatDetailFooter = ({ selectedChat }) => {
+const InputChatDetail = ({ selectedChat }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const textareaRef = useRef(null);
@@ -90,4 +90,4 @@ const ChatDetailFooter = ({ selectedChat }) => {
   );
 };
 
-export default ChatDetailFooter;
+export default InputChatDetail;

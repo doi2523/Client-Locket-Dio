@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import { ChevronLeft } from "lucide-react";
 import { useApp } from "@/context/AppContext";
-import ChatDetail from "./View/ChatDetail";
-import SocketStatus from "./View/SocketStatus";
-import { ConversationItem } from "./View/Conversation/ConversationItem";
 import { markReadMessage } from "@/services";
-import { ConversationSkeleton } from "./View/Conversation/ConversationSkeleton";
 import { CONFIG } from "@/config";
 import { useSocket } from "@/context/SocketContext";
 import { useAuthStore, useMessagesStore } from "@/stores";
+import HeaderConversation from "./Layout/HeaderConversation";
+import ConversationWithUser from "./Views/ConversationWithUser";
+import ConversationList from "./Views/ConversationList";
 
 const INITIAL_DISPLAY_COUNT = CONFIG.ui.chat.initialVisible;
 
@@ -125,7 +123,7 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
     .sort(
       (a, b) =>
         Number(b.latestMessage?.createdAt || 0) -
-        Number(a.latestMessage?.createdAt || 0)
+        Number(a.latestMessage?.createdAt || 0),
     );
 
   const displayedMessages = sortedMessages.slice(0, displayCount);
@@ -148,59 +146,23 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
             : "translate-x-full"
         }`}
       >
-        <div className="relative flex items-center shadow-lg justify-between px-4 py-2 text-base-content">
-          <button
-            onClick={() => {
-              setIsHomeOpen(false);
-              setSelectedChat(null);
-            }}
-            className="btn p-1 border-0 rounded-full hover:bg-base-200 transition cursor-pointer z-10"
-          >
-            <ChevronLeft size={30} />
-          </button>
-          <SocketStatus isConnected={isConnected} />
-        </div>
-
-        <div className="flex-1 px-4 py-6 overflow-y-auto space-y-4">
-          {loading ? (
-            // Hiển thị skeleton khi đang loading
-            Array.from({ length: INITIAL_DISPLAY_COUNT }).map((_, idx) => (
-              <ConversationSkeleton key={idx} />
-            ))
-          ) : (
-            <>
-              {/* Danh sách conversations */}
-              {displayedMessages.map((msg) => (
-                <ConversationItem
-                  key={msg.uid}
-                  msg={msg}
-                  onSelect={handleSelectChat}
-                />
-              ))}
-
-              {/* Nút "Xem thêm" */}
-              {remainingCount > 0 && (
-                <button
-                  onClick={handleLoadMore}
-                  className="w-full py-3 mt-4 text-sm font-medium text-primary hover:bg-base-200 rounded-lg transition-colors duration-200"
-                >
-                  Xem thêm {remainingCount} cuộc hội thoại
-                </button>
-              )}
-
-              {/* Thông báo khi không có conversations */}
-              {sortedMessages.length === 0 && (
-                <div className="text-center text-base-content/60 py-8">
-                  Chưa có cuộc hội thoại nào
-                </div>
-              )}
-            </>
-          )}
-        </div>
+        <HeaderConversation
+          setIsHomeOpen={setIsHomeOpen}
+          setSelectedChat={setSelectedChat}
+          isConnected={isConnected}
+        />
+        <ConversationList
+          onSelect={handleSelectChat}
+          loading={loading}
+          conversations={displayedMessages}
+          handleLoadMore={handleLoadMore}
+          remainingCount={remainingCount}
+          initDisplayCount={INITIAL_DISPLAY_COUNT}
+        />
       </div>
 
-      {/* ================= ChatDetail ================= */}
-      <ChatDetail
+      {/* ================= ConversationWithUser ================= */}
+      <ConversationWithUser
         selectedChat={selectedChat}
         messages={messagesByConversation || []}
         setSelectedChat={setSelectedChat}
