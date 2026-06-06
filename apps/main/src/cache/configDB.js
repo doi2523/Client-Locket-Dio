@@ -15,6 +15,19 @@ export function createLocketDioDB() {
     viewedMoments: "id, user, viewedAt"
   });
 
+  db.version(2).stores({
+    meta: "&key",
+    friendIds: "uid, createdAt",
+    friendDetails: "uid, username, badge, isCelebrity",
+    moments: "id, user, date",
+    conversations: "uid, with_user, update_time",
+    messages: "id, uid, update_time, [uid+update_time]",
+    rollcalls: "uid, user, week_of_year, create_time",
+    viewedMoments: "id, user, viewedAt",
+    groups: "id, last_updated_at",
+    groupsMeta: "&key",
+  });
+
   return db;
 }
 // 👉 Tạo instance ban đầu

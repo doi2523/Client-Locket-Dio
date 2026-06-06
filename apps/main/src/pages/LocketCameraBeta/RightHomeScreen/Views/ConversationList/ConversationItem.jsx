@@ -1,21 +1,57 @@
 import { formatTimeAgoV2 } from "@/utils";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Users } from "lucide-react";
 import { useFriendStoreV3 } from "@/stores";
+
+function getGroupDisplayName(group, memberDetails) {
+  if (group?.name) return group.name;
+  if (group?.emoji) return group.emoji;
+
+  const names = memberDetails
+    .map((f) => f?.firstName)
+    .filter(Boolean)
+    .slice(0, 3);
+
+  if (names.length) return names.join(", ");
+  return "Nhóm chat";
+}
 
 // ================= Component: ConversationItem =================
 export const ConversationItem = ({ msg, onSelect }) => {
   const friendMap = useFriendStoreV3((s) => s.friendDetailsMap);
+  const isGroup = msg.type === "group";
 
-  // 🔹 Lookup O(1)
-  const friendDetail = friendMap?.[msg.with_user] ?? null;
+  const friendDetail = !isGroup ? (friendMap?.[msg.with_user] ?? null) : null;
+  const groupMembers = isGroup
+    ? (msg.group?.users || [])
+        .map((u) => friendMap?.[u.user_id])
+        .filter(Boolean)
+    : [];
+
+  const displayName = isGroup
+    ? getGroupDisplayName(msg.group, groupMembers)
+    : `${friendDetail?.firstName || ""} ${friendDetail?.lastName || ""}`.trim();
+
+  const latestSender = isGroup
+    ? friendMap?.[msg.latestMessage?.userId]
+    : null;
+
+  const previewText = msg.latestMessage?.replyMoment
+    ? "Đã trả lời Locket của bạn!"
+    : isGroup && latestSender
+      ? `${latestSender.firstName}: ${msg.latestMessage?.body || ""}`
+      : msg.latestMessage?.body || "";
+
   const isUnread = msg.isRead === false;
+  const sortTime = Number(msg.latestMessage?.createdAt || msg.update_time || 0);
 
   return (
     <div
       onClick={() =>
         onSelect({
           uid: msg.uid,
+          type: msg.type || "direct",
           with_user: msg.with_user,
+          group: msg.group || null,
           isRead: msg.isRead,
           friend: friendDetail || null,
         })
@@ -24,7 +60,41 @@ export const ConversationItem = ({ msg, onSelect }) => {
       ${isUnread ? "bg-base-200" : "bg-base-200"}`}
     >
       {/* Avatar */}
-      {friendDetail ? (
+      {isGroup ? (
+        msg.group?.image_url ? (
+          <img
+            src={msg.group.image_url}
+            alt={displayName}
+            className={`w-15 h-15 rounded-full p-0.5 object-cover transition-all duration-200 
+              ${
+                isUnread
+                  ? "border-[3px] border-amber-400"
+                  : "border-[3px] border-gray-300"
+              }`}
+          />
+        ) : (
+          <div
+            className={`w-15 h-15 rounded-full flex items-center justify-center bg-primary/10 transition-all duration-200 
+              ${
+                isUnread
+                  ? "border-[3px] border-amber-400"
+                  : "border-[3px] border-gray-300"
+              }`}
+          >
+            {msg.group?.emoji ? (
+              <span className="text-2xl">{msg.group.emoji}</span>
+            ) : groupMembers[0]?.profilePic ? (
+              <img
+                src={groupMembers[0].profilePic}
+                alt={displayName}
+                className="w-full h-full rounded-full object-cover"
+              />
+            ) : (
+              <Users className="w-6 h-6 text-primary" />
+            )}
+          </div>
+        )
+      ) : friendDetail ? (
         <img
           src={friendDetail.profilePic || "/default-avatar.png"}
           alt={friendDetail?.firstName || "user"}
@@ -48,17 +118,14 @@ export const ConversationItem = ({ msg, onSelect }) => {
               : "font-semibold text-black opacity-60"
           }`}
         >
-          {friendDetail?.firstName} {friendDetail?.lastName} ~{" "}
-          {formatTimeAgoV2(Number(msg.latestMessage?.createdAt))}
+          {displayName} ~ {formatTimeAgoV2(sortTime)}
         </p>
         <p
           className={`text-md truncate pt-1 font-semibold ${
             isUnread ? "text-black" : "text-gray-500 opacity-60"
           }`}
         >
-          {msg.latestMessage?.replyMoment
-            ? "Đã trả lời Locket của bạn!"
-            : msg.latestMessage?.body || ""}
+          {previewText}
         </p>
       </div>
 

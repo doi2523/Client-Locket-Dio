@@ -20,7 +20,7 @@ import {
   useStreakStore,
   useUploadQueueStore,
   useFriendStoreV3,
-  // useGroupChatStore,
+  useGroupChatStore,
 } from "./stores";
 import { showDevWarning } from "./utils/logging/devConsole";
 import LoadingPageMain from "./components/pages/LoadPageMain";
@@ -49,8 +49,7 @@ function AppContent() {
   const fetchCaptionOverlays = useOverlayDataStore((s) => s.fetchCaptionOverlays);
   const hydrateUploadQueue = useUploadQueueStore((s) => s.hydrateUploadQueue);
   const loadFriendsV3 = useFriendStoreV3((s) => s.loadFriends);
-
-  // const fetchGroups = useGroupChatStore((s) => s.fetchGroups);
+  const fetchGroups = useGroupChatStore((s) => s.fetchGroups);
   const location = useLocation();
 
   const allRoutes = [...publicRoutes, ...authRoutes, ...locketRoutes];
@@ -80,7 +79,7 @@ function AppContent() {
       loadFriendsV3();
       syncStreak();
       hydrateUploadQueue();
-      // fetchGroups();
+      fetchGroups();
     }
   }, [user]);
 

@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useApp } from "@/context/AppContext";
 import { markReadMessage } from "@/services";
 import { CONFIG } from "@/config";
 import { useSocket } from "@/context/SocketContext";
-import { useAuthStore, useMessagesStore } from "@/stores";
+import { useAuthStore, useGroupChatStore, useMessagesStore } from "@/stores";
+import { mergeAndSortConversations } from "@/utils/mergeChatList";
 import HeaderConversation from "./Layout/HeaderConversation";
 import ConversationWithUser from "./Views/ConversationWithUser";
+import ConversationWithGroup from "./Views/ConversationWithGroup";
 import ConversationList from "./Views/ConversationList";
 
 const INITIAL_DISPLAY_COUNT = CONFIG.ui.chat.initialVisible;
@@ -26,11 +28,20 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
     messages,
     fetchConversations,
     upsertConversation,
-    loading,
+    loading: conversationsLoading,
     conversations,
     getMessagesByUser,
+    getGroupMessagesAction,
     addMessageWithUserV2,
   } = useMessagesStore();
+
+  const {
+    groups,
+    fetchGroups,
+    loading: groupsLoading,
+  } = useGroupChatStore();
+
+  const loading = conversationsLoading || groupsLoading;
 
   const handleListMessage = (upsertConversation) => (data) => {
     if (!Array.isArray(data) || !data.length) return;
@@ -93,10 +104,11 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
     }
   }, [isHomeOpen]);
 
-  // ================= Fetch conversations =================
+  // ================= Fetch conversations & groups =================
   useEffect(() => {
     if (!idToken) return;
     fetchConversations();
+    fetchGroups();
   }, [idToken]);
 
   // ================= Chọn chat =================
@@ -105,10 +117,14 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
 
     if (!chat?.uid) return;
 
-    await getMessagesByUser(chat.uid);
+    if (chat.type === "group") {
+      await getGroupMessagesAction(chat.uid);
+    } else {
+      await getMessagesByUser(chat.uid);
 
-    if (chat.isRead === false) {
-      await markReadMessage(chat.uid);
+      if (chat.isRead === false) {
+        await markReadMessage(chat.uid);
+      }
     }
   };
 
@@ -117,14 +133,11 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
     setDisplayCount((prev) => prev + 10);
   };
 
-  // ================= Sắp xếp và lọc conversations =================
-  const sortedMessages = conversations
-    ?.slice()
-    .sort(
-      (a, b) =>
-        Number(b.latestMessage?.createdAt || 0) -
-        Number(a.latestMessage?.createdAt || 0),
-    );
+  // ================= Merge & sắp xếp conversations + groups =================
+  const sortedMessages = useMemo(
+    () => mergeAndSortConversations(conversations, groups),
+    [conversations, groups],
+  );
 
   const displayedMessages = sortedMessages.slice(0, displayCount);
   const remainingCount = sortedMessages.length - displayCount;
@@ -161,12 +174,20 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
         />
       </div>
 
-      {/* ================= ConversationWithUser ================= */}
-      <ConversationWithUser
-        selectedChat={selectedChat}
-        messages={messagesByConversation || []}
-        setSelectedChat={setSelectedChat}
-      />
+      {/* ================= Conversation Detail (Direct or Group) ================= */}
+      {selectedChat?.type === "group" ? (
+        <ConversationWithGroup
+          selectedChat={selectedChat}
+          messages={messagesByConversation || []}
+          setSelectedChat={setSelectedChat}
+        />
+      ) : (
+        <ConversationWithUser
+          selectedChat={selectedChat}
+          messages={messagesByConversation || []}
+          setSelectedChat={setSelectedChat}
+        />
+      )}
     </>
   );
 };

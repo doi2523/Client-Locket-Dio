@@ -1,6 +1,6 @@
 // src/store/messagesStore.js
 import { create } from "zustand";
-import { GetAllMessage, getMessagesWithUser } from "@/services";
+import { GetAllMessage, getMessagesWithUser, getGroupMessages } from "@/services";
 import {
   getAllConversations,
   getMessagesByConversationId,
@@ -120,6 +120,65 @@ export const useMessagesStore = create((set, get) => ({
       });
 
       return merged;
+    }
+
+    return local;
+  },
+
+  getGroupMessagesAction: async (groupId) => {
+    const { messages } = get();
+
+    // 1. Nếu đã cache → trả ngay
+    if (messages[groupId]?.length) {
+      return messages[groupId];
+    }
+
+    // 2. Load local DB
+    const local = await getMessagesByConversationId(groupId);
+    set({
+      messages: { ...messages, [groupId]: local },
+    });
+
+    // 3. Sync API
+    try {
+      const apiData = await getGroupMessages({
+        groupId: groupId,
+        limit: 40,
+      });
+
+      if (apiData?.messages?.length) {
+        // Chuẩn hóa tin nhắn nhóm
+        const normalized = apiData.messages.map((msg) => ({
+          ...msg,
+          uid: groupId,
+          sender: msg.user_id, // Để tương thích nếu cần
+          text: msg.content?.content || "",
+          create_time: Number(msg.created_at || 0) / 1000, // đổi sang giây để giống direct message
+          update_time: Number(msg.created_at || 0),
+        }));
+
+        await saveMessages(normalized);
+
+        const merged = [...normalized, ...local].sort(
+          (a, b) => b.update_time - a.update_time
+        );
+
+        // Loại trùng id
+        const unique = [
+          ...new Map(merged.map((m) => [m.id, m])).values(),
+        ];
+
+        set({
+          messages: {
+            ...get().messages,
+            [groupId]: unique,
+          },
+        });
+
+        return unique;
+      }
+    } catch (err) {
+      console.error("Failed to sync group messages:", err);
     }
 
     return local;
