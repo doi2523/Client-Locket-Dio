@@ -1,7 +1,13 @@
 import React from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, RefreshCw } from "lucide-react";
 
-const HeaderConversation = ({ setIsHomeOpen, setSelectedChat, isConnected }) => {
+const HeaderConversation = ({
+  setIsHomeOpen,
+  setSelectedChat,
+  isConnected,
+  relayStatus,
+  sendReconnect,
+}) => {
   return (
     <div className="relative flex items-center shadow-lg justify-between px-4 py-2 text-base-content">
       <button
@@ -13,22 +19,53 @@ const HeaderConversation = ({ setIsHomeOpen, setSelectedChat, isConnected }) => 
       >
         <ChevronLeft size={30} />
       </button>
-      <SocketStatus isConnected={isConnected} />
+
+      <div className="flex items-center gap-3">
+        {relayStatus === "open" && (
+          <button
+            onClick={sendReconnect}
+            className="btn btn-ghost btn-xs rounded-full gap-1 text-warning"
+          >
+            <RefreshCw size={14} />
+            Reconnect
+          </button>
+        )}
+
+        <SocketStatus isConnected={isConnected} relayStatus={relayStatus} />
+      </div>
     </div>
   );
 };
 
-const SocketStatus = ({ isConnected }) => {
-  const statusClass = isConnected ? "status-success" : "status-error";
+const SocketStatus = ({ isConnected, relayStatus }) => {
+  const relayOk = relayStatus === "open";
+  const label =
+    !isConnected
+      ? "Dio service: off"
+      : !relayOk
+        ? "Relay: " + relayStatus
+        : "Connected";
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5">
       <div className="inline-grid *:[grid-area:1/1]">
-        <div className={`status ${statusClass} animate-ping`}></div>
-        <div className={`status ${statusClass}`}></div>
+        <div
+          className={`status ${
+            isConnected && relayOk ? "status-success" : "status-error"
+          } animate-ping`}
+        ></div>
+        <div
+          className={`status ${
+            isConnected && relayOk ? "status-success" : "status-error"
+          }`}
+        ></div>
       </div>
-      <span className={isConnected ? "text-success" : "text-error"}>
-        {isConnected ? "Connected to Dio Service" : "Disconnected"}
+      <span
+        className={`text-xs font-semibold ${
+          isConnected && relayOk ? "text-success" : "text-error"
+        }`}
+      >
+        {label}
       </span>
     </div>
   );

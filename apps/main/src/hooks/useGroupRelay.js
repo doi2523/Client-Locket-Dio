@@ -157,5 +157,11 @@ export const useGroupRelay = (idToken, myUid, isActive) => {
     };
   }, [isActive, idToken, myUid, connect, disconnect]);
 
-  return { status, reconnect: connect, disconnect };
+  const sendReconnect = useCallback(() => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({ type: "reconnect" }));
+    }
+  }, []);
+
+  return { status, reconnect: connect, disconnect, sendReconnect };
 };

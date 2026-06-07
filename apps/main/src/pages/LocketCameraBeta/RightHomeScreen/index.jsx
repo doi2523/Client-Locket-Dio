@@ -99,7 +99,7 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
   }, [socket, selectedChat?.uid]);
 
   // ================= Group WebSocket Relay =================
-  const { status: relayStatus } = useGroupRelay(
+  const { status: relayStatus, sendReconnect } = useGroupRelay(
     idToken,
     user?.uid,
     !!idToken && !!user?.uid && isConnected,
@@ -172,6 +172,8 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
           setIsHomeOpen={setIsHomeOpen}
           setSelectedChat={setSelectedChat}
           isConnected={isConnected}
+          relayStatus={relayStatus}
+          sendReconnect={sendReconnect}
         />
         <ConversationList
           onSelect={handleSelectChat}
