@@ -6,9 +6,9 @@ const HeaderGroupChatDetail = ({ selectedChat, onBack }) => {
   const friendMap = useFriendStoreV3((s) => s.friendDetailsMap);
 
   const group = selectedChat?.group;
-const groupMembers = (group?.users || [])
-  .map((u) => friendMap?.[u.user_id] || { user_id: u.user_id })
-  // Lấy tên hiển thị của nhóm
+  const groupMembers = (group?.users || []).map((u) =>
+    friendMap?.[u.user_id] || { user_id: u.user_id }
+  );
   const getDisplayName = () => {
     if (group?.name) return group.name;
     if (group?.emoji) return group.emoji;

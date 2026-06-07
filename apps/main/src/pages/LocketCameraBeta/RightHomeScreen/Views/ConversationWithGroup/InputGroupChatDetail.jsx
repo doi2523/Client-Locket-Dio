@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { ArrowUp } from "lucide-react";
+import { sendGroupMessage } from "@/services";
 
 const InputGroupChatDetail = ({ selectedChat }) => {
   const [message, setMessage] = useState("");
@@ -9,17 +10,25 @@ const InputGroupChatDetail = ({ selectedChat }) => {
   const MAX_ROWS = 6;
 
   const handleSend = async () => {
-    if (!message.trim() || loading) return;
+    const text = message.trim();
+    if (!text || loading || !selectedChat?.uid) return;
 
-    // Logic gửi tin nhắn nhóm sẽ được thêm sau bởi người dùng
-    console.log("Gửi tin nhắn nhóm:", {
-      groupId: selectedChat?.uid,
-      message: message.trim(),
-    });
-
+    setLoading(true);
+    const sentText = text;
     setMessage("");
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
+    }
+
+    try {
+      await sendGroupMessage({
+        groupId: selectedChat.uid,
+        message: sentText,
+      });
+    } catch (err) {
+      console.error("sendGroupMessage error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,6 +47,13 @@ const InputGroupChatDetail = ({ selectedChat }) => {
         : target.scrollHeight + "px";
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
   const disabled = loading || !message.trim();
 
   return (
@@ -48,6 +64,7 @@ const InputGroupChatDetail = ({ selectedChat }) => {
           placeholder="Gửi tin nhắn nhóm..."
           value={message}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           rows={1}
           className="flex-1 bg-transparent focus:outline-none font-semibold pl-1 pr-7 resize-none disabled:opacity-50 leading-6 overflow-y-auto"
           disabled={loading}

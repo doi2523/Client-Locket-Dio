@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useApp } from "@/context/AppContext";
-import { markReadMessage } from "@/services";
+import { markReadMessage, markGroupAsRead } from "@/services";
 import { CONFIG } from "@/config";
 import { useSocket } from "@/context/SocketContext";
 import { useAuthStore, useGroupChatStore, useMessagesStore } from "@/stores";
 import { mergeAndSortConversations } from "@/utils/mergeChatList";
+import { useGroupRelay } from "@/hooks/useGroupRelay";
 import HeaderConversation from "./Layout/HeaderConversation";
 import ConversationWithUser from "./Views/ConversationWithUser";
 import ConversationWithGroup from "./Views/ConversationWithGroup";
@@ -97,6 +98,13 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
     };
   }, [socket, selectedChat?.uid]);
 
+  // ================= Group WebSocket Relay =================
+  const { status: relayStatus } = useGroupRelay(
+    idToken,
+    user?.uid,
+    !!idToken && !!user?.uid && isConnected,
+  );
+
   // ================= Reset displayCount khi đóng isHomeOpen =================
   useEffect(() => {
     if (!isHomeOpen) {
@@ -119,6 +127,7 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
 
     if (chat.type === "group") {
       await getGroupMessagesAction(chat.uid);
+      await markGroupAsRead({ groupId: chat.uid });
     } else {
       await getMessagesByUser(chat.uid);
 
@@ -180,6 +189,7 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
           selectedChat={selectedChat}
           messages={messagesByConversation || []}
           setSelectedChat={setSelectedChat}
+          isLoading={conversationsLoading}
         />
       ) : (
         <ConversationWithUser
