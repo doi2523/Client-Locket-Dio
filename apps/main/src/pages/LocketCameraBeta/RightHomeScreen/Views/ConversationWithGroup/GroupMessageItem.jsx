@@ -10,6 +10,7 @@ const MomentContent = ({ moment }) => {
   const captionText = overlay?.data?.text || moment.caption || "";
   const textColor = overlay?.data?.text_color || "#FFFFFFE6";
   const background = overlay?.data?.background;
+  const captionIcon = overlay?.data?.icon;
 
   return (
     <div className="mt-2">
@@ -22,13 +23,18 @@ const MomentContent = ({ moment }) => {
         />
         {captionText && (
           <div
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 w-fit max-w-[90%] px-4 py-1 text-center font-semibold rounded-lg"
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 w-fit max-w-[90%] px-4 py-1 text-center font-semibold rounded-full"
             style={{
               backgroundColor: "rgba(0, 0, 0, 0.5)",
               ...getCaptionStyle(background, textColor),
-
             }}
           >
+            {captionIcon && captionIcon.type === "emoji" && (
+              <span className="mr-1">{captionIcon.data}</span>
+            )}
+            {captionIcon && captionIcon.type === "url" && (
+              <img src={captionIcon.data} alt="icon caption" className="mr-1" />
+            )}
             {captionText}
           </div>
         )}
