@@ -88,3 +88,95 @@ export const markGroupAsRead = async ({ groupId, timestamp } = {}) => {
     console.error("Error marking group as read:", error);
   }
 };
+
+export const toggleGroupMute = async ({ groupId, muted }) => {
+  try {
+    const body = {
+      data: {
+        muted,
+        type: "toggleMute",
+        group_id: groupId,
+      },
+    };
+
+    await instanceLocketV2.post("groupChatOp", body);
+  } catch (error) {
+    console.error("Error toggling group mute:", error);
+    throw error;
+  }
+};
+
+export const addGroupMember = async ({ groupId, userId }) => {
+  try {
+    const body = {
+      data: {
+        user_id: userId,
+        type: "addUser",
+        group_id: groupId,
+      },
+    };
+
+    const res = await instanceLocketV2.post("groupUserOp", body);
+    return res.data?.result?.data?.group ?? null;
+  } catch (error) {
+    console.error("Error adding group member:", error);
+    throw error;
+  }
+};
+
+export const removeGroupMember = async ({ groupId, userId, timestamp } = {}) => {
+  try {
+    const body = {
+      data: {
+        timestamp: {
+          "@type": "type.googleapis.com/google.protobuf.Int64Value",
+          value: String(timestamp || Date.now()),
+        },
+        user_id: userId,
+        type: "removeUser",
+        fully_remove_self: false,
+        group_id: groupId,
+      },
+    };
+
+    const res = await instanceLocketV2.post("groupUserOp", body);
+    return res.data?.result?.data?.group ?? null;
+  } catch (error) {
+    console.error("Error removing group member:", error);
+    throw error;
+  }
+};
+
+export const updateGroupName = async ({ groupId, name }) => {
+  try {
+    const body = {
+      data: {
+        group_id: groupId,
+        name,
+      },
+    };
+
+    const res = await instanceLocketV2.post("updateGroup", body);
+    return res.data?.result?.data?.group ?? null;
+  } catch (error) {
+    console.error("Error updating group name:", error);
+    throw error;
+  }
+};
+
+export const updateGroupAvatar = async ({ groupId, imageUrl }) => {
+  try {
+    const body = {
+      data: {
+        image_url: imageUrl,
+        group_id: groupId,
+      },
+    };
+
+    const res = await instanceLocketV2.post("updateGroup", body);
+    return res.data?.result?.data?.group ?? null;
+  } catch (error) {
+    console.error("Error updating group avatar:", error);
+    throw error;
+  }
+};
