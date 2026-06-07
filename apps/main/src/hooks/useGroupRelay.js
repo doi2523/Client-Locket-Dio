@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useMessagesStore } from "@/stores";
 
-const RELAY_URL = "ws://localhost:8765";
+const RELAY_URL = import.meta.env.VITE_RELAY_GROUP_URL;
 const PING_INTERVAL = 15000;
 
 export const useGroupRelay = (idToken, myUid, isActive) => {
