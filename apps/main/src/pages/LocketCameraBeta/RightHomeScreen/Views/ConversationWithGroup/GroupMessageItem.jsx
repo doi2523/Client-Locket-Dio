@@ -1,5 +1,6 @@
 import React from "react";
 import { useFriendStoreV3 } from "@/stores";
+import { getCaptionStyle } from "@/helpers/styleHelpers";
 
 const MomentContent = ({ moment }) => {
   if (!moment?.thumbnail_url) return null;
@@ -8,14 +9,11 @@ const MomentContent = ({ moment }) => {
   );
   const captionText = overlay?.data?.text || moment.caption || "";
   const textColor = overlay?.data?.text_color || "#FFFFFFE6";
-  const bgColors = overlay?.data?.background?.colors || [];
-  const bgStyle = bgColors.length
-    ? `background:linear-gradient(135deg,${bgColors.join(",")});backdrop-filter:none;`
-    : "";
+  const background = overlay?.data?.background;
 
   return (
     <div className="mt-2">
-      <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-base-300">
+      <div className="relative rounded-xl overflow-hidden border border-base-300">
         <img
           src={moment.thumbnail_url}
           alt=""
@@ -24,11 +22,11 @@ const MomentContent = ({ moment }) => {
         />
         {captionText && (
           <div
-            className="absolute bottom-0 left-0 right-0 px-2 py-1 text-center text-xs font-semibold truncate"
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 w-fit max-w-[90%] px-4 py-1 text-center font-semibold rounded-lg"
             style={{
-              color: textColor,
-              backdropFilter: "blur(4px)",
-              background: bgStyle || "rgba(0,0,0,0.45)",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              ...getCaptionStyle(background, textColor),
+
             }}
           >
             {captionText}
