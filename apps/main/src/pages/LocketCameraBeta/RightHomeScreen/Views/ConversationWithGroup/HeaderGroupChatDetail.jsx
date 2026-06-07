@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { ChevronLeft, Ellipsis, Users } from "lucide-react";
-import { useFriendStoreV3, useGroupChatStore } from "@/stores";
+import { useFriendStoreV3, useGroupChatStore, useUserInfoStore } from "@/stores";
 import GroupInfoModal from "./GroupInfoModal";
 
 const HeaderGroupChatDetail = ({ selectedChat, onBack }) => {
   const friendMap = useFriendStoreV3((s) => s.friendDetailsMap);
+  const userInfoMap = useUserInfoStore((s) => s.userInfoMap);
   const groupFromStore = useGroupChatStore((s) =>
     s.groups.find((g) => g.id === selectedChat?.uid),
   );
@@ -12,7 +13,7 @@ const HeaderGroupChatDetail = ({ selectedChat, onBack }) => {
 
   const group = groupFromStore || selectedChat?.group;
   const groupMembers = (group?.users || []).map((u) =>
-    friendMap?.[u.user_id] || { user_id: u.user_id },
+    friendMap?.[u.user_id] || userInfoMap?.[u.user_id] || { user_id: u.user_id },
   );
 
   const getDisplayName = () => {

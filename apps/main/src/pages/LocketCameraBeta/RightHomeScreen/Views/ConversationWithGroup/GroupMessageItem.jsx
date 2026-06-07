@@ -1,5 +1,5 @@
-import React from "react";
-import { useFriendStoreV3 } from "@/stores";
+import React, { useEffect } from "react";
+import { useFriendStoreV3, useUserInfoStore } from "@/stores";
 import { getCaptionStyle } from "@/helpers/styleHelpers";
 
 const MomentContent = ({ moment }) => {
@@ -48,14 +48,21 @@ const GroupMessageItem = ({ msg }) => {
   const isMe = msg.user_id === me;
 
   const friendMap = useFriendStoreV3((s) => s.friendDetailsMap);
-  const senderDetail = friendMap?.[msg.user_id] ?? null;
+  const userInfoMap = useUserInfoStore((s) => s.userInfoMap);
+  const ensureUserInfo = useUserInfoStore((s) => s.ensureUserInfo);
+
+  const senderDetail = friendMap?.[msg.user_id] ?? userInfoMap?.[msg.user_id] ?? null;
   const senderName = isMe
     ? "Bạn"
     : senderDetail
       ? `${senderDetail.firstName} ${senderDetail.lastName}`
-      : "Thành viên nhóm";
+      : msg.user_id?.slice(0, 8) || "Thành viên nhóm";
 
   const avatarUrl = senderDetail?.profilePic || "/default-avatar.png";
+
+  useEffect(() => {
+    if (!isMe && !senderDetail) ensureUserInfo(msg.user_id);
+  }, [msg.user_id]);
 
   const formatTime = (ts) => {
     if (!ts) return "";

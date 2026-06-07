@@ -28,6 +28,20 @@ export function createLocketDioDB() {
     groupsMeta: "&key",
   });
 
+  db.version(3).stores({
+    meta: "&key",
+    friendIds: "uid, createdAt",
+    friendDetails: "uid, username, badge, isCelebrity",
+    moments: "id, user, date",
+    conversations: "uid, with_user, update_time",
+    messages: "id, uid, update_time, [uid+update_time]",
+    rollcalls: "uid, user, week_of_year, create_time",
+    viewedMoments: "id, user, viewedAt",
+    groups: "id, last_updated_at",
+    groupsMeta: "&key",
+    userInfo: "uid, username",
+  });
+
   return db;
 }
 // 👉 Tạo instance ban đầu

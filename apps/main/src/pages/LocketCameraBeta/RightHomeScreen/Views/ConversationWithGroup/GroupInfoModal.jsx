@@ -7,15 +7,14 @@ import {
   useFriendStoreV3,
   useGroupChatStore,
   useAuthStore,
+  useUserInfoStore,
 } from "@/stores";
 import {
   addGroupMember,
   removeGroupMember,
   updateGroupName,
   toggleGroupMute,
-  fetchUserById,
 } from "@/services";
-import { normalizeFriendDataV2 } from "@/utils";
 
 const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
   const myUser = useAuthStore((s) => s.user);
@@ -30,30 +29,18 @@ const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
   const [showAddMember, setShowAddMember] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [loadingAction, setLoadingAction] = useState(null);
-  const [fetchedUsers, setFetchedUsers] = useState({});
+  const userInfoMap = useUserInfoStore((s) => s.userInfoMap);
+  const ensureUsers = useUserInfoStore((s) => s.ensureUsers);
 
   const groupMembers = group?.users || [];
   const memberIds = new Set(groupMembers.map((u) => u.user_id));
 
   useEffect(() => {
     const unknownIds = groupMembers
-      .filter((u) => u.user_id !== myUserId && !friendDetailsMap[u.user_id])
-      .map((u) => u.user_id)
-      .filter((id) => !fetchedUsers[id]);
+      .filter((u) => u.user_id !== myUserId && !friendDetailsMap[u.user_id] && !userInfoMap[u.user_id])
+      .map((u) => u.user_id);
 
-    if (unknownIds.length === 0) return;
-
-    unknownIds.forEach(async (uid) => {
-      try {
-        const data = await fetchUserById(uid);
-        if (data) {
-          const normalized = normalizeFriendDataV2(data);
-          setFetchedUsers((prev) => ({ ...prev, [uid]: normalized }));
-        }
-      } catch (err) {
-        console.error("Failed to fetch user:", uid, err);
-      }
-    });
+    if (unknownIds.length > 0) ensureUsers(unknownIds);
   }, [group?.id]);
 
   const availableFriends = useMemo(() => {
@@ -157,8 +144,8 @@ const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
     }
     const friend = friendDetailsMap[userId];
     if (friend?.firstName) return friend;
-    const fetched = fetchedUsers[userId];
-    if (fetched?.firstName) return fetched;
+    const cached = userInfoMap[userId];
+    if (cached?.firstName) return cached;
     return null;
   };
 

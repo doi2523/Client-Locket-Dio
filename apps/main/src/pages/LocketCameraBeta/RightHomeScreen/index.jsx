@@ -3,7 +3,7 @@ import { useApp } from "@/context/AppContext";
 import { markReadMessage, markGroupAsRead } from "@/services";
 import { CONFIG } from "@/config";
 import { useSocket } from "@/context/SocketContext";
-import { useAuthStore, useGroupChatStore, useMessagesStore } from "@/stores";
+import { useAuthStore, useGroupChatStore, useMessagesStore, useUserInfoStore } from "@/stores";
 import { mergeAndSortConversations } from "@/utils/mergeChatList";
 import { useGroupRelay } from "@/hooks/useGroupRelay";
 import HeaderConversation from "./Layout/HeaderConversation";
@@ -112,11 +112,14 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
     }
   }, [isHomeOpen]);
 
+  const initUserInfo = useUserInfoStore((s) => s.init);
+
   // ================= Fetch conversations & groups =================
   useEffect(() => {
     if (!idToken) return;
     fetchConversations();
     fetchGroups();
+    initUserInfo();
   }, [idToken]);
 
   // ================= Chọn chat =================
