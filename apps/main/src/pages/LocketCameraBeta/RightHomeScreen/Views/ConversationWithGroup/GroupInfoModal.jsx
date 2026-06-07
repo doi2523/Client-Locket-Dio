@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   X, Plus, UserMinus, Users, Bell, BellOff,
   Pencil, Check, Search, LogOut,
@@ -13,10 +13,13 @@ import {
   removeGroupMember,
   updateGroupName,
   toggleGroupMute,
+  fetchUserById,
 } from "@/services";
+import { normalizeFriendDataV2 } from "@/utils";
 
 const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
-  const myUserId = useAuthStore((s) => s.user?.uid);
+  const myUser = useAuthStore((s) => s.user);
+  const myUserId = myUser?.uid;
   const friendDetailsMap = useFriendStoreV3((s) => s.friendDetailsMap);
   const friendList = useFriendStoreV3((s) => s.friendList);
   const upsertGroup = useGroupChatStore((s) => s.upsertGroup);
@@ -27,9 +30,31 @@ const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
   const [showAddMember, setShowAddMember] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [loadingAction, setLoadingAction] = useState(null);
+  const [fetchedUsers, setFetchedUsers] = useState({});
 
   const groupMembers = group?.users || [];
   const memberIds = new Set(groupMembers.map((u) => u.user_id));
+
+  useEffect(() => {
+    const unknownIds = groupMembers
+      .filter((u) => u.user_id !== myUserId && !friendDetailsMap[u.user_id])
+      .map((u) => u.user_id)
+      .filter((id) => !fetchedUsers[id]);
+
+    if (unknownIds.length === 0) return;
+
+    unknownIds.forEach(async (uid) => {
+      try {
+        const data = await fetchUserById(uid);
+        if (data) {
+          const normalized = normalizeFriendDataV2(data);
+          setFetchedUsers((prev) => ({ ...prev, [uid]: normalized }));
+        }
+      } catch (err) {
+        console.error("Failed to fetch user:", uid, err);
+      }
+    });
+  }, [group?.id]);
 
   const availableFriends = useMemo(() => {
     return friendList
@@ -123,14 +148,28 @@ const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
     setLoadingAction(null);
   };
 
-  const getFriendName = (userId) => {
+  const getUserInfo = (userId) => {
+    if (userId === myUserId) {
+      return {
+        firstName: myUser?.firstName || myUser?.first_name || "",
+        profilePic: myUser?.profilePic || myUser?.profile_picture_url || null,
+      };
+    }
     const friend = friendDetailsMap[userId];
-    if (friend?.firstName) return friend.firstName;
+    if (friend?.firstName) return friend;
+    const fetched = fetchedUsers[userId];
+    if (fetched?.firstName) return fetched;
+    return null;
+  };
+
+  const getFriendName = (userId) => {
+    const info = getUserInfo(userId);
+    if (info?.firstName) return info.firstName;
     return userId?.slice(0, 8) || "Unknown";
   };
 
   const getFriendAvatar = (userId) => {
-    return friendDetailsMap[userId]?.profilePic || null;
+    return getUserInfo(userId)?.profilePic || null;
   };
 
   return (
