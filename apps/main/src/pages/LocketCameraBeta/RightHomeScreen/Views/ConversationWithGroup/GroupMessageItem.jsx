@@ -89,15 +89,17 @@ const GroupMessageItem = ({ msg }) => {
       unknowns.forEach((uid) => ensureUserInfo(uid));
     }
   }, [msg.id, actorUid, targetUid]);
-
-  if (isSystemMessage) {
-    const getName = (uid) => {
+  
+  const getName = (uid) => {
       if (!uid) return null;
       if (uid === me) return "Bạn";
       const detail = friendMap?.[uid] ?? userInfoMap?.[uid] ?? null;
       if (detail?.firstName) return `${detail.firstName} ${detail.lastName}`.trim();
       return null;
-    };
+  };
+
+  if (isSystemMessage) {
+    
     const actorName = getName(actorUid);
     const targetName = getName(targetUid);
 
@@ -177,9 +179,9 @@ const GroupMessageItem = ({ msg }) => {
         {renderBody()}
 
         {msg.reactions && msg.reactions.length > 0 && (
-          <div className="absolute -bottom-2 -right-1 flex gap-0.5 bg-base-300 px-1 py-0.5 rounded-full shadow text-[10px]">
+          <div className="absolute -bottom-2 -right-1 flex gap-0.5 bg-base-300 px-1 py-0.5 rounded-full shadow text-[15px]">
             {msg.reactions.map((r, idx) => (
-              <span key={idx} title={r.user_id}>
+              <span key={idx} title={getName(r.user_id)}>
                 {r.emoji}
               </span>
             ))}
