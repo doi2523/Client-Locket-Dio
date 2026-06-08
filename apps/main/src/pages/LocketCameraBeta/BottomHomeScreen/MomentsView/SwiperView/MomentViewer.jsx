@@ -74,7 +74,7 @@ const MomentViewer = ({ moment, handleClose }) => {
           />
         </div>
 
-        <UserInfo user={moment?.user} date={moment?.date ?? moment?.createTime} />
+        <UserInfo user={moment?.user} date={moment?.date ?? moment?.createTime} groupId={moment?.group_id} />
       </div>
     </div>
   );
