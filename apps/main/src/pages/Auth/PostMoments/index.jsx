@@ -27,7 +27,10 @@ import {
   useAuthStore,
   useOverlayEditorStore,
   useUploadQueueStore,
+  useGroupChatStore,
+  usePostStore,
 } from "@/stores";
+import { generateUUIDv4Upper } from "@/utils/generate/uuid";
 import { getCaptionStyle } from "@/helpers/styleHelpers";
 
 const PostMoments = () => {
@@ -54,6 +57,10 @@ const PostMoments = () => {
   const { maxImageSizeMB, maxVideoSizeMB, storage_limit_mb } = getMaxUploads();
   const savePostedMoment = useUploadQueueStore((s) => s.savePostedMoment);
   const fileInputRef = useRef(null);
+
+  const groups = useGroupChatStore((s) => s.groups);
+  const selectedGroupId = usePostStore((s) => s.selectedGroupId);
+  const setSelectedGroupId = usePostStore((s) => s.setSelectedGroupId);
 
   const handleFileChange = useCallback(async (event) => {
     const rawFile = event.target.files[0];
@@ -105,10 +112,16 @@ const PostMoments = () => {
       if (!payload) {
         throw new Error("Không tạo được payload. Hủy tiến trình tải lên.");
       }
-      // console.log("Payload:", payload);
+
+      if (selectedGroupId) {
+        payload.optionsData.group = {
+          id: selectedGroupId,
+          group_conversation_only: true,
+          message_client_token: generateUUIDv4Upper(),
+        };
+      }
 
       SonnerInfo("Đợi chút nhé", `Đang tạo bài viết !`);
-      // Gọi API upload
       const response = await services.uploadMediaV2(payload);
 
       const normalizedNewData = utils.normalizeMoment(response?.data);
@@ -123,6 +136,7 @@ const PostMoments = () => {
       setPreview(null);
       setSelectedFile(null);
       resetOverlayEditor();
+      setSelectedGroupId(null);
     } catch (error) {
       const errorMessage =
         error?.response?.data?.message || error.message || "Lỗi không xác định";
@@ -349,6 +363,47 @@ const PostMoments = () => {
             )}
           </div>
           <MediaSizeInfo />
+        </div>
+
+        {/* Group selector */}
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <input
+              type="checkbox"
+              id="send-to-group"
+              checked={!!selectedGroupId}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  const firstGroup = groups[0]?.id || "";
+                  setSelectedGroupId(firstGroup);
+                } else {
+                  setSelectedGroupId(null);
+                }
+              }}
+              className="checkbox checkbox-sm"
+            />
+            <label htmlFor="send-to-group" className="font-medium text-sm cursor-pointer">
+              Gửi vào nhóm chat (sẽ không gửi cho bạn bè)
+            </label>
+          </div>
+          <select
+            value={selectedGroupId || ""}
+            onChange={(e) => setSelectedGroupId(e.target.value || null)}
+            className="select select-bordered w-full text-sm"
+            disabled={!selectedGroupId}
+          >
+            <option value="">-- Chọn nhóm --</option>
+            {groups.map((g) => (
+              <option key={g.id} value={g.id}>
+                {g.name || g.id?.slice(0, 12)}
+              </option>
+            ))}
+          </select>
+          {!selectedGroupId && (
+            <p className="text-xs text-base-content/40 mt-1">
+              Tích vào ô để chọn nhóm gửi kèm
+            </p>
+          )}
         </div>
 
         {/* Caption & Color */}

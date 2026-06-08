@@ -8,6 +8,7 @@ const defaultState = {
   audience: "all",
   selectedRecipients: [],
   restoreStreakData: null,
+  selectedGroupId: null,
 };
 
 export const usePostStore = create((set) => ({
@@ -21,6 +22,7 @@ export const usePostStore = create((set) => ({
   setSelectedRecipients: (recipients) =>
     set({ selectedRecipients: recipients }),
   setRestoreStreakData: (val) => set({ restoreStreakData: val }),
+  setSelectedGroupId: (val) => set({ selectedGroupId: val }),
 
   resetPostStore: () => set(defaultState),
 }));

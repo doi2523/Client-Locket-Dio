@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaUserFriends, FaLock } from "react-icons/fa";
+import { FaUserFriends, FaLock, FaUsers } from "react-icons/fa";
 import clsx from "clsx";
 import { getToken } from "@/utils";
 import FriendSelectItems from "./FriendSelectItems";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
-import { useNormalFriendIds, usePostStore } from "@/stores";
+import { useNormalFriendIds, usePostStore, useGroupChatStore } from "@/stores";
 
 const SelectFriendsList = ({}) => {
   const friendIds = useNormalFriendIds();
@@ -13,8 +13,17 @@ const SelectFriendsList = ({}) => {
   const setAudience = usePostStore((s) => s.setAudience);
   const setSelectedRecipients = usePostStore((s) => s.setSelectedRecipients);
   const selectedRecipients = usePostStore((s) => s.selectedRecipients);
+  const selectedGroupId = usePostStore((s) => s.selectedGroupId);
+  const setSelectedGroupId = usePostStore((s) => s.setSelectedGroupId);
+
+  const groups = useGroupChatStore((s) => s.groups);
+  const fetchGroups = useGroupChatStore((s) => s.fetchGroups);
 
   const [selectedFriends, setSelectedFriends] = useState([]);
+
+  useEffect(() => {
+    if (!groups.length) fetchGroups();
+  }, []);
 
   // Nếu audience là "all", chọn tất cả bạn bè
   useEffect(() => {
@@ -45,13 +54,25 @@ const SelectFriendsList = ({}) => {
 
   const handleToggle = (uid) => {
     setAudience("selected");
+    setSelectedGroupId(null);
     setSelectedFriends((prev) =>
       prev.includes(uid) ? prev.filter((id) => id !== uid) : [...prev, uid],
     );
   };
 
+  const handleToggleGroup = (groupId) => {
+    if (selectedGroupId === groupId) {
+      setSelectedGroupId(null);
+    } else {
+      setSelectedGroupId(groupId);
+      setAudience("selected");
+      setSelectedFriends([]);
+    }
+  };
+
   const handleSelectAll = () => {
     const allIds = friendIds;
+    setSelectedGroupId(null);
     if (selectedFriends.length === friendIds.length) {
       setAudience("selected");
       setSelectedFriends([]);
@@ -63,7 +84,8 @@ const SelectFriendsList = ({}) => {
 
   const handleSelectPrivate = () => {
     SonnerInfo("Lưu ý chế độ đăng bài", "Bạn đang chọn chế độ riêng tư!");
-    setAudience("private"); // Thay đổi audience thành "private"
+    setAudience("private");
+    setSelectedGroupId(null);
     setSelectedFriends([]);
   };
 
@@ -105,6 +127,45 @@ const SelectFriendsList = ({}) => {
         ref={scrollRef}
         className="flex gap-3 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory px-[47vw]"
       >
+        {/* Danh sách nhóm (ưu tiên đầu) */}
+        {groups.map((g) => {
+          const isGroupSelected = selectedGroupId === g.id;
+          return (
+            <div
+              key={g.id}
+              onClick={() => handleToggleGroup(g.id)}
+              className={clsx(
+                "flex flex-col items-center cursor-pointer transition-opacity hover:opacity-80 active:opacity-60 snap-center shrink-0",
+                isGroupSelected ? "opacity-100" : "opacity-60",
+              )}
+            >
+              <div
+                className={clsx(
+                  "flex p-0.5 flex-col items-center justify-center cursor-pointer rounded-full border-[2.5px] transition-all duration-300 transform",
+                  isGroupSelected
+                    ? "border-amber-400 scale-100"
+                    : "border-gray-700 scale-95",
+                )}
+              >
+                {g.image_url ? (
+                  <img
+                    src={g.image_url}
+                    alt={g.name}
+                    className="w-11 h-11 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-11 h-11 rounded-full bg-base-300 flex items-center justify-center text-lg font-bold text-primary">
+                    <FaUsers className="w-5 h-5 text-base-content" />
+                  </div>
+                )}
+              </div>
+              <span className="text-xs mt-1 text-center max-w-[4rem] font-semibold truncate text-base-content transition-opacity duration-300">
+                {g.name || g.id?.slice(0, 6)}
+              </span>
+            </div>
+          );
+        })}
+
         {/* Mục "Riêng tư" */}
         <div
           className={clsx(
