@@ -30,6 +30,7 @@ import {
 import { SonnerInfo } from "@/components/ui/SonnerToast";
 import AddMemberModal from "./AddMemberModal";
 import SearchInput from "@/components/ui/Input/SearchInput";
+import EditGroupPoup from "./EditGroupModal";
 
 const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
   const [showModal, setShowModal] = useState(false);
@@ -64,6 +65,10 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
   const [loadingAction, setLoadingAction] = useState(null);
   const userInfoMap = useUserInfoStore((s) => s.userInfoMap);
   const ensureUsers = useUserInfoStore((s) => s.ensureUsers);
+
+  const [showEditGroup, setShowEditGroup] = useState(false);
+  const [editName, setEditName] = useState(group?.name || "");
+  const [editAvatar, setEditAvatar] = useState(group?.image_url || null);
 
   const groupMembers = group?.users || [];
   const memberIds = new Set(groupMembers.map((u) => u.user_id));
@@ -121,31 +126,46 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
     console.log("report user:", userId);
   };
 
-  const handleToggleMute = async () => {
+  const handleToggleMute = () => {
     setLoadingAction("mute");
-    try {
-      // await toggleGroupMute({ groupId: group.id, muted: !group.muted });
-      // upsertGroup({ id: group.id, muted: !group.muted });
-      SonnerInfo("Tính năng đang được phát triển");
-    } catch (err) {
-      console.error("Toggle mute failed:", err);
-    }
-    setLoadingAction(null);
+
+    const promise = toggleGroupMute({
+      groupId: group.id,
+      muted: !group.muted,
+    });
+
+    SonnerPromise(promise, {
+      loading: "Đang cập nhật...",
+      success: () => {
+        upsertGroup({ id: group.id, muted: !group.muted });
+        return group.muted ? "Đã bật thông báo 🔔" : "Đã tắt thông báo 🔕";
+      },
+      error: "Cập nhật thất bại!",
+    });
+
+    promise.finally(() => setLoadingAction(null));
   };
 
-  const handleAddMember = async (userId) => {
+  const handleAddMember = (userId) => {
+    const promise = addGroupMember({
+      groupId: group.id,
+      userId,
+    });
+
+    SonnerPromise(promise, {
+      loading: "Đang thêm thành viên...",
+      success: (res) => {
+        if (res) upsertGroup(res);
+        return "Thêm thành viên thành công 🎉";
+      },
+      error: "Thêm thành viên thất bại!",
+    });
+
     setLoadingAction(`add_${userId}`);
-    try {
-      // const updated = await addGroupMember({
-      //   groupId: group.id,
-      //   userId,
-      // });
-      // if (updated) upsertGroup(updated);
-      SonnerInfo("Tính năng đang được phát triển");
-    } catch (err) {
-      console.error("Add member failed:", err);
-    }
-    setLoadingAction(null);
+
+    promise.finally(() => {
+      setLoadingAction(null);
+    });
   };
 
   const handleRemoveMember = async (userId) => {
@@ -213,9 +233,6 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
 
   if (!showModal) return null;
 
-  const baseBtn =
-    "btn btn-lg text-base font-semibold rounded-3xl w-full sm:w-auto sm:min-w-[140px] px-6 flex items-center justify-center gap-2";
-
   return ReactDOM.createPortal(
     <div
       className={`fixed inset-0 bg-base-100/30 backdrop-blur-[4px] transition-opacity duration-500 z-[62] ${
@@ -246,6 +263,13 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
               <span className="text-lg font-semibold">
                 {group?.name || "Nhóm chat"}
               </span>
+
+              <button
+                onClick={() => setShowEditGroup(true)}
+                className="btn btn-ghost btn-xs"
+              >
+                <Pencil size={16} />
+              </button>
             </div>
           </div>
 
@@ -308,7 +332,25 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
         <div className="flex-1 overflow-y-auto space-y-5 pt-4">
           {/* Member list */}
           <div className="space-y-1">
+            {/* SELF INFO */}
+            <div className="flex items-center justify-between p-2">
+              <div className="flex items-center gap-3">
+                <img
+                  src={myUser.profilePicture}
+                  className="w-9 h-9 rounded-full"
+                  onError={(e) => {
+                    e.currentTarget.src = "./images/default_profile.png";
+                  }}
+                />
+
+                <div>
+                  <p className="text-sm font-medium">{myUser?.displayName}</p>
+                  <p className="text-[10px] text-base-content/40">Bạn</p>
+                </div>
+              </div>
+            </div>
             {groupMembers
+              .filter((m) => m.user_id !== myUserId)
               .filter((m) => {
                 if (!searchQuery) return true;
                 const name = getFriendName(m.user_id).toLowerCase();
@@ -399,6 +441,14 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
           availableFriends={availableFriends}
           onAddMember={handleAddMember}
           loadingAction={loadingAction}
+        />
+        <EditGroupPoup
+          open={showEditGroup}
+          onClose={() => setShowEditGroup(false)}
+          group={group}
+          onUpdated={(updated) => {
+            upsertGroup(updated);
+          }}
         />
       </div>
     </div>,

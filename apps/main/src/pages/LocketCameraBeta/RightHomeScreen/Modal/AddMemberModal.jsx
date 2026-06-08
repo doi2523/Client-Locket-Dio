@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { Plus, Users } from "lucide-react";
-import { SonnerInfo } from "@/components/ui/SonnerToast";
+import { Users } from "lucide-react";
 import SearchInput from "@/components/ui/Input/SearchInput";
 
 const AddMemberModal = ({
@@ -14,8 +13,9 @@ const AddMemberModal = ({
   const [showModal, setShowModal] = useState(false);
   const [animate, setAnimate] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
   const [isFocused, setIsFocused] = useState(false);
+
+  const [selectedUid, setSelectedUid] = useState(null);
 
   useEffect(() => {
     document.body.style.overflow = showModal ? "hidden" : "";
@@ -28,12 +28,18 @@ const AddMemberModal = ({
       setTimeout(() => setAnimate(true), 10);
     } else {
       setAnimate(false);
-      setTimeout(() => setShowModal(false), 300);
+      setTimeout(() => {
+        setShowModal(false);
+        setSelectedUid(null);
+      }, 300);
     }
   }, [open]);
 
   const filteredFriends = availableFriends.filter((f) => {
+    if (f.isCelebrity) return false;
+
     if (!searchQuery) return true;
+
     const q = searchQuery.toLowerCase();
     return (
       (f.firstName || "").toLowerCase().includes(q) ||
@@ -51,13 +57,16 @@ const AddMemberModal = ({
       onClick={onClose}
     >
       <div
-        className={`fixed h-4/5 text-base-content bottom-0 border-t border-base-300 left-0 w-full p-4 bg-base-100 rounded-t-4xl shadow-lg transition-all duration-500 z-[71] flex flex-col
+        className={`fixed h-[90%] text-base-content bottom-0 left-0 w-full p-4 bg-base-100 rounded-t-4xl shadow-lg transition-all duration-500 z-[71] flex flex-col
         ${animate ? "translate-y-0" : "translate-y-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-xl font-semibold text-center mb-2">
           Thêm vào nhóm
         </h3>
+
+        <p>Lưu ý: Người mới có thể xem các tin nhắn trước đó.</p>
+
         <div className="mb-3">
           <SearchInput
             searchTerm={searchQuery}
@@ -68,28 +77,41 @@ const AddMemberModal = ({
           />
         </div>
 
-        {/* grid list */}
-        <div className="flex-1 overflow-y-auto">
+        {/* list */}
+        <div className="flex-1 overflow-y-auto pb-16">
           {filteredFriends.length === 0 ? (
             <p className="text-center text-sm text-base-content/40 mt-4">
               Không có bạn bè phù hợp
             </p>
           ) : (
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
               {filteredFriends.map((friend) => {
-                const isLoading = loadingAction === `add_${friend.uid}`;
+                const isSelected = selectedUid === friend.uid;
 
                 return (
                   <div
                     key={friend.uid}
-                    className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-base-200 transition"
+                    onClick={() => setSelectedUid(friend.uid)}
+                    className={`flex flex-col items-center gap-2 p-3 rounded-xl cursor-pointer transition
+                      hover:bg-base-200 hover:scale-105
+                      ${
+                        selectedUid
+                          ? selectedUid === friend.uid
+                            ? "opacity-100"
+                            : "opacity-50 blur-[0.3px]"
+                          : "opacity-100"
+                      }
+                    `}
                   >
                     {/* avatar */}
-                    <div className="relative">
+                    <div
+                      className={`relative rounded-full p-[2px] transition
+                        ${isSelected ? "ring-3 ring-yellow-400" : "ring-0"}`}
+                    >
                       {friend.profilePic ? (
                         <img
                           src={friend.profilePic}
-                          className="w-14 h-14 rounded-full object-cover border border-base-300"
+                          className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full object-cover border border-base-300"
                         />
                       ) : (
                         <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
@@ -100,32 +122,27 @@ const AddMemberModal = ({
 
                     {/* name */}
                     <span className="text-xs font-medium text-center line-clamp-1">
-                      {friend.firstName || friend.username}
+                      {friend?.firstName} {friend?.lastName}
                     </span>
-
-                    {/* button */}
-                    <button
-                      onClick={() => {
-                        SonnerInfo("Đang thêm...");
-                        onAddMember(friend.uid);
-                      }}
-                      className="btn btn-primary btn-xs rounded-full w-full"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <span className="loading loading-spinner loading-xs" />
-                      ) : (
-                        <>
-                          <Plus size={12} />
-                          Thêm
-                        </>
-                      )}
-                    </button>
                   </div>
                 );
               })}
             </div>
           )}
+        </div>
+
+        {/* footer */}
+        <div className="fixed bottom-0 left-0 w-full z-[80] p-4">
+          <button
+            className="btn btn-lg text-base font-semibold rounded-3xl w-full btn-neutral px-6 flex items-center justify-center gap-2"
+            disabled={!selectedUid || loadingAction}
+            onClick={() => {
+              if (!selectedUid) return;
+              onAddMember(selectedUid);
+            }}
+          >
+            Thêm vào nhóm
+          </button>
         </div>
       </div>
     </div>,
