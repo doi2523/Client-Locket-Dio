@@ -125,47 +125,8 @@ const SelectFriendsList = ({}) => {
     <div className={`w-full `}>
       <div
         ref={scrollRef}
-        className="flex gap-3 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory px-[47vw]"
+        className="flex items-center gap-3 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory px-[47vw]"
       >
-        {/* Danh sách nhóm (ưu tiên đầu) */}
-        {groups.map((g) => {
-          const isGroupSelected = selectedGroupId === g.id;
-          return (
-            <div
-              key={g.id}
-              onClick={() => handleToggleGroup(g.id)}
-              className={clsx(
-                "flex flex-col items-center cursor-pointer transition-opacity hover:opacity-80 active:opacity-60 snap-center shrink-0",
-                isGroupSelected ? "opacity-100" : "opacity-60",
-              )}
-            >
-              <div
-                className={clsx(
-                  "flex p-0.5 flex-col items-center justify-center cursor-pointer rounded-full border-[2.5px] transition-all duration-300 transform",
-                  isGroupSelected
-                    ? "border-amber-400 scale-100"
-                    : "border-gray-700 scale-95",
-                )}
-              >
-                {g.image_url ? (
-                  <img
-                    src={g.image_url}
-                    alt={g.name}
-                    className="w-11 h-11 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-11 h-11 rounded-full bg-base-300 flex items-center justify-center text-lg font-bold text-primary">
-                    <FaUsers className="w-5 h-5 text-base-content" />
-                  </div>
-                )}
-              </div>
-              <span className="text-xs mt-1 text-center max-w-[4rem] font-semibold truncate text-base-content transition-opacity duration-300">
-                {g.name || g.id?.slice(0, 6)}
-              </span>
-            </div>
-          );
-        })}
-
         {/* Mục "Riêng tư" */}
         <div
           className={clsx(
@@ -215,6 +176,45 @@ const SelectFriendsList = ({}) => {
             Tất cả
           </span>
         </div>
+
+        {/* Danh sách nhóm */}
+        {groups.map((g) => {
+          const isGroupSelected = selectedGroupId === g.id;
+          return (
+            <div
+              key={g.id}
+              onClick={() => handleToggleGroup(g.id)}
+              className={clsx(
+                "flex flex-col items-center cursor-pointer transition-opacity hover:opacity-80 active:opacity-60 snap-center shrink-0",
+                isGroupSelected ? "opacity-100" : "opacity-60",
+              )}
+            >
+              <div
+                className={clsx(
+                  "flex p-0.5 flex-col items-center justify-center cursor-pointer rounded-full border-[2.5px] transition-all duration-300 transform",
+                  isGroupSelected
+                    ? "border-amber-400 scale-100"
+                    : "border-gray-700 scale-95",
+                )}
+              >
+                {g.image_url ? (
+                  <img
+                    src={g.image_url}
+                    alt={g.name}
+                    className="w-11 h-11 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-11 h-11 rounded-full bg-base-300 flex items-center justify-center text-lg font-bold text-primary">
+                    <FaUsers className="w-5 h-5 text-base-content" />
+                  </div>
+                )}
+              </div>
+              <span className="text-xs mt-1 text-center max-w-[4rem] font-semibold truncate text-base-content transition-opacity duration-300">
+                {g.name || g.id?.slice(0, 6)}
+              </span>
+            </div>
+          );
+        })}
 
         {/* Danh sách bạn bè */}
         {friendIds.map((uid) => (
