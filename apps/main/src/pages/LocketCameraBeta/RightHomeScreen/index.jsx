@@ -188,21 +188,20 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
         />
       </div>
 
-      {/* ================= Conversation Detail (Direct or Group) ================= */}
-      {selectedChat?.type === "group" ? (
-        <ConversationWithGroup
-          selectedChat={selectedChat}
-          messages={messagesByConversation || []}
-          setSelectedChat={setSelectedChat}
-          isLoading={conversationsLoading}
-        />
-      ) : (
-        <ConversationWithUser
-          selectedChat={selectedChat}
-          messages={messagesByConversation || []}
-          setSelectedChat={setSelectedChat}
-        />
-      )}
+      {/* ================= Conversation Detail (Direct) ================= */}
+      <ConversationWithUser
+        selectedChat={selectedChat?.type !== "group" ? selectedChat : null}
+        messages={messagesByConversation || []}
+        setSelectedChat={setSelectedChat}
+      />
+
+      {/* ================= Conversation Detail (Group) ================= */}
+      <ConversationWithGroup
+        selectedChat={selectedChat?.type === "group" ? selectedChat : null}
+        messages={messagesByConversation || []}
+        setSelectedChat={setSelectedChat}
+        isLoading={conversationsLoading}
+      />
     </>
   );
 };
