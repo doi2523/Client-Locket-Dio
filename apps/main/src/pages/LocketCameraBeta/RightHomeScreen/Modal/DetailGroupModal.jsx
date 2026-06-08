@@ -11,6 +11,9 @@ import {
   Check,
   Search,
   LogOut,
+  UserRoundPlus,
+  Flag,
+  MoreVertical,
 } from "lucide-react";
 import {
   useFriendStoreV3,
@@ -26,11 +29,12 @@ import {
 } from "@/services";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
 import AddMemberModal from "./AddMemberModal";
+import SearchInput from "@/components/ui/Input/SearchInput";
 
 const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
   const [showModal, setShowModal] = useState(false);
   const [animate, setAnimate] = useState(false);
-
+  const [openMenuUserId, setOpenMenuUserId] = useState(null);
   useEffect(() => {
     document.body.style.overflow = showModal ? "hidden" : "";
     return () => (document.body.style.overflow = "");
@@ -112,6 +116,10 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
     setLoadingAction(null);
     setEditingName(false);
   };
+  const handleReportUser = (userId) => {
+    SonnerInfo("Đã gửi báo cáo người dùng");
+    console.log("report user:", userId);
+  };
 
   const handleToggleMute = async () => {
     setLoadingAction("mute");
@@ -144,11 +152,12 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
     if (!window.confirm("Xoá thành viên này khỏi nhóm?")) return;
     setLoadingAction(`remove_${userId}`);
     try {
-      const updated = await removeGroupMember({
-        groupId: group.id,
-        userId,
-      });
-      if (updated) upsertGroup(updated);
+      SonnerInfo("Tính năng đang được phát triển");
+      // const updated = await removeGroupMember({
+      //   groupId: group.id,
+      //   userId,
+      // });
+      // if (updated) upsertGroup(updated);
     } catch (err) {
       console.error("Remove member failed:", err);
     }
@@ -187,7 +196,14 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
 
   const getFriendName = (userId) => {
     const info = getUserInfo(userId);
-    if (info?.firstName) return info.firstName;
+
+    const first = info?.firstName || "";
+    const last = info?.lastName || "";
+
+    const fullName = `${first} ${last}`.trim();
+
+    if (fullName) return fullName;
+
     return userId?.slice(0, 8) || "Unknown";
   };
 
@@ -212,12 +228,12 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
         ${animate ? "translate-y-0" : "translate-y-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex-1 overflow-y-auto space-y-5">
+        <div className="shrink-0 space-y-4 pb-3 border-b border-base-300">
+          {/* Avatar + Name */}
           <div className="flex flex-col items-center gap-3">
             {group?.image_url ? (
               <img
                 src={group.image_url}
-                alt=""
                 className="w-20 h-20 rounded-full object-cover border-2 border-base-300"
               />
             ) : (
@@ -227,115 +243,99 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
             )}
 
             <div className="flex items-center gap-2">
-              {editingName ? (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={nameInput}
-                    onChange={(e) => setNameInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleRename();
-                      if (e.key === "Escape") setEditingName(false);
-                    }}
-                    className="input input-bordered input-sm w-48 text-center"
-                    autoFocus
-                  />
-                  <button
-                    onClick={handleRename}
-                    className="btn btn-ghost btn-sm btn-square"
-                    disabled={loadingAction === "rename"}
-                  >
-                    {loadingAction === "rename" ? (
-                      <span className="loading loading-spinner loading-xs" />
-                    ) : (
-                      <Check size={18} />
-                    )}
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <span className="text-lg font-semibold">
-                    {group?.name || "Nhóm chat"}
-                  </span>
-                  <button
-                    onClick={() => {
-                      // setNameInput(group?.name || "");
-                      // setEditingName(true);
-                      SonnerInfo("Tính năng đang được phát triển");
-                    }}
-                    className="btn btn-ghost btn-xs btn-square"
-                  >
-                    <Pencil size={14} />
-                  </button>
-                </>
-              )}
+              <span className="text-lg font-semibold">
+                {group?.name || "Nhóm chat"}
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-3 bg-base-200 rounded-xl">
-            <div className="flex items-center gap-3">
-              {group?.muted ? (
-                <BellOff size={20} className="text-base-content/60" />
-              ) : (
-                <Bell size={20} />
-              )}
-              <span className="font-medium">Thông báo</span>
+          <div className="p-3 bg-base-200 rounded-xl space-y-2">
+            {/* Toggle mute */}
+            <div className="flex items-center justify-between py-1">
+              <div className="flex items-center gap-3">
+                {group?.muted ? (
+                  <BellOff size={18} className="text-base-content/60" />
+                ) : (
+                  <Bell size={18} />
+                )}
+                <span className="font-medium">Thông báo</span>
+              </div>
+
+              <input
+                type="checkbox"
+                checked={group?.muted}
+                onChange={handleToggleMute}
+                className="toggle toggle-secondary"
+              />
             </div>
+
+            <div className="divider my-0 opacity-30" />
+
+            {/* Leave group */}
             <button
-              onClick={handleToggleMute}
-              className={`btn btn-sm min-w-16 ${
-                group?.muted ? "btn-ghost" : "btn-primary"
-              } rounded-full`}
-              disabled={loadingAction === "mute"}
+              onClick={handleLeaveGroup}
+              className="flex items-center gap-3 w-full py-2 hover:bg-error/10 rounded-lg transition-colors"
             >
-              {loadingAction === "mute" ? (
-                <span className="loading loading-spinner loading-xs" />
-              ) : group?.muted ? (
-                "Bật"
-              ) : (
-                "Tắt"
-              )}
+              <LogOut size={18} className="text-error" />
+              <span className="font-medium text-error">Rời nhóm</span>
             </button>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="font-semibold text-base-content/80">
-                Thành viên ({groupMembers.length})
-              </h4>
-              <button
-                onClick={() => setShowAddMember(true)}
-                className="btn btn-ghost btn-sm rounded-full gap-1"
-              >
-                <Plus size={16} />
-                Thêm
-              </button>
-            </div>
+          {/* Search input */}
+          <SearchInput
+            searchTerm={searchQuery}
+            setSearchTerm={setSearchQuery}
+            isFocused={false}
+            setIsFocused={() => {}}
+            placeholder="Tìm kiếm thành viên..."
+          />
 
-            <div className="space-y-1 max-h-48 overflow-y-auto">
-              {groupMembers.map(({ user_id }) => {
+          {/* Member header */}
+          <div className="flex items-center justify-between">
+            <h4 className="font-semibold text-base-content/80">
+              Thành viên ({groupMembers.length})
+            </h4>
+
+            <button
+              onClick={() => setShowAddMember(true)}
+              className="btn btn-secondary btn-sm rounded-full gap-1"
+            >
+              <UserRoundPlus size={16} />
+              Thêm thành viên
+            </button>
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto space-y-5 pt-4">
+          {/* Member list */}
+          <div className="space-y-1">
+            {groupMembers
+              .filter((m) => {
+                if (!searchQuery) return true;
+                const name = getFriendName(m.user_id).toLowerCase();
+                return name.includes(searchQuery.toLowerCase());
+              })
+              .map(({ user_id }) => {
                 const isSelf = user_id === myUserId;
                 const avatar = getFriendAvatar(user_id);
                 const name = getFriendName(user_id);
-                const isLoading = loadingAction === `remove_${user_id}`;
+                const isOpen = openMenuUserId === user_id;
 
                 return (
                   <div
                     key={user_id}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-base-200 transition-colors"
+                    className="flex items-center justify-between p-2 rounded-lg hover:bg-base-200 transition-colors relative"
                   >
+                    {/* LEFT */}
                     <div className="flex items-center gap-3 min-w-0">
                       {avatar ? (
-                        <img
-                          src={avatar}
-                          alt=""
-                          className="w-9 h-9 rounded-full object-cover"
-                        />
+                        <img src={avatar} className="w-9 h-9 rounded-full" />
                       ) : (
-                        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Users className="w-4 h-4 text-primary" />
-                        </div>
+                        <img
+                          src="./images/default_profile.png"
+                          className="w-9 h-9 rounded-full"
+                        />
                       )}
+
                       <div className="min-w-0">
                         <p className="font-medium text-sm truncate">{name}</p>
                         {isSelf && (
@@ -345,37 +345,61 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
                         )}
                       </div>
                     </div>
+
+                    {/* RIGHT - 3 DOT MENU */}
                     {!isSelf && (
-                      <button
-                        onClick={() => {
-                          SonnerInfo("Tính năng đang được phát triển");
-                          // handleRemoveMember(user_id);
-                        }}
-                        className="btn btn-ghost btn-xs text-error gap-1"
-                        disabled={!!isLoading}
-                      >
-                        {isLoading ? (
-                          <span className="loading loading-spinner loading-xs" />
-                        ) : (
-                          <UserMinus size={14} />
+                      <div className="relative">
+                        <button
+                          onClick={() =>
+                            setOpenMenuUserId(isOpen ? null : user_id)
+                          }
+                          className="btn btn-ghost btn-xs"
+                        >
+                          <MoreVertical size={16} />
+                        </button>
+
+                        {/* DROPDOWN */}
+                        {isOpen && (
+                          <div className="absolute right-0 top-8 w-40 bg-base-100 shadow-lg rounded-xl border border-base-300 z-50 overflow-hidden">
+                            {/* REMOVE */}
+                            <button
+                              onClick={() => {
+                                handleRemoveMember(user_id);
+                                setOpenMenuUserId(null);
+                              }}
+                              className="flex items-center gap-2 w-full px-3 py-2 hover:bg-base-200 text-error"
+                            >
+                              <UserMinus size={14} />
+                              Xoá khỏi nhóm
+                            </button>
+
+                            {/* REPORT */}
+                            <button
+                              onClick={() => {
+                                handleReportUser(user_id);
+                                setOpenMenuUserId(null);
+                              }}
+                              className="flex items-center gap-2 w-full px-3 py-2 hover:bg-base-200 text-warning"
+                            >
+                              <Flag size={14} />
+                              Báo cáo
+                            </button>
+                          </div>
                         )}
-                        Xoá
-                      </button>
+                      </div>
                     )}
                   </div>
                 );
               })}
-            </div>
           </div>
-
-          <AddMemberModal
-            open={showAddMember}
-            onClose={() => setShowAddMember(false)}
-            availableFriends={availableFriends}
-            onAddMember={handleAddMember}
-            loadingAction={loadingAction}
-          />
         </div>
+        <AddMemberModal
+          open={showAddMember}
+          onClose={() => setShowAddMember(false)}
+          availableFriends={availableFriends}
+          onAddMember={handleAddMember}
+          loadingAction={loadingAction}
+        />
       </div>
     </div>,
     document.body,
