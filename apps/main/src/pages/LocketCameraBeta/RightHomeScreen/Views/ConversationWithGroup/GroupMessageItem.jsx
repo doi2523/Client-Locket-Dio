@@ -179,9 +179,9 @@ const GroupMessageItem = ({ msg }) => {
         {renderBody()}
 
         {msg.reactions && msg.reactions.length > 0 && (
-          <div className="absolute -bottom-2 -right-1 flex gap-0.5 bg-base-300 px-1 py-0.5 rounded-full shadow text-[15px]">
+          <div className="absolute -bottom-2 -right-1 flex gap-0.5 bg-base-300 px-1 py-0.5 rounded-full shadow text-[15px] cursor-pointer">
             {msg.reactions.map((r, idx) => (
-              <span key={idx} title={getName(r.user_id)}>
+              <span key={idx} title={getName(r.user_id)} className="text-sm">
                 {r.emoji}
               </span>
             ))}
