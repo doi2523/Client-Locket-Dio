@@ -30,7 +30,6 @@ import {
   useGroupChatStore,
   usePostStore,
 } from "@/stores";
-import { generateUUIDv4Upper } from "@/utils/generate/uuid";
 import { getCaptionStyle } from "@/helpers/styleHelpers";
 
 const PostMoments = () => {
@@ -111,14 +110,6 @@ const PostMoments = () => {
 
       if (!payload) {
         throw new Error("Không tạo được payload. Hủy tiến trình tải lên.");
-      }
-
-      if (selectedGroupId) {
-        payload.optionsData.group = {
-          id: selectedGroupId,
-          group_conversation_only: true,
-          message_client_token: generateUUIDv4Upper(),
-        };
       }
 
       SonnerInfo("Đợi chút nhé", `Đang tạo bài viết !`);

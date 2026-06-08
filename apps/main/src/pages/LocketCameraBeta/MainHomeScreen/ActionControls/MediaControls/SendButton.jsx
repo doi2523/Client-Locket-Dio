@@ -9,10 +9,9 @@ import {
   SonnerSuccess,
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
-import { useAuthStore, useUploadQueueStore, usePostStore } from "@/stores";
+import { useAuthStore, useUploadQueueStore } from "@/stores";
 import { useNavigate } from "react-router-dom";
 import { resetAllPostData } from "@/utils";
-import { generateUUIDv4Upper } from "@/utils/generate/uuid";
 
 const SendButton = () => {
   const navigate = useNavigate();
@@ -124,23 +123,10 @@ const SendButton = () => {
         throw new Error("Không tạo được payload. Hủy tiến trình tải lên.");
       }
 
-      const selectedGroupId = usePostStore.getState().selectedGroupId;
-
-      if (selectedGroupId) {
-        payload.optionsData.group = {
-          id: selectedGroupId,
-          group_conversation_only: true,
-          message_client_token: generateUUIDv4Upper(),
-        };
-      }
-
       // Lưu payload vào memory và start
       enqueueUploadItem(payload);
 
-      SonnerSuccess(
-        "Thêm vào hàng đợi!",
-        selectedGroupId ? "Bài viết sẽ được gửi vào nhóm" : "Bài viết đang được xử lý...",
-      );
+      SonnerSuccess("Thêm vào hàng đợi!", "Bài viết đang được xử lý...");
 
       // Kết thúc loading và hiển thị success
       setUploadLoading(false);

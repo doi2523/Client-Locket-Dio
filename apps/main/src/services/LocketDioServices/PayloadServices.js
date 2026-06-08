@@ -81,6 +81,7 @@ export const createRequestPayloadV6 = async (selectedFile, previewType) => {
 
     const audience = usePostStore.getState().audience;
     const selectedRecipients = usePostStore.getState().selectedRecipients;
+    const selectedGroupId = usePostStore.getState().selectedGroupId;
 
     if (!localId) {
       SonnerWarning("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
@@ -105,6 +106,11 @@ export const createRequestPayloadV6 = async (selectedFile, previewType) => {
       audience, // Gắn audience vào options luôn
       recipients: determineRecipients(audience, selectedRecipients, localId),
     };
+
+    // Thêm selectedGroupId vào optionsData nếu có
+    if (selectedGroupId) {
+      optionsDataObj.selectedGroupId = selectedGroupId;
+    }
 
     //Gửi dữ liệu streak (nếu có) để backend quyết định có Streak hay không
     if (streakData) {
