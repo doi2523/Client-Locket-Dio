@@ -60,10 +60,6 @@ const GroupMessageItem = ({ msg }) => {
 
   const avatarUrl = senderDetail?.profilePic || "/default-avatar.png";
 
-  useEffect(() => {
-    if (!isMe && !senderDetail) ensureUserInfo(msg.user_id);
-  }, [msg.user_id]);
-
   const formatTime = (ts) => {
     if (!ts) return "";
     return new Date(Number(ts)).toLocaleTimeString([], {
@@ -79,12 +75,58 @@ const GroupMessageItem = ({ msg }) => {
     content.type === "groupNameChanged" ||
     content.type === "groupImageChanged";
 
+  const actorUid = content.added_by_user_id || msg.user_id;
+  const targetUid = isSystemMessage ? content.user_id : null;
+
+  useEffect(() => {
+    const unknowns = [];
+    if (actorUid && actorUid !== me && !friendMap?.[actorUid] && !userInfoMap?.[actorUid])
+      unknowns.push(actorUid);
+    if (targetUid && targetUid !== me && !friendMap?.[targetUid] && !userInfoMap?.[targetUid])
+      unknowns.push(targetUid);
+    if (!isMe && !senderDetail) unknowns.push(msg.user_id);
+    if (unknowns.length > 0) {
+      unknowns.forEach((uid) => ensureUserInfo(uid));
+    }
+  }, [msg.id, actorUid, targetUid]);
+
   if (isSystemMessage) {
+    const getName = (uid) => {
+      if (!uid) return null;
+      if (uid === me) return "Bạn";
+      const detail = friendMap?.[uid] ?? userInfoMap?.[uid] ?? null;
+      if (detail?.firstName) return `${detail.firstName} ${detail.lastName}`.trim();
+      return null;
+    };
+    const actorName = getName(actorUid);
+    const targetName = getName(targetUid);
+
     let sysText = "";
-    if (content.type === "userAddedToGroup") sysText = "👤 Đã thêm thành viên vào nhóm";
-    else if (content.type === "userRemovedFromGroup") sysText = "👤 Đã xóa thành viên khỏi nhóm";
-    else if (content.type === "groupNameChanged") sysText = `✏️ Đã đổi tên nhóm thành "${content.name || ""}"`;
-    else if (content.type === "groupImageChanged") sysText = "🖼️ Đã thay đổi ảnh đại diện nhóm";
+    if (content.type === "userAddedToGroup") {
+      sysText = actorName
+        ? targetName
+          ? `${actorName} đã thêm ${targetName} vào nhóm`
+          : `${actorName} đã thêm thành viên vào nhóm`
+        : targetName
+          ? `Đã thêm ${targetName} vào nhóm`
+          : "Đã thêm thành viên vào nhóm";
+    } else if (content.type === "userRemovedFromGroup") {
+      sysText = actorName
+        ? targetName
+          ? `${actorName} đã xoá ${targetName} khỏi nhóm`
+          : `${actorName} đã xoá thành viên khỏi nhóm`
+        : targetName
+          ? `Đã xoá ${targetName} khỏi nhóm`
+          : "Đã xoá thành viên khỏi nhóm";
+    } else if (content.type === "groupNameChanged") {
+      sysText = actorName
+        ? `${actorName} đã đổi tên nhóm thành "${content.name || ""}"`
+        : `Đã đổi tên nhóm thành "${content.name || ""}"`;
+    } else if (content.type === "groupImageChanged") {
+      sysText = actorName
+        ? `${actorName} đã thay đổi ảnh đại diện nhóm`
+        : "Đã thay đổi ảnh đại diện nhóm";
+    }
     return (
       <div className="text-center text-[11px] text-base-content/50 font-semibold py-2">
         {sysText}
