@@ -1,7 +1,16 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import ReactDOM from "react-dom";
 import {
-  X, Plus, UserMinus, Users, Bell, BellOff,
-  Pencil, Check, Search, LogOut,
+  X,
+  Plus,
+  UserMinus,
+  Users,
+  Bell,
+  BellOff,
+  Pencil,
+  Check,
+  Search,
+  LogOut,
 } from "lucide-react";
 import {
   useFriendStoreV3,
@@ -15,8 +24,28 @@ import {
   updateGroupName,
   toggleGroupMute,
 } from "@/services";
+import { SonnerInfo } from "@/components/ui/SonnerToast";
+import AddMemberModal from "./AddMemberModal";
 
-const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
+const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [animate, setAnimate] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = showModal ? "hidden" : "";
+    return () => (document.body.style.overflow = "");
+  }, [showModal]);
+
+  useEffect(() => {
+    if (open) {
+      setShowModal(true);
+      setTimeout(() => setAnimate(true), 10);
+    } else {
+      setAnimate(false);
+      setTimeout(() => setShowModal(false), 300);
+    }
+  }, [open]);
+
   const myUser = useAuthStore((s) => s.user);
   const myUserId = myUser?.uid;
   const friendDetailsMap = useFriendStoreV3((s) => s.friendDetailsMap);
@@ -37,7 +66,12 @@ const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
 
   useEffect(() => {
     const unknownIds = groupMembers
-      .filter((u) => u.user_id !== myUserId && !friendDetailsMap[u.user_id] && !userInfoMap[u.user_id])
+      .filter(
+        (u) =>
+          u.user_id !== myUserId &&
+          !friendDetailsMap[u.user_id] &&
+          !userInfoMap[u.user_id],
+      )
       .map((u) => u.user_id);
 
     if (unknownIds.length > 0) ensureUsers(unknownIds);
@@ -82,8 +116,9 @@ const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
   const handleToggleMute = async () => {
     setLoadingAction("mute");
     try {
-      await toggleGroupMute({ groupId: group.id, muted: !group.muted });
-      upsertGroup({ id: group.id, muted: !group.muted });
+      // await toggleGroupMute({ groupId: group.id, muted: !group.muted });
+      // upsertGroup({ id: group.id, muted: !group.muted });
+      SonnerInfo("Tính năng đang được phát triển");
     } catch (err) {
       console.error("Toggle mute failed:", err);
     }
@@ -93,11 +128,12 @@ const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
   const handleAddMember = async (userId) => {
     setLoadingAction(`add_${userId}`);
     try {
-      const updated = await addGroupMember({
-        groupId: group.id,
-        userId,
-      });
-      if (updated) upsertGroup(updated);
+      // const updated = await addGroupMember({
+      //   groupId: group.id,
+      //   userId,
+      // });
+      // if (updated) upsertGroup(updated);
+      SonnerInfo("Tính năng đang được phát triển");
     } catch (err) {
       console.error("Add member failed:", err);
     }
@@ -159,26 +195,24 @@ const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
     return getUserInfo(userId)?.profilePic || null;
   };
 
-  return (
+  if (!showModal) return null;
+
+  const baseBtn =
+    "btn btn-lg text-base font-semibold rounded-3xl w-full sm:w-auto sm:min-w-[140px] px-6 flex items-center justify-center gap-2";
+
+  return ReactDOM.createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50"
-      onClick={onClose}
+      className={`fixed inset-0 bg-base-100/30 backdrop-blur-[4px] transition-opacity duration-500 z-[62] ${
+        animate ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
+      onClick={!loading ? onClose : undefined}
     >
       <div
-        className="bg-base-100 rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl mx-4"
+        className={`fixed h-[90%] border-t border-base-300 bottom-0 left-0 w-full p-4 bg-base-100 rounded-t-4xl shadow-lg transition-all duration-500 ease-in-out z-[63] flex flex-col text-base-content
+        ${animate ? "translate-y-0" : "translate-y-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-base-200 shrink-0">
-          <h3 className="text-lg font-bold">Thông tin nhóm</h3>
-          <button
-            onClick={onClose}
-            className="btn btn-ghost btn-sm btn-square rounded-full"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-4 space-y-5">
+        <div className="flex-1 overflow-y-auto space-y-5">
           <div className="flex flex-col items-center gap-3">
             {group?.image_url ? (
               <img
@@ -225,8 +259,9 @@ const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
                   </span>
                   <button
                     onClick={() => {
-                      setNameInput(group?.name || "");
-                      setEditingName(true);
+                      // setNameInput(group?.name || "");
+                      // setEditingName(true);
+                      SonnerInfo("Tính năng đang được phát triển");
                     }}
                     className="btn btn-ghost btn-xs btn-square"
                   >
@@ -269,7 +304,7 @@ const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
                 Thành viên ({groupMembers.length})
               </h4>
               <button
-                onClick={() => setShowAddMember((v) => !v)}
+                onClick={() => setShowAddMember(true)}
                 className="btn btn-ghost btn-sm rounded-full gap-1"
               >
                 <Plus size={16} />
@@ -312,7 +347,10 @@ const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
                     </div>
                     {!isSelf && (
                       <button
-                        onClick={() => handleRemoveMember(user_id)}
+                        onClick={() => {
+                          SonnerInfo("Tính năng đang được phát triển");
+                          // handleRemoveMember(user_id);
+                        }}
                         className="btn btn-ghost btn-xs text-error gap-1"
                         disabled={!!isLoading}
                       >
@@ -330,91 +368,18 @@ const GroupInfoModal = ({ group, onClose, onLeaveGroup }) => {
             </div>
           </div>
 
-          {showAddMember && (
-            <div className="bg-base-200 rounded-xl p-3 space-y-3">
-              <div className="relative">
-                <Search
-                  size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"
-                />
-                <input
-                  type="text"
-                  placeholder="Tìm bạn bè..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="input input-bordered input-sm w-full pl-9"
-                />
-              </div>
-              <div className="max-h-40 overflow-y-auto space-y-1">
-                {availableFriends.length === 0 ? (
-                  <p className="text-sm text-base-content/40 text-center py-2">
-                    {searchQuery
-                      ? "Không tìm thấy"
-                      : "Tất cả bạn bè đã trong nhóm"}
-                  </p>
-                ) : (
-                  availableFriends.map((friend) => (
-                    <div
-                      key={friend.uid}
-                      className="flex items-center justify-between p-2 rounded-lg hover:bg-base-100 transition-colors"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        {friend.profilePic ? (
-                          <img
-                            src={friend.profilePic}
-                            alt=""
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Users className="w-4 h-4 text-primary" />
-                          </div>
-                        )}
-                        <span className="text-sm font-medium truncate">
-                          {friend.firstName ||
-                            friend.username ||
-                            friend.uid?.slice(0, 8)}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => handleAddMember(friend.uid)}
-                        className="btn btn-primary btn-xs rounded-full gap-1"
-                        disabled={
-                          loadingAction === `add_${friend.uid}`
-                        }
-                      >
-                        {loadingAction === `add_${friend.uid}` ? (
-                          <span className="loading loading-spinner loading-xs" />
-                        ) : (
-                          <Plus size={14} />
-                        )}
-                        Thêm
-                      </button>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="p-4 border-t border-base-200 shrink-0">
-          <button
-            onClick={handleLeaveGroup}
-            className="btn btn-ghost btn-sm w-full text-error gap-2"
-            disabled={loadingAction === "leave"}
-          >
-            {loadingAction === "leave" ? (
-              <span className="loading loading-spinner loading-xs" />
-            ) : (
-              <LogOut size={16} />
-            )}
-            Rời khỏi nhóm
-          </button>
+          <AddMemberModal
+            open={showAddMember}
+            onClose={() => setShowAddMember(false)}
+            availableFriends={availableFriends}
+            onAddMember={handleAddMember}
+            loadingAction={loadingAction}
+          />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 
-export default GroupInfoModal;
+export default DetailGroupPoup;

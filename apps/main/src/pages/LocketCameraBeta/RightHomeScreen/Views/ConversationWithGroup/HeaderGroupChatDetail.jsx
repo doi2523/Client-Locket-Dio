@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ChevronLeft, Ellipsis, Users } from "lucide-react";
 import { useFriendStoreV3, useGroupChatStore, useUserInfoStore } from "@/stores";
-import GroupInfoModal from "./GroupInfoModal";
+import DetailGroupPoup from "../../Modal/DetailGroupModal";
 
 const HeaderGroupChatDetail = ({ selectedChat, onBack }) => {
   const friendMap = useFriendStoreV3((s) => s.friendDetailsMap);
@@ -88,7 +88,7 @@ const HeaderGroupChatDetail = ({ selectedChat, onBack }) => {
         </div>
       </div>
 
-      {showInfoModal && (
+      {/* {showInfoModal && (
         <GroupInfoModal
           group={group}
           onClose={() => setShowInfoModal(false)}
@@ -97,7 +97,18 @@ const HeaderGroupChatDetail = ({ selectedChat, onBack }) => {
             onBack();
           }}
         />
-      )}
+      )} */}
+      <DetailGroupPoup
+        open={showInfoModal}
+        onClose={() => setShowInfoModal(false)}
+        group={group}
+        title={displayName}
+        onConfirm={() => {
+          setShowInfoModal(false);
+          onBack();
+        }}
+      />
+
     </>
   );
 };
