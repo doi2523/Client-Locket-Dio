@@ -25,6 +25,7 @@ const HeaderConversation = ({
           <button
             onClick={sendReconnect}
             className="btn btn-ghost btn-xs rounded-full gap-1 text-warning"
+            title="Kết nối lại với relay service, dùng khi kết nối bạn bị đứng"
           >
             <RefreshCw size={14} />
             Reconnect
