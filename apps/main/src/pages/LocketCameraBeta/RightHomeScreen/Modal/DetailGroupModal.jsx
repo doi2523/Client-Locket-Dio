@@ -27,7 +27,7 @@ import {
   updateGroupName,
   toggleGroupMute,
 } from "@/services";
-import { SonnerInfo } from "@/components/ui/SonnerToast";
+import { SonnerInfo, SonnerPromise } from "@/components/ui/SonnerToast";
 import AddMemberModal from "./AddMemberModal";
 import SearchInput from "@/components/ui/Input/SearchInput";
 import EditGroupPoup from "./EditGroupModal";
@@ -282,7 +282,7 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
                 ) : (
                   <Bell size={18} />
                 )}
-                <span className="font-medium">Thông báo</span>
+                <span className="font-medium">Tắt thông báo</span>
               </div>
 
               <input
