@@ -3,7 +3,12 @@ import { useApp } from "@/context/AppContext";
 import { markReadMessage, markGroupAsRead } from "@/services";
 import { CONFIG } from "@/config";
 import { useSocket } from "@/context/SocketContext";
-import { useAuthStore, useGroupChatStore, useMessagesStore, useUserInfoStore } from "@/stores";
+import {
+  useAuthStore,
+  useGroupChatStore,
+  useMessagesStore,
+  useUserInfoStore,
+} from "@/stores";
 import { mergeAndSortConversations } from "@/utils/mergeChatList";
 import { useGroupRelay } from "@/hooks/useGroupRelay";
 import HeaderConversation from "./Layout/HeaderConversation";
@@ -11,6 +16,7 @@ import ConversationWithUser from "./Views/ConversationWithUser";
 import ConversationWithGroup from "./Views/ConversationWithGroup";
 import ConversationList from "./Views/ConversationList";
 import CreateGroupModal from "./Modal/CreateGroupModal";
+import ButtonCreateGroup from "./Layout/ButtonCreateGroup";
 
 const INITIAL_DISPLAY_COUNT = CONFIG.ui.chat.initialVisible;
 
@@ -53,12 +59,9 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
     [groups, user?.uid],
   );
 
-  const handleCreateGroup = useCallback(
-    (newGroup) => {
-      if (newGroup?.id) upsertGroup(newGroup);
-    },
-    [],
-  );
+  const handleCreateGroup = useCallback((newGroup) => {
+    if (newGroup?.id) upsertGroup(newGroup);
+  }, []);
 
   const handleListMessage = (upsertConversation) => (data) => {
     if (!Array.isArray(data) || !data.length) return;
@@ -201,7 +204,9 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
           handleLoadMore={handleLoadMore}
           remainingCount={remainingCount}
           initDisplayCount={INITIAL_DISPLAY_COUNT}
-          onCreateGroup={() => setShowCreateGroup(true)}
+        />
+        <ButtonCreateGroup
+          onClick={() => setShowCreateGroup(true)}
           hasUserGroup={hasUserGroup}
         />
       </div>
