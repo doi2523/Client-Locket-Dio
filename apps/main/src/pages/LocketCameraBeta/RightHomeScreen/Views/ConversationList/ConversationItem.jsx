@@ -114,15 +114,15 @@ export const ConversationItem = ({ msg, onSelect }) => {
         <p
           className={`text-lg truncate ${
             isUnread
-              ? "font-bold text-black"
-              : "font-semibold text-black opacity-60"
+              ? "font-bold text-base-content"
+              : "font-semibold text-base-content/50"
           }`}
         >
           {displayName} ~ {formatTimeAgoV2(sortTime)}
         </p>
         <p
           className={`text-md truncate pt-1 font-semibold ${
-            isUnread ? "text-black" : "text-gray-500 opacity-60"
+            isUnread ? "text-base-content" : "text-base-content/50"
           }`}
         >
           {previewText}

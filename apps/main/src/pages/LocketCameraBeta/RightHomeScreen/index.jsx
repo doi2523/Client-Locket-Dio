@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useApp } from "@/context/AppContext";
 import { markReadMessage, markGroupAsRead } from "@/services";
 import { CONFIG } from "@/config";
@@ -10,6 +10,7 @@ import HeaderConversation from "./Layout/HeaderConversation";
 import ConversationWithUser from "./Views/ConversationWithUser";
 import ConversationWithGroup from "./Views/ConversationWithGroup";
 import ConversationList from "./Views/ConversationList";
+import CreateGroupModal from "./Modal/CreateGroupModal";
 
 const INITIAL_DISPLAY_COUNT = CONFIG.ui.chat.initialVisible;
 
@@ -39,10 +40,25 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
   const {
     groups,
     fetchGroups,
+    upsertGroup,
     loading: groupsLoading,
   } = useGroupChatStore();
 
   const loading = conversationsLoading || groupsLoading;
+
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
+
+  const hasUserGroup = useMemo(
+    () => groups.some((g) => g.id.startsWith(user?.uid + "-")),
+    [groups, user?.uid],
+  );
+
+  const handleCreateGroup = useCallback(
+    (newGroup) => {
+      if (newGroup?.id) upsertGroup(newGroup);
+    },
+    [],
+  );
 
   const handleListMessage = (upsertConversation) => (data) => {
     if (!Array.isArray(data) || !data.length) return;
@@ -185,8 +201,17 @@ const RightHomeScreen = ({ setIsHomeOpen }) => {
           handleLoadMore={handleLoadMore}
           remainingCount={remainingCount}
           initDisplayCount={INITIAL_DISPLAY_COUNT}
+          onCreateGroup={() => setShowCreateGroup(true)}
+          hasUserGroup={hasUserGroup}
         />
       </div>
+
+      {/* ================= Create Group Modal ================= */}
+      <CreateGroupModal
+        open={showCreateGroup}
+        onClose={() => setShowCreateGroup(false)}
+        onCreated={handleCreateGroup}
+      />
 
       {/* ================= Conversation Detail (Direct) ================= */}
       <ConversationWithUser

@@ -164,6 +164,26 @@ export const updateGroupName = async ({ groupId, name }) => {
   }
 };
 
+export const createGroup = async ({ userIds, initialMessage } = {}) => {
+  try {
+    const body = {
+      data: {
+        users: userIds,
+        initial_message: {
+          content: initialMessage || "Chào cả nhà mình nhá",
+          client_token: generateUUIDv4Upper(),
+        },
+      },
+    };
+
+    const res = await instanceLocketV2.post("createGroup", body);
+    return res.data?.result?.data?.group ?? null;
+  } catch (error) {
+    console.error("Error creating group:", error);
+    throw error;
+  }
+};
+
 export const updateGroupAvatar = async ({ groupId, imageUrl }) => {
   try {
     const body = {
