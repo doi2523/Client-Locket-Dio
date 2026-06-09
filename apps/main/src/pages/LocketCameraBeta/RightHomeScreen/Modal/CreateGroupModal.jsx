@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import ReactDOM from "react-dom";
-import { Users, X } from "lucide-react";
+import { Users, X, Check } from "lucide-react";
 import SearchInput from "@/components/ui/Input/SearchInput";
 import { useFriendStoreV3 } from "@/stores";
 import { createGroup } from "@/services";
@@ -90,13 +90,16 @@ const CreateGroupModal = ({ open, onClose, onCreated }) => {
       onClick={onClose}
     >
       <div
-        className={`fixed h-[90%] text-base-content bottom-0 left-0 w-full p-4 bg-base-100 rounded-t-4xl shadow-lg transition-all duration-500 z-[71] flex flex-col
+        className={`fixed h-[90%] border-t border-base-300 text-base-content bottom-0 left-0 w-full p-4 bg-base-100 rounded-t-4xl shadow-lg transition-all duration-500 z-[71] flex flex-col
         ${animate ? "translate-y-0" : "translate-y-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-semibold">Tạo nhóm mới</h3>
-          <button onClick={onClose} className="btn btn-ghost btn-sm rounded-full">
+          <button
+            onClick={onClose}
+            className="btn btn-ghost btn-sm btn-circle rounded-full bg-base-300"
+          >
             <X size={20} />
           </button>
         </div>
@@ -142,7 +145,7 @@ const CreateGroupModal = ({ open, onClose, onCreated }) => {
                   >
                     <div
                       className={`relative rounded-full p-[2px] transition
-                        ${isSelected ? "ring-3 ring-yellow-400" : "ring-0"}`}
+    ${isSelected ? "ring-3 ring-yellow-400" : "ring-0"}`}
                     >
                       {friend.profilePic ? (
                         <img
@@ -150,8 +153,14 @@ const CreateGroupModal = ({ open, onClose, onCreated }) => {
                           className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full object-cover border border-base-300"
                         />
                       ) : (
-                        <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-primary/10 flex items-center justify-center">
                           <Users className="w-6 h-6 text-primary" />
+                        </div>
+                      )}
+
+                      {isSelected && (
+                        <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-yellow-400 border-2 border-base-100 flex items-center justify-center shadow-md">
+                          <Check size={14} className="text-black stroke-[3]" />
                         </div>
                       )}
                     </div>

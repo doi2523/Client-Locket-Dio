@@ -1,4 +1,3 @@
-import { Pencil, Users } from "lucide-react";
 import { SonnerInfo } from "@/components/ui/SonnerToast";
 
 const ButtonCreateGroup = ({ onClick, hasUserGroup }) => {
@@ -28,7 +27,7 @@ const ButtonCreateGroup = ({ onClick, hasUserGroup }) => {
       "
       title={hasUserGroup ? "Bạn đã tạo một nhóm rồi" : "Tạo nhóm chat mới"}
     >
-      {hasUserGroup ? <Users size={22} /> : <Pencil size={22} />}
+      <img src="./icons/edit_title.png" alt="" className="w-6 h-6" />
     </button>
   );
 };
