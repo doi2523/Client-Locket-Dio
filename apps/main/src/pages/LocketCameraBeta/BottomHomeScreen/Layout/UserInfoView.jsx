@@ -56,7 +56,8 @@ const UserInfo = ({ user: userId, date, groupId }) => {
 
           {/* USER NAME */}
           <span className="text-xs text-base-content/70 truncate">
-            {isMe ? "Bạn" : (displayUser?.firstName ?? "Người dùng")}{" ~ "}
+            {isMe ? "Bạn" : (displayUser?.firstName ?? "Người dùng")}
+            {" ~ "}
             <span className="text-xs text-base-content/50">
               {formatTimeAgo(date)}
             </span>
@@ -87,24 +88,20 @@ const UserInfo = ({ user: userId, date, groupId }) => {
   // NORMAL USER UI
   // =========================
   return (
-    <div className="flex items-center gap-2 text-base-content">
-      <img
-        src={
-          displayUser?.profilePicture ||
-          displayUser?.profilePic ||
-          "/images/default_profile.png"
-        }
-        alt={fullName}
-        className="w-10 h-10 rounded-full object-cover"
-      />
+    <div className="flex items-center gap-2 text-md text-muted-foreground">
+      <div className="flex items-center gap-1.5">
+        <img
+          src={
+            displayUser?.profilePicture ||
+            displayUser?.profilePic ||
+            "/images/default_profile.png"
+          }
+          alt={fullName}
+          className="w-10 h-10 rounded-full object-cover"
+        />
 
-      <div className="flex flex-col min-w-0">
-        <span className="text-sm font-semibold truncate">
+        <span className="truncate max-w-[100px] text-base text-base-content font-semibold">
           {isMe ? "Bạn" : (displayUser?.firstName ?? "Người dùng")}
-        </span>
-
-        <span className="text-xs text-base-content/50">
-          {formatTimeAgo(date)}
         </span>
       </div>
 
@@ -112,16 +109,22 @@ const UserInfo = ({ user: userId, date, groupId }) => {
       {displayUser?.badge === "locket_gold" && (
         <img
           src="https://cdn.locket-dio.com/v1/caption/caption-icon/locket_gold_badge.png"
-          className="w-4 h-4"
+          alt="Gold Badge"
+          className="w-5 h-5"
         />
       )}
 
       {displayUser?.isCelebrity && (
         <img
           src="https://cdn.locket-dio.com/v1/caption/caption-icon/celebrity_badge.png"
-          className="w-4 h-4"
+          alt="Celebrity"
+          className="w-5 h-5"
         />
       )}
+
+      <div className="text-base-content font-semibold">
+        {formatTimeAgo(date)}
+      </div>
     </div>
   );
 };
