@@ -1,43 +1,25 @@
 import React, { useEffect } from "react";
 import { useFriendStoreV3, useUserInfoStore } from "@/stores";
-import { getCaptionStyle } from "@/helpers/styleHelpers";
+import { OverlayRendererV2 } from "@/components/OverlayRender";
 
 const MomentContent = ({ moment }) => {
   if (!moment?.thumbnail_url) return null;
-  const overlay = (moment.overlays || []).find(
-    (o) => o.overlay_type === "caption"
-  );
-  const captionText = overlay?.data?.text || moment.caption || "";
-  const textColor = overlay?.data?.text_color || "#FFFFFFE6";
-  const background = overlay?.data?.background;
-  const captionIcon = overlay?.data?.icon;
-
   return (
     <div className="mt-2">
-      <div className="relative rounded-xl overflow-hidden border border-base-300">
+      <div className="relative rounded-4xl overflow-hidden border border-base-300">
         <img
           src={moment.thumbnail_url}
           alt=""
           className="w-full h-full object-cover"
-          onError={(e) => { e.target.style.display = "none"; }}
+          onError={(e) => {
+            e.target.style.display = "none";
+          }}
         />
-        {captionText && (
-          <div
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 w-fit max-w-[90%] px-4 py-1 text-center font-semibold rounded-full"
-            style={{
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              ...getCaptionStyle(background, textColor),
-            }}
-          >
-            {captionIcon && captionIcon.type === "emoji" && (
-              <span className="mr-1">{captionIcon.data}</span>
-            )}
-            {captionIcon && captionIcon.type === "url" && (
-              <img src={captionIcon.data} alt="icon caption" className="mr-1" />
-            )}
-            {captionText}
-          </div>
-        )}
+
+        {/* OVERLAY LAYER */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <OverlayRendererV2 overlays={moment.overlays} />
+        </div>
       </div>
     </div>
   );
@@ -51,7 +33,8 @@ const GroupMessageItem = ({ msg }) => {
   const userInfoMap = useUserInfoStore((s) => s.userInfoMap);
   const ensureUserInfo = useUserInfoStore((s) => s.ensureUserInfo);
 
-  const senderDetail = friendMap?.[msg.user_id] ?? userInfoMap?.[msg.user_id] ?? null;
+  const senderDetail =
+    friendMap?.[msg.user_id] ?? userInfoMap?.[msg.user_id] ?? null;
   const senderName = isMe
     ? "Bạn"
     : senderDetail
@@ -80,26 +63,36 @@ const GroupMessageItem = ({ msg }) => {
 
   useEffect(() => {
     const unknowns = [];
-    if (actorUid && actorUid !== me && !friendMap?.[actorUid] && !userInfoMap?.[actorUid])
+    if (
+      actorUid &&
+      actorUid !== me &&
+      !friendMap?.[actorUid] &&
+      !userInfoMap?.[actorUid]
+    )
       unknowns.push(actorUid);
-    if (targetUid && targetUid !== me && !friendMap?.[targetUid] && !userInfoMap?.[targetUid])
+    if (
+      targetUid &&
+      targetUid !== me &&
+      !friendMap?.[targetUid] &&
+      !userInfoMap?.[targetUid]
+    )
       unknowns.push(targetUid);
     if (!isMe && !senderDetail) unknowns.push(msg.user_id);
     if (unknowns.length > 0) {
       unknowns.forEach((uid) => ensureUserInfo(uid));
     }
   }, [msg.id, actorUid, targetUid]);
-  
+
   const getName = (uid) => {
-      if (!uid) return null;
-      if (uid === me) return "Bạn";
-      const detail = friendMap?.[uid] ?? userInfoMap?.[uid] ?? null;
-      if (detail?.firstName) return `${detail.firstName} ${detail.lastName}`.trim();
-      return null;
+    if (!uid) return null;
+    if (uid === me) return "Bạn";
+    const detail = friendMap?.[uid] ?? userInfoMap?.[uid] ?? null;
+    if (detail?.firstName)
+      return `${detail.firstName} ${detail.lastName}`.trim();
+    return null;
   };
 
   if (isSystemMessage) {
-    
     const actorName = getName(actorUid);
     const targetName = getName(targetUid);
 
@@ -190,7 +183,7 @@ const GroupMessageItem = ({ msg }) => {
       </div>
 
       <div className="chat-footer opacity-50 text-[9px] mt-0.5">
-        {formatTime(msg.created_at || (msg.create_time * 1000))}
+        {formatTime(msg.created_at || msg.create_time * 1000)}
       </div>
     </div>
   );
