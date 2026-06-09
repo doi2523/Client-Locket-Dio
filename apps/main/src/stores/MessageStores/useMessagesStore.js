@@ -184,7 +184,61 @@ export const useMessagesStore = create((set, get) => ({
     return local;
   },
 
-  // ==== 4️⃣ Add message mới ====
+  loadMoreGroupMessages: async (groupId) => {
+    const { messages } = get();
+    const current = messages[groupId] || [];
+    if (current.length === 0) return false;
+
+    let beforeTimestamp = 0;
+    for (const msg of current) {
+      const ts = Number(msg.created_at || 0);
+      if (ts > 0 && (beforeTimestamp === 0 || ts < beforeTimestamp)) {
+        beforeTimestamp = ts;
+      }
+    }
+    if (!beforeTimestamp) return false;
+
+    try {
+      const apiData = await getGroupMessages({ groupId, limit: 40, beforeTimestamp });
+
+      if (apiData?.messages?.length) {
+        const normalized = apiData.messages.map((msg) => ({
+          ...msg,
+          uid: groupId,
+          sender: msg.user_id,
+          text: msg.content?.content || "",
+          create_time: Number(msg.created_at || 0) / 1000,
+          update_time: Number(msg.created_at || 0),
+        }));
+
+        await saveMessages(normalized);
+
+        const merged = [...current, ...normalized].sort(
+          (a, b) => b.update_time - a.update_time
+        );
+
+        const unique = [
+          ...new Map(merged.map((m) => [m.id, m])).values(),
+        ];
+
+        set({
+          messages: {
+            ...get().messages,
+            [groupId]: unique,
+          },
+        });
+
+        return normalized.length === 40;
+      }
+
+      return false;
+    } catch (err) {
+      console.error("Failed to load older group messages:", err);
+      return false;
+    }
+  },
+
+  // ==== 5️⃣ Add message mới ====
   addMessageWithUser: async (conversationId, msg) => {
     const { messages } = get();
     const current = messages[conversationId] || [];
