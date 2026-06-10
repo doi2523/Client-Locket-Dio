@@ -54,7 +54,7 @@ const InputGroupChatDetail = ({ selectedChat, chat_disabled = false }) => {
     }
   };
 
-  const disabled = loading || !message.trim() || !selectedChat?.uid || chat_disabled;
+  const disabled = loading || !message.trim();
 
   return (
     <div className="">
@@ -67,7 +67,7 @@ const InputGroupChatDetail = ({ selectedChat, chat_disabled = false }) => {
           onKeyDown={handleKeyDown}
           rows={1}
           className="flex-1 bg-transparent focus:outline-none font-semibold pl-1 pr-7 resize-none disabled:opacity-50 leading-6 overflow-y-auto"
-          disabled={loading || disabled}
+          disabled={loading || chat_disabled}
         />
         <button
           onClick={handleSend}
