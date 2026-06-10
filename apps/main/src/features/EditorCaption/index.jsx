@@ -10,6 +10,7 @@ import MusicOverlay from "./components/MusicOverlay";
 import { OverlayRenderer } from "@/components/Overlay";
 import IconRenderer from "@/components/Overlay/icons/IconRenderer";
 import LocationIcon from "@/assets/icons/LocationIcon";
+import EmojiModal from "./Modal/EmojiPollModal";
 
 // Custom Hooks
 const useTextMeasurement = (text, ref, type, placeholder, parentRef) => {
@@ -481,6 +482,9 @@ function PollOverlay({
 }) {
   const textareaRef = useRef(null);
 
+  const [emojiModalOpen, setEmojiModalOpen] = useState(false);
+  const [activeSide, setActiveSide] = useState(null);
+
   const pollData = postOverlay?.payload || postOverlay?.overlays?.payload || {};
 
   const backgroundColors = postOverlay?.background?.colors || [
@@ -536,14 +540,34 @@ function PollOverlay({
 
       {/* Poll actions */}
       <div className="flex items-center gap-2 w-full">
-        <div className="flex-1 flex items-center justify-center py-1 px-5 rounded-3xl bg-white/10 backdrop-blur-md shadow-md text-xl">
+        <div
+          onClick={() => {
+            setActiveSide("left");
+            setEmojiModalOpen(true);
+          }}
+          className="flex-1 flex items-center justify-center py-1 px-5 rounded-3xl bg-white/10 backdrop-blur-md shadow-md text-xl"
+        >
           {leftEmoji}
         </div>
 
-        <div className="flex-1 flex items-center justify-center py-1 px-5 rounded-3xl bg-white/10 backdrop-blur-md shadow-md text-xl">
+        <div
+          onClick={() => {
+            setActiveSide("right");
+            setEmojiModalOpen(true);
+          }}
+          className="flex-1 flex items-center justify-center py-1 px-5 rounded-3xl bg-white/10 backdrop-blur-md shadow-md text-xl"
+        >
           {rightEmoji}
         </div>
       </div>
+
+      <EmojiModal
+        open={emojiModalOpen}
+        onClose={() => setEmojiModalOpen(false)}
+        setPostOverlay={setPostOverlay}
+        activeSide={activeSide}
+        title="Chọn emoji"
+      />
     </div>
   );
 }
