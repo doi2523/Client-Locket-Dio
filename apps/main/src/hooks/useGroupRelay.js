@@ -14,6 +14,7 @@ export const useGroupRelay = (idToken, myUid, isActive) => {
   const connectRef = useRef(null);
 
   const addMessageWithUserV2 = useMessagesStore((s) => s.addMessageWithUserV2);
+  const updateGroupMessageReaction = useMessagesStore((s) => s.updateGroupMessageReaction);
   const fetchConversations = useMessagesStore((s) => s.fetchConversations);
 
   const disconnect = useCallback(() => {
@@ -54,10 +55,26 @@ export const useGroupRelay = (idToken, myUid, isActive) => {
           };
 
           addMessageWithUserV2(data.group_id, normalized);
+        } else if (u.type === "reactionAdded") {
+          updateGroupMessageReaction(
+            data.group_id,
+            u.message_id,
+            u.user_id,
+            u.emoji,
+            "reactionAdded",
+          );
+        } else if (u.type === "reactionRemoved") {
+          updateGroupMessageReaction(
+            data.group_id,
+            u.message_id,
+            u.user_id,
+            null,
+            "reactionRemoved",
+          );
         }
       }
     },
-    [addMessageWithUserV2, fetchConversations],
+    [addMessageWithUserV2, updateGroupMessageReaction, fetchConversations],
   );
 
   const startPing = useCallback(() => {

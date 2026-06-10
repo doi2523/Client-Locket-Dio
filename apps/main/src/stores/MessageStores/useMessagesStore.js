@@ -238,6 +238,36 @@ export const useMessagesStore = create((set, get) => ({
     }
   },
 
+  updateGroupMessageReaction: (groupId, messageId, userId, emoji, actionType) => {
+    const { messages } = get();
+    const current = messages[groupId] || [];
+
+    const updated = current.map((msg) => {
+      if (msg.id !== messageId) return msg;
+
+      let reactions = [...(msg.reactions || [])];
+
+      if (actionType === "reactionAdded") {
+        reactions = reactions.filter((r) => r.user_id !== userId);
+        reactions.push({ user_id: userId, emoji });
+      } else if (actionType === "reactionRemoved") {
+        reactions = reactions.filter((r) => r.user_id !== userId);
+      }
+
+      return { ...msg, reactions };
+    });
+
+    set({
+      messages: {
+        ...messages,
+        [groupId]: updated,
+      },
+    });
+
+    const changedMsg = updated.find((m) => m.id === messageId);
+    if (changedMsg) saveMessages(changedMsg);
+  },
+
   // ==== 5️⃣ Add message mới ====
   addMessageWithUser: async (conversationId, msg) => {
     const { messages } = get();
