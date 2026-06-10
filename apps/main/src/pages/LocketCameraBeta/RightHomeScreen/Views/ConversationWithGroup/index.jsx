@@ -2,7 +2,7 @@ import React, { useRef, useMemo, useLayoutEffect, useState, useEffect, useCallba
 import HeaderGroupChatDetail from "./HeaderGroupChatDetail";
 import GroupMessageItem from "./GroupMessageItem";
 import InputGroupChatDetail from "./InputGroupChatDetail";
-import { useMessagesStore } from "@/stores";
+import { useMessagesStore, useGroupChatStore, useAuthStore } from "@/stores";
 
 const PULL_THRESHOLD = 80;
 
@@ -50,6 +50,14 @@ const ConversationWithGroup = ({
   const isPulling = useRef(false);
 
   const loadMoreGroupMessages = useMessagesStore((s) => s.loadMoreGroupMessages);
+  const groupFromStore = useGroupChatStore((s) =>
+    s.groups.find((g) => g.id === selectedChat?.uid),
+  );
+  const currentUser = useAuthStore((s) => s.user);
+  const isMember = useMemo(() => {
+    if (!currentUser?.uid || !groupFromStore?.users) return true;
+    return groupFromStore.users.some((u) => u.user_id === currentUser.uid);
+  }, [currentUser?.uid, groupFromStore?.users]);
 
   const sortedMessages = useMemo(() => {
     return [...messages].sort(
@@ -235,7 +243,7 @@ const ConversationWithGroup = ({
       </div>
 
       <div className="sticky bottom-4 z-10 p-2">
-        <InputGroupChatDetail selectedChat={selectedChat} />
+        <InputGroupChatDetail selectedChat={selectedChat} chat_disabled={!isMember} />
       </div>
     </div>
   );

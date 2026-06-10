@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { ArrowUp } from "lucide-react";
 import { sendGroupMessage } from "@/services";
 
-const InputGroupChatDetail = ({ selectedChat }) => {
+const InputGroupChatDetail = ({ selectedChat, chat_disabled = false }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const textareaRef = useRef(null);
@@ -54,7 +54,7 @@ const InputGroupChatDetail = ({ selectedChat }) => {
     }
   };
 
-  const disabled = loading || !message.trim();
+  const disabled = loading || !message.trim() || !selectedChat?.uid || chat_disabled;
 
   return (
     <div className="">
@@ -67,7 +67,7 @@ const InputGroupChatDetail = ({ selectedChat }) => {
           onKeyDown={handleKeyDown}
           rows={1}
           className="flex-1 bg-transparent focus:outline-none font-semibold pl-1 pr-7 resize-none disabled:opacity-50 leading-6 overflow-y-auto"
-          disabled={loading}
+          disabled={loading || disabled}
         />
         <button
           onClick={handleSend}
