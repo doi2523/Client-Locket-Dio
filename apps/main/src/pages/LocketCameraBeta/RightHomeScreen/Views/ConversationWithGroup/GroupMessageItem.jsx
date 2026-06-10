@@ -1,6 +1,105 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
 import { useFriendStoreV3, useUserInfoStore } from "@/stores";
 import { OverlayRendererV2 } from "@/components/OverlayRender";
+
+const ReactionViewerDrawer = ({ open, reactions, friendMap, userInfoMap, onClose }) => {
+  const me = localStorage.getItem("localId");
+  const [show, setShow] = useState(false);
+  const [animate, setAnimate] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = show ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [show]);
+
+  useEffect(() => {
+    if (open) {
+      setShow(true);
+      setTimeout(() => setAnimate(true), 10);
+    } else {
+      setAnimate(false);
+      setTimeout(() => setShow(false), 300);
+    }
+  }, [open]);
+
+  const grouped = {};
+  reactions.forEach((r) => {
+    if (!r?.emoji || !r?.user_id) return;
+    if (!grouped[r.emoji]) grouped[r.emoji] = [];
+    if (!grouped[r.emoji].includes(r.user_id)) {
+      grouped[r.emoji].push(r.user_id);
+    }
+  });
+
+  const getName = (uid) => {
+    if (uid === me) return "Bạn";
+    const detail = friendMap?.[uid] ?? userInfoMap?.[uid] ?? null;
+    return detail
+      ? `${detail.firstName} ${detail.lastName}`.trim()
+      : uid?.slice(0, 8);
+  };
+
+  const getAvatar = (uid) => {
+    const detail = friendMap?.[uid] ?? userInfoMap?.[uid] ?? null;
+    return detail?.profilePic || null;
+  };
+
+  const getInitial = (uid) => {
+    const detail = friendMap?.[uid] ?? userInfoMap?.[uid] ?? null;
+    return detail?.firstName?.charAt(0)?.toUpperCase() || uid?.charAt(0)?.toUpperCase() || "?";
+  };
+
+  if (!show) return null;
+
+  return ReactDOM.createPortal(
+    <div
+      className={`fixed inset-0 bg-base-100/30 backdrop-blur-[4px] transition-opacity duration-500 z-[62] ${
+        animate ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
+      onClick={onClose}
+    >
+      <div
+        className={`fixed h-fit max-h-[50%] border-t border-base-300 bottom-0 left-0 w-full bg-base-100 rounded-t-4xl shadow-lg transition-all duration-500 ease-in-out z-[63] flex flex-col text-base-content overflow-hidden
+        ${animate ? "translate-y-0" : "translate-y-full"}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-center pt-3 pb-1 shrink-0">
+          <div className="w-10 h-1 rounded-full bg-base-300" />
+        </div>
+        <h3 className="text-sm font-bold text-center mb-1 shrink-0 text-base-content/70">Reactions</h3>
+        <div className="overflow-y-auto px-4 pb-6">
+          {Object.entries(grouped).map(([emoji, users]) => (
+            <div key={emoji} className="flex items-start gap-3 py-2.5 border-b border-base-200 last:border-0">
+              <span className="text-xl w-8 text-center flex-shrink-0">{emoji}</span>
+              <div className="flex flex-col gap-1.5">
+                {users.map((uid) => {
+                  const avatar = getAvatar(uid);
+                  return (
+                    <div key={uid} className="flex items-center gap-2">
+                      {avatar ? (
+                        <img
+                          src={avatar}
+                          className="w-6 h-6 rounded-full object-cover border border-base-300 flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-6 h-6 rounded-full bg-base-300 flex items-center justify-center text-[10px] font-bold text-base-content/70 flex-shrink-0">
+                          {getInitial(uid)}
+                        </div>
+                      )}
+                      <span className="text-sm font-medium">{getName(uid)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+};
 
 const MomentContent = ({ moment }) => {
   if (!moment?.thumbnail_url) return null;
@@ -28,6 +127,7 @@ const MomentContent = ({ moment }) => {
 const GroupMessageItem = ({ msg }) => {
   const me = localStorage.getItem("localId");
   const isMe = msg.user_id === me;
+  const [showReactions, setShowReactions] = useState(false);
 
   const friendMap = useFriendStoreV3((s) => s.friendDetailsMap);
   const userInfoMap = useUserInfoStore((s) => s.userInfoMap);
@@ -172,15 +272,36 @@ const GroupMessageItem = ({ msg }) => {
         {renderBody()}
 
         {msg.reactions && msg.reactions.length > 0 && (
-          <div className="absolute -bottom-2 -right-1 flex gap-0.5 bg-base-300 px-1 py-0.5 rounded-full shadow text-[15px] cursor-pointer">
-            {msg.reactions.map((r, idx) => (
-              <span key={idx} title={getName(r.user_id)} className="text-sm">
-                {r.emoji}
-              </span>
-            ))}
+          <div
+            className="absolute -bottom-2 -right-1 flex gap-0.5 bg-base-300 px-1 py-0.5 rounded-full shadow text-[15px] cursor-pointer"
+            onClick={() => setShowReactions(true)}
+          >
+            {(() => {
+              const grouped = {};
+              msg.reactions.forEach((r) => {
+                if (!r?.emoji) return;
+                if (!grouped[r.emoji]) grouped[r.emoji] = { count: 0, users: [] };
+                grouped[r.emoji].count++;
+                grouped[r.emoji].users.push(r.user_id);
+              });
+              return Object.entries(grouped).map(([emoji, { count, users }]) => (
+                <span key={emoji} title={users.map((u) => getName(u)).filter(Boolean).join(", ")} className="flex items-center gap-0.5 text-sm">
+                  {count > 1 && <span className="text-[10px] font-semibold">{count}</span>}
+                  <span>{emoji}</span>
+                </span>
+              ));
+            })()}
           </div>
         )}
       </div>
+
+      <ReactionViewerDrawer
+        open={showReactions}
+        reactions={msg.reactions}
+        friendMap={friendMap}
+        userInfoMap={userInfoMap}
+        onClose={() => setShowReactions(false)}
+      />
 
       <div className="chat-footer opacity-50 text-[9px] mt-0.5">
         {formatTime(msg.created_at || msg.create_time * 1000)}
