@@ -424,7 +424,7 @@ const GroupMessageItem = ({ msg }) => {
                 ))}
               </div>
 
-              <div className="bg-base-100 shadow-lg border border-base-300 rounded-2xl overflow-hidden min-w-[180px]">
+              <div className="bg-base-100 shadow-lg text-base-content border border-base-300 rounded-2xl overflow-hidden min-w-[180px]">
                 <button
                   className="flex items-center gap-3 px-4 py-3 hover:bg-base-200 w-full text-left text-sm font-medium"
                   onClick={() => setShowEmojiPicker(true)}
