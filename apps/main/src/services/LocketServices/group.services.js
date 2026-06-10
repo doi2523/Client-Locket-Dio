@@ -1,6 +1,41 @@
 import { instanceLocketV2 } from "@/libs";
 import { generateUUIDv4Upper } from "@/utils/generate/uuid";
 
+export const reactToGroupMessage = async ({ groupId, messageId, emoji }) => {
+  try {
+    const body = {
+      data: {
+        type: "addReaction",
+        group_id: groupId,
+        message_id: messageId,
+        emoji,
+      },
+    };
+    const res = await instanceLocketV2.post("groupChatOp", body);
+    return res.data?.result?.data ?? null;
+  } catch (error) {
+    console.error("Error reacting to group message:", error);
+    throw error;
+  }
+};
+
+export const removeGroupMessageReaction = async ({ groupId, messageId }) => {
+  try {
+    const body = {
+      data: {
+        type: "removeReaction",
+        group_id: groupId,
+        message_id: messageId,
+      },
+    };
+    const res = await instanceLocketV2.post("groupChatOp", body);
+    return res.data?.result?.data ?? null;
+  } catch (error) {
+    console.error("Error removing group message reaction:", error);
+    throw error;
+  }
+};
+
 export const getGroupsState = async ({ groupIds, lastFetchedAt } = {}) => {
   try {
     const body = { data: {} };
