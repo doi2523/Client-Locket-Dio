@@ -61,7 +61,7 @@ const InputGroupChatDetail = ({ selectedChat, chat_disabled = false }) => {
       <div className="flex w-full items-end gap-3 px-4 py-3.5 bg-base-200 rounded-3xl shadow-md relative">
         <textarea
           ref={textareaRef}
-          placeholder="Gửi tin nhắn nhóm..."
+          placeholder={chat_disabled ? "Bạn không phải là thành viên của nhóm này" : "Gửi tin nhắn nhóm..."}
           value={message}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
