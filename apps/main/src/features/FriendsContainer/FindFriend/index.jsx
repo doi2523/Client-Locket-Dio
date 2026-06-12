@@ -5,7 +5,7 @@ import SearchInput from "@/components/ui/Input/SearchInput";
 import CelebItemFriend from "./CelebItemFriend";
 import {
   SonnerInfo,
-  SonnerSuccess,
+  SonnerPromiseV2,
   SonnerWarning,
 } from "@/components/ui/SonnerToast";
 import {
@@ -37,22 +37,28 @@ const FindFriend = () => {
   const handleFindFriend = async (username) => {
     if (!username) return;
 
-    try {
-      setLoading(true);
-      setFoundUser(null);
+    setLoading(true);
+    setFoundUser(null);
 
-      const result = await FindFriendByUserName(username);
+    try {
+      const result = await SonnerPromiseV2(FindFriendByUserName(username), {
+        loading: "Đang tìm người dùng...",
+        success: "Đã tìm thấy người dùng",
+        error: (err) => {
+          if (err?.message === "Người dùng không tồn tại") {
+            return err.message;
+          }
+
+          return "Có lỗi xảy ra, vui lòng thử lại sau";
+        },
+      });
 
       if (result?.success) {
         setFoundUser(result.data);
 
         const status = await getFriendshipStatus(result.data.uid);
         setFriendshipStatus(status);
-      } else {
-        SonnerInfo("Người dùng không tồn tại");
       }
-    } catch (error) {
-      SonnerInfo(error.message || "Người dùng không tồn tại");
     } finally {
       setLoading(false);
     }
@@ -68,44 +74,56 @@ const FindFriend = () => {
         {
           action: {
             label: "Nâng cấp",
-            onClick: () => {
-              navigate("/pricing");
-            },
+            onClick: () => navigate("/pricing"),
           },
         },
       );
       return;
     }
+
     try {
       setSending(true);
 
       if (foundUser?.celebrity) {
-        const res = await SendRequestToCelebrity(foundUser.uid);
+        const res = await SonnerPromiseV2(
+          SendRequestToCelebrity(foundUser.uid),
+          {
+            loading: "Đang gửi yêu cầu...",
+            success: "Gửi thành công!",
+            error: (err) => err?.message || "Gửi thất bại",
+          },
+        );
 
         if (res?.success) {
-          SonnerSuccess("Gửi thành công!");
           setFriendshipStatus("OUTGOING");
+
           setFoundUser((prev) => ({
             ...prev,
             friendship_status: "outgoing-follow-request",
           }));
         }
-      } else {
-        const res = await SendRequestToFriend(foundUser.uid);
 
-        if (res?.status === "real-user") {
-          SonnerSuccess("Đã gửi yêu cầu!");
-          setFriendshipStatus("OUTGOING");
-          if (shareHistoryOn) {
-            SonnerInfo("Lịch sử sẽ được chia sẻ nếu họ chấp nhận yêu cầu.");
-            await shareHistoryWithFriend(foundUser.uid);
-          }
-        } else {
-          SonnerWarning("Gửi thất bại");
+        return;
+      }
+
+      const res = await SonnerPromiseV2(SendRequestToFriend(foundUser.uid), {
+        loading: "Đang gửi yêu cầu...",
+        success: "Đã gửi yêu cầu!",
+        error: (err) => err?.message || "Gửi thất bại",
+      });
+
+      if (res?.status === "real-user") {
+        setFriendshipStatus("OUTGOING");
+
+        if (shareHistoryOn) {
+          SonnerInfo("Lịch sử sẽ được chia sẻ nếu họ chấp nhận yêu cầu.");
+
+          await shareHistoryWithFriend(foundUser.uid);
         }
       }
     } catch (error) {
-      SonnerWarning(error.message || "Lỗi");
+      // SonnerPromise đã hiện lỗi rồi
+      console.error(error);
     } finally {
       setSending(false);
     }
@@ -183,7 +201,7 @@ const FindFriend = () => {
           )
         ) : (
           <p className="text-gray-400 h-[70px] text-center">
-            {loading ? "Đang tìm..." : "Không tìm thấy người dùng nào"}
+            {loading ? "Đang tìm..." : "Không có dữ liệu..."}
           </p>
         )}
       </div>

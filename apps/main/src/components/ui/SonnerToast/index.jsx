@@ -70,6 +70,44 @@ export const SonnerPromise = (
   });
 };
 
+export const SonnerPromiseV2 = (
+  promise,
+  {
+    loading = "Đang xử lý...",
+    success = "Thành công!",
+    error = "Có lỗi xảy ra!",
+    description = {},
+    options = {},
+  } = {},
+) => {
+  toast.promise(promise, {
+    loading,
+    success: (data) => ({
+      message: typeof success === "function" ? success(data) : success,
+      description:
+        typeof description.success === "function"
+          ? description.success(data)
+          : description.success,
+    }),
+    error: (err) => ({
+      message: typeof error === "function" ? error(err) : error,
+      description:
+        typeof description.error === "function"
+          ? description.error(err)
+          : description.error,
+    }),
+
+    position: "top-center",
+    richColors: true,
+    dismissible: true,
+    closeButton: false,
+
+    ...options,
+  });
+
+  return promise;
+};
+
 // Export helpers
 export const SonnerSuccess = (msg, body = "", opt) =>
   showToast("success", msg, body, opt);
