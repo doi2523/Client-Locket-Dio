@@ -137,7 +137,7 @@ function EmojiModal({
         ${animate ? "translate-y-0" : "translate-y-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-5 flex flex-col h-full">
+        <div className="p-5 pb-0 flex flex-col h-full">
           <h3 className="text-xl font-semibold text-center mb-4">{title}</h3>
 
           <div className="flex justify-center gap-2 mb-5">
