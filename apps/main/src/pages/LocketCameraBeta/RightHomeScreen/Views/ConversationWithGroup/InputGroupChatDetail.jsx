@@ -58,7 +58,7 @@ const InputGroupChatDetail = ({ selectedChat, chat_disabled = false }) => {
   const disabled = loading || !message.trim();
 
   return (
-    <div className="flex flex-row items-center gap-3">
+    <div className="flex flex-row items-center gap-3 px-3">
       {/* CAMERA BUTTON */}
       <button
         onClick={() => SonnerInfo("Đang được thi công!")}
