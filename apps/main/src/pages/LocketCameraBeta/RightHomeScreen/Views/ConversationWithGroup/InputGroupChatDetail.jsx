@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { ArrowUp } from "lucide-react";
 import { sendGroupMessage } from "@/services";
+import { SonnerInfo } from "@/components/ui/SonnerToast";
 
 const InputGroupChatDetail = ({ selectedChat, chat_disabled = false }) => {
   const [message, setMessage] = useState("");
@@ -57,11 +58,25 @@ const InputGroupChatDetail = ({ selectedChat, chat_disabled = false }) => {
   const disabled = loading || !message.trim();
 
   return (
-    <div className="">
-      <div className="flex w-full items-end gap-3 px-4 py-3.5 bg-base-200 rounded-3xl shadow-md relative">
+    <div className="flex flex-row items-center gap-3">
+      {/* CAMERA BUTTON */}
+      <button
+        onClick={() => SonnerInfo("Đang được thi công!")}
+        className="relative flex items-center justify-center w-10 h-10 shrink-0"
+      >
+        <div className="absolute w-8 h-8 ring-4 text-primary/80 rounded-full z-10" />
+        <div className="absolute w-7 h-7 rounded-full camera-inner-circle shadow-sm" />
+      </button>
+
+      {/* INPUT */}
+      <div className="flex-1 flex items-end gap-3 px-4 py-3.5 bg-base-200 rounded-3xl shadow-md relative">
         <textarea
           ref={textareaRef}
-          placeholder={chat_disabled ? "Bạn không phải là thành viên của nhóm này" : "Gửi tin nhắn nhóm..."}
+          placeholder={
+            chat_disabled
+              ? "Bạn không phải là thành viên của nhóm này"
+              : "Gửi tin nhắn nhóm..."
+          }
           value={message}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
