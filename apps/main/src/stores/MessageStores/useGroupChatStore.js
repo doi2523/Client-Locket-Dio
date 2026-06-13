@@ -30,9 +30,7 @@ export const useGroupChatStore = create((set, get) => ({
 
       const lastFetchedAt = await getGroupsLastFetchedAt();
 
-      const apiData = await getGroupsState(
-        lastFetchedAt ? { lastFetchedAt } : {},
-      );
+      const apiData = await getGroupsState();
 
       if (!apiData) return;
 
