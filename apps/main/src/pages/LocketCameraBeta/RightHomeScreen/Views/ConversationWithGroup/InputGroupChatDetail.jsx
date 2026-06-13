@@ -64,7 +64,7 @@ const InputGroupChatDetail = ({ selectedChat, chat_disabled = false }) => {
         onClick={() => SonnerInfo("Đang được thi công!")}
         className="relative flex items-center justify-center w-10 h-10 shrink-0"
       >
-        <div className="absolute w-8 h-8 ring-4 text-primary/80 rounded-full z-10" />
+        <div className="absolute w-8 h-8 ring-4 text-primary rounded-full z-10" />
         <div className="absolute w-7 h-7 rounded-full camera-inner-circle shadow-sm" />
       </button>
 
