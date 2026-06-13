@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { useFriendStoreV3, useUserInfoStore, useMessagesStore } from "@/stores";
 import { reactToGroupMessage, removeGroupMessageReaction } from "@/services";
 
@@ -22,9 +28,12 @@ const GroupMessageItem = ({ msg }) => {
   const friendMap = useFriendStoreV3((s) => s.friendDetailsMap);
   const userInfoMap = useUserInfoStore((s) => s.userInfoMap);
   const ensureUserInfo = useUserInfoStore((s) => s.ensureUserInfo);
-  const updateGroupMessageReaction = useMessagesStore((s) => s.updateGroupMessageReaction);
+  const updateGroupMessageReaction = useMessagesStore(
+    (s) => s.updateGroupMessageReaction,
+  );
 
-  const senderDetail = friendMap?.[msg.user_id] ?? userInfoMap?.[msg.user_id] ?? null;
+  const senderDetail =
+    friendMap?.[msg.user_id] ?? userInfoMap?.[msg.user_id] ?? null;
   const senderName = isMe
     ? "Bạn"
     : senderDetail
@@ -53,8 +62,20 @@ const GroupMessageItem = ({ msg }) => {
 
   useEffect(() => {
     const unknowns = [];
-    if (actorUid && actorUid !== me && !friendMap?.[actorUid] && !userInfoMap?.[actorUid]) unknowns.push(actorUid);
-    if (targetUid && targetUid !== me && !friendMap?.[targetUid] && !userInfoMap?.[targetUid]) unknowns.push(targetUid);
+    if (
+      actorUid &&
+      actorUid !== me &&
+      !friendMap?.[actorUid] &&
+      !userInfoMap?.[actorUid]
+    )
+      unknowns.push(actorUid);
+    if (
+      targetUid &&
+      targetUid !== me &&
+      !friendMap?.[targetUid] &&
+      !userInfoMap?.[targetUid]
+    )
+      unknowns.push(targetUid);
     if (!isMe && !senderDetail) unknowns.push(msg.user_id);
     if (unknowns.length > 0) unknowns.forEach((uid) => ensureUserInfo(uid));
   }, [msg.id, actorUid, targetUid]);
@@ -63,26 +84,44 @@ const GroupMessageItem = ({ msg }) => {
     if (!uid) return null;
     if (uid === me) return "Bạn";
     const detail = friendMap?.[uid] ?? userInfoMap?.[uid] ?? null;
-    if (detail?.firstName) return `${detail.firstName} ${detail.lastName}`.trim();
+    if (detail?.firstName)
+      return `${detail.firstName} ${detail.lastName}`.trim();
     return null;
   };
 
-  const myReaction = msg.reactions?.find((r) => r.user_id === me)?.emoji || null;
+  const myReaction =
+    msg.reactions?.find((r) => r.user_id === me)?.emoji || null;
 
-  const sendReaction = useCallback(async (emoji) => {
-    const existing = msg.reactions?.find((r) => r.user_id === me);
+  const sendReaction = useCallback(
+    async (emoji) => {
+      const existing = msg.reactions?.find((r) => r.user_id === me);
 
-    if (existing?.emoji === emoji) {
-      updateGroupMessageReaction(msg.uid, msg.id, me, null, "reactionRemoved");
-      removeGroupMessageReaction({ groupId: msg.uid, messageId: msg.id }).catch(console.error);
-    } else {
-      updateGroupMessageReaction(msg.uid, msg.id, me, emoji, "reactionAdded");
-      reactToGroupMessage({ groupId: msg.uid, messageId: msg.id, emoji }).catch(console.error);
-    }
+      if (existing?.emoji === emoji) {
+        updateGroupMessageReaction(
+          msg.uid,
+          msg.id,
+          me,
+          null,
+          "reactionRemoved",
+        );
+        removeGroupMessageReaction({
+          groupId: msg.uid,
+          messageId: msg.id,
+        }).catch(console.error);
+      } else {
+        updateGroupMessageReaction(msg.uid, msg.id, me, emoji, "reactionAdded");
+        reactToGroupMessage({
+          groupId: msg.uid,
+          messageId: msg.id,
+          emoji,
+        }).catch(console.error);
+      }
 
-    setShowMenu(false);
-    setShowEmojiPicker(false);
-  }, [msg, me, updateGroupMessageReaction]);
+      setShowMenu(false);
+      setShowEmojiPicker(false);
+    },
+    [msg, me, updateGroupMessageReaction],
+  );
 
   const showContextMenu = useCallback((x, y) => {
     setMenuPos({ x, y });
@@ -120,11 +159,14 @@ const GroupMessageItem = ({ msg }) => {
     }
   }, []);
 
-  const handleContextMenu = useCallback((e) => {
-    if (isMe) return;
-    e.preventDefault();
-    showContextMenu(e.clientX, e.clientY);
-  }, [isMe, showContextMenu]);
+  const handleContextMenu = useCallback(
+    (e) => {
+      if (isMe) return;
+      e.preventDefault();
+      showContextMenu(e.clientX, e.clientY);
+    },
+    [isMe, showContextMenu],
+  );
 
   useEffect(() => {
     return () => {
@@ -134,11 +176,11 @@ const GroupMessageItem = ({ msg }) => {
 
   if (isSystemMessage) {
     return (
-      <SystemMessage 
-        content={content} 
-        actorUid={actorUid} 
-        targetUid={targetUid} 
-        getName={getName} 
+      <SystemMessage
+        content={content}
+        actorUid={actorUid}
+        targetUid={targetUid}
+        getName={getName}
       />
     );
   }
@@ -150,7 +192,9 @@ const GroupMessageItem = ({ msg }) => {
     if (content.type === "text" || !content.type) {
       return (
         <>
-          {content.content && <span className="break-words text-sm">{content.content}</span>}
+          {content.content && (
+            <span className="break-words text-sm">{content.content}</span>
+          )}
           {content.moment && <MomentContent moment={content.moment} />}
         </>
       );
@@ -183,33 +227,19 @@ const GroupMessageItem = ({ msg }) => {
         onContextMenu={handleContextMenu}
       >
         {msg.reply_moment && (
-          <div className="text-xs italic opacity-75 mb-1 text-primary">↪ Đã phản hồi khoảnh khắc</div>
+          <div className="text-xs italic opacity-75 mb-1 text-primary">
+            ↪ Đã phản hồi khoảnh khắc
+          </div>
         )}
 
         {renderBody()}
 
-        {msg.reactions && msg.reactions.length > 0 && (
-          <div
-            className="absolute -bottom-2 -right-1 flex gap-0.5 bg-base-300 px-1 py-0.5 rounded-full shadow text-[15px] cursor-pointer z-10"
-            onClick={(e) => { e.stopPropagation(); setShowReactions(true); }}
-          >
-            {(() => {
-              const grouped = {};
-              msg.reactions.forEach((r) => {
-                if (!r?.emoji) return;
-                if (!grouped[r.emoji]) grouped[r.emoji] = { count: 0, users: [] };
-                grouped[r.emoji].count++;
-                grouped[r.emoji].users.push(r.user_id);
-              });
-              return Object.entries(grouped).map(([emoji, { count, users }]) => (
-                <span key={emoji} title={users.map((u) => getName(u)).filter(Boolean).join(", ")} className="flex items-center gap-0.5 text-sm">
-                  {count > 1 && <span className="text-[10px] font-semibold">{count}</span>}
-                  <span>{emoji}</span>
-                </span>
-              ));
-            })()}
-          </div>
-        )}
+        <MessageReactions
+          reactions={msg.reactions}
+          isMe={isMe}
+          getName={getName}
+          onClick={() => setShowReactions(true)}
+        />
       </div>
 
       <ReactionViewerDrawer
@@ -219,8 +249,17 @@ const GroupMessageItem = ({ msg }) => {
         userInfoMap={userInfoMap}
         onClose={() => setShowReactions(false)}
         onRemoveReaction={() => {
-          updateGroupMessageReaction(msg.uid, msg.id, me, null, "reactionRemoved");
-          removeGroupMessageReaction({ groupId: msg.uid, messageId: msg.id }).catch(console.error);
+          updateGroupMessageReaction(
+            msg.uid,
+            msg.id,
+            me,
+            null,
+            "reactionRemoved",
+          );
+          removeGroupMessageReaction({
+            groupId: msg.uid,
+            messageId: msg.id,
+          }).catch(console.error);
           setShowReactions(false);
         }}
       />
@@ -247,3 +286,73 @@ const GroupMessageItem = ({ msg }) => {
 };
 
 export default GroupMessageItem;
+
+function MessageReactions({ reactions = [], isMe, getName, onClick }) {
+  const groupedReactions = useMemo(() => {
+    const grouped = {};
+
+    reactions.forEach((r) => {
+      if (!r?.emoji) return;
+
+      if (!grouped[r.emoji]) {
+        grouped[r.emoji] = {
+          count: 0,
+          users: [],
+        };
+      }
+
+      grouped[r.emoji].count++;
+      grouped[r.emoji].users.push(r.user_id);
+    });
+
+    return Object.entries(grouped);
+  }, [reactions]);
+
+  if (!groupedReactions.length) return null;
+
+  return (
+    <div
+      className={`
+        absolute -top-7 flex cursor-pointer z-10
+        ${isMe ? "-left-2" : "-right-2"}
+      `}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick?.();
+      }}
+    >
+      {groupedReactions.length === 1 ? (
+        <div className="p-1 bg-base-100 rounded-full">
+          <div className="p-1 w-8 h-8 text-base bg-base-300 rounded-full shadow flex items-center justify-center">
+            {groupedReactions[0][0]}
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center">
+          {groupedReactions.slice(0, 2).map(([emoji, data], index) => (
+            <div
+              key={emoji}
+              title={data.users
+                .map((u) => getName?.(u))
+                .filter(Boolean)
+                .join(", ")}
+              className={`p-1 bg-base-100 rounded-full ${index > 0 ? "-ml-3" : ""}`}
+            >
+              <div className="p-1 w-8 h-8 text-base bg-base-300 rounded-full shadow flex items-center justify-center">
+                {emoji}
+              </div>
+            </div>
+          ))}
+
+          {groupedReactions.length > 2 && (
+            <div className="-ml-3 p-2 bg-base-300 rounded-full shadow border border-base-100">
+              <div className="p-1 flex items-center justify-center text-[10px] font-semibold">
+                +{groupedReactions.length - 2}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
