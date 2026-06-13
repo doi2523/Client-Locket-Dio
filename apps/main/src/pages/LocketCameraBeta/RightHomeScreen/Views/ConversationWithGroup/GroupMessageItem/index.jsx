@@ -2,10 +2,10 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useFriendStoreV3, useUserInfoStore, useMessagesStore } from "@/stores";
 import { reactToGroupMessage, removeGroupMessageReaction } from "@/services";
 
-import { ReactionViewerDrawer } from "./components/ReactionViewerDrawer";
-import { MomentContent } from "./components/MomentContent";
-import { SystemMessage } from "./components/SystemMessage";
-import { MessageContextMenu } from "./components/MessageContextMenu";
+import { ReactionViewerDrawer } from "./ReactionViewerDrawer";
+import { MomentContent } from "./MomentContent";
+import { SystemMessage } from "./SystemMessage";
+import { MessageContextMenu } from "./MessageContextMenu";
 
 const GroupMessageItem = ({ msg }) => {
   const me = localStorage.getItem("localId");

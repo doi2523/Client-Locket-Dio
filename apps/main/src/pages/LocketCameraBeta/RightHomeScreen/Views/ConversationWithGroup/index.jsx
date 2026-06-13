@@ -1,8 +1,8 @@
 import React, { useRef, useMemo, useLayoutEffect, useState, useEffect, useCallback } from "react";
 import HeaderGroupChatDetail from "./HeaderGroupChatDetail";
-import GroupMessageItem from "./GroupMessageItem";
 import InputGroupChatDetail from "./InputGroupChatDetail";
 import { useMessagesStore, useGroupChatStore, useAuthStore } from "@/stores";
+import GroupMessageItem from "./GroupMessageItem";
 
 const PULL_THRESHOLD = 80;
 
