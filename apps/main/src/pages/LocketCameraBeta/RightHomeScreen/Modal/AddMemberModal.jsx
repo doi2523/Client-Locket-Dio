@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { Users } from "lucide-react";
+import { Check, Users } from "lucide-react";
 import SearchInput from "@/components/ui/Input/SearchInput";
 
 const AddMemberModal = ({
@@ -65,7 +65,9 @@ const AddMemberModal = ({
           Thêm vào nhóm
         </h3>
 
-        <p>Lưu ý: Người mới có thể xem các tin nhắn trước đó.</p>
+        <p className="text-sm text-base-content/60 mb-3">
+          Lưu ý: Người mới có thể xem các tin nhắn trước đó.
+        </p>
 
         <div className="mb-3">
           <SearchInput
@@ -103,10 +105,9 @@ const AddMemberModal = ({
                       }
                     `}
                   >
-                    {/* avatar */}
                     <div
                       className={`relative rounded-full p-[2px] transition
-                        ${isSelected ? "ring-3 ring-yellow-400" : "ring-0"}`}
+    ${isSelected ? "ring-3 ring-yellow-400" : "ring-0"}`}
                     >
                       {friend.profilePic ? (
                         <img
@@ -114,8 +115,15 @@ const AddMemberModal = ({
                           className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full object-cover border border-base-300"
                         />
                       ) : (
-                        <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Users className="w-6 h-6 text-primary" />
+                        <img
+                          src="./images/default_profile.png"
+                          className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full object-cover border border-base-300"
+                        />
+                      )}
+
+                      {isSelected && (
+                        <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-yellow-400 border-2 border-base-100 flex items-center justify-center shadow-md">
+                          <Check size={14} className="text-black stroke-[3]" />
                         </div>
                       )}
                     </div>

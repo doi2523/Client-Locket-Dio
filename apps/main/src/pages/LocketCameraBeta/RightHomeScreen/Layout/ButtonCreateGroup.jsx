@@ -2,10 +2,10 @@ import { SonnerInfo } from "@/components/ui/SonnerToast";
 
 const ButtonCreateGroup = ({ onClick, hasUserGroup }) => {
   const handleClick = () => {
-    if (hasUserGroup) {
-      SonnerInfo("Bạn đã tạo một nhóm rồi");
-      return;
-    }
+    // if (hasUserGroup) {
+    //   SonnerInfo("Bạn đã tạo một nhóm rồi");
+    //   return;
+    // }
 
     onClick?.();
   };

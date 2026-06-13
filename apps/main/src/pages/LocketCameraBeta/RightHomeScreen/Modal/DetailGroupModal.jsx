@@ -1,19 +1,17 @@
 import React, { useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import {
-  X,
-  Plus,
-  UserMinus,
   Users,
   Bell,
   BellOff,
   Pencil,
-  Check,
-  Search,
   LogOut,
   UserRoundPlus,
   Flag,
-  MoreVertical,
+  MoreHorizontal,
+  CircleMinus,
+  UserRoundX,
+  CircleQuestionMark,
 } from "lucide-react";
 import {
   useFriendStoreV3,
@@ -27,15 +25,21 @@ import {
   updateGroupName,
   toggleGroupMute,
 } from "@/services";
-import { SonnerInfo, SonnerPromise } from "@/components/ui/SonnerToast";
+import {
+  SonnerInfo,
+  SonnerPromise,
+  SonnerPromiseV2,
+} from "@/components/ui/SonnerToast";
 import AddMemberModal from "./AddMemberModal";
 import SearchInput from "@/components/ui/Input/SearchInput";
 import EditGroupPoup from "./EditGroupModal";
+import ConfirmPoup from "@/features/PoupScreen/ConfirmPoup";
 
 const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
   const [showModal, setShowModal] = useState(false);
   const [animate, setAnimate] = useState(false);
   const [openMenuUserId, setOpenMenuUserId] = useState(null);
+
   useEffect(() => {
     document.body.style.overflow = showModal ? "hidden" : "";
     return () => (document.body.style.overflow = "");
@@ -58,8 +62,6 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
   const upsertGroup = useGroupChatStore((s) => s.upsertGroup);
   const removeGroups = useGroupChatStore((s) => s.removeGroups);
 
-  const [editingName, setEditingName] = useState(false);
-  const [nameInput, setNameInput] = useState(group?.name || "");
   const [showAddMember, setShowAddMember] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [loadingAction, setLoadingAction] = useState(null);
@@ -67,8 +69,20 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
   const ensureUsers = useUserInfoStore((s) => s.ensureUsers);
 
   const [showEditGroup, setShowEditGroup] = useState(false);
-  const [editName, setEditName] = useState(group?.name || "");
-  const [editAvatar, setEditAvatar] = useState(group?.image_url || null);
+
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedMember, setSelectedMember] = useState(null);
+
+  const [openLeaveModal, setOpenLeaveModal] = useState(false);
+
+  const handleOpenRemoveMember = (userId) => {
+    setSelectedMember({
+      userId,
+      name: getFriendName(userId),
+    });
+
+    setOpenDeleteModal(true);
+  };
 
   const groupMembers = group?.users || [];
   const memberIds = new Set(groupMembers.map((u) => u.user_id));
@@ -102,25 +116,6 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
       });
   }, [friendList, memberIds, friendDetailsMap, searchQuery]);
 
-  const handleRename = async () => {
-    const trimmed = nameInput.trim();
-    if (!trimmed || trimmed === (group?.name || "")) {
-      setEditingName(false);
-      return;
-    }
-    setLoadingAction("rename");
-    try {
-      const updated = await updateGroupName({
-        groupId: group.id,
-        name: trimmed,
-      });
-      if (updated) upsertGroup(updated);
-    } catch (err) {
-      console.error("Rename failed:", err);
-    }
-    setLoadingAction(null);
-    setEditingName(false);
-  };
   const handleReportUser = (userId) => {
     SonnerInfo("Đã gửi báo cáo người dùng");
     console.log("report user:", userId);
@@ -168,36 +163,56 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
     });
   };
 
-  const handleRemoveMember = async (userId) => {
-    if (!window.confirm("Xoá thành viên này khỏi nhóm?")) return;
-    setLoadingAction(`remove_${userId}`);
+  const handleRemoveMember = async () => {
+    if (!selectedMember) return;
+
+    setLoadingAction(`remove_${selectedMember.userId}`);
+
     try {
-      SonnerInfo("Tính năng đang được phát triển");
-      // const updated = await removeGroupMember({
-      //   groupId: group.id,
-      //   userId,
-      // });
-      // if (updated) upsertGroup(updated);
-    } catch (err) {
-      console.error("Remove member failed:", err);
+      const updated = await SonnerPromiseV2(
+        removeGroupMember({
+          groupId: group.id,
+          userId: selectedMember.userId,
+        }),
+        {
+          loading: "Đang xoá thành viên...",
+          success: `Đã xoá ${selectedMember.name} khỏi nhóm`,
+          error: (err) => err?.message || "Xoá thành viên thất bại",
+        },
+      );
+
+      if (updated) {
+        upsertGroup(updated);
+      }
+
+      setOpenDeleteModal(false);
+      setSelectedMember(null);
+    } finally {
+      setLoadingAction(null);
     }
-    setLoadingAction(null);
   };
 
   const handleLeaveGroup = async () => {
-    if (!window.confirm("Bạn có chắc muốn rời nhóm?")) return;
     setLoadingAction("leave");
+
     try {
-      await removeGroupMember({
-        groupId: group.id,
-        userId: myUserId,
-      });
+      await SonnerPromiseV2(
+        removeGroupMember({
+          groupId: group.id,
+          userId: myUserId,
+        }),
+        {
+          loading: "Đang rời nhóm...",
+          success: `Đã rời khỏi ${group.name}`,
+          error: (err) => err?.message || "Rời nhóm thất bại",
+        },
+      );
+
       removeGroups([group.id]);
-      onLeaveGroup?.();
-    } catch (err) {
-      console.error("Leave group failed:", err);
+      onClose?.();
+    } finally {
+      setLoadingAction(null);
     }
-    setLoadingAction(null);
   };
 
   const getUserInfo = (userId) => {
@@ -297,7 +312,7 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
 
             {/* Leave group */}
             <button
-              onClick={handleLeaveGroup}
+              onClick={() => setOpenLeaveModal(true)}
               className="flex items-center gap-3 w-full py-2 hover:bg-error/10 rounded-lg transition-colors"
             >
               <LogOut size={18} className="text-error" />
@@ -395,23 +410,23 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
                           onClick={() =>
                             setOpenMenuUserId(isOpen ? null : user_id)
                           }
-                          className="btn btn-ghost btn-xs"
+                          className="btn btn-ghost btn-xs btn-circle"
                         >
-                          <MoreVertical size={16} />
+                          <MoreHorizontal size={16} />
                         </button>
 
                         {/* DROPDOWN */}
                         {isOpen && (
-                          <div className="absolute right-0 top-8 w-40 bg-base-100 shadow-lg rounded-xl border border-base-300 z-50 overflow-hidden">
+                          <div className="absolute right-0 bottom-8 w-40 bg-base-100 shadow-lg rounded-xl border border-base-300 z-50 overflow-hidden">
                             {/* REMOVE */}
                             <button
                               onClick={() => {
-                                handleRemoveMember(user_id);
+                                handleOpenRemoveMember(user_id);
                                 setOpenMenuUserId(null);
                               }}
                               className="flex items-center gap-2 w-full px-3 py-2 hover:bg-base-200 text-error"
                             >
-                              <UserMinus size={14} />
+                              <CircleMinus size={18} />
                               Xoá khỏi nhóm
                             </button>
 
@@ -423,7 +438,7 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
                               }}
                               className="flex items-center gap-2 w-full px-3 py-2 hover:bg-base-200 text-warning"
                             >
-                              <Flag size={14} />
+                              <Flag size={18} />
                               Báo cáo
                             </button>
                           </div>
@@ -450,6 +465,42 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
             upsertGroup(updated);
           }}
         />
+        <ConfirmPoup
+          open={openDeleteModal}
+          onClose={() => {
+            setOpenDeleteModal(false);
+            setSelectedMember(null);
+          }}
+          onConfirm={handleRemoveMember}
+          title="Xoá thành viên"
+          icon={<UserRoundX size={28} className="text-error" />}
+          labelConfirm="Xoá khỏi nhóm"
+        >
+          {selectedMember && (
+            <>
+              Bạn có chắc muốn xoá{" "}
+              <span className="font-semibold">{selectedMember.name}</span> khỏi
+              nhóm?
+              <br />
+              Hành động này không thể hoàn tác.
+            </>
+          )}
+        </ConfirmPoup>
+
+        <ConfirmPoup
+          open={openLeaveModal}
+          onClose={() => setOpenLeaveModal(false)}
+          onConfirm={handleLeaveGroup}
+          title="Rời khỏi nhóm?"
+          icon={<CircleQuestionMark size={28} className="text-black" />}
+          labelConfirm="Rời nhóm"
+        >
+          <>
+            Bạn có chắc muốn rời nhóm khỏi nhóm?
+            <br />
+            Hành động này không thể hoàn tác.
+          </>
+        </ConfirmPoup>
       </div>
     </div>,
     document.body,

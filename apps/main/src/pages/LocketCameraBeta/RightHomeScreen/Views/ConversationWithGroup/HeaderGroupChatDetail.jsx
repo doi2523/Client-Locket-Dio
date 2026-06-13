@@ -88,16 +88,6 @@ const HeaderGroupChatDetail = ({ selectedChat, onBack }) => {
         </div>
       </div>
 
-      {/* {showInfoModal && (
-        <GroupInfoModal
-          group={group}
-          onClose={() => setShowInfoModal(false)}
-          onLeaveGroup={() => {
-            setShowInfoModal(false);
-            onBack();
-          }}
-        />
-      )} */}
       <DetailGroupPoup
         open={showInfoModal}
         onClose={() => setShowInfoModal(false)}

@@ -153,13 +153,14 @@ const CreateGroupModal = ({ open, onClose, onCreated }) => {
                           className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full object-cover border border-base-300"
                         />
                       ) : (
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Users className="w-6 h-6 text-primary" />
-                        </div>
+                        <img
+                          src="./images/default_profile.png"
+                          className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full object-cover border border-base-300"
+                        />
                       )}
 
                       {isSelected && (
-                        <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-yellow-400 border-2 border-base-100 flex items-center justify-center shadow-md">
+                        <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-yellow-400 border-2 border-base-100 flex items-center justify-center shadow-md">
                           <Check size={14} className="text-black stroke-[3]" />
                         </div>
                       )}
