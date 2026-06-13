@@ -12,6 +12,7 @@ import { ReactionViewerDrawer } from "./ReactionViewerDrawer";
 import { MomentContent } from "./MomentContent";
 import { SystemMessage } from "./SystemMessage";
 import { MessageContextMenu } from "./MessageContextMenu";
+import clsx from "clsx";
 
 const GroupMessageItem = ({ msg }) => {
   const me = localStorage.getItem("localId");
@@ -203,7 +204,13 @@ const GroupMessageItem = ({ msg }) => {
   };
 
   return (
-    <div className={`chat ${isMe ? "chat-end" : "chat-start"}`} key={msg.id}>
+    <div
+      className={clsx("chat", {
+        "chat-end": isMe,
+        "chat-start": !isMe,
+      })}
+      key={msg.id}
+    >
       {!isMe && (
         <div className="chat-image avatar">
           <div className="w-8 h-8 rounded-full border border-base-300">
@@ -220,7 +227,13 @@ const GroupMessageItem = ({ msg }) => {
 
       <div
         ref={bubbleRef}
-        className="chat-bubble relative bg-base-200 text-base-content font-medium rounded-2xl max-w-xs md:max-w-md select-none"
+        className={clsx(
+          "chat-bubble relative bg-base-200 text-base-content font-medium max-w-xs md:max-w-md select-none rounded-t-2xl",
+          {
+            "rounded-bl-2xl": isMe,
+            "rounded-br-2xl": !isMe,
+          },
+        )}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -312,10 +325,10 @@ function MessageReactions({ reactions = [], isMe, getName, onClick }) {
 
   return (
     <div
-      className={`
-        absolute -top-7 flex cursor-pointer z-10
-        ${isMe ? "-left-2" : "-right-2"}
-      `}
+      className={clsx("absolute -top-7 flex cursor-pointer z-10", {
+        "-left-2": isMe,
+        "-right-2": !isMe,
+      })}
       onClick={(e) => {
         e.stopPropagation();
         onClick?.();
@@ -336,7 +349,9 @@ function MessageReactions({ reactions = [], isMe, getName, onClick }) {
                 .map((u) => getName?.(u))
                 .filter(Boolean)
                 .join(", ")}
-              className={`p-1 bg-base-100 rounded-full ${index > 0 ? "-ml-3" : ""}`}
+              className={clsx("p-1 bg-base-100 rounded-full", {
+                "-ml-3": index > 0,
+              })}
             >
               <div className="p-1 w-8 h-8 text-base bg-base-300 rounded-full shadow flex items-center justify-center">
                 {emoji}
