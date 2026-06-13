@@ -240,9 +240,10 @@ const ConversationWithGroup = ({
             ))
           )}
         </div>
+        <div className="h-18"/>
       </div>
 
-      <div className="sticky bottom-4 z-10 p-2">
+      <div className="fixed w-full bottom-4 z-40 p-2 px-5">
         <InputGroupChatDetail selectedChat={selectedChat} chat_disabled={!isMember} />
       </div>
     </div>
