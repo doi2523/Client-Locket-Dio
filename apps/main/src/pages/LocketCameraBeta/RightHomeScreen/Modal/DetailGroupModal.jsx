@@ -5,13 +5,13 @@ import {
   Bell,
   BellOff,
   Pencil,
-  LogOut,
   UserRoundPlus,
   Flag,
   MoreHorizontal,
   CircleMinus,
   UserRoundX,
   CircleQuestionMark,
+  Undo2,
 } from "lucide-react";
 import {
   useFriendStoreV3,
@@ -315,7 +315,7 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
               onClick={() => setOpenLeaveModal(true)}
               className="flex items-center gap-3 w-full py-2 hover:bg-error/10 rounded-lg transition-colors"
             >
-              <LogOut size={18} className="text-error" />
+              <Undo2 size={18} className="text-error" />
               <span className="font-medium text-error">Rời nhóm</span>
             </button>
           </div>
