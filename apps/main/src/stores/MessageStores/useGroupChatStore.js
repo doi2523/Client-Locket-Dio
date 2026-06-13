@@ -20,13 +20,16 @@ export const useGroupChatStore = create((set, get) => ({
 
   fetchGroups: async () => {
     set({ loading: true });
+
     try {
       const localGroups = await getAllGroups();
+
       if (localGroups.length) {
         set({ groups: sortGroups(localGroups) });
       }
 
       const lastFetchedAt = await getGroupsLastFetchedAt();
+
       const apiData = await getGroupsState(
         lastFetchedAt ? { lastFetchedAt } : {},
       );
@@ -35,11 +38,27 @@ export const useGroupChatStore = create((set, get) => ({
 
       const { groups = [], removed_group_ids = [] } = apiData;
       const { groups: currentGroups } = get();
+
       const map = new Map(currentGroups.map((g) => [g.id, g]));
 
+      // Giữ nguyên logic cũ
       if (removed_group_ids.length) {
         removed_group_ids.forEach((id) => map.delete(id));
         await deleteGroupsByIds(removed_group_ids);
+      }
+
+      // Xóa những group local không còn tồn tại trên server
+      const serverIds = new Set(groups.map((g) => g.id));
+
+      const deletedIds = currentGroups
+        .filter(
+          (g) => !serverIds.has(g.id) && !removed_group_ids.includes(g.id),
+        )
+        .map((g) => g.id);
+
+      if (deletedIds.length) {
+        deletedIds.forEach((id) => map.delete(id));
+        await deleteGroupsByIds(deletedIds);
       }
 
       groups.forEach((group) => {
@@ -50,11 +69,10 @@ export const useGroupChatStore = create((set, get) => ({
       });
 
       const merged = sortGroups([...map.values()]);
+
       set({ groups: merged });
 
-      if (merged.length) {
-        await saveGroups(merged);
-      }
+      await saveGroups(merged);
 
       const latestUpdatedAt = Math.max(
         ...groups.map((g) => g.last_updated_at || 0),
