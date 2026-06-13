@@ -36,7 +36,7 @@ const ReactionViewerDrawer = ({ open, reactions, friendMap, userInfoMap, onClose
   }, [open]);
 
   const grouped = {};
-  reactions.forEach((r) => {
+  reactions?.forEach((r) => {
     if (!r?.emoji || !r?.user_id) return;
     if (!grouped[r.emoji]) grouped[r.emoji] = [];
     if (!grouped[r.emoji].includes(r.user_id)) {
