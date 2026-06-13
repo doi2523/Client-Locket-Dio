@@ -1,139 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import ReactDOM from "react-dom";
 import { useFriendStoreV3, useUserInfoStore, useMessagesStore } from "@/stores";
-import { OverlayRendererV2 } from "@/components/OverlayRender";
 import { reactToGroupMessage, removeGroupMessageReaction } from "@/services";
-import { SonnerInfo } from "@/components/ui/SonnerToast";
 
-const QUICK_EMOJIS = ["❤️", "😂", "😍", "😢", "👍"];
-
-const EMOJI_GRID = [
-  "❤️", "😂", "😍", "😢", "👍", "🔥", "🎉", "💯",
-  "😊", "😁", "🤣", "😅", "🥰", "😘", "😎", "🙏",
-  "😡", "💀", "🤡", "👀", "💪", "✨", "🥺", "😭",
-  "😤", "🤔", "🙄", "😴", "🤩", "😇", "🤗", "🫡",
-  "👎", "💔", "🍆", "💦",
-];
-
-const ReactionViewerDrawer = ({ open, reactions, friendMap, userInfoMap, onClose, onRemoveReaction }) => {
-  const me = localStorage.getItem("localId");
-  const [show, setShow] = useState(false);
-  const [animate, setAnimate] = useState(false);
-
-  useEffect(() => {
-    document.body.style.overflow = show ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [show]);
-
-  useEffect(() => {
-    if (open) {
-      setShow(true);
-      setTimeout(() => setAnimate(true), 10);
-    } else {
-      setAnimate(false);
-      setTimeout(() => setShow(false), 300);
-    }
-  }, [open]);
-
-  const grouped = {};
-  reactions?.forEach((r) => {
-    if (!r?.emoji || !r?.user_id) return;
-    if (!grouped[r.emoji]) grouped[r.emoji] = [];
-    if (!grouped[r.emoji].includes(r.user_id)) {
-      grouped[r.emoji].push(r.user_id);
-    }
-  });
-
-  const getName = (uid) => {
-    if (uid === me) return "Bạn";
-    const detail = friendMap?.[uid] ?? userInfoMap?.[uid] ?? null;
-    return detail
-      ? `${detail.firstName} ${detail.lastName}`.trim()
-      : uid?.slice(0, 8);
-  };
-
-  const getAvatar = (uid) => {
-    const detail = friendMap?.[uid] ?? userInfoMap?.[uid] ?? null;
-    return detail?.profilePic || null;
-  };
-
-  const getInitial = (uid) => {
-    const detail = friendMap?.[uid] ?? userInfoMap?.[uid] ?? null;
-    return detail?.firstName?.charAt(0)?.toUpperCase() || uid?.charAt(0)?.toUpperCase() || "?";
-  };
-
-  if (!show) return null;
-
-  return ReactDOM.createPortal(
-    <div
-      className={`fixed inset-0 bg-base-100/30 backdrop-blur-[4px] transition-opacity duration-500 z-[62] ${
-        animate ? "opacity-100" : "opacity-0 pointer-events-none"
-      }`}
-      onClick={onClose}
-    >
-      <div
-        className={`fixed h-fit max-h-[50%] border-t border-base-300 bottom-0 left-0 w-full bg-base-100 rounded-t-4xl shadow-lg transition-all duration-500 ease-in-out z-[63] flex flex-col text-base-content overflow-hidden
-        ${animate ? "translate-y-0" : "translate-y-full"}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex justify-center pt-3 pb-1 shrink-0">
-          <div className="w-10 h-1 rounded-full bg-base-300" />
-        </div>
-        <h3 className="text-sm font-bold text-center mb-1 shrink-0 text-base-content/70">Reactions</h3>
-        <div className="overflow-y-auto px-4 pb-6">
-          {Object.entries(grouped).map(([emoji, users]) => (
-            <div key={emoji} className="flex items-start gap-3 py-2.5 border-b border-base-200 last:border-0">
-              <span className="text-xl w-8 text-center flex-shrink-0">{emoji}</span>
-              <div className="flex flex-col gap-1.5 flex-1">
-                {users.map((uid) => {
-                  const avatar = getAvatar(uid);
-                  const isMeUid = uid === me;
-                  return (
-                    <div key={uid} className="flex items-center gap-2 w-full">
-                      {avatar ? (
-                        <img src={avatar} className="w-6 h-6 rounded-full object-cover border border-base-300 flex-shrink-0" />
-                      ) : (
-                        <div className="w-6 h-6 rounded-full bg-base-300 flex items-center justify-center text-[10px] font-bold text-base-content/70 flex-shrink-0">
-                          {getInitial(uid)}
-                        </div>
-                      )}
-                      <span className="text-sm font-medium">{getName(uid)}</span>
-                      {isMeUid && (
-                        <button
-                          className="ml-auto w-5 h-5 rounded-full bg-base-300 flex items-center justify-center hover:bg-base-400 transition-colors flex-shrink-0"
-                          onClick={() => onRemoveReaction(emoji)}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3">
-                            <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />
-                          </svg>
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>,
-    document.body,
-  );
-};
-
-const MomentContent = ({ moment }) => {
-  if (!moment?.thumbnail_url) return null;
-  return (
-    <div className="mt-2">
-      <div className="relative rounded-4xl overflow-hidden border border-base-300">
-        <img src={moment.thumbnail_url} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = "none"; }} />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <OverlayRendererV2 overlays={moment.overlays} />
-        </div>
-      </div>
-    </div>
-  );
-};
+import { ReactionViewerDrawer } from "./components/ReactionViewerDrawer";
+import { MomentContent } from "./components/MomentContent";
+import { SystemMessage } from "./components/SystemMessage";
+import { MessageContextMenu } from "./components/MessageContextMenu";
 
 const GroupMessageItem = ({ msg }) => {
   const me = localStorage.getItem("localId");
@@ -261,25 +133,13 @@ const GroupMessageItem = ({ msg }) => {
   }, []);
 
   if (isSystemMessage) {
-    const actorName = getName(actorUid);
-    const targetName = getName(targetUid);
-
-    let sysText = "";
-    if (content.type === "userAddedToGroup") {
-      sysText = actorName
-        ? targetName ? `${actorName} đã thêm ${targetName} vào nhóm` : `${actorName} đã thêm thành viên vào nhóm`
-        : targetName ? `Đã thêm ${targetName} vào nhóm` : "Đã thêm thành viên vào nhóm";
-    } else if (content.type === "userRemovedFromGroup") {
-      sysText = actorName
-        ? targetName ? `${actorName} đã xoá ${targetName} khỏi nhóm` : `${actorName} đã xoá thành viên khỏi nhóm`
-        : targetName ? `Đã xoá ${targetName} khỏi nhóm` : "Đã xoá thành viên khỏi nhóm";
-    } else if (content.type === "groupNameChanged") {
-      sysText = actorName ? `${actorName} đã đổi tên nhóm thành "${content.name || ""}"` : `Đã đổi tên nhóm thành "${content.name || ""}"`;
-    } else if (content.type === "groupImageChanged") {
-      sysText = actorName ? `${actorName} đã thay đổi ảnh đại diện nhóm` : "Đã thay đổi ảnh đại diện nhóm";
-    }
     return (
-      <div className="text-center text-[11px] text-base-content/50 font-semibold py-2">{sysText}</div>
+      <SystemMessage 
+        content={content} 
+        actorUid={actorUid} 
+        targetUid={targetUid} 
+        getName={getName} 
+      />
     );
   }
 
@@ -365,92 +225,19 @@ const GroupMessageItem = ({ msg }) => {
         }}
       />
 
-      {showMenu && ReactDOM.createPortal(
-        <div className="fixed inset-0 z-[999]" onClick={() => { setShowMenu(false); setShowEmojiPicker(false); }}>
-          {showEmojiPicker ? (
-            <div
-              className="fixed bg-base-100 shadow-xl border border-base-300 rounded-2xl overflow-hidden w-72 max-h-80"
-              style={{ left: Math.min(menuPos.x, window.innerWidth - 288), top: Math.max(menuPos.y - 320, 8) }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center gap-2 p-3 border-b border-base-200">
-                <button
-                  className="btn btn-ghost btn-xs p-1"
-                  onClick={() => setShowEmojiPicker(false)}
-                >
-                  ←
-                </button>
-                <span className="font-semibold text-sm">Chọn emoji</span>
-              </div>
-              <div className="grid grid-cols-8 gap-1 p-3 overflow-y-auto max-h-64">
-                {EMOJI_GRID.map((emoji) => (
-                  <button
-                    key={emoji}
-                    className={`w-8 h-8 flex items-center justify-center rounded-lg text-xl ${
-                      myReaction === emoji
-                        ? "bg-primary/20 ring-2 ring-primary"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => sendReaction(emoji)}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div
-              className="fixed flex flex-col gap-2"
-              style={{
-                left: Math.min(menuPos.x - (window.innerWidth < 640 ? 40 : 0), window.innerWidth - 200),
-                top: Math.max(menuPos.y - 16, 8),
-                transform: "translateY(-100%)",
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex gap-1 bg-base-100 shadow-lg border border-base-300 rounded-full p-1.5 self-start">
-                {QUICK_EMOJIS.map((emoji) => (
-                  <button
-                    key={emoji}
-                    className={`w-9 h-9 flex items-center justify-center rounded-full text-xl active:scale-110 transition-transform ${
-                      myReaction === emoji
-                        ? "bg-primary/20 ring-2 ring-primary"
-                        : "hover:bg-base-200"
-                    }`}
-                    onClick={() => sendReaction(emoji)}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-
-              <div className="bg-base-100 shadow-lg text-base-content border border-base-300 rounded-2xl overflow-hidden min-w-[180px]">
-                <button
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-base-200 w-full text-left text-sm font-medium"
-                  onClick={() => setShowEmojiPicker(true)}
-                >
-                  <span className="text-lg">😊</span>
-                  <span>Reaction</span>
-                </button>
-                {content.type !== "moment" && (
-                  <button
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-base-200 w-full text-left text-sm font-medium"
-                    onClick={() => {
-                      navigator.clipboard.writeText(content.content || "");
-                      SonnerInfo("Đã sao chép");
-                      setShowMenu(false);
-                    }}
-                  >
-                    <span className="text-lg">📋</span>
-                    <span>Sao chép</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-        </div>,
-        document.body,
-      )}
+      <MessageContextMenu
+        showMenu={showMenu}
+        showEmojiPicker={showEmojiPicker}
+        menuPos={menuPos}
+        myReaction={myReaction}
+        content={content}
+        onClose={() => {
+          setShowMenu(false);
+          setShowEmojiPicker(false);
+        }}
+        onShowEmojiPicker={setShowEmojiPicker}
+        onSendReaction={sendReaction}
+      />
 
       <div className="chat-footer opacity-50 text-[9px] mt-0.5">
         {formatTime(msg.created_at || msg.create_time * 1000)}
