@@ -87,6 +87,66 @@ export const useGroupChatStore = create((set, get) => ({
     }
   },
 
+  fetchAndSyncGroups: async () => {
+    set({ loading: true });
+
+    try {
+      const localGroups = await getAllGroups();
+
+      if (localGroups.length) {
+        set({ groups: sortGroups(localGroups) });
+      }
+
+      // FULL FETCH
+      const initialData = await getGroupsState();
+
+      if (!initialData) return;
+
+      const merged = await mergeGroups({
+        incomingGroups: initialData.groups || [],
+        removedGroupIds: initialData.removed_group_ids || [],
+        currentGroups: localGroups,
+        removeMissing: true,
+      });
+
+      set({ groups: merged });
+
+      const latestUpdatedAt = Math.max(
+        ...merged.map((g) => g.last_updated_at || 0),
+        0,
+      );
+
+      await setGroupsLastFetchedAt(latestUpdatedAt);
+
+      // DELTA SYNC
+      const syncData = await getGroupsState({
+        groupIds: merged.map((g) => g.id),
+        lastFetchedAt: latestUpdatedAt,
+      });
+
+      if (syncData) {
+        const synced = await mergeGroups({
+          incomingGroups: syncData.groups || [],
+          removedGroupIds: syncData.removed_group_ids || [],
+          currentGroups: merged,
+        });
+
+        set({ groups: synced });
+
+        const syncLatest = Math.max(
+          ...synced.map((g) => g.last_updated_at || 0),
+          latestUpdatedAt,
+        );
+
+        await setGroupsLastFetchedAt(syncLatest);
+      }
+    } catch (err) {
+      console.error("fetchAndSyncGroups:", err);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   upsertGroup: (group) => {
     if (!group?.id) return;
 
@@ -115,3 +175,43 @@ export const useGroupChatStore = create((set, get) => ({
 
   resetGroups: () => set({ groups: [] }),
 }));
+
+const mergeGroups = async ({
+  incomingGroups = [],
+  removedGroupIds = [],
+  currentGroups = [],
+  removeMissing = false,
+}) => {
+  const map = new Map(currentGroups.map((g) => [g.id, g]));
+
+  if (removedGroupIds.length) {
+    removedGroupIds.forEach((id) => map.delete(id));
+    await deleteGroupsByIds(removedGroupIds);
+  }
+
+  if (removeMissing) {
+    const serverIds = new Set(incomingGroups.map((g) => g.id));
+
+    const deletedIds = currentGroups
+      .filter((g) => !serverIds.has(g.id) && !removedGroupIds.includes(g.id))
+      .map((g) => g.id);
+
+    if (deletedIds.length) {
+      deletedIds.forEach((id) => map.delete(id));
+      await deleteGroupsByIds(deletedIds);
+    }
+  }
+
+  incomingGroups.forEach((group) => {
+    map.set(group.id, {
+      ...map.get(group.id),
+      ...group,
+    });
+  });
+
+  const merged = sortGroups([...map.values()]);
+
+  await saveGroups(merged);
+
+  return merged;
+};

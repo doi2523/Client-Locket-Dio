@@ -49,7 +49,7 @@ function AppContent() {
   const fetchCaptionOverlays = useOverlayDataStore((s) => s.fetchCaptionOverlays);
   const hydrateUploadQueue = useUploadQueueStore((s) => s.hydrateUploadQueue);
   const loadFriendsV3 = useFriendStoreV3((s) => s.loadFriends);
-  const fetchGroups = useGroupChatStore((s) => s.fetchGroups);
+  const fetchAndSyncGroups = useGroupChatStore((s) => s.fetchAndSyncGroups);
   const location = useLocation();
 
   const allRoutes = [...publicRoutes, ...authRoutes, ...locketRoutes];
@@ -79,7 +79,7 @@ function AppContent() {
       loadFriendsV3();
       syncStreak();
       hydrateUploadQueue();
-      fetchGroups();
+      fetchAndSyncGroups();
     }
   }, [user]);
 
