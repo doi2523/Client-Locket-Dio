@@ -65,7 +65,7 @@ const InputGroupChatDetail = ({ selectedChat, chat_disabled = false }) => {
         className="relative flex items-center justify-center w-10 h-10 shrink-0"
       >
         <div className="absolute w-8 h-8 ring-4 text-primary rounded-full z-10" />
-        <div className="absolute w-7 h-7 rounded-full camera-inner-circle shadow-sm" />
+        <div className="absolute w-7 h-7 rounded-full bg-base-100 shadow-sm" />
       </button>
 
       {/* INPUT */}
