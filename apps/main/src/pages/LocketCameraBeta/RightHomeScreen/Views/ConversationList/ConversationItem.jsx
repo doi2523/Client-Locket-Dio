@@ -1,6 +1,7 @@
 import { formatTimeAgoV2 } from "@/utils";
 import { ChevronRight, Users } from "lucide-react";
 import { useFriendStoreV3 } from "@/stores";
+import clsx from "clsx";
 
 function getGroupDisplayName(group, memberDetails) {
   if (group?.name) return group.name;
@@ -31,9 +32,7 @@ export const ConversationItem = ({ msg, onSelect }) => {
     ? getGroupDisplayName(msg.group, groupMembers)
     : `${friendDetail?.firstName || ""} ${friendDetail?.lastName || ""}`.trim();
 
-  const latestSender = isGroup
-    ? friendMap?.[msg.latestMessage?.userId]
-    : null;
+  const latestSender = isGroup ? friendMap?.[msg.latestMessage?.userId] : null;
 
   const previewText = msg.latestMessage?.replyMoment
     ? "Đã trả lời Locket của bạn!"
@@ -56,8 +55,13 @@ export const ConversationItem = ({ msg, onSelect }) => {
           friend: friendDetail || null,
         })
       }
-      className={`relative w-full flex items-center gap-3 p-3 rounded-3xl shadow-sm cursor-pointer transition 
-      ${isUnread ? "bg-base-200" : "bg-base-200"}`}
+      className={clsx(
+        "relative w-full flex items-center gap-3 p-3 rounded-3xl shadow-sm cursor-pointer transition",
+        {
+          "bg-base-200": isUnread,
+          "bg-base-200": !isUnread,
+        },
+      )}
     >
       {/* Avatar */}
       {isGroup ? (
@@ -65,21 +69,23 @@ export const ConversationItem = ({ msg, onSelect }) => {
           <img
             src={msg.group.image_url}
             alt={displayName}
-            className={`w-15 h-15 rounded-full p-0.5 object-cover transition-all duration-200 
-              ${
-                isUnread
-                  ? "border-[3px] border-amber-400"
-                  : "border-[3px] border-gray-300"
-              }`}
+            className={clsx(
+              "w-15 h-15 rounded-full outline-3 p-0.5 object-cover transition-all duration-200",
+              {
+                "outline-amber-400": isUnread,
+                "outline-gray-300": !isUnread,
+              },
+            )}
           />
         ) : (
           <div
-            className={`w-15 h-15 rounded-full flex items-center justify-center bg-primary/10 transition-all duration-200 
-              ${
-                isUnread
-                  ? "border-[3px] border-amber-400"
-                  : "border-[3px] border-gray-300"
-              }`}
+            className={clsx(
+              "w-15 h-15 rounded-full flex items-center justify-center bg-primary/10 transition-all duration-200 outline-3 p-0.5",
+              {
+                "outline-amber-400": isUnread,
+                "outline-gray-300": !isUnread,
+              },
+            )}
           >
             {msg.group?.emoji ? (
               <span className="text-2xl">{msg.group.emoji}</span>
@@ -96,14 +102,15 @@ export const ConversationItem = ({ msg, onSelect }) => {
         )
       ) : friendDetail ? (
         <img
-          src={friendDetail.profilePic || "/default-avatar.png"}
+          src={friendDetail.profilePic || "./images/default_profile.png"}
           alt={friendDetail?.firstName || "user"}
-          className={`w-15 h-15 rounded-full p-0.5 object-cover transition-all duration-200 
-            ${
-              isUnread
-                ? "border-[3px] border-amber-400"
-                : "border-[3px] border-gray-300"
-            }`}
+          className={clsx(
+            "w-15 h-15 rounded-full outline-3 p-0.5 object-cover transition-all duration-200",
+            {
+              "outline-amber-400": isUnread,
+              "outline-gray-300": !isUnread,
+            },
+          )}
         />
       ) : (
         <div className="w-15 h-15 rounded-full bg-gray-300 animate-pulse" />
@@ -112,18 +119,18 @@ export const ConversationItem = ({ msg, onSelect }) => {
       {/* Nội dung */}
       <div className="flex-1 min-w-0">
         <p
-          className={`text-lg truncate ${
-            isUnread
-              ? "font-bold text-base-content"
-              : "font-semibold text-base-content/50"
-          }`}
+          className={clsx("text-lg truncate", {
+            "font-bold text-base-content": isUnread,
+            "font-semibold text-base-content/50": !isUnread,
+          })}
         >
           {displayName} ~ {formatTimeAgoV2(sortTime)}
         </p>
         <p
-          className={`text-md truncate pt-1 font-semibold ${
-            isUnread ? "text-base-content" : "text-base-content/50"
-          }`}
+          className={clsx("text-md truncate pt-1 font-semibold", {
+            "text-base-content": isUnread,
+            "text-base-content/50": !isUnread,
+          })}
         >
           {previewText}
         </p>

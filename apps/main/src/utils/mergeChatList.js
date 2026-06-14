@@ -40,6 +40,7 @@ export function normalizeGroupToListItem(group) {
           type: latest.content?.type || "text",
           userId: latest.user_id,
           reactions: latest.reactions || [],
+          content: latest?.content || null,
         }
       : null,
     isRead: !group.unread_count,

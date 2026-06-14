@@ -162,6 +162,29 @@ export const useGroupChatStore = create((set, get) => ({
     upsertGroups(group);
   },
 
+  updateGroupState: (groupId, payload) => {
+    const { groups } = get();
+
+    const updated = sortGroups(
+      groups.map((group) =>
+        group.id === groupId
+          ? {
+              ...group,
+              ...payload,
+            }
+          : group,
+      ),
+    );
+
+    set({ groups: updated });
+
+    const updatedGroup = updated.find((g) => g.id === groupId);
+
+    if (updatedGroup) {
+      upsertGroups(updatedGroup);
+    }
+  },
+
   removeGroups: async (groupIds) => {
     if (!groupIds?.length) return;
 
