@@ -256,7 +256,7 @@ const DetailGroupPoup = ({ open, onClose, group, loading = false }) => {
       onClick={!loading ? onClose : undefined}
     >
       <div
-        className={`fixed h-[90%] border-t border-base-300 bottom-0 left-0 w-full p-4 bg-base-100 rounded-t-4xl shadow-lg transition-all duration-500 ease-in-out z-[63] flex flex-col text-base-content
+        className={`fixed h-[90%] border-t border-base-300 bottom-0 left-0 w-full pt-4 px-4 bg-base-100 rounded-t-4xl shadow-lg transition-all duration-500 ease-in-out z-[63] flex flex-col text-base-content
         ${animate ? "translate-y-0" : "translate-y-full"}`}
         onClick={(e) => e.stopPropagation()}
       >
