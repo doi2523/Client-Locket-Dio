@@ -1,5 +1,11 @@
 import { useApp } from "@/context/AppContext";
-import { useAuthStore, useFriendObjects, useSelectedStore } from "@/stores";
+import {
+  useAuthStore,
+  useFriendObjects,
+  useGroupChatStore,
+  useSelectedStore,
+} from "@/stores";
+import clsx from "clsx";
 import { ChevronRight } from "lucide-react";
 import React, { useState } from "react";
 import { FaUserFriends } from "react-icons/fa";
@@ -14,8 +20,12 @@ function HistorySelectFriend({
   const { isBottomOpen, isFriendHistoryOpen, setFriendHistoryOpen } =
     navigation;
 
-  const setSelectedFriendUid = useSelectedStore((state) => state.setSelectedFriendUid);
-  const setSelectedMoment = useSelectedStore((state) => state.setSelectedMoment);
+  const setSelectedFriendUid = useSelectedStore(
+    (state) => state.setSelectedFriendUid,
+  );
+  const setSelectedMoment = useSelectedStore(
+    (state) => state.setSelectedMoment,
+  );
   const setSelectedQueue = useSelectedStore((state) => state.setSelectedQueue);
 
   const { user } = useAuthStore();
@@ -31,12 +41,26 @@ function HistorySelectFriend({
     return fullName.includes(term) || username.includes(term);
   });
 
+  const groups = useGroupChatStore((s) => s.groups);
+
   const handleSelectFriend = (friend) => {
     const fullName = `${friend.firstName || ""} ${
       friend.lastName || ""
     }`.trim();
 
     setSelectedFriendUid(friend.uid);
+
+    setFriendName(truncateName(fullName, 15));
+
+    setFriendHistoryOpen(false);
+    setSelectedMoment(null);
+    setSelectedQueue(null);
+    setTimeout(() => setIsVisible(false), 500);
+  };
+  const handleSelectgroup = (group) => {
+    const fullName = group.name || "group";
+
+    setSelectedFriendUid(group.id);
 
     setFriendName(truncateName(fullName, 15));
 
@@ -73,23 +97,23 @@ function HistorySelectFriend({
       {isVisible && (
         <div
           onClick={onClick}
-          className={`fixed inset-0 z-60 flex justify-center items-start backdrop-blur-[3px] px-4 bg-base-100/70
-            transition-opacity duration-500 ease-in-out
-            ${
-              isFriendHistoryOpen
-                ? "opacity-100 pointer-events-auto"
-                : "opacity-0 pointer-events-none"
-            }`}
+          className={clsx(
+            "fixed inset-0 z-60 flex justify-center items-start backdrop-blur-[3px] px-4 bg-base-100/70 transition-opacity duration-500 ease-in-out",
+            {
+              "opacity-100 pointer-events-auto": isFriendHistoryOpen,
+              "opacity-0 pointer-events-none": !isFriendHistoryOpen,
+            },
+          )}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className={`overflow-hidden w-full max-w-xs sm:max-w-sm max-h-[500px] mt-14 transition-all duration-500 ease-in-out transform origin-top
-                      ${
-                        isFriendHistoryOpen
-                          ? "opacity-100 scale-100"
-                          : "opacity-0 scale-0"
-                      }
-                      bg-base-100 border border-base-300 rounded-3xl shadow-md py-3`}
+            className={clsx(
+              "overflow-hidden w-full max-w-xs sm:max-w-sm max-h-[500px] mt-14 transition-all duration-500 ease-in-out transform origin-top bg-base-100 border border-base-300 rounded-3xl shadow-md py-3",
+              {
+                "opacity-100 scale-100": isFriendHistoryOpen,
+                "opacity-0 scale-0": !isFriendHistoryOpen,
+              },
+            )}
           >
             <h3 className="font-semibold mb-3 text-base px-4">
               Danh sách bạn bè
@@ -148,6 +172,32 @@ function HistorySelectFriend({
                 </div>
                 <ChevronRight className="w-5 h-5 text-base-content" />
               </div>
+
+              {groups.map((g) => {
+                return (
+                  <div
+                    key={g.id}
+                    onClick={() => handleSelectgroup(g)}
+                    className="flex bg-base-200 p-2 items-center justify-between hover:bg-base-200 rounded-2xl transition cursor-pointer active:scale-97 select-none"
+                  >
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={g.image_url || "/images/default_profile.png"}
+                        alt={g.name || "group"}
+                        className="w-10 h-10 rounded-full border-[2.5px] p-0.5 border-amber-400 object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/images/default_profile.png";
+                        }}
+                      />
+                      <span className="text-base font-medium">
+                        {g.name || g.id?.slice(0, 6)}
+                      </span>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-base-content" />
+                  </div>
+                );
+              })}
 
               {/* Danh sách bạn bè */}
               {filteredFriends.length > 0 ? (
