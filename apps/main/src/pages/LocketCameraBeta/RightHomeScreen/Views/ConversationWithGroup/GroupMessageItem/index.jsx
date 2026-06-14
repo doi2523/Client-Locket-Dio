@@ -13,6 +13,7 @@ import { MomentContent } from "./MomentContent";
 import { SystemMessage } from "./SystemMessage";
 import { MessageContextMenu } from "./MessageContextMenu";
 import clsx from "clsx";
+import { SonnerInfo } from "@/components/ui/SonnerToast";
 
 const GroupMessageItem = ({ msg }) => {
   const me = localStorage.getItem("localId");
@@ -131,12 +132,14 @@ const GroupMessageItem = ({ msg }) => {
   }, []);
 
   const handleTouchStart = useCallback(() => {
-    if (isMe) return;
     isLongPress.current = false;
+
     holdTimerRef.current = setTimeout(() => {
       isLongPress.current = true;
+
       if (bubbleRef.current) {
         const rect = bubbleRef.current.getBoundingClientRect();
+
         showContextMenu(isMe ? rect.right : rect.left, rect.top);
       }
     }, 400);
@@ -162,11 +165,11 @@ const GroupMessageItem = ({ msg }) => {
 
   const handleContextMenu = useCallback(
     (e) => {
-      if (isMe) return;
       e.preventDefault();
+
       showContextMenu(e.clientX, e.clientY);
     },
-    [isMe, showContextMenu],
+    [showContextMenu],
   );
 
   useEffect(() => {
@@ -224,14 +227,28 @@ const GroupMessageItem = ({ msg }) => {
           {senderName}
         </div>
       )}
-
+      <div
+        onClick={() => {
+          setShowMenu(false);
+        }}
+        className={clsx(
+          "fixed inset-0 bg-base-100/30 backdrop-blur-[4px] transition-opacity duration-500 z-[50]",
+          {
+            "opacity-100 select-none": showMenu,
+            "opacity-0 pointer-events-none": !showMenu,
+          },
+        )}
+      />
       <div
         ref={bubbleRef}
         className={clsx(
-          "chat-bubble relative bg-base-200 text-base-content font-medium max-w-xs md:max-w-md select-none rounded-t-2xl",
+          "chat-bubble relative bg-base-200 text-base-content font-medium max-w-xs md:max-w-md select-none rounded-t-2xl transition-all duration-500 scale-100",
           {
             "rounded-bl-2xl": isMe,
             "rounded-br-2xl": !isMe,
+            "relative z-[50] scale-110": showMenu,
+            "left-3": showMenu && !isMe,
+            "right-3": showMenu && isMe,
           },
         )}
         onTouchStart={handleTouchStart}
@@ -252,6 +269,24 @@ const GroupMessageItem = ({ msg }) => {
           isMe={isMe}
           getName={getName}
           onClick={() => setShowReactions(true)}
+        />
+        <MessageContextMenu
+          show={showMenu}
+          isMe={isMe}
+          content={content}
+          myReaction={myReaction}
+          onReaction={sendReaction}
+          onCopy={() => {
+            navigator.clipboard.writeText(content.content || "");
+            SonnerInfo("Đã sao chép");
+            setShowMenu(false);
+          }}
+          onRecall={() => {
+            SonnerInfo("Đang nghiên cứu...");
+          }}
+          onReport={() => {
+            SonnerInfo("Chưa mở tính năng này...");
+          }}
         />
       </div>
 
@@ -275,20 +310,6 @@ const GroupMessageItem = ({ msg }) => {
           }).catch(console.error);
           setShowReactions(false);
         }}
-      />
-
-      <MessageContextMenu
-        showMenu={showMenu}
-        showEmojiPicker={showEmojiPicker}
-        menuPos={menuPos}
-        myReaction={myReaction}
-        content={content}
-        onClose={() => {
-          setShowMenu(false);
-          setShowEmojiPicker(false);
-        }}
-        onShowEmojiPicker={setShowEmojiPicker}
-        onSendReaction={sendReaction}
       />
 
       <div className="chat-footer opacity-50 text-[9px] mt-0.5">
