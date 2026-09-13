@@ -1,0 +1,23 @@
+/* styles.css */
+.gradient-text {
+  font-family: "LoveHouse", sans-serif;
+  font-size: 1.8rem;
+  background: linear-gradient(45deg, #ff0000, #1a53ff, #ea01ff, #fcfc00);
+  background-clip: text;
+  color: transparent;
+  font-weight: bold;
+  background-size: 400% 400%;
+  animation: gradient 3s ease infinite;
+  margin-bottom: -7px;
+}
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

@@ -1,0 +1,165 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  /* color-scheme: light dark; */
+  color: rgba(255, 255, 255, 0.87);
+  /* background-color: #242424; */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* --theme-color: #ffffff: */
+}
+.no-save {
+  pointer-events: none; /* Ngăn mọi tương tác chuột */
+  -webkit-user-drag: none; /* Chrome, Edge, Opera */
+}
+.no-select {
+  user-select: none; /* Chặn chọn chữ trên tất cả trình duyệt */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  pointer-events: none; /* Ngăn mọi tương tác chuột */
+  -webkit-user-drag: none; /* Chrome, Edge, Opera */
+}
+.disable-select {
+  user-select: none; /* Chặn chọn chữ trên tất cả trình duyệt */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
+  pointer-events: none; /* Ngăn mọi tương tác chuột */
+  -webkit-user-drag: none; /* Chrome, Edge, Opera */
+}
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.bg-locket {
+  background: linear-gradient(rgb(0, 0, 0), #8f6700);
+  background-size: 200% 200%;
+  /* animation: gradientMove 5s ease infinite; */
+  color: white;
+}
+
+.font-lovehouse {
+  font-family: "LoveHouse", system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+@font-face {
+  font-family: "LoveHouse";
+  src: url("./assets//fonts/LoveHouse.otf") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-purrfect {
+  font-family: "Purrfect", system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+@font-face {
+  font-family: 'Purrfect';
+  src: url("./assets//fonts/Pacifico.ttf") format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Class để dùng font này */
+/* .sf-compact-rounded-regular {
+  font-family: 'SF Compact Rounded Black', sans-serif;
+} */
+
+/* Animation send new moments */
+@layer utilities {
+  .animate-slide-up {
+    animation: slide-up 0.5s forwards;
+  }
+
+  .animate-reset {
+    animation: reset 0s forwards, scale-up 0.5s 0.1s forwards;
+  }
+
+  @keyframes slide-up {
+    0% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1) translateY(-100vh); /* Đẩy lên khỏi màn hình */
+    }
+  }
+
+  @keyframes reset {
+    0% {
+      opacity: 0;
+      transform: scale(0) translateY(-100vh);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0) translateY(0);
+    }
+  }
+
+  @keyframes scale-up {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+/* InputForMoment.css */
+
+@keyframes custom-shake {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  10% {
+    transform: translate(-2px, -1px) rotate(-1deg) scale(1.05);
+  }
+  20% {
+    transform: translate(2px, 1px) rotate(1deg) scale(0.97);
+  }
+  30% {
+    transform: translate(-1px, 2px) rotate(-1.5deg) scale(1.03);
+  }
+  40% {
+    transform: translate(1px, -2px) rotate(1.5deg) scale(0.95);
+  }
+  50% {
+    transform: translate(-2px, 1px) rotate(-1deg) scale(1.1);
+  }
+  60% {
+    transform: translate(2px, -1px) rotate(1deg) scale(0.95);
+  }
+  70% {
+    transform: translate(-1px, -2px) rotate(-1.5deg) scale(1.03);
+  }
+  80% {
+    transform: translate(1px, 2px) rotate(1.5deg) scale(0.97);
+  }
+  90% {
+    transform: translate(-2px, 0) rotate(-1deg) scale(1.05);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+}
+
+.shake {
+  animation: custom-shake 0.8s infinite;
+  transform-origin: center;
+}

@@ -1,0 +1,13 @@
+{
+  "name": "self-hosted",
+  "private": true,
+  "scripts": {
+    "start": "npm run start:api & npm run start:web",
+    "dev": "npm run dev:api & npm run dev:web",
+    "dev:api": "cd api && npm run dev",
+    "dev:web": "cd web && npm run dev",
+    "start:api": "cd api && npm run start",
+    "start:web": "cd web && npm run start",
+    "install-all": "cd api && npm install && cd ../web && npm install"
+  }
+}

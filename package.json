@@ -1,0 +1,18 @@
+{
+  "name": "locketdio",
+  "description": "Share real-time photos with close friends, add captions, overlays, and interact instantly.",
+  "author": "dio",
+  "private": true,
+  "version": "0.0.0",
+  "license": "MIT",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w main",
+    "build": "npm run build -w main",
+    "lint": "npm run lint -ws",
+    "dev:main": "npm run dev -w main",
+    "build:main": "npm run build -w main"
+  }
+}

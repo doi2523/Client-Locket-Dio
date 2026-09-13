@@ -1,0 +1,4 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: bumblebee --default, dark, cupcake, emerald, corporate, retro, valentine, halloween, garden, luxury, dracula, lemonade, night, winter;
+}

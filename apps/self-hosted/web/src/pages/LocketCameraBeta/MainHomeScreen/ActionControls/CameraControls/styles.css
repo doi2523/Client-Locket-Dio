@@ -1,0 +1,19 @@
+.border-camera-custome {
+  box-shadow: 0 0 0 5px currentColor;
+}
+
+@keyframes borderExpand {
+  0%,
+  100% {
+    box-shadow: 0 0 0 5px currentColor;
+    opacity: 0.8;
+  }
+  50% {
+    box-shadow: 0 0 0 7px currentColor;
+    opacity: 1;
+  }
+}
+.animate-borderExpand {
+  box-shadow: 0 0 0 5px currentColor;
+  animation: borderExpand 1s infinite ease-in-out;
+}
