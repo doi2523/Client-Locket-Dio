@@ -5,7 +5,7 @@ const { logError, logInfo } = require("../../utils/logEventUtils.js");
 
 //#region Video handlers
 
-const uploadThumbnailFromVideo = async (userId, idToken, video) => {
+const uploadThumbnailFromVideo = async (userId, idToken, video, momentId) => {
   try {
     const thumbnailBytes = await videoService.thumbnailData(
       video.path,
@@ -14,7 +14,7 @@ const uploadThumbnailFromVideo = async (userId, idToken, video) => {
       75,
     );
 
-    return await uploadImageToFirebaseStorage(userId, idToken, thumbnailBytes);
+    return await uploadImageToFirebaseStorage(userId, idToken, thumbnailBytes, momentId);
   } catch (error) {
     logError("uploadThumbnailFromVideo", error.message);
     return null;
@@ -27,9 +27,9 @@ const uploadThumbnailFromVideo = async (userId, idToken, video) => {
  * @param {*} idToken
  * @param {Byte} video
  */
-const uploadVideoToFirebaseStorage = async (userId, idToken, video) => {
+const uploadVideoToFirebaseStorage = async (userId, idToken, video, momentId) => {
   try {
-    const videoName = `${Date.now()}_vtd182.mp4`;
+    const videoName = `${momentId}.mp4`;
     const videoSize = video.length;
 
     // Giai đoạn 1: Khởi tạo quá trình upload, sẽ nhận lại được URL tạm thời để tải video lên

@@ -12,10 +12,10 @@ const { instanceFirestoreUpload } = require("../../libs");
  * @param {File|Buffer} image - The image to be uploaded. Can be a `File` object or a `Buffer`.
  * @returns
  */
-const uploadImageToFirebaseStorage = async (userId, idToken, image) => {
+const uploadImageToFirebaseStorage = async (userId, idToken, image, momentId) => {
   try {
     logInfo("uploadImageToFirebaseStorage", "Start");
-    const imageName = `${Date.now()}_vtd182.webp`;
+    const imageName = `${momentId}.webp`;
 
     // Bước 1: Khởi tạo quá trình upload
     const url = `https://firebasestorage.googleapis.com/v0/b/locket-img/o/users%2F${userId}%2Fmoments%2Fthumbnails%2F${imageName}?uploadType=resumable&name=users%2F${userId}%2Fmoments%2Fthumbnails%2F${imageName}`;

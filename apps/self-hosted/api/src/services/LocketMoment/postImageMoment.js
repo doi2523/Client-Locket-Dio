@@ -3,7 +3,7 @@ const { logInfo, logError, logBanner } = require("../../utils/logEventUtils");
 const { uploadImageToFirebaseStorage } = require("../FirestorageService");
 const { creImagePayload } = require("../LocketPayload");
 
-const postImageToLocket = async ({ userId, idToken, image, optionsData }) => {
+const postImageToLocket = async ({ userId, idToken, image, optionsData, momentId }) => {
   try {
     logInfo("postImage", "Start");
 
@@ -11,7 +11,7 @@ const postImageToLocket = async ({ userId, idToken, image, optionsData }) => {
       throw new Error("Missing optionsData.type");
     }
 
-    const imageUrl = await uploadImageToFirebaseStorage(userId, idToken, image);
+    const imageUrl = await uploadImageToFirebaseStorage(userId, idToken, image, momentId);
 
     const { type } = optionsData;
 

@@ -8,13 +8,13 @@ const {
   uploadImageToFirebaseStorage,
 } = require("../FirestorageService");
 
-const postVideoToLocket = async ({ userId, idToken, video, optionsData }) => {
+const postVideoToLocket = async ({ userId, idToken, video, optionsData, momentId }) => {
   try {
     logInfo("postVideoToLocket", "Start");
 
     const videoBuffer = video.buffer || fs.readFileSync(video.path);
 
-    const thumbnailUrl = await uploadThumbnailFromVideo(userId, idToken, video);
+    const thumbnailUrl = await uploadThumbnailFromVideo(userId, idToken, video, momentId);
 
     if (!thumbnailUrl) {
       throw new Error("Failed to upload thumbnail");
@@ -24,6 +24,7 @@ const postVideoToLocket = async ({ userId, idToken, video, optionsData }) => {
       userId,
       idToken,
       videoBuffer,
+      momentId,
     );
 
     if (!videoUrl) {

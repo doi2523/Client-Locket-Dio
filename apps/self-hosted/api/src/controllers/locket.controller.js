@@ -6,6 +6,7 @@ const {
   chatServices,
 } = require("../services");
 const { formatFileSize } = require("../utils/formatFileSize");
+const { generateFirestoreId } = require("../utils/generateFirestoreId");
 const {
   logWarning,
   logTable,
@@ -133,13 +134,17 @@ class LocketController {
         });
       }
 
+      //Generate MomentId
+      const momentId = generateFirestoreId();
+
       if (images) {
-        await postServices.postImageToLocket(
-          userId,
-          idToken,
-          images[0],
-          caption,
-        );
+        await postServices.postImageToLocket({
+          userId: userId,
+          idToken: idToken,
+          image: images[0],
+          optionsData: caption,
+          momentId: momentId,
+        });
       } else {
         if (videos[0].size > 10 * 1024 * 1024) {
           return res.status(400).json({
@@ -147,12 +152,13 @@ class LocketController {
           });
         }
 
-        await postServices.postVideoToLocket(
-          userId,
-          idToken,
-          videos[0],
-          caption,
-        );
+        await postServices.postVideoToLocket({
+          userId: userId,
+          idToken: idToken,
+          video: videos[0],
+          optionsData: caption,
+          momentId,
+        });
       }
 
       return res.status(200).json({
@@ -181,6 +187,9 @@ class LocketController {
       const images = files.filter((f) => f.mimetype.startsWith("image"));
       const videos = files.filter((f) => f.mimetype.startsWith("video"));
 
+      //Generate MomentId
+      const momentId = generateFirestoreId();
+
       // không cho upload cả 2 loại
       if (images.length && videos.length) {
         return res.status(400).json({
@@ -194,6 +203,7 @@ class LocketController {
           idToken: idToken,
           image: images[0].buffer || { path: images[0].path },
           optionsData: optionsData,
+          momentId: momentId,
         });
       }
 
@@ -209,6 +219,7 @@ class LocketController {
           idToken: idToken,
           video: videos[0].buffer || { path: videos[0].path },
           optionsData: optionsData,
+          momentId: momentId,
         });
       }
 
