@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'SF Pro Rounded';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/SF-Pro-Rounded-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'SF Pro Rounded';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/SF-Pro-Rounded-Semibold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'SF Pro Rounded';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/SF-Pro-Rounded-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'SF Pro Rounded';
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/SF-Pro-Rounded-Heavy.woff2') format('woff2');
+}
+
+:root {
+  --bg: #FFE091;
+  --fg: #1A1200;
+  --accent-gold: #FFB000;
+  --locket-yellow: #FFE091;
+  --font-rounded: 'SF Pro Rounded', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--locket-yellow);
+  color: var(--fg);
+  font-family: var(--font-rounded);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+::selection {
+  background: rgba(0, 0, 0, 0.12);
+}
